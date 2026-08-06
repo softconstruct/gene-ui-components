@@ -5,7 +5,6 @@ import HighchartsReact from "highcharts-react-official";
 
 // Components
 import Loader from "@components/atoms/Loader";
-import { Popover, PopoverBody } from "@components/atoms/Popover";
 import Empty from "@components/molecules/Empty";
 
 import ChartLegend from "@internal/components/ChartLegend";
@@ -16,11 +15,7 @@ import ChartTooltip, { IChartTooltipItem } from "@internal/components/ChartToolt
 import "./BarChart.scss";
 
 // Helpers
-import {
-    DEFAULT_CHART_SERIES_COLOR_TOKEN,
-    getDefaultChartSeriesColor,
-    mergeChartOptions
-} from "../../../helpers/charts";
+import { DEFAULT_CHART_SERIES_COLOR_TOKEN, mergeChartOptions, resolveChartSeriesColor } from "../../../helpers/charts";
 
 interface IBarChartSeries {
     /**
@@ -33,6 +28,7 @@ interface IBarChartSeries {
     data: number[];
     /**
      * Optional bar color. Defaults to `--guit-sem-color-background-accent-blue-2`.
+     * CSS variables / custom-property names are resolved through a DOM probe for Highcharts.
      */
     color?: string;
 }
@@ -107,6 +103,8 @@ interface IBarChartProps {
 
 const defaultValueFormatter = (value: number) => `${value}`;
 
+const defaultSeriesColor = `var(${DEFAULT_CHART_SERIES_COLOR_TOKEN})`;
+
 /**
  * Vertical single-series bar (column) chart built on Highcharts.
  * Use GroupedBarChart for multiple series per category. Chart animations are disabled by default.
@@ -130,37 +128,65 @@ const BarChart: FC<IBarChartProps> = ({
     options
 }) => {
     const colorProbeRef = useRef<HTMLSpanElement>(null);
-    const [resolvedColor, setResolvedColor] = useState(series?.color || "");
-    const [chartInstance, setChartInstance] = useState<Highcharts.Chart | null>(null);
-    const [popoverProps, setPopoverProps] = useState<Record<string, unknown>>({});
+    const [resolvedColor, setResolvedColor] = useState(series?.color || defaultSeriesColor);
     const [isTooltipOpen, setIsTooltipOpen] = useState(false);
-    const [tooltipItem, setTooltipItem] = useState<IChartTooltipItem | null>(null);
+    const [tooltipItems, setTooltipItems] = useState<IChartTooltipItem[]>([]);
+    const [tooltipPointIndex, setTooltipPointIndex] = useState<number | null>(null);
     const [anchorPosition, setAnchorPosition] = useState({ left: 0, top: 0 });
     const hasData = Boolean(series?.data?.length);
     const isRtl = typeof document !== "undefined" && document.dir === "rtl";
 
+    const tooltipHandlersRef = useRef<{
+        show: (point: Highcharts.Point) => void;
+        hide: () => void;
+    }>({
+        show: () => undefined,
+        hide: () => undefined
+    });
+
+    tooltipHandlersRef.current = {
+        show: (point) => {
+            const { chart } = point.series;
+
+            setAnchorPosition({
+                left: chart.plotLeft + (point.plotX ?? 0),
+                top: chart.plotTop + (point.plotY ?? 0)
+            });
+            setTooltipPointIndex(point.index);
+            setTooltipItems([
+                {
+                    name: point.series.name,
+                    value: valueFormatter(point.y as number),
+                    color: String(point.color)
+                }
+            ]);
+            setIsTooltipOpen(true);
+        },
+        hide: () => {
+            setIsTooltipOpen(false);
+            setTooltipItems([]);
+        }
+    };
+
     useLayoutEffect(() => {
-        if (series?.color) {
-            setResolvedColor(series.color);
+        if (!series?.data?.length) {
+            setResolvedColor(defaultSeriesColor);
             return;
         }
 
-        if (!colorProbeRef.current || !series?.data?.length) {
-            setResolvedColor("");
-            return;
-        }
-
-        setResolvedColor(getDefaultChartSeriesColor(colorProbeRef.current));
+        const resolved = resolveChartSeriesColor(colorProbeRef.current, series.color);
+        // Never blank the plot: keep a concrete color when possible, otherwise a token var / provided color.
+        setResolvedColor(resolved || series.color || defaultSeriesColor);
     }, [series?.color, series?.data?.length]);
 
     const resolvedSeries = useMemo(() => {
-        if (!series?.data?.length || !resolvedColor) {
+        if (!series?.data?.length) {
             return null;
         }
 
         return {
             ...series,
-            color: resolvedColor
+            color: resolvedColor || series.color || defaultSeriesColor
         };
     }, [resolvedColor, series]);
 
@@ -195,7 +221,6 @@ const BarChart: FC<IBarChartProps> = ({
             title: { text: undefined },
             subtitle: { text: undefined },
             credits: { enabled: false },
-            exporting: { enabled: false },
             legend: { enabled: false },
             tooltip: {
                 enabled: false
@@ -256,7 +281,18 @@ const BarChart: FC<IBarChartProps> = ({
                     borderWidth: 0,
                     borderRadius: 0,
                     groupPadding: 0.2,
-                    pointPadding: 0.1
+                    pointPadding: 0.1,
+                    point: {
+                        events: {
+                            // Highcharts invokes these with the point as `this`; handlers stay fresh via ref.
+                            mouseOver(this: Highcharts.Point) {
+                                tooltipHandlersRef.current.show(this);
+                            },
+                            mouseOut() {
+                                tooltipHandlersRef.current.hide();
+                            }
+                        }
+                    }
                 }
             },
             series: [
@@ -273,51 +309,14 @@ const BarChart: FC<IBarChartProps> = ({
         return mergeChartOptions(baseOptions, options);
     }, [categories, height, isRtl, max, min, options, resolvedSeries, xAxisTitle, yAxisTitle]);
 
-    useLayoutEffect(() => {
-        if (!chartInstance || !resolvedSeries) {
-            return undefined;
-        }
-
-        const showTooltipForPoint = (point: Highcharts.Point) => {
-            const { chart } = point.series;
-
-            setAnchorPosition({
-                left: chart.plotLeft + (point.plotX ?? 0),
-                top: chart.plotTop + (point.plotY ?? 0)
-            });
-            setTooltipItem({
-                name: point.series.name,
-                value: valueFormatter(point.y as number),
-                color: String(point.color)
-            });
-            setIsTooltipOpen(true);
-        };
-
-        const hideTooltip = () => {
-            setIsTooltipOpen(false);
-            setTooltipItem(null);
-        };
-
-        const removers: Array<() => void> = [];
-
-        chartInstance.series.forEach((chartSeries) => {
-            chartSeries.points.forEach((point) => {
-                removers.push(Highcharts.addEvent(point, "mouseOver", () => showTooltipForPoint(point)) as () => void);
-                removers.push(Highcharts.addEvent(point, "mouseOut", hideTooltip) as () => void);
-            });
-        });
-
-        return () => {
-            removers.forEach((remove) => remove());
-        };
-    }, [chartInstance, resolvedSeries, valueFormatter]);
+    const tooltipAnchorKey = tooltipPointIndex ?? "idle";
 
     return (
         <div className={classNames("barChart", className)}>
             <span
                 ref={colorProbeRef}
                 className="barChart__colorProbe"
-                style={{ backgroundColor: `var(${DEFAULT_CHART_SERIES_COLOR_TOKEN})` }}
+                style={{ backgroundColor: defaultSeriesColor }}
                 aria-hidden
             />
             {subtitle && <ChartSubtitle className="barChart__subtitle">{subtitle}</ChartSubtitle>}
@@ -334,32 +333,17 @@ const BarChart: FC<IBarChartProps> = ({
                 )}
                 {!loading && hasData && resolvedSeries && (
                     <>
-                        <span
-                            className="barChart__tooltipAnchor"
-                            {...popoverProps}
-                            style={{ left: anchorPosition.left, top: anchorPosition.top }}
-                        />
-                        <Popover
-                            setProps={setPopoverProps}
+                        <ChartTooltip
                             open={isTooltipOpen}
-                            hasCloseButton={false}
-                            withArrow
-                            size="fitContent"
-                            position="top-center"
-                            margin={8}
-                            disableMobileSpreadsheet
+                            items={tooltipItems}
+                            left={anchorPosition.left}
+                            top={anchorPosition.top}
+                            pointKey={tooltipAnchorKey}
                             onClose={() => setIsTooltipOpen(false)}
-                        >
-                            <PopoverBody withPadding={false} withScrollbar={false}>
-                                {tooltipItem && (
-                                    <ChartTooltip items={[tooltipItem]} withSurface={false} withCaret={false} />
-                                )}
-                            </PopoverBody>
-                        </Popover>
+                        />
                         <HighchartsReact
                             highcharts={Highcharts}
                             options={chartOptions}
-                            callback={setChartInstance}
                             containerProps={{ className: "barChart__plot" }}
                         />
                     </>
