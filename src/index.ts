@@ -138,6 +138,9 @@ export {
     IUploaderUploadPayload
 } from "./components/organisms/Uploader";
 
+// Charts
+export { default as BarChart, IBarChartProps, IBarChartSeries } from "./components/charts/BarChart";
+
 // Providers
 export {
     default as GeneUIProvider,

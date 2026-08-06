@@ -1,0 +1,44 @@
+.barChart {
+    display: flex;
+    flex-direction: column;
+    gap: var(--guit-ref-spacing-small);
+    width: 100%;
+
+    &__colorProbe {
+        position: absolute;
+        width: 0;
+        height: 0;
+        overflow: hidden;
+        pointer-events: none;
+    }
+
+    &__body {
+        position: relative;
+        width: 100%;
+        min-height: 24rem;
+    }
+
+    &__tooltipAnchor {
+        position: absolute;
+        z-index: 1;
+        width: 0;
+        height: 0;
+        pointer-events: none;
+    }
+
+    &__state {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-height: 24rem;
+    }
+
+    &__plot {
+        width: 100%;
+    }
+
+    &__legend {
+        margin-inline-start: 0;
+    }
+}

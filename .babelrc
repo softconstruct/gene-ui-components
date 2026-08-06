@@ -12,6 +12,7 @@
                 "root": ["./src"],
                 "alias": {
                     "@components": "./src/components",
+                    "@internal": "./src/_internal",
                     "@hooks": "./src/hooks",
                     "@assets": "./src/assets",
                     "@types": "./src/types"
