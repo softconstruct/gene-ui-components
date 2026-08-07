@@ -179,7 +179,7 @@ const askQuestions = () => {
             prefix: "[?]",
             message: "Please choose a level of the component: ",
             choices: ["Atom", "Molecule", "Organism", "Chart"],
-            filter: (value) => (value === "Chart" ? "charts" : `${value.toLowerCase()}s`)
+            filter: (value) => `${value.toLowerCase()}s`
         },
         {
             name: "name",
