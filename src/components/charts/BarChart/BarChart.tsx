@@ -92,10 +92,6 @@ interface IBarChartProps {
      */
     valueFormatter?: (value: number) => string;
     /**
-     * Chart plot height in pixels.
-     */
-    height?: number;
-    /**
      * Deep-merged Highcharts options override.
      */
     options?: Highcharts.Options;
@@ -124,7 +120,6 @@ const BarChart: FC<IBarChartProps> = ({
     emptyTitle = "No Data Available",
     emptyDescription = "No data is available for display at this moment.",
     valueFormatter = defaultValueFormatter,
-    height = 320,
     options
 }) => {
     const colorProbeRef = useRef<HTMLSpanElement>(null);
@@ -211,7 +206,7 @@ const BarChart: FC<IBarChartProps> = ({
         const baseOptions: Highcharts.Options = {
             chart: {
                 type: "column",
-                height,
+                height: null,
                 animation: false,
                 backgroundColor: "transparent",
                 style: {
@@ -307,7 +302,7 @@ const BarChart: FC<IBarChartProps> = ({
         };
 
         return mergeChartOptions(baseOptions, options);
-    }, [categories, height, isRtl, max, min, options, resolvedSeries, xAxisTitle, yAxisTitle]);
+    }, [categories, isRtl, max, min, options, resolvedSeries, xAxisTitle, yAxisTitle]);
 
     const tooltipAnchorKey = tooltipPointIndex ?? "idle";
 

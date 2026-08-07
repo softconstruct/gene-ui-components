@@ -1,3 +1,4 @@
+import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
@@ -13,6 +14,13 @@ const sampleSeries = {
 const meta: Meta<IBarChartProps> = {
     title: "Charts/BarChart",
     component: BarChart,
+    decorators: [
+        (Story) => (
+            <div style={{ height: "32rem" }}>
+                <Story />
+            </div>
+        )
+    ],
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         categories: args({ control: "object", ...propCategory.content }),
@@ -27,7 +35,6 @@ const meta: Meta<IBarChartProps> = {
         loadingText: args({ control: "text", ...propCategory.content }),
         emptyTitle: args({ control: "text", ...propCategory.content }),
         emptyDescription: args({ control: "text", ...propCategory.content }),
-        height: args({ control: "number", ...propCategory.appearance }),
         options: args({ control: "object", ...propCategory.others }),
         valueFormatter: args({ control: "false", ...propCategory.functionality })
     },
@@ -41,7 +48,6 @@ const meta: Meta<IBarChartProps> = {
         max: 300,
         showLegend: true,
         loading: false,
-        height: 320,
         valueFormatter: (value) => `${value}`
     },
     parameters: {
