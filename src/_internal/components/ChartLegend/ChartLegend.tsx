@@ -40,11 +40,11 @@ const ChartLegend: FC<IChartLegendProps> = ({ className, items }) => {
 
     return (
         <ul className={classNames("chartLegend", className)}>
-            {items.map((item) => (
-                <li key={`${item.name}-${item.color}`} className="chartLegend__item">
-                    <span className="chartLegend__swatch" style={{ backgroundColor: item.color }} aria-hidden />
+            {items.map(({ name, color }) => (
+                <li key={`${name}-${color}`} className="chartLegend__item">
+                    <span className="chartLegend__swatch" style={{ backgroundColor: color }} aria-hidden />
                     <Text as="span" variant="captionLargeMedium" className="chartLegend__label">
-                        {item.name}
+                        {name}
                     </Text>
                 </li>
             ))}

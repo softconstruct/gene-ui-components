@@ -90,15 +90,15 @@ const ChartTooltip: FC<IChartTooltipProps> = ({
                     {items.length > 0 && (
                         <div className={classNames("chartTooltip", className)}>
                             <div className="chartTooltip__content">
-                                {items.map((item) => (
-                                    <div key={`${item.name}-${item.value}`} className="chartTooltip__row">
+                                {items.map(({ name, value, color }) => (
+                                    <div key={`${name}-${value}`} className="chartTooltip__row">
                                         <span
                                             className="chartTooltip__swatch"
-                                            style={{ backgroundColor: item.color }}
+                                            style={{ backgroundColor: color }}
                                             aria-hidden
                                         />
                                         <Text as="span" variant="captionLargeMedium" className="chartTooltip__text">
-                                            {`${item.name}: ${item.value}`}
+                                            {`${name}: ${value}`}
                                         </Text>
                                     </div>
                                 ))}
