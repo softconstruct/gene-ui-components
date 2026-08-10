@@ -283,7 +283,6 @@ const BarChart: FC<IBarChartProps> = ({
                     pointPadding: 0.1,
                     point: {
                         events: {
-                            // Highcharts invokes these with the point as `this`; handlers stay fresh via ref.
                             mouseOver(this: Highcharts.Point) {
                                 tooltipHandlersRef.current.show(this);
                             },
