@@ -274,7 +274,11 @@ const BarChart: FC<IBarChartProps> = ({
                 column: {
                     animation: false,
                     borderWidth: 0,
-                    borderRadius: 0,
+                    borderRadius: {
+                        radius: 4,
+                        scope: "point",
+                        where: "end"
+                    },
                     groupPadding: 0.2,
                     pointPadding: 0.1,
                     point: {
