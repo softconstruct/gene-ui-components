@@ -96,7 +96,9 @@ interface IGroupedBarChartProps {
      */
     valueFormatter?: (value: number) => string;
     /**
-     * Deep-merged Highcharts options override.
+     * Deep-merged Highcharts options override for chart-level tweaks (axes, plotOptions, etc.).
+     * Note: `series` is managed via the `series` prop and is ignored here, so the plot stays
+     * in sync with the legend, tooltip, and visibility toggles.
      */
     options?: Highcharts.Options;
 }
@@ -335,7 +337,16 @@ const GroupedBarChart: FC<IGroupedBarChartProps> = ({
             }))
         };
 
-        return mergeChartOptions(baseOptions, options);
+        // `series` is owned by the `series` prop so the legend, tooltip, and visibility
+        // toggles stay in sync with the plot. Drop any `series` coming through `options`
+        // (arrays replace on merge, which would otherwise clobber the managed series).
+        let optionsOverride = options;
+        if (options && "series" in options) {
+            optionsOverride = { ...options };
+            delete optionsOverride.series;
+        }
+
+        return mergeChartOptions(baseOptions, optionsOverride);
     }, [categories, hiddenSeriesIndexes, isRtl, max, min, options, resolvedSeries, xAxisTitle, yAxisTitle]);
 
     const tooltipAnchorKey = tooltipCategoryIndex ?? "idle";
