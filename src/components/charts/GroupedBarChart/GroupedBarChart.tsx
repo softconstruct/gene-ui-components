@@ -127,16 +127,7 @@ const GroupedBarChart: FC<IGroupedBarChartProps> = ({
     options
 }) => {
     const colorProbeRef = useRef<HTMLSpanElement>(null);
-    const [resolvedSeries, setResolvedSeries] = useState<IGroupedBarChartSeries[]>(() => {
-        if (!series?.length) {
-            return [];
-        }
-
-        return series.map((seriesItem, index) => ({
-            ...seriesItem,
-            color: seriesItem.color || `var(${getDefaultGroupedChartSeriesColorToken(index)})`
-        }));
-    });
+    const [resolvedSeries, setResolvedSeries] = useState<IGroupedBarChartSeries[]>([]);
     const [isTooltipOpen, setIsTooltipOpen] = useState(false);
     const [tooltipItems, setTooltipItems] = useState<IChartTooltipItem[]>([]);
     const [tooltipCategoryIndex, setTooltipCategoryIndex] = useState<number | null>(null);
