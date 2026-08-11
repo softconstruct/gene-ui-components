@@ -384,7 +384,11 @@ const GroupedBarChart: FC<IGroupedBarChartProps> = ({
                         <HighchartsReact
                             highcharts={Highcharts}
                             options={chartOptions}
-                            containerProps={{ className: "groupedBarChart__plot" }}
+                            containerProps={{
+                                className: "groupedBarChart__plot",
+                                role: "img",
+                                "aria-label": subtitle ? `Grouped bar chart: ${subtitle}` : "Grouped bar chart"
+                            }}
                         />
                     </>
                 )}
