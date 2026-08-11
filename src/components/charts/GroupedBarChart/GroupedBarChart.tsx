@@ -139,7 +139,7 @@ const GroupedBarChart: FC<IGroupedBarChartProps> = ({
     const [tooltipItems, setTooltipItems] = useState<IChartTooltipItem[]>([]);
     const [tooltipCategoryIndex, setTooltipCategoryIndex] = useState<number | null>(null);
     const [anchorPosition, setAnchorPosition] = useState({ left: 0, top: 0 });
-    const [hiddenSeriesNames, setHiddenSeriesNames] = useState<Record<string, boolean>>({});
+    const [hiddenSeriesIndexes, setHiddenSeriesIndexes] = useState<Record<number, boolean>>({});
     const hasData = Boolean(series?.some(({ data }) => data?.length));
     const isRtl = typeof document !== "undefined" && document.dir === "rtl";
 
@@ -212,18 +212,18 @@ const GroupedBarChart: FC<IGroupedBarChartProps> = ({
 
     const legendItems = useMemo(
         () =>
-            resolvedSeries.map(({ name, color }) => ({
+            resolvedSeries.map(({ name, color }, index) => ({
                 name,
                 color: color as string,
-                visible: !hiddenSeriesNames[name]
+                visible: !hiddenSeriesIndexes[index]
             })),
-        [hiddenSeriesNames, resolvedSeries]
+        [hiddenSeriesIndexes, resolvedSeries]
     );
 
-    const handleLegendItemClick = ({ name }: { name: string }) => {
-        setHiddenSeriesNames((previous) => ({
+    const handleLegendItemClick = (_item: { name: string }, index: number) => {
+        setHiddenSeriesIndexes((previous) => ({
             ...previous,
-            [name]: !previous[name]
+            [index]: !previous[index]
         }));
         setIsTooltipOpen(false);
         setTooltipItems([]);
@@ -325,18 +325,18 @@ const GroupedBarChart: FC<IGroupedBarChartProps> = ({
                     }
                 }
             },
-            series: resolvedSeries.map(({ name, data, color }) => ({
+            series: resolvedSeries.map(({ name, data, color }, index) => ({
                 type: "column" as const,
                 name,
                 data,
                 color,
-                visible: !hiddenSeriesNames[name],
+                visible: !hiddenSeriesIndexes[index],
                 animation: false
             }))
         };
 
         return mergeChartOptions(baseOptions, options);
-    }, [categories, hiddenSeriesNames, isRtl, max, min, options, resolvedSeries, xAxisTitle, yAxisTitle]);
+    }, [categories, hiddenSeriesIndexes, isRtl, max, min, options, resolvedSeries, xAxisTitle, yAxisTitle]);
 
     const tooltipAnchorKey = tooltipCategoryIndex ?? "idle";
 

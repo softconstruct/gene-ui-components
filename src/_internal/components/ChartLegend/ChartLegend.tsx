@@ -36,7 +36,7 @@ interface IChartLegendProps {
     /**
      * Called when a legend item is clicked (typically to toggle series visibility).
      */
-    onItemClick?: (item: IChartLegendItem) => void;
+    onItemClick?: (item: IChartLegendItem, index: number) => void;
 }
 
 /**
@@ -50,7 +50,7 @@ const ChartLegend: FC<IChartLegendProps> = ({ className, items, onItemClick }) =
 
     return (
         <ul className={classNames("chartLegend", className)}>
-            {items.map((item) => {
+            {items.map((item, index) => {
                 const { name, color, visible = true } = item;
                 const isInteractive = Boolean(onItemClick);
 
@@ -64,7 +64,7 @@ const ChartLegend: FC<IChartLegendProps> = ({ className, items, onItemClick }) =
                             })}
                             disabled={!isInteractive}
                             aria-pressed={visible}
-                            onClick={() => onItemClick?.(item)}
+                            onClick={() => onItemClick?.(item, index)}
                         >
                             <span className="chartLegend__swatch" style={{ backgroundColor: color }} aria-hidden />
                             <Text as="span" variant="captionLargeMedium" className="chartLegend__label">
