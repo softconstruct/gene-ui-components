@@ -60,7 +60,11 @@ const renderLegendItem = (item: IChartLegendItem, index: number, onItemClick: IC
                 aria-pressed={visible}
                 onClick={() => onItemClick?.(item, index)}
             >
-                <span className="chartLegend__swatch" style={{ backgroundColor: color }} aria-hidden />
+                <span
+                    className="chartLegend__swatch"
+                    style={{ backgroundColor: color, borderColor: color }}
+                    aria-hidden
+                />
                 <Text as="span" variant="captionLargeMedium" className="chartLegend__label">
                     {name}
                 </Text>
@@ -160,7 +164,7 @@ const ChartLegend: FC<IChartLegendProps> = ({ className, items, onItemClick, onE
                     aria-expanded={isExpanded}
                     onClick={toggleExpanded}
                 >
-                    <Text as="span" variant="captionLargeMedium" className="chartLegend__toggleLabel">
+                    <Text as="span" variant="bodyMediumSemibold" className="chartLegend__toggleLabel">
                         {isExpanded ? "Show less" : `Show ${hiddenCount} more`}
                     </Text>
                 </button>
