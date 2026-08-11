@@ -5,6 +5,11 @@
     width: 100%;
     height: 100%;
 
+    &_legendExpanded {
+        height: auto;
+        min-height: 100%;
+    }
+
     &__colorProbe {
         position: absolute;
         width: 0;
@@ -18,6 +23,10 @@
         flex: 1 1 auto;
         width: 100%;
         min-height: 0;
+
+        &_frozen {
+            flex: none;
+        }
     }
 
     &__state {

@@ -127,14 +127,22 @@ const GroupedBarChart: FC<IGroupedBarChartProps> = ({
     options
 }) => {
     const colorProbeRef = useRef<HTMLSpanElement>(null);
+    const bodyRef = useRef<HTMLDivElement>(null);
+
     const [resolvedSeries, setResolvedSeries] = useState<IGroupedBarChartSeries[]>([]);
     const [isTooltipOpen, setIsTooltipOpen] = useState(false);
     const [tooltipItems, setTooltipItems] = useState<IChartTooltipItem[]>([]);
     const [tooltipCategoryIndex, setTooltipCategoryIndex] = useState<number | null>(null);
     const [anchorPosition, setAnchorPosition] = useState({ left: 0, top: 0 });
     const [hiddenSeriesIndexes, setHiddenSeriesIndexes] = useState<Record<number, boolean>>({});
+    const [frozenBodyHeight, setFrozenBodyHeight] = useState<number | null>(null);
     const hasData = Boolean(series?.some(({ data }) => data?.length));
     const isRtl = typeof document !== "undefined" && document.dir === "rtl";
+    const isLegendExpanded = frozenBodyHeight !== null;
+
+    const handleLegendExpandedChange = (expanded: boolean) => {
+        setFrozenBodyHeight(expanded ? (bodyRef.current?.offsetHeight ?? null) : null);
+    };
 
     const tooltipHandlersRef = useRef<{
         show: (point: Highcharts.Point) => void;
@@ -343,7 +351,11 @@ const GroupedBarChart: FC<IGroupedBarChartProps> = ({
     const tooltipAnchorKey = tooltipCategoryIndex ?? "idle";
 
     return (
-        <div className={classNames("groupedBarChart", className)}>
+        <div
+            className={classNames("groupedBarChart", className, {
+                groupedBarChart_legendExpanded: isLegendExpanded
+            })}
+        >
             <span
                 ref={colorProbeRef}
                 className="groupedBarChart__colorProbe"
@@ -351,7 +363,13 @@ const GroupedBarChart: FC<IGroupedBarChartProps> = ({
                 aria-hidden
             />
             {subtitle && <ChartSubtitle className="groupedBarChart__subtitle">{subtitle}</ChartSubtitle>}
-            <div className="groupedBarChart__body">
+            <div
+                ref={bodyRef}
+                className={classNames("groupedBarChart__body", {
+                    groupedBarChart__body_frozen: isLegendExpanded
+                })}
+                style={frozenBodyHeight !== null ? { height: frozenBodyHeight } : undefined}
+            >
                 {loading && (
                     <div className="groupedBarChart__state">
                         <Loader loading text={loadingText} textPosition="below" size="large" appearance="brand" />
@@ -389,6 +407,7 @@ const GroupedBarChart: FC<IGroupedBarChartProps> = ({
                     className="groupedBarChart__legend"
                     items={legendItems}
                     onItemClick={handleLegendItemClick}
+                    onExpandedChange={handleLegendExpandedChange}
                 />
             )}
         </div>
