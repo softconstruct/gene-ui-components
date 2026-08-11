@@ -21,6 +21,7 @@ module.exports = {
         ".svg": "<rootDir>/tests/__mocks__/svg.js",
         "^src": "<rootDir>/src",
         "^@components/(.*)$": "<rootDir>/src/components/$1",
+        "^@internal/(.*)$": "<rootDir>/src/_internal/$1",
         "^@hooks/(.*)$": "<rootDir>/src/hooks/$1",
         "^@assets/(.*)$": "<rootDir>/src/assets/$1",
         "^@types/(.*)$": "<rootDir>/src/types/$1"

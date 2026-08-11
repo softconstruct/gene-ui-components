@@ -1,0 +1,27 @@
+.chartLegend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--guit-ref-spacing-small) var(--guit-ref-spacing-medium);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    &__item {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-3xsmall);
+    }
+
+    &__swatch {
+        flex: 0 0 auto;
+        width: 0.8rem;
+        height: 0.8rem;
+        border-radius: var(--guit-ref-radius-4xsmall, 0.2rem);
+    }
+
+    &__label {
+        color: var(--guit-sem-color-foreground-neutral-2);
+    }
+}
