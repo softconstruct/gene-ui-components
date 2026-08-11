@@ -6,6 +6,10 @@
     max-width: 24rem;
     pointer-events: none;
 
+    &__popover {
+        pointer-events: none;
+    }
+
     &__anchor {
         position: absolute;
         z-index: 1;
