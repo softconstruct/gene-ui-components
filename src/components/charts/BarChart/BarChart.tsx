@@ -128,6 +128,7 @@ const BarChart: FC<IBarChartProps> = ({
     const [tooltipItems, setTooltipItems] = useState<IChartTooltipItem[]>([]);
     const [tooltipPointIndex, setTooltipPointIndex] = useState<number | null>(null);
     const [anchorPosition, setAnchorPosition] = useState({ left: 0, top: 0 });
+    const [isSeriesVisible, setIsSeriesVisible] = useState(true);
     const hasData = Boolean(series?.data?.length);
     const isRtl = typeof document !== "undefined" && document.dir === "rtl";
 
@@ -191,12 +192,19 @@ const BarChart: FC<IBarChartProps> = ({
                 ? [
                       {
                           name: resolvedSeries.name,
-                          color: resolvedSeries.color as string
+                          color: resolvedSeries.color as string,
+                          visible: isSeriesVisible
                       }
                   ]
                 : [],
-        [resolvedSeries]
+        [isSeriesVisible, resolvedSeries]
     );
+
+    const handleLegendItemClick = () => {
+        setIsSeriesVisible((previous) => !previous);
+        setIsTooltipOpen(false);
+        setTooltipItems([]);
+    };
 
     const chartOptions = useMemo(() => {
         if (!resolvedSeries) {
@@ -299,13 +307,14 @@ const BarChart: FC<IBarChartProps> = ({
                     name: resolvedSeries.name,
                     data: resolvedSeries.data,
                     color: resolvedSeries.color,
+                    visible: isSeriesVisible,
                     animation: false
                 }
             ]
         };
 
         return mergeChartOptions(baseOptions, options);
-    }, [categories, isRtl, max, min, options, resolvedSeries, xAxisTitle, yAxisTitle]);
+    }, [categories, isRtl, isSeriesVisible, max, min, options, resolvedSeries, xAxisTitle, yAxisTitle]);
 
     const tooltipAnchorKey = tooltipPointIndex ?? "idle";
 
@@ -348,7 +357,7 @@ const BarChart: FC<IBarChartProps> = ({
                 )}
             </div>
             {showLegend && !loading && hasData && resolvedSeries && (
-                <ChartLegend className="barChart__legend" items={legendItems} />
+                <ChartLegend className="barChart__legend" items={legendItems} onItemClick={handleLegendItemClick} />
             )}
         </div>
     );

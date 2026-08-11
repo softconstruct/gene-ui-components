@@ -139,6 +139,7 @@ const GroupedBarChart: FC<IGroupedBarChartProps> = ({
     const [tooltipItems, setTooltipItems] = useState<IChartTooltipItem[]>([]);
     const [tooltipCategoryIndex, setTooltipCategoryIndex] = useState<number | null>(null);
     const [anchorPosition, setAnchorPosition] = useState({ left: 0, top: 0 });
+    const [hiddenSeriesNames, setHiddenSeriesNames] = useState<Record<string, boolean>>({});
     const hasData = Boolean(series?.some(({ data }) => data?.length));
     const isRtl = typeof document !== "undefined" && document.dir === "rtl";
 
@@ -155,6 +156,7 @@ const GroupedBarChart: FC<IGroupedBarChartProps> = ({
             const { chart } = point.series;
             const categoryIndex = point.index;
             const categoryPoints = chart.series
+                .filter((chartSeries) => chartSeries.visible)
                 .map((chartSeries) => chartSeries.points[categoryIndex])
                 .filter((categoryPoint): categoryPoint is Highcharts.Point => Boolean(categoryPoint));
 
@@ -212,10 +214,20 @@ const GroupedBarChart: FC<IGroupedBarChartProps> = ({
         () =>
             resolvedSeries.map(({ name, color }) => ({
                 name,
-                color: color as string
+                color: color as string,
+                visible: !hiddenSeriesNames[name]
             })),
-        [resolvedSeries]
+        [hiddenSeriesNames, resolvedSeries]
     );
+
+    const handleLegendItemClick = ({ name }: { name: string }) => {
+        setHiddenSeriesNames((previous) => ({
+            ...previous,
+            [name]: !previous[name]
+        }));
+        setIsTooltipOpen(false);
+        setTooltipItems([]);
+    };
 
     const chartOptions = useMemo(() => {
         if (!resolvedSeries.length) {
@@ -318,12 +330,13 @@ const GroupedBarChart: FC<IGroupedBarChartProps> = ({
                 name,
                 data,
                 color,
+                visible: !hiddenSeriesNames[name],
                 animation: false
             }))
         };
 
         return mergeChartOptions(baseOptions, options);
-    }, [categories, isRtl, max, min, options, resolvedSeries, xAxisTitle, yAxisTitle]);
+    }, [categories, hiddenSeriesNames, isRtl, max, min, options, resolvedSeries, xAxisTitle, yAxisTitle]);
 
     const tooltipAnchorKey = tooltipCategoryIndex ?? "idle";
 
@@ -366,7 +379,11 @@ const GroupedBarChart: FC<IGroupedBarChartProps> = ({
                 )}
             </div>
             {showLegend && !loading && hasData && resolvedSeries.length > 0 && (
-                <ChartLegend className="groupedBarChart__legend" items={legendItems} />
+                <ChartLegend
+                    className="groupedBarChart__legend"
+                    items={legendItems}
+                    onItemClick={handleLegendItemClick}
+                />
             )}
         </div>
     );

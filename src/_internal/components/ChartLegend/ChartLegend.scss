@@ -1,4 +1,6 @@
 .chartLegend {
+    $this: &;
+
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -11,7 +13,6 @@
     &__item {
         display: inline-flex;
         align-items: center;
-        gap: var(--guit-ref-spacing-3xsmall);
     }
 
     &__swatch {
@@ -23,5 +24,45 @@
 
     &__label {
         color: var(--guit-sem-color-foreground-neutral-2);
+    }
+
+    &__button {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-3xsmall);
+        margin: 0;
+        padding: 0;
+        border: 0;
+        background: none;
+        font: inherit;
+        color: inherit;
+        cursor: default;
+
+        &_interactive {
+            cursor: pointer;
+        }
+
+        &_interactive:focus-visible {
+            outline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+                var(--guit-sem-color-border-focus);
+            outline-offset: var(--guit-ref-border-width-thin);
+            border-radius: var(--guit-ref-radius-4xsmall, 0.2rem);
+        }
+
+        &_hidden {
+            opacity: 0.45;
+
+            #{ $this }__label {
+                text-decoration: line-through;
+            }
+
+            #{ $this }__swatch {
+                background-color: var(--guit-sem-color-background-neutral-4) !important;
+            }
+        }
+
+        &:disabled {
+            cursor: default;
+        }
     }
 }
