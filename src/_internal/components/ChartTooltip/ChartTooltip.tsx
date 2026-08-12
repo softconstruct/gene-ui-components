@@ -1,4 +1,5 @@
 import React, { FC, useState } from "react";
+import { Placement } from "@floating-ui/utils";
 import classNames from "classnames";
 
 // Components
@@ -7,6 +8,18 @@ import Text from "@components/atoms/Text";
 
 // Styles
 import "./ChartTooltip.scss";
+
+/** Prefer above the point; if needed flip to the sides — never below (under the cursor). */
+const CHART_TOOLTIP_FALLBACK_PLACEMENTS: Placement[] = [
+    "top-start",
+    "top-end",
+    "right",
+    "left",
+    "right-start",
+    "left-start",
+    "right-end",
+    "left-end"
+];
 
 interface IChartTooltipItem {
     /**
@@ -83,7 +96,9 @@ const ChartTooltip: FC<IChartTooltipProps> = ({
                 size="fitContent"
                 position="top-center"
                 margin={8}
+                fallbackPlacements={CHART_TOOLTIP_FALLBACK_PLACEMENTS}
                 disableMobileSpreadsheet
+                className="chartTooltip__popover"
                 onClose={onClose}
             >
                 <PopoverBody withPadding={false} withScrollbar={false}>

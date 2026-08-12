@@ -150,6 +150,11 @@ export {
 
 // Charts
 export { default as BarChart, IBarChartProps, IBarChartSeries } from "./components/charts/BarChart";
+export {
+    default as GroupedBarChart,
+    IGroupedBarChartProps,
+    IGroupedBarChartSeries
+} from "./components/charts/GroupedBarChart";
 
 // Providers
 export {

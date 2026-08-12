@@ -12,12 +12,16 @@ import ChartSubtitle from "@internal/components/ChartSubtitle";
 import ChartTooltip, { IChartTooltipItem } from "@internal/components/ChartTooltip";
 
 // Styles
-import "./BarChart.scss";
+import "./GroupedBarChart.scss";
 
 // Helpers
-import { DEFAULT_CHART_SERIES_COLOR_TOKEN, mergeChartOptions, resolveChartSeriesColor } from "../../../helpers/charts";
+import {
+    getDefaultGroupedChartSeriesColorToken,
+    mergeChartOptions,
+    resolveGroupedChartSeriesColor
+} from "../../../helpers/charts";
 
-interface IBarChartSeries {
+interface IGroupedBarChartSeries {
     /**
      * Series name shown in the legend and tooltip.
      */
@@ -27,13 +31,13 @@ interface IBarChartSeries {
      */
     data: number[];
     /**
-     * Optional bar color. Defaults to `--guit-sem-color-background-accent-blue-2`.
+     * Optional bar color. Defaults cycle through the grouped chart accent palette.
      * CSS variables / custom-property names are resolved through a DOM probe for Highcharts.
      */
     color?: string;
 }
 
-interface IBarChartProps {
+interface IGroupedBarChartProps {
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
@@ -44,9 +48,9 @@ interface IBarChartProps {
      */
     categories: string[];
     /**
-     * Single column series. Multi-series / grouped bars belong in `GroupedBarChart`.
+     * Multiple column series rendered as grouped bars per category.
      */
-    series?: IBarChartSeries;
+    series?: IGroupedBarChartSeries[];
     /**
      * Optional subtitle rendered above the chart body.
      */
@@ -92,20 +96,20 @@ interface IBarChartProps {
      */
     valueFormatter?: (value: number) => string;
     /**
-     * Deep-merged Highcharts options override.
+     * Deep-merged Highcharts options override for chart-level tweaks (axes, plotOptions, etc.).
+     * Note: `series` is managed via the `series` prop and is ignored here, so the plot stays
+     * in sync with the legend, tooltip, and visibility toggles.
      */
     options?: Highcharts.Options;
 }
 
 const defaultValueFormatter = (value: number) => `${value}`;
 
-const defaultSeriesColor = `var(${DEFAULT_CHART_SERIES_COLOR_TOKEN})`;
-
 /**
- * Vertical single-series bar (column) chart built on Highcharts.
- * Use GroupedBarChart for multiple series per category. Chart animations are disabled by default.
+ * Vertical multi-series grouped bar (column) chart built on Highcharts.
+ * Hover shows all series values for the hovered category. Chart animations are disabled by default.
  */
-const BarChart: FC<IBarChartProps> = ({
+const GroupedBarChart: FC<IGroupedBarChartProps> = ({
     className,
     categories,
     series,
@@ -123,14 +127,22 @@ const BarChart: FC<IBarChartProps> = ({
     options
 }) => {
     const colorProbeRef = useRef<HTMLSpanElement>(null);
-    const [resolvedColor, setResolvedColor] = useState(series?.color || defaultSeriesColor);
+    const bodyRef = useRef<HTMLDivElement>(null);
+
+    const [resolvedSeries, setResolvedSeries] = useState<IGroupedBarChartSeries[]>([]);
     const [isTooltipOpen, setIsTooltipOpen] = useState(false);
     const [tooltipItems, setTooltipItems] = useState<IChartTooltipItem[]>([]);
-    const [tooltipPointIndex, setTooltipPointIndex] = useState<number | null>(null);
+    const [tooltipCategoryIndex, setTooltipCategoryIndex] = useState<number | null>(null);
     const [anchorPosition, setAnchorPosition] = useState({ left: 0, top: 0 });
-    const [isSeriesVisible, setIsSeriesVisible] = useState(true);
-    const hasData = Boolean(series?.data?.length);
+    const [hiddenSeriesIndexes, setHiddenSeriesIndexes] = useState<Record<number, boolean>>({});
+    const [frozenBodyHeight, setFrozenBodyHeight] = useState<number | null>(null);
+    const hasData = Boolean(series?.some(({ data }) => data?.length));
     const isRtl = typeof document !== "undefined" && document.dir === "rtl";
+    const isLegendExpanded = frozenBodyHeight !== null;
+
+    const handleLegendExpandedChange = (expanded: boolean) => {
+        setFrozenBodyHeight(expanded ? (bodyRef.current?.offsetHeight ?? null) : null);
+    };
 
     const tooltipHandlersRef = useRef<{
         show: (point: Highcharts.Point) => void;
@@ -143,19 +155,33 @@ const BarChart: FC<IBarChartProps> = ({
     tooltipHandlersRef.current = {
         show: (point) => {
             const { chart } = point.series;
+            const categoryIndex = point.index;
+            const categoryPoints = chart.series
+                .filter((chartSeries) => chartSeries.visible)
+                .map((chartSeries) => chartSeries.points[categoryIndex])
+                .filter((categoryPoint): categoryPoint is Highcharts.Point => Boolean(categoryPoint));
+
+            if (!categoryPoints.length) {
+                return;
+            }
+
+            const averagePlotX =
+                categoryPoints.reduce((sum, categoryPoint) => sum + (categoryPoint.plotX ?? 0), 0) /
+                categoryPoints.length;
+            const topPlotY = Math.min(...categoryPoints.map((categoryPoint) => categoryPoint.plotY ?? 0));
 
             setAnchorPosition({
-                left: chart.plotLeft + (point.plotX ?? 0),
-                top: chart.plotTop + (point.plotY ?? 0)
+                left: chart.plotLeft + averagePlotX,
+                top: chart.plotTop + topPlotY
             });
-            setTooltipPointIndex(point.index);
-            setTooltipItems([
-                {
-                    name: point.series.name,
-                    value: valueFormatter(point.y as number),
-                    color: String(point.color)
-                }
-            ]);
+            setTooltipCategoryIndex(categoryIndex);
+            setTooltipItems(
+                categoryPoints.map((categoryPoint) => ({
+                    name: categoryPoint.series.name,
+                    value: valueFormatter(categoryPoint.y as number),
+                    color: String(categoryPoint.color)
+                }))
+            );
             setIsTooltipOpen(true);
         },
         hide: () => {
@@ -165,49 +191,47 @@ const BarChart: FC<IBarChartProps> = ({
     };
 
     useLayoutEffect(() => {
-        if (!series?.data?.length) {
-            setResolvedColor(defaultSeriesColor);
+        if (!series?.length || !series.some(({ data }) => data?.length)) {
+            setResolvedSeries([]);
             return;
         }
 
-        const resolved = resolveChartSeriesColor(colorProbeRef.current, series.color);
-        // Never blank the plot: keep a concrete color when possible, otherwise a token var / provided color.
-        setResolvedColor(resolved || series.color || defaultSeriesColor);
-    }, [series?.color, series?.data?.length]);
+        const probe = colorProbeRef.current;
 
-    const resolvedSeries = useMemo(() => {
-        if (!series?.data?.length) {
-            return null;
-        }
+        setResolvedSeries(
+            series.map((seriesItem, index) => {
+                const fallbackColor = `var(${getDefaultGroupedChartSeriesColorToken(index)})`;
+                const resolved = resolveGroupedChartSeriesColor(probe, seriesItem.color, index);
 
-        return {
-            ...series,
-            color: resolvedColor || series.color || defaultSeriesColor
-        };
-    }, [resolvedColor, series]);
+                return {
+                    ...seriesItem,
+                    color: resolved || seriesItem.color || fallbackColor
+                };
+            })
+        );
+    }, [series]);
 
     const legendItems = useMemo(
         () =>
-            resolvedSeries
-                ? [
-                      {
-                          name: resolvedSeries.name,
-                          color: resolvedSeries.color as string,
-                          visible: isSeriesVisible
-                      }
-                  ]
-                : [],
-        [isSeriesVisible, resolvedSeries]
+            resolvedSeries.map(({ name, color }, index) => ({
+                name,
+                color: color as string,
+                visible: !hiddenSeriesIndexes[index]
+            })),
+        [hiddenSeriesIndexes, resolvedSeries]
     );
 
-    const handleLegendItemClick = () => {
-        setIsSeriesVisible((previous) => !previous);
+    const handleLegendItemClick = (_item: { name: string }, index: number) => {
+        setHiddenSeriesIndexes((previous) => ({
+            ...previous,
+            [index]: !previous[index]
+        }));
         setIsTooltipOpen(false);
         setTooltipItems([]);
     };
 
     const chartOptions = useMemo(() => {
-        if (!resolvedSeries) {
+        if (!resolvedSeries.length) {
             return {};
         }
 
@@ -228,7 +252,7 @@ const BarChart: FC<IBarChartProps> = ({
             tooltip: {
                 enabled: false
             },
-            colors: [resolvedSeries.color as string],
+            colors: resolvedSeries.map(({ color }) => color as string),
             xAxis: {
                 categories,
                 title: {
@@ -283,12 +307,13 @@ const BarChart: FC<IBarChartProps> = ({
                     animation: false,
                     borderWidth: 0,
                     borderRadius: {
+                        // Figma `radius/3xsmall` (`--guit-ref-radius-3xsmall` = 4px)
                         radius: 4,
                         scope: "point",
                         where: "end"
                     },
-                    groupPadding: 0.2,
-                    pointPadding: 0.1,
+                    groupPadding: 0.15,
+                    pointPadding: 0.05,
                     point: {
                         events: {
                             mouseOver(this: Highcharts.Point) {
@@ -301,44 +326,61 @@ const BarChart: FC<IBarChartProps> = ({
                     }
                 }
             },
-            series: [
-                {
-                    type: "column",
-                    name: resolvedSeries.name,
-                    data: resolvedSeries.data,
-                    color: resolvedSeries.color,
-                    visible: isSeriesVisible,
-                    animation: false
-                }
-            ]
+            series: resolvedSeries.map(({ name, data, color }, index) => ({
+                type: "column" as const,
+                name,
+                data,
+                color,
+                visible: !hiddenSeriesIndexes[index],
+                animation: false
+            }))
         };
 
-        return mergeChartOptions(baseOptions, options);
-    }, [categories, isRtl, isSeriesVisible, max, min, options, resolvedSeries, xAxisTitle, yAxisTitle]);
+        // `series` is owned by the `series` prop so the legend, tooltip, and visibility
+        // toggles stay in sync with the plot. Drop any `series` coming through `options`
+        // (arrays replace on merge, which would otherwise clobber the managed series).
+        let optionsOverride = options;
+        if (options && "series" in options) {
+            optionsOverride = { ...options };
+            delete optionsOverride.series;
+        }
 
-    const tooltipAnchorKey = tooltipPointIndex ?? "idle";
+        return mergeChartOptions(baseOptions, optionsOverride);
+    }, [categories, hiddenSeriesIndexes, isRtl, max, min, options, resolvedSeries, xAxisTitle, yAxisTitle]);
+
+    const tooltipAnchorKey = tooltipCategoryIndex ?? "idle";
 
     return (
-        <div className={classNames("barChart", className)}>
+        <div
+            className={classNames("groupedBarChart", className, {
+                groupedBarChart_legendExpanded: isLegendExpanded
+            })}
+        >
             <span
                 ref={colorProbeRef}
-                className="barChart__colorProbe"
-                style={{ backgroundColor: defaultSeriesColor }}
+                className="groupedBarChart__colorProbe"
+                style={{ backgroundColor: `var(${getDefaultGroupedChartSeriesColorToken(0)})` }}
                 aria-hidden
             />
-            {subtitle && <ChartSubtitle className="barChart__subtitle">{subtitle}</ChartSubtitle>}
-            <div className="barChart__body">
+            {subtitle && <ChartSubtitle className="groupedBarChart__subtitle">{subtitle}</ChartSubtitle>}
+            <div
+                ref={bodyRef}
+                className={classNames("groupedBarChart__body", {
+                    groupedBarChart__body_frozen: isLegendExpanded
+                })}
+                style={frozenBodyHeight !== null ? { height: frozenBodyHeight } : undefined}
+            >
                 {loading && (
-                    <div className="barChart__state">
+                    <div className="groupedBarChart__state">
                         <Loader loading text={loadingText} textPosition="below" size="large" appearance="brand" />
                     </div>
                 )}
                 {!loading && !hasData && (
-                    <div className="barChart__state">
+                    <div className="groupedBarChart__state">
                         <Empty appearance="noData" title={emptyTitle} description={emptyDescription} size="small" />
                     </div>
                 )}
-                {!loading && hasData && resolvedSeries && (
+                {!loading && hasData && resolvedSeries.length > 0 && (
                     <>
                         <ChartTooltip
                             open={isTooltipOpen}
@@ -351,16 +393,25 @@ const BarChart: FC<IBarChartProps> = ({
                         <HighchartsReact
                             highcharts={Highcharts}
                             options={chartOptions}
-                            containerProps={{ className: "barChart__plot" }}
+                            containerProps={{
+                                className: "groupedBarChart__plot",
+                                role: "img",
+                                "aria-label": subtitle ? `Grouped bar chart: ${subtitle}` : "Grouped bar chart"
+                            }}
                         />
                     </>
                 )}
             </div>
-            {showLegend && !loading && hasData && resolvedSeries && (
-                <ChartLegend className="barChart__legend" items={legendItems} onItemClick={handleLegendItemClick} />
+            {showLegend && !loading && hasData && resolvedSeries.length > 0 && (
+                <ChartLegend
+                    className="groupedBarChart__legend"
+                    items={legendItems}
+                    onItemClick={handleLegendItemClick}
+                    onExpandedChange={handleLegendExpandedChange}
+                />
             )}
         </div>
     );
 };
 
-export { IBarChartProps, IBarChartSeries, BarChart as default };
+export { IGroupedBarChartProps, IGroupedBarChartSeries, GroupedBarChart as default };
