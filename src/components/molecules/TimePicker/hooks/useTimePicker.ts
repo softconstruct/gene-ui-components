@@ -290,8 +290,6 @@ export const useSingleTimePicker = ({
 
         const nextValue = event.target.value;
 
-        // The typed text is committed as it is. Rewriting it on every keystroke fought the mask and
-        // made the meridiem impossible to edit; normalization and clamping happen on blur instead.
         field.setIsEditing(true);
         field.setValue(nextValue);
         onChange?.(nextValue, { source: "input", parts: parseTime(nextValue, is12Hour) });

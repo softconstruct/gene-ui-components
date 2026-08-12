@@ -113,18 +113,63 @@ interface IPickerMaskedInputProps {
      * Whether the popover is currently expanded.
      */
     isExpanded: boolean;
+    /**
+     * The size of the input field.
+     * @default "medium"
+     */
     size?: TimePickerSizes;
+    /**
+     * Validation state of the field.
+     * @default "rest"
+     */
     status?: TimePickerStatus;
+    /**
+     * Whether the field is mandatory.
+     */
     required?: boolean;
+    /**
+     * Whether the field should be displayed as disabled.
+     */
     disabled?: boolean;
+    /**
+     * Whether the field should be read-only.
+     */
     readOnly?: boolean;
+    /**
+     * The mask of the input field.
+     */
     mask: string;
+    /**
+     * Per slot regular expressions the mask placeholders are validated against.
+     */
     maskReplacement: Record<string, RegExp>;
+    /**
+     * Reference to the input element.
+     */
     inputRef?: Ref<HTMLInputElement>;
+    /**
+     * Callback function which triggers when the field is getting clicked.
+     */
     onClick?: () => void;
+    /**
+     * Callback function which triggers when the field value is getting changed.
+     * @param event
+     */
     onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
+    /**
+     * Callback function which triggers when the field is getting focused.
+     * @param event
+     */
     onFocus?: (event: FocusEvent<HTMLInputElement>) => void;
+    /**
+     * Callback function which triggers when the field is getting blurred.
+     * @param event
+     */
     onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
+    /**
+     * Callback function which triggers when a key is getting pressed.
+     * @param event
+     */
     onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void;
 }
 
@@ -199,6 +244,10 @@ interface IPickerInputBaseProps {
      * `HTML` `name` attribute for the `input` element.
      */
     name?: string;
+    /**
+     * Callback function which triggers when a key is getting pressed.
+     * @param event
+     */
     onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void;
 }
 
@@ -215,17 +264,30 @@ interface ISinglePickerInputProps extends IPickerInputBaseProps {
      * ID used to tie the input field to a label.
      */
     id: string;
+    /**
+     * Reference to the input element.
+     */
     inputRef?: Ref<HTMLInputElement>;
     /**
      * Callback function which triggers when the field is getting clicked.
      */
     onClick?: () => void;
+    /**
+     * Callback function which triggers when the field value is getting changed.
+     * @param event
+     */
     onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
+    /**
+     * Callback function which triggers when the field is getting focused.
+     */
     onFocus?: (event: FocusEvent<HTMLInputElement>) => void;
+    /**
+     * Callback function which triggers when the field is getting blurred.
+     * @param event
+     */
     onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
 }
 
-// `onKeyDown` is widened with the edited field, so it has to be replaced rather than extended.
 interface IRangePickerInputProps extends Omit<IPickerInputBaseProps, "onKeyDown"> {
     /**
      * Placeholder values of range input picker.
@@ -255,6 +317,9 @@ interface IRangePickerInputProps extends Omit<IPickerInputBaseProps, "onKeyDown"
         start: string;
         end: string;
     };
+    /**
+     * References to the input elements.
+     */
     inputRefs: {
         start: Ref<HTMLInputElement>;
         end: Ref<HTMLInputElement>;
@@ -264,9 +329,29 @@ interface IRangePickerInputProps extends Omit<IPickerInputBaseProps, "onKeyDown"
      * @param field - The field that was clicked.
      */
     onClick: (field: TimePickerRangeFields) => void;
+    /**
+     * Callback function which triggers when one of the fields value is getting changed.
+     * @param event
+     * @param field
+     */
     onChange?: (event: ChangeEvent<HTMLInputElement>, field: TimePickerRangeFields) => void;
+    /**
+     * Callback function which triggers when one of the fields is getting focused.
+     * @param field
+     * @param event
+     */
     onFocus?: (field: TimePickerRangeFields, event: FocusEvent<HTMLInputElement>) => void;
+    /**
+     * Callback function which triggers when one of the fields is getting blurred.
+     * @param event
+     * @param field
+     */
     onBlur?: (event: FocusEvent<HTMLInputElement>, field: TimePickerRangeFields) => void;
+    /**
+     * Callback function which triggers when a key is getting pressed.
+     * @param event
+     * @param field
+     */
     onKeyDown?: (event: KeyboardEvent<HTMLInputElement>, field: TimePickerRangeFields) => void;
 }
 
@@ -373,8 +458,6 @@ const PickerShell: FC<IPickerShellProps> = ({
                 )}
             </div>
             {helperText && (
-                // `HelperText` does not expose an `id`, so the wrapper carries the one the inputs
-                // reference through `aria-describedby`.
                 <div id={helperTextId}>
                     <HelperText
                         size={helperTextSizeMap[size]}

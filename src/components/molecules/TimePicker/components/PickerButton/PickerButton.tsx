@@ -38,7 +38,6 @@ const PickerButton: FC<IPickerButtonProps> = ({
 }) => {
     return (
         <button
-            // Spread first so `type`, `disabled` and the computed class list cannot be overridden.
             {...props}
             type="button"
             disabled={disabled}

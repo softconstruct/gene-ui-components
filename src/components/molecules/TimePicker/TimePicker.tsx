@@ -266,7 +266,6 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
         const generatedId = useMemo(() => id || `${DEFAULT_ID_PREFIX}${nanoid()}`, [id]);
         const popoverId = `${generatedId}-popover`;
 
-        // `error`/`errorMessage` are kept working for backwards compatibility.
         const resolvedStatus = status ?? (error ? "error" : "rest");
         const resolvedHelperText = helperText ?? errorMessage;
 

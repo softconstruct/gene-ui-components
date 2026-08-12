@@ -40,9 +40,21 @@ type PickerColumnEntry = {
 };
 
 type PickerColumn = {
+    /**
+     * Time part of the column.
+     */
     part: keyof TimeParts;
+    /**
+     * Header text of the column.
+     */
     header: string;
+    /**
+     * ARIA label of the column.
+     */
     ariaLabel: string;
+    /**
+     * List of entries of the column.
+     */
     entries: PickerColumnEntry[];
     /**
      * Index of the single item of this column that takes part in the tab sequence,
@@ -113,7 +125,13 @@ interface IPickerPopoverProps {
      * Time parts of both range fields, used to keep start and end in order.
      */
     partsStart?: TimeParts;
+    /**
+     * Time parts of both range fields, used to keep start and end in order.
+     */
     partsEnd?: TimeParts;
+    /**
+     * Callback invoked to determine whether a time part should be disabled.
+     */
     shouldDisableTime?: ShouldDisableTime;
 }
 
@@ -216,11 +234,6 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
         [parts, is12Hour, activeField, partsStart, partsEnd, shouldDisableTime]
     );
 
-    /**
-     * Built only while the popover is open: the popover renders up to 146 buttons and every one of
-     * them needs a `shouldDisableTime` / range bound evaluation, which used to run on every render
-     * of the picker (including every keystroke) even though the result was thrown away.
-     */
     const columns = useMemo<PickerColumn[]>(() => {
         if (!open) return [];
 
@@ -292,11 +305,6 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
         buttons[selectedIndex < 0 ? 0 : selectedIndex].focus();
     };
 
-    /**
-     * `Popover` renders through a floating portal that only mounts its children on a later render,
-     * so the columns are not in the DOM yet when the open effect runs. The work is therefore queued
-     * and retried from the column `ref` callbacks, the same way `Dropdown` focuses its options.
-     */
     const applyPendingColumnEffects = () => {
         if (!pendingScrollRef.current && !pendingFocusRef.current) return;
         if (!columnOrder.every((part) => columnRefs.current[part])) return;
@@ -336,10 +344,6 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
         }
     }, [open, focusOnOpen, columnOrder]);
 
-    /**
-     * Clicks are delegated to the column so every button keeps receiving only primitive props and
-     * stays memoized. `Enter`/`Space` on a button dispatch a native click, so they land here too.
-     */
     const handleColumnClick = (part: keyof TimeParts) => (event: MouseEvent<HTMLDivElement>) => {
         const button = (event.target as HTMLElement).closest("button");
 
@@ -351,8 +355,6 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
     const handleColumnKeyDown = (part: keyof TimeParts) => (event: KeyboardEvent<HTMLDivElement>) => {
         const { key } = event;
 
-        // `Escape` is intentionally not handled here: `Popover` already dismisses itself on
-        // `Escape` and reports the reason through `onClose`.
         if (!VERTICAL_KEYS.includes(key) && !HORIZONTAL_KEYS.includes(key) && !EDGE_KEYS.includes(key)) return;
 
         event.preventDefault();

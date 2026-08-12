@@ -7,12 +7,6 @@ import { TimeParts, TimePickerLocalization } from "./types";
 /**
  * @description
  * Generates an inclusive list of zero padded numeric strings.
- *
- * Intentionally declared in this module rather than in `helpers.ts`: `helpers.ts` imports its
- * constants from here, so importing `generateRange` back from `helpers.ts` created a circular
- * dependency. Because `generateRange` is an arrow function (not hoisted), that cycle could throw
- * a temporal dead zone `ReferenceError` at module initialization depending on the bundler's
- * evaluation order.
  */
 const generateRange = (start: number, end: number): string[] =>
     Array.from({ length: end - start + 1 }, (_, index) => (start + index).toString().padStart(2, "0"));
@@ -140,7 +134,6 @@ const MASK_REPLACEMENT_12H: Record<string, RegExp> = {
 
 /**
  * `id` prefix used when the consumer does not provide an `id`.
- * Mirrors the `TextField`/`NumberField` convention (`default-id-${nanoid()}`).
  */
 const DEFAULT_ID_PREFIX = "default-id-";
 
