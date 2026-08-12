@@ -1,23 +1,37 @@
-import { generateRange } from "@components/molecules/TimePicker/helpers";
+import { TimeParts, TimePickerLocalization } from "./types";
 
-const LABEL_SIZE_MAPPER = {
-    large: "medium",
-    medium: "medium",
-    small: "small"
-} as const;
+// ---------------------------------------------------------
+// Range generation
+// ---------------------------------------------------------
+
+/**
+ * @description
+ * Generates an inclusive list of zero padded numeric strings.
+ *
+ * Intentionally declared in this module rather than in `helpers.ts`: `helpers.ts` imports its
+ * constants from here, so importing `generateRange` back from `helpers.ts` created a circular
+ * dependency. Because `generateRange` is an arrow function (not hoisted), that cycle could throw
+ * a temporal dead zone `ReferenceError` at module initialization depending on the bundler's
+ * evaluation order.
+ */
+const generateRange = (start: number, end: number): string[] =>
+    Array.from({ length: end - start + 1 }, (_, index) => (start + index).toString().padStart(2, "0"));
+
+// ---------------------------------------------------------
+// Time domains
+// ---------------------------------------------------------
 
 const HOURS_24 = generateRange(0, 23);
 const HOURS_12 = generateRange(1, 12);
 const MINUTES = generateRange(0, 59);
 const SECONDS = generateRange(0, 59);
+
 const MERIDIEMS = {
     AM: "AM",
     PM: "PM"
-};
-const PICKER_RANGE_FIELDS = {
-    START: "start",
-    END: "end"
 } as const;
+
+const MERIDIEM_LIST = [MERIDIEMS.AM, MERIDIEMS.PM];
 
 const TIME_PARTS = {
     HOURS: "hours",
@@ -26,43 +40,168 @@ const TIME_PARTS = {
     MERIDIEM: "meridiem"
 } as const;
 
+/**
+ * Visual (and keyboard navigation) order of the scrollable time columns.
+ * The meridiem column is appended at runtime, only when the 12-hour format is active.
+ */
+const TIME_COLUMNS_ORDER = [TIME_PARTS.HOURS, TIME_PARTS.MINUTES, TIME_PARTS.SECONDS] as const;
+
+const PICKER_RANGE_FIELDS = {
+    START: "start",
+    END: "end"
+} as const;
+
+// ---------------------------------------------------------
+// Numeric constants
+// ---------------------------------------------------------
+
 const MERIDIEM_OFFSET = 12;
 
 const TIME_PART_DEFAULT_TEXT_VALUE = "00";
+const TIME_PART_DEFAULT_12H_HOUR = "12";
 const TIME_PARTS_RADIX = 10;
 
+/**
+ * Shared "nothing selected yet" value. Kept as a single frozen object so that the derived
+ * `parts` reference stays stable across renders and does not invalidate memoized children.
+ */
+const EMPTY_TIME_PARTS: TimeParts = Object.freeze({
+    hours: undefined,
+    minutes: undefined,
+    seconds: undefined,
+    meridiem: undefined
+});
+
 const HOURS_IN_DAY = 24;
-const MINUTES_IN_HOUR = 60;
+const SECONDS_IN_MINUTE = 60;
 const SECONDS_IN_HOUR = 3600;
+const SECONDS_IN_DAY = HOURS_IN_DAY * SECONDS_IN_HOUR;
+
 const LAST_MINUTE_IN_HOUR = 59;
 const LAST_SECOND_IN_MINUTE = 59;
 const LAST_HOUR_IN_24H_FORMAT_DAY = 23;
+const FIRST_HOUR_IN_12H_FORMAT = 1;
 
-const TIME_PICKER_FIELD_ID = "time-picker-field";
+// ---------------------------------------------------------
+// Size mappers
+// ---------------------------------------------------------
 
-const RANGE_TIME_PICKER_FIELDS_IDS = {
-    start: "range-time-picker-start-field",
-    end: "range-time-picker-end-field"
+const textSizeMap = {
+    large: "medium",
+    medium: "medium",
+    small: "small"
+} as const;
+
+const labelSizeMap = textSizeMap;
+const helperTextSizeMap = textSizeMap;
+
+const headerTextVariantMap = {
+    large: "bodyMediumSemibold",
+    medium: "bodyMediumSemibold",
+    small: "captionLargeSemibold"
+} as const;
+
+// ---------------------------------------------------------
+// Input mask
+// ---------------------------------------------------------
+
+/**
+ * Every slot of the mask has its own replacement character so that structurally impossible
+ * values can never be typed (e.g. `99:99:99`):
+ * `H`/`h` hour tens/units, `M`/`m` minute tens/units, `S`/`s` second tens/units,
+ * `A` the first meridiem character, `P` the trailing `M`.
+ */
+const TIME_PICKER_INPUT_MASK = "Hh:Mm:Ss";
+const TIME_PICKER_INPUT_MASK_WITH_MERIDIEM = "Hh:Mm:Ss AP";
+
+const MASK_REPLACEMENT_24H: Record<string, RegExp> = {
+    H: /[0-2]/,
+    h: /[0-9]/,
+    M: /[0-5]/,
+    m: /[0-9]/,
+    S: /[0-5]/,
+    s: /[0-9]/
 };
 
+const MASK_REPLACEMENT_12H: Record<string, RegExp> = {
+    H: /[0-1]/,
+    h: /[0-9]/,
+    M: /[0-5]/,
+    m: /[0-9]/,
+    S: /[0-5]/,
+    s: /[0-9]/,
+    A: /[aApP]/,
+    P: /[mM]/
+};
+
+// ---------------------------------------------------------
+// Accessibility & localization
+// ---------------------------------------------------------
+
+/**
+ * `id` prefix used when the consumer does not provide an `id`.
+ * Mirrors the `TextField`/`NumberField` convention (`default-id-${nanoid()}`).
+ */
+const DEFAULT_ID_PREFIX = "default-id-";
+
+const DEFAULT_LOCALIZATION: Required<TimePickerLocalization> = {
+    hours: "hours",
+    minutes: "minutes",
+    seconds: "seconds",
+    am: "AM",
+    pm: "PM",
+    clear: "Clear time selection",
+    selectHours: "Select hours",
+    selectMinutes: "Select minutes",
+    selectSeconds: "Select seconds",
+    selectMeridiem: "Select AM/PM",
+    startTime: "Start time",
+    endTime: "End time"
+};
+
+const KEYS = {
+    ENTER: "Enter",
+    SPACE: " ",
+    ESCAPE: "Escape",
+    ARROW_UP: "ArrowUp",
+    ARROW_DOWN: "ArrowDown",
+    ARROW_LEFT: "ArrowLeft",
+    ARROW_RIGHT: "ArrowRight",
+    HOME: "Home",
+    END: "End"
+} as const;
+
 export {
-    LABEL_SIZE_MAPPER,
-    HOURS_24,
+    DEFAULT_ID_PREFIX,
+    DEFAULT_LOCALIZATION,
+    EMPTY_TIME_PARTS,
+    FIRST_HOUR_IN_12H_FORMAT,
+    headerTextVariantMap,
+    helperTextSizeMap,
     HOURS_12,
-    MINUTES,
-    SECONDS,
-    MERIDIEMS,
-    MINUTES_IN_HOUR,
-    SECONDS_IN_HOUR,
+    HOURS_24,
     HOURS_IN_DAY,
-    PICKER_RANGE_FIELDS,
-    TIME_PARTS,
-    TIME_PART_DEFAULT_TEXT_VALUE,
-    MERIDIEM_OFFSET,
-    TIME_PARTS_RADIX,
+    KEYS,
+    labelSizeMap,
+    LAST_HOUR_IN_24H_FORMAT_DAY,
     LAST_MINUTE_IN_HOUR,
     LAST_SECOND_IN_MINUTE,
-    LAST_HOUR_IN_24H_FORMAT_DAY,
-    TIME_PICKER_FIELD_ID,
-    RANGE_TIME_PICKER_FIELDS_IDS
+    MASK_REPLACEMENT_12H,
+    MASK_REPLACEMENT_24H,
+    MERIDIEM_LIST,
+    MERIDIEM_OFFSET,
+    MERIDIEMS,
+    MINUTES,
+    PICKER_RANGE_FIELDS,
+    SECONDS,
+    SECONDS_IN_DAY,
+    SECONDS_IN_HOUR,
+    SECONDS_IN_MINUTE,
+    TIME_COLUMNS_ORDER,
+    TIME_PART_DEFAULT_12H_HOUR,
+    TIME_PART_DEFAULT_TEXT_VALUE,
+    TIME_PARTS,
+    TIME_PARTS_RADIX,
+    TIME_PICKER_INPUT_MASK,
+    TIME_PICKER_INPUT_MASK_WITH_MERIDIEM
 };

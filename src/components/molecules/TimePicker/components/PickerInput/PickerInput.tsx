@@ -1,4 +1,4 @@
-import React, { ComponentProps, FC, HTMLAttributes, ReactNode } from "react";
+import React, { ChangeEvent, FC, FocusEvent, HTMLAttributes, KeyboardEvent, ReactNode, Ref } from "react";
 import { InputMask } from "@react-input/mask";
 import classNames from "classnames";
 
@@ -8,14 +8,14 @@ import { IconProps, Minus, X } from "@geneui/icons";
 // Components
 import Button from "@components/atoms/Button";
 import HelperText from "@components/atoms/HelperText";
-import { TimePickerSizes } from "@components/molecules/TimePicker/types";
 
 // Styles
 import "./PickerInput.scss";
 
-type InputMaskProps = ComponentProps<typeof InputMask>;
-type PickerInputOnClick = NonNullable<InputMaskProps["onClick"]>;
-type PickerInputOnChange = NonNullable<InputMaskProps["onChange"]>;
+// Constants
+import { helperTextSizeMap } from "../../constants";
+// Types
+import { TimePickerRangeFields, TimePickerSizes, TimePickerStatus } from "../../types";
 
 interface IPickerShellProps {
     /**
@@ -37,15 +37,20 @@ interface IPickerShellProps {
      */
     children: ReactNode;
     /**
-     * Whether the field should be displayed in an errored state.
+     * Validation state of the field.
+     * @default "rest"
      */
-    error?: boolean;
+    status?: TimePickerStatus;
     /**
-     * Error message used to display when the component is in the errored state.
+     * Helper text rendered below the field, styled according to `status`.
      */
-    errorMessage?: string;
+    helperText?: string;
     /**
-     * Whether the field should be displayed.
+     * `id` of the helper text, referenced by the inputs through `aria-describedby`.
+     */
+    helperTextId: string;
+    /**
+     * Whether the field should be displayed as disabled.
      */
     disabled?: boolean;
     /**
@@ -65,17 +70,62 @@ interface IPickerShellProps {
      */
     shouldShowClearableIcon?: boolean;
     /**
+     * Accessible label of the clear button.
+     */
+    clearLabel: string;
+    /**
      * Reference data of popover, used for positioning the popover accordingly to the input field.
      */
     popoverRefData?: HTMLAttributes<HTMLDivElement>;
+}
+
+interface IPickerMaskedInputProps {
     /**
-     * Used for accessibility, determines whether the picker popover is open/expanded.
+     * ID used to tie the input field to a label.
+     */
+    id: string;
+    /**
+     * `HTML` `name` attribute for the `input` element.
+     */
+    name?: string;
+    /**
+     * The value of the input field.
+     */
+    value?: string | null;
+    /**
+     * The placeholder text displayed when the input field is empty.
+     */
+    placeholder?: string;
+    /**
+     * Accessible label, used when there is no visible label tied to this input
+     * (the range picker shares a single label between two inputs).
+     */
+    ariaLabel?: string;
+    /**
+     * `id` of the helper text describing the field.
+     */
+    describedBy?: string;
+    /**
+     * `id` of the popover controlled by this input.
+     */
+    controls: string;
+    /**
+     * Whether the popover is currently expanded.
      */
     isExpanded: boolean;
-    /**
-     * Used for accessibility, receives the id of the picker popover.
-     */
-    ariaControls?: string;
+    size?: TimePickerSizes;
+    status?: TimePickerStatus;
+    required?: boolean;
+    disabled?: boolean;
+    readOnly?: boolean;
+    mask: string;
+    maskReplacement: Record<string, RegExp>;
+    inputRef?: Ref<HTMLInputElement>;
+    onClick?: () => void;
+    onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
+    onFocus?: (event: FocusEvent<HTMLInputElement>) => void;
+    onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
+    onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void;
 }
 
 interface IPickerInputBaseProps {
@@ -89,15 +139,16 @@ interface IPickerInputBaseProps {
      */
     size?: TimePickerSizes;
     /**
-     * Whether the field should be displayed in an errored state.
+     * Validation state of the field.
+     * @default "rest"
      */
-    error?: boolean;
+    status?: TimePickerStatus;
     /**
-     * Error message used to display when the component is in the errored state.
+     * Helper text rendered below the field.
      */
-    errorMessage?: string;
+    helperText?: string;
     /**
-     * Whether the field should be displayed.
+     * Whether the field should be displayed as disabled.
      */
     disabled?: boolean;
     /**
@@ -105,29 +156,29 @@ interface IPickerInputBaseProps {
      */
     readOnly?: boolean;
     /**
+     * Whether the field is mandatory.
+     */
+    required?: boolean;
+    /**
      * Icon to display at the end of the input field.
      */
     EndIcon?: FC<IconProps>;
     /**
      * The mask of the input field.
      */
-    mask?: string;
+    mask: string;
     /**
-     * Callback function which triggers when field is getting focused.
+     * Per slot regular expressions the mask placeholders are validated against.
      */
-    onFocus?: () => void;
-    /**
-     * Callback function which triggers when the user changes the value of the input.
-     */
-    onChange?: PickerInputOnChange;
+    maskReplacement: Record<string, RegExp>;
     /**
      * Callback function which triggers when the field value is getting cleared with the clear button.
      */
     onClear?: () => void;
     /**
-     * Callback function which triggers when the field is getting clicked.
+     * Accessible label of the clear button.
      */
-    onClick?: PickerInputOnClick;
+    clearLabel: string;
     /**
      * Reference data of popover, used for positioning the popover accordingly to the input field.
      */
@@ -137,17 +188,18 @@ interface IPickerInputBaseProps {
      */
     clearable?: boolean;
     /**
-     * Whether the field should display meridiem.
-     */
-    is12Hour?: boolean;
-    /**
      * Used for accessibility, determines whether the picker popover is open/expanded.
      */
     isExpanded: boolean;
     /**
-     * Aria-controls attribute of the picker input field.
+     * `id` of the popover controlled by the input(s).
      */
-    ariaControls?: string;
+    popoverId: string;
+    /**
+     * `HTML` `name` attribute for the `input` element.
+     */
+    name?: string;
+    onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void;
 }
 
 interface ISinglePickerInputProps extends IPickerInputBaseProps {
@@ -163,13 +215,18 @@ interface ISinglePickerInputProps extends IPickerInputBaseProps {
      * ID used to tie the input field to a label.
      */
     id: string;
+    inputRef?: Ref<HTMLInputElement>;
     /**
-     * Aria-label attribute of the picker input field.
+     * Callback function which triggers when the field is getting clicked.
      */
-    ariaLabel?: string;
+    onClick?: () => void;
+    onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
+    onFocus?: (event: FocusEvent<HTMLInputElement>) => void;
+    onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
 }
 
-interface IRangePickerInputProps extends IPickerInputBaseProps {
+// `onKeyDown` is widened with the edited field, so it has to be replaced rather than extended.
+interface IRangePickerInputProps extends Omit<IPickerInputBaseProps, "onKeyDown"> {
     /**
      * Placeholder values of range input picker.
      */
@@ -185,48 +242,113 @@ interface IRangePickerInputProps extends IPickerInputBaseProps {
         end?: string | null;
     };
     /**
-     * IDs used to tie the input field to the label
+     * IDs used to tie the input fields to the label.
      */
     ids: {
         start: string;
         end: string;
     };
     /**
-     * Aria-label attribute of the picker input field.
+     * Accessible labels of the two inputs, since a single visible label is shared between them.
      */
-    ariaLabels?: {
+    labels: {
         start: string;
         end: string;
     };
+    inputRefs: {
+        start: Ref<HTMLInputElement>;
+        end: Ref<HTMLInputElement>;
+    };
+    /**
+     * Callback function which triggers when one of the fields is getting clicked.
+     * @param field - The field that was clicked.
+     */
+    onClick: (field: TimePickerRangeFields) => void;
+    onChange?: (event: ChangeEvent<HTMLInputElement>, field: TimePickerRangeFields) => void;
+    onFocus?: (field: TimePickerRangeFields, event: FocusEvent<HTMLInputElement>) => void;
+    onBlur?: (event: FocusEvent<HTMLInputElement>, field: TimePickerRangeFields) => void;
+    onKeyDown?: (event: KeyboardEvent<HTMLInputElement>, field: TimePickerRangeFields) => void;
 }
+
+const PickerMaskedInput: FC<IPickerMaskedInputProps> = ({
+    id,
+    name,
+    value,
+    placeholder,
+    ariaLabel,
+    describedBy,
+    controls,
+    isExpanded,
+    size = "medium",
+    status,
+    required,
+    disabled,
+    readOnly,
+    mask,
+    maskReplacement,
+    inputRef,
+    onClick,
+    onChange,
+    onFocus,
+    onBlur,
+    onKeyDown
+}) => (
+    <InputMask
+        id={id}
+        name={name}
+        ref={inputRef}
+        mask={mask}
+        replacement={maskReplacement}
+        className={classNames("pickerInput__input", {
+            [`pickerInput__input_size_${size}`]: size
+        })}
+        showMask={false}
+        placeholder={placeholder}
+        autoComplete="off"
+        value={value ?? ""}
+        disabled={disabled}
+        readOnly={readOnly}
+        separate
+        role="combobox"
+        aria-expanded={isExpanded}
+        aria-haspopup="dialog"
+        aria-controls={controls}
+        aria-invalid={status === "error" || undefined}
+        aria-required={required || undefined}
+        aria-label={ariaLabel}
+        aria-describedby={describedBy}
+        onClick={onClick}
+        onChange={onChange}
+        onFocus={onFocus}
+        onBlur={onBlur}
+        onKeyDown={onKeyDown}
+    />
+);
 
 const PickerShell: FC<IPickerShellProps> = ({
     className,
-    mode,
+    mode = "single",
     size = "medium",
     children,
-    error,
-    errorMessage,
+    status = "rest",
+    helperText,
+    helperTextId,
     disabled,
     readOnly,
     EndIcon,
     handleClear,
     shouldShowClearableIcon,
-    popoverRefData,
-    isExpanded,
-    ariaControls = "Time picker shell"
+    clearLabel,
+    popoverRefData
 }) => {
     const shouldShowIconAppends = shouldShowClearableIcon || EndIcon;
-    const helperTextSize = size === "medium" || size === "large" ? "medium" : "small";
 
     return (
         <>
             <div
-                role="combobox"
-                aria-expanded={isExpanded}
-                aria-controls={ariaControls}
                 className={classNames("pickerInput", className, `pickerInput_mode_${mode}`, {
-                    pickerInput_state_error: error,
+                    pickerInput_state_error: status === "error",
+                    pickerInput_state_warning: status === "warning",
                     pickerInput_state_disabled: disabled,
                     pickerInput_state_readOnly: readOnly,
                     [`pickerInput_size_${size}`]: size
@@ -241,7 +363,7 @@ const PickerShell: FC<IPickerShellProps> = ({
                                 onClick={handleClear}
                                 Icon={X}
                                 appearance="secondary"
-                                aria-label="Clear time selection"
+                                aria-label={clearLabel}
                                 size={size}
                                 layout="text"
                             />
@@ -250,13 +372,18 @@ const PickerShell: FC<IPickerShellProps> = ({
                     </div>
                 )}
             </div>
-            {errorMessage && (
-                <HelperText
-                    size={helperTextSize}
-                    text={errorMessage}
-                    status="error"
-                    className="pickerInput__errorMessage"
-                />
+            {helperText && (
+                // `HelperText` does not expose an `id`, so the wrapper carries the one the inputs
+                // reference through `aria-describedby`.
+                <div id={helperTextId}>
+                    <HelperText
+                        size={helperTextSizeMap[size]}
+                        text={helperText}
+                        status={status}
+                        disabled={disabled}
+                        className="pickerInput__errorMessage"
+                    />
+                </div>
             )}
         </>
     );
@@ -265,61 +392,71 @@ const PickerShell: FC<IPickerShellProps> = ({
 const SinglePickerInput: FC<ISinglePickerInputProps> = ({
     className,
     size = "medium",
-    error,
+    status = "rest",
+    helperText,
     disabled,
     readOnly,
+    required,
     EndIcon,
-    errorMessage,
     onClear,
     clearable,
+    clearLabel,
     value,
     placeholder,
     onClick,
     onChange,
     onFocus,
-    mask = "__:__:__",
+    onBlur,
+    onKeyDown,
+    mask,
+    maskReplacement,
     popoverRefData,
-    is12Hour,
     id,
+    name,
+    inputRef,
     isExpanded,
-    ariaControls,
-    ariaLabel
+    popoverId
 }) => {
-    const shouldShowClearableIcon = clearable && value && !disabled && !readOnly;
+    const shouldShowClearableIcon = !!(clearable && value && !disabled && !readOnly);
+    const helperTextId = `${id}-helper-text`;
+
     return (
         <PickerShell
-            error={error}
+            status={status}
+            helperText={helperText}
+            helperTextId={helperTextId}
             disabled={disabled}
             readOnly={readOnly}
             className={className}
             mode="single"
             size={size}
             EndIcon={EndIcon}
-            errorMessage={errorMessage}
             handleClear={onClear}
-            shouldShowClearableIcon={!!shouldShowClearableIcon}
+            shouldShowClearableIcon={shouldShowClearableIcon}
+            clearLabel={clearLabel}
             popoverRefData={popoverRefData}
-            isExpanded={isExpanded}
-            ariaControls={ariaControls}
         >
-            <InputMask
+            <PickerMaskedInput
                 id={id}
-                mask={is12Hour ? "__:__:__ aa" : mask}
-                replacement={is12Hour ? { _: /[0-9]/, a: /[a-zA-Z]/ } : { _: /[0-9]/ }}
-                className={classNames("pickerInput__input", {
-                    [`pickerInput__input_size_${size}`]: size
-                })}
-                showMask={false}
+                name={name}
+                inputRef={inputRef}
+                value={value}
                 placeholder={placeholder}
-                autoComplete="off"
-                value={value ?? ""}
+                describedBy={helperText ? helperTextId : undefined}
+                controls={popoverId}
+                isExpanded={isExpanded}
+                size={size}
+                status={status}
+                required={required}
                 disabled={disabled}
                 readOnly={readOnly}
-                separate
+                mask={mask}
+                maskReplacement={maskReplacement}
                 onClick={onClick}
                 onChange={onChange}
                 onFocus={onFocus}
-                aria-label={ariaLabel || "Time picker input"}
+                onBlur={onBlur}
+                onKeyDown={onKeyDown}
             />
         </PickerShell>
     );
@@ -328,81 +465,98 @@ const SinglePickerInput: FC<ISinglePickerInputProps> = ({
 const RangePickerInput: FC<IRangePickerInputProps> = ({
     className,
     size = "medium",
-    error,
+    status = "rest",
+    helperText,
     disabled,
     readOnly,
+    required,
     EndIcon,
-    errorMessage,
     onClear,
     clearable,
+    clearLabel,
     value,
     placeholder,
-    mask = "__:__:__",
+    mask,
+    maskReplacement,
     onClick,
-    onFocus,
     onChange,
+    onFocus,
+    onBlur,
+    onKeyDown,
     popoverRefData,
-    is12Hour,
     ids,
+    labels,
+    inputRefs,
+    name,
     isExpanded,
-    ariaControls,
-    ariaLabels
+    popoverId
 }) => {
-    const shouldShowClearableIcon = clearable && (value?.start || value?.end) && !disabled && !readOnly;
+    const shouldShowClearableIcon = !!(clearable && (value?.start || value?.end) && !disabled && !readOnly);
+    const helperTextId = `${ids.start}-helper-text`;
+    const describedBy = helperText ? helperTextId : undefined;
+
     return (
         <PickerShell
-            error={error}
+            status={status}
+            helperText={helperText}
+            helperTextId={helperTextId}
             disabled={disabled}
             readOnly={readOnly}
             className={className}
             mode="range"
             size={size}
             EndIcon={EndIcon}
-            errorMessage={errorMessage}
             handleClear={onClear}
-            shouldShowClearableIcon={!!shouldShowClearableIcon}
+            shouldShowClearableIcon={shouldShowClearableIcon}
+            clearLabel={clearLabel}
             popoverRefData={popoverRefData}
-            isExpanded={isExpanded}
-            ariaControls={ariaControls}
         >
-            <InputMask
-                id={ids?.start}
-                mask={is12Hour ? "__:__:__ aa" : mask}
-                replacement={is12Hour ? { _: /[0-9]/, a: /[a-zA-Z]/ } : { _: /[0-9]/ }}
-                className={classNames("pickerInput__input", {
-                    [`pickerInput__input_size_${size}`]: size
-                })}
-                showMask={false}
+            <PickerMaskedInput
+                id={ids.start}
+                name={name && `${name}-start`}
+                inputRef={inputRefs.start}
+                value={value?.start}
                 placeholder={placeholder?.start}
-                autoComplete="off"
-                value={value?.start ?? ""}
+                ariaLabel={labels.start}
+                describedBy={describedBy}
+                controls={popoverId}
+                isExpanded={isExpanded}
+                size={size}
+                status={status}
+                required={required}
                 disabled={disabled}
                 readOnly={readOnly}
-                separate
+                mask={mask}
+                maskReplacement={maskReplacement}
                 onClick={() => onClick("start")}
-                onChange={(e) => onChange(e, "start")}
-                onFocus={onFocus}
-                aria-label={ariaLabels?.start || "Range time picker start time"}
+                onChange={(event) => onChange?.(event, "start")}
+                onFocus={(event) => onFocus?.("start", event)}
+                onBlur={(event) => onBlur?.(event, "start")}
+                onKeyDown={(event) => onKeyDown?.(event, "start")}
             />
             <Minus className="pickerInput__icon" size={16} aria-hidden="true" />
-            <InputMask
-                id={ids?.end}
-                mask={is12Hour ? "__:__:__ aa" : mask}
-                replacement={is12Hour ? { _: /[0-9]/, a: /[a-zA-Z]/ } : { _: /[0-9]/ }}
-                className={classNames("pickerInput__input", {
-                    [`pickerInput__input_size_${size}`]: size
-                })}
-                showMask={false}
+            <PickerMaskedInput
+                id={ids.end}
+                name={name && `${name}-end`}
+                inputRef={inputRefs.end}
+                value={value?.end}
                 placeholder={placeholder?.end}
-                autoComplete="off"
-                value={value?.end ?? ""}
+                ariaLabel={labels.end}
+                describedBy={describedBy}
+                controls={popoverId}
+                isExpanded={isExpanded}
+                size={size}
+                status={status}
+                required={required}
                 disabled={disabled}
                 readOnly={readOnly}
-                separate
+                mask={mask}
+                maskReplacement={maskReplacement}
                 onClick={() => onClick("end")}
-                onChange={(e) => onChange(e, "end")}
-                onFocus={onFocus}
-                aria-label={ariaLabels?.end || "Range time picker end time"}
+                onChange={(event) => onChange?.(event, "end")}
+                onFocus={(event) => onFocus?.("end", event)}
+                onBlur={(event) => onBlur?.(event, "end")}
+                onKeyDown={(event) => onKeyDown?.(event, "end")}
             />
         </PickerShell>
     );

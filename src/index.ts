@@ -110,7 +110,10 @@ export {
     default as TimePicker,
     ISingleTimePickerProps,
     IRangeTimePickerProps,
-    RangeTimePicker
+    TimeParts,
+    TimePickerChangeContext,
+    TimePickerLocalization,
+    TimePickerRangeChangeContext
 } from "./components/molecules/TimePicker";
 
 // Organisms

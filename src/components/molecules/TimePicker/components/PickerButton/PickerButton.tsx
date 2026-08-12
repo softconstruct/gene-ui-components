@@ -1,10 +1,11 @@
-import React, { ComponentPropsWithoutRef, FC } from "react";
+import React, { ComponentPropsWithoutRef, FC, memo } from "react";
 import classNames from "classnames";
-
-import { TimePickerSizes } from "@components/molecules/TimePicker/types";
 
 // Styles
 import "./PickerButton.scss";
+
+// Types
+import { TimePickerSizes } from "../../types";
 
 interface IPickerButtonProps extends ComponentPropsWithoutRef<"button"> {
     /**
@@ -37,17 +38,22 @@ const PickerButton: FC<IPickerButtonProps> = ({
 }) => {
     return (
         <button
+            // Spread first so `type`, `disabled` and the computed class list cannot be overridden.
+            {...props}
             type="button"
             disabled={disabled}
             className={classNames("pickerButton", `pickerButton_size_${size}`, className, {
                 pickerButton_state_selected: selected,
                 pickerButton_state_disabled: disabled
             })}
-            {...props}
         >
             {children}
         </button>
     );
 };
 
-export default PickerButton;
+/**
+ * A single picker renders up to 146 buttons. They are memoized (and receive only primitive props,
+ * clicks being delegated to the column) so unrelated state changes do not re-render all of them.
+ */
+export default memo(PickerButton);
