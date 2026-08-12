@@ -178,7 +178,7 @@ const askQuestions = () => {
             type: "list",
             prefix: "[?]",
             message: "Please choose a level of the component: ",
-            choices: ["Atom", "Molecule", "Organism"],
+            choices: ["Atom", "Molecule", "Organism", "Chart"],
             filter: (value) => `${value.toLowerCase()}s`
         },
         {
@@ -203,8 +203,9 @@ const askQuestions = () => {
                 const atoms = await fs.readdir(path.join(__dirname, ...pathToComponents, "atoms"));
                 const molecules = await fs.readdir(path.join(__dirname, ...pathToComponents, "molecules"));
                 const organisms = await fs.readdir(path.join(__dirname, ...pathToComponents, "organisms"));
+                const charts = await fs.readdir(path.join(__dirname, ...pathToComponents, "charts")).catch(() => []);
 
-                const components = [...atoms, ...molecules, ...organisms];
+                const components = [...atoms, ...molecules, ...organisms, ...charts];
 
                 for (let i = 0; i < components.length; i++) {
                     if (components[i].toLowerCase() === componentName.toLowerCase()) {
@@ -394,7 +395,8 @@ const addGlobalExportToIndexTs = async ({ level, name }) => {
         const fromTo = {
             atoms: ["// Atoms", "// Molecules"],
             molecules: ["// Molecules", "// Organisms"],
-            organisms: ["// Organisms", "// Providers"]
+            organisms: ["// Organisms", "// Charts"],
+            charts: ["// Charts", "// Providers"]
         };
 
         const [from, to] = fromTo[level];

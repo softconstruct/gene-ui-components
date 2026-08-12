@@ -42,6 +42,8 @@
         "analyze-bundle-size": "babel-node --config-file ./.babelrc ./scripts/analyzeBundleSize.js"
     },
     "peerDependencies": {
+        "highcharts": "^11.0.0",
+        "highcharts-react-official": "^3.2.0",
         "prop-types": "^15.8.1",
         "react": "^16.8.1",
         "react-dom": "^16.8.1"
@@ -124,6 +126,8 @@
         "figlet": "^1.5.2",
         "file-loader": "^6.2.0",
         "git-cz": "^4.9.0",
+        "highcharts": "^11.4.8",
+        "highcharts-react-official": "^3.2.3",
         "husky": "^1.3.1",
         "identity-obj-proxy": "^3.0.0",
         "immutability-helper": "^3.0.1",

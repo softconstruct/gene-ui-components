@@ -1,0 +1,48 @@
+.chartTooltip {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 24rem;
+    pointer-events: none;
+
+    &__anchor {
+        position: absolute;
+        z-index: 1;
+        width: 0;
+        height: 0;
+        pointer-events: none;
+    }
+
+    &__content {
+        display: flex;
+        flex-direction: column;
+        gap: var(--guit-ref-spacing-4xsmall, 0.2rem);
+        width: 100%;
+        padding: var(--guit-ref-spacing-xsmall) var(--guit-ref-spacing-small);
+        box-sizing: border-box;
+    }
+
+    &__row {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--guit-ref-spacing-3xsmall);
+        max-width: 100%;
+    }
+
+    &__swatch {
+        flex: 0 0 auto;
+        width: 0.8rem;
+        height: 0.8rem;
+        margin-top: 0.3rem;
+        border-radius: var(--guit-ref-radius-4xsmall, 0.2rem);
+    }
+
+    &__text {
+        flex: 1 1 auto;
+        min-width: 0;
+        color: var(--guit-sem-color-foreground-neutral-2);
+        overflow-wrap: anywhere;
+        white-space: normal;
+    }
+}
