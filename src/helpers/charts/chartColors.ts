@@ -27,8 +27,29 @@ export const resolveCssColor = (token: string, probe: HTMLElement): string =>
 /** Figma `color/background/accent-blue-2` — default single-series bar fill. */
 export const DEFAULT_CHART_SERIES_COLOR_TOKEN = "--guit-sem-color-background-accent-blue-2";
 
+/**
+ * Default palette for multi-series charts (Figma Grouped Bar Chart channels).
+ * Order: red, blue, green, purple, then additional accents.
+ */
+export const DEFAULT_GROUPED_CHART_SERIES_COLOR_TOKENS = [
+    "--guit-sem-color-background-accent-red-2",
+    "--guit-sem-color-background-accent-blue-2",
+    "--guit-sem-color-background-accent-green-2",
+    "--guit-sem-color-background-accent-purple-2",
+    "--guit-sem-color-background-accent-orange-2",
+    "--guit-sem-color-background-accent-magenta-2",
+    "--guit-sem-color-background-accent-lagoon-2",
+    "--guit-sem-color-background-accent-slate-2"
+] as const;
+
 export const getDefaultChartSeriesColor = (probe: HTMLElement): string =>
     resolveCssColor(DEFAULT_CHART_SERIES_COLOR_TOKEN, probe);
+
+export const getDefaultGroupedChartSeriesColorToken = (index: number): string =>
+    DEFAULT_GROUPED_CHART_SERIES_COLOR_TOKENS[index % DEFAULT_GROUPED_CHART_SERIES_COLOR_TOKENS.length];
+
+export const getDefaultGroupedChartSeriesColor = (probe: HTMLElement, index: number): string =>
+    resolveCssColor(getDefaultGroupedChartSeriesColorToken(index), probe);
 
 /**
  * Resolves a series color for Highcharts.
@@ -55,4 +76,23 @@ export const resolveChartSeriesColor = (probe: HTMLElement | null, color?: strin
     }
 
     return trimmed;
+};
+
+/**
+ * Resolves a grouped-series color. Falls back to the palette token at `index` when `color` is omitted.
+ */
+export const resolveGroupedChartSeriesColor = (
+    probe: HTMLElement | null,
+    color: string | undefined,
+    index: number
+): string => {
+    if (!probe) {
+        return "";
+    }
+
+    if (!color) {
+        return getDefaultGroupedChartSeriesColor(probe, index);
+    }
+
+    return resolveChartSeriesColor(probe, color);
 };
