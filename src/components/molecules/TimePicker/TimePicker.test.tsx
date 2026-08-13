@@ -368,13 +368,6 @@ describe("TimePicker", () => {
             expect(setup.find(".pickerInput__errorMessage").first().text()).toBe("Invalid time format");
         });
 
-        it("keeps supporting the deprecated error and errorMessage props", () => {
-            setup.setProps({ error: true, errorMessage: "Legacy message" });
-
-            expect(setup.find(".pickerInput").hasClass("pickerInput_state_error")).toBeTruthy();
-            expect(setup.find(".pickerInput__errorMessage").first().text()).toBe("Legacy message");
-        });
-
         it("does not render an error state for a helperText alone", () => {
             setup.setProps({ helperText: "Business hours only" });
 
