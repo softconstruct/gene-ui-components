@@ -217,6 +217,16 @@ export interface IPopoverProps {
      * @default false
      */
     disableMobileSpreadsheet?: boolean;
+    /**
+     * Preferred flip targets when the primary `position` overflows the viewport.
+     * Defaults to all Popover placements. Chart tooltips can omit bottom placements
+     * so the overlay does not open under the cursor.
+     */
+    fallbackPlacements?: Placement[];
+    /**
+     * Additional class for the floating popover element.
+     */
+    className?: string;
 }
 
 /**
@@ -244,7 +254,9 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
             hasCloseButton = true,
             Icon,
             mobileHeightMode = "full",
-            disableMobileSpreadsheet = false
+            disableMobileSpreadsheet = false,
+            fallbackPlacements,
+            className
         },
         popoverRef
     ) => {
@@ -282,7 +294,17 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
                 flip({
                     mainAxis: position !== "auto" && !disableReposition,
                     fallbackAxisSideDirection: "none",
-                    fallbackPlacements: position === "auto" ? [] : positions
+                    fallbackPlacements: (() => {
+                        if (position === "auto") {
+                            return [];
+                        }
+
+                        if (fallbackPlacements?.length) {
+                            return fallbackPlacements;
+                        }
+
+                        return positions;
+                    })()
                 }),
                 arrow({ element: arrowRef }),
 
@@ -471,7 +493,8 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
                                     "popover",
                                     `popover_position_${currentDirection}`,
                                     { popover_size_reference: fitReference },
-                                    !fitReference && `popover_size_${size}`
+                                    !fitReference && `popover_size_${size}`,
+                                    className
                                 )}
                                 ref={refs.setFloating}
                                 {...getFloatingProps()}

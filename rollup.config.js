@@ -1,3 +1,4 @@
+import { existsSync } from "fs";
 import alias from "@rollup/plugin-alias";
 import commonjs from "@rollup/plugin-commonjs";
 import image from "@rollup/plugin-image";
@@ -16,10 +17,15 @@ const packageJson = require("./package.json");
 
 const getInputs = (_name, dir) => {
     const inputs = getDirectories(dir).reduce((obj, item) => {
+        const entry = `${item}/index.tsx`;
+        if (!existsSync(entry)) {
+            return obj;
+        }
+
         const [name] = item.split("/").reverse();
         return {
             ...obj,
-            [name]: `${item}/index.tsx`
+            [name]: entry
         };
     }, {});
 
@@ -32,6 +38,7 @@ const componentsInputs = Object.entries({
     atoms: "src/components/atoms",
     molecules: "src/components/molecules",
     organisms: "src/components/organisms",
+    charts: "src/components/charts",
     providers: "src/components/providers"
 }).reduce((obj, entry) => ({ ...obj, ...getInputs(...entry) }), {});
 
@@ -55,7 +62,7 @@ export default {
             exports: "named"
         }
     ],
-    external: ["react", "react-dom", "prop-types"],
+    external: ["react", "react-dom", "prop-types", "highcharts", "highcharts-react-official"],
     plugins: [
         // peerDepsExternal({
         //     packageJsonPath: resolvePath(__dirname, '../package.json'),
@@ -64,6 +71,7 @@ export default {
         alias({
             entries: [
                 { find: "@components", replacement: resolvePath(__dirname, "./src/components") },
+                { find: "@internal", replacement: resolvePath(__dirname, "./src/_internal") },
                 { find: "@hooks", replacement: resolvePath(__dirname, "./src/hooks") },
                 { find: "@assets", replacement: resolvePath(__dirname, "./src/assets") }
             ]

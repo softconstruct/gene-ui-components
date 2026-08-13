@@ -68,9 +68,10 @@
             "error",
             {
                 "groups": [
-                    ["^react$", "^react-dom$", "^(?!@components|@hooks|@types|@assets|@geneui)@?\\w"],
+                    ["^react$", "^react-dom$", "^(?!@components|@internal|@hooks|@types|@assets|@geneui)@?\\w"],
                     ["^@geneui"],
                     ["^@components"],
+                    ["^@internal"],
                     ["^@hooks"],
                     ["^@types"],
                     ["^@assets"],

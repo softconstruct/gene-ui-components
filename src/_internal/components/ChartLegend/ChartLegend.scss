@@ -1,0 +1,112 @@
+.chartLegend {
+    $this: &;
+
+    display: flex;
+    align-items: flex-start;
+    gap: var(--guit-ref-spacing-small) var(--guit-ref-spacing-2xlarge);
+    width: 100%;
+
+    &__list {
+        display: flex;
+        flex: 0 1 auto;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-start;
+        gap: var(--guit-ref-spacing-small) var(--guit-ref-spacing-2xlarge);
+        min-width: 0;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        overflow: hidden;
+        overflow: clip;
+        overflow-clip-margin: var(--guit-ref-spacing-2xsmall);
+
+        &_expanded {
+            overflow: visible;
+        }
+    }
+
+    &__item {
+        display: inline-flex;
+        flex: 0 0 auto;
+        align-items: center;
+    }
+
+    &__swatch {
+        box-sizing: border-box;
+        flex: 0 0 auto;
+        width: 1.2rem;
+        height: 1.2rem;
+
+        // Colored border + a transparent ring (padding) + colored fill: the fill only paints the
+        // content box, so the padding shows through as the gap between the fill and the border.
+        padding: var(--guit-ref-border-width-thin);
+        border: var(--guit-ref-border-width-thick) var(--guit-ref-border-style-solid) transparent;
+        border-radius: var(--guit-ref-radius-3xsmall);
+        background-clip: content-box;
+    }
+
+    &__label {
+        color: var(--guit-sem-color-foreground-neutral-1);
+    }
+
+    &__button {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-xsmall);
+        margin: 0;
+        padding: 0;
+        border: 0;
+        background: none;
+        font: inherit;
+        color: inherit;
+        cursor: default;
+
+        &_interactive {
+            cursor: pointer;
+        }
+
+        &_interactive:focus-visible {
+            outline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+                var(--guit-sem-color-border-focus);
+            outline-offset: var(--guit-ref-border-width-thick);
+            border-radius: var(--guit-ref-radius-3xsmall);
+        }
+
+        // "Not selected": the swatch becomes an outline (colored border, transparent fill).
+        &_hidden {
+            #{ $this }__swatch {
+                background-color: transparent !important;
+            }
+        }
+
+        &:disabled {
+            cursor: default;
+        }
+    }
+
+    &__toggle {
+        display: inline-flex;
+        flex: 0 0 auto;
+        align-items: center;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        background: none;
+        font: inherit;
+        white-space: nowrap;
+        cursor: pointer;
+
+        &:focus-visible {
+            outline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+                var(--guit-sem-color-border-focus);
+            outline-offset: var(--guit-ref-border-width-thin);
+            border-radius: var(--guit-ref-radius-4xsmall, 0.2rem);
+        }
+    }
+
+    &__toggleLabel {
+        color: var(--guit-sem-color-foreground-neutral-1);
+        cursor: pointer;
+    }
+}
