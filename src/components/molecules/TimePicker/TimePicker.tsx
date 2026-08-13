@@ -44,7 +44,6 @@ interface ITimePickerBaseProps {
     className?: string;
     /**
      * The size of the component.<br>
-     * Possible values: `small | medium | large`
      * @default "medium"
      */
     size?: TimePickerSizes;
@@ -78,7 +77,6 @@ interface ITimePickerBaseProps {
     readOnly?: boolean;
     /**
      * Validation state of the component.<br>
-     * Possible values: `rest | warning | error`
      * @default "rest"
      */
     status?: TimePickerStatus;
@@ -86,16 +84,6 @@ interface ITimePickerBaseProps {
      * Text displayed below the input field, styled according to the `status` prop.
      */
     helperText?: string;
-    /**
-     * Specifies whether the input field is in an error state.
-     * @deprecated Use `status="error"` instead.
-     */
-    error?: boolean;
-    /**
-     * Error message to display when the input field is in an error state.
-     * @deprecated Use `helperText` together with `status="error"` instead.
-     */
-    errorMessage?: string;
     /**
      * Callback function that is triggered when the input field value was cleared with a clear button.
      */
@@ -217,8 +205,6 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
             onOpenChange,
             status,
             helperText,
-            error,
-            errorMessage,
             format = "24h",
             localization,
             shouldDisableTime,
@@ -266,9 +252,6 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
         const generatedId = useMemo(() => id || `${DEFAULT_ID_PREFIX}${nanoid()}`, [id]);
         const popoverId = `${generatedId}-popover`;
 
-        const resolvedStatus = status ?? (error ? "error" : "rest");
-        const resolvedHelperText = helperText ?? errorMessage;
-
         const texts = useMemo(() => resolveLocalization(localization), [localization]);
 
         const maskToUse = is12Hour ? TIME_PICKER_INPUT_MASK_WITH_MERIDIEM : TIME_PICKER_INPUT_MASK;
@@ -306,8 +289,8 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
                     onClear={handleClear}
                     clearable={clearable}
                     clearLabel={texts.clear}
-                    status={resolvedStatus}
-                    helperText={resolvedHelperText}
+                    status={status}
+                    helperText={helperText}
                     isExpanded={popoverOpen}
                     popoverId={popoverId}
                     mask={maskToUse}
@@ -360,8 +343,6 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
             onOpenChange,
             status,
             helperText,
-            error,
-            errorMessage,
             format = "24h",
             localization,
             shouldDisableTime,
@@ -413,9 +394,6 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
         const fieldIds = useMemo(() => ({ start: `${generatedId}-start`, end: `${generatedId}-end` }), [generatedId]);
         const popoverId = `${generatedId}-popover`;
 
-        const resolvedStatus = status ?? (error ? "error" : "rest");
-        const resolvedHelperText = helperText ?? errorMessage;
-
         const texts = useMemo(() => resolveLocalization(localization), [localization]);
 
         const maskToUse = is12Hour ? TIME_PICKER_INPUT_MASK_WITH_MERIDIEM : TIME_PICKER_INPUT_MASK;
@@ -454,8 +432,8 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
                     onClear={handleClear}
                     clearable={clearable}
                     clearLabel={texts.clear}
-                    status={resolvedStatus}
-                    helperText={resolvedHelperText}
+                    status={status}
+                    helperText={helperText}
                     isExpanded={popoverOpen}
                     popoverId={popoverId}
                     mask={maskToUse}

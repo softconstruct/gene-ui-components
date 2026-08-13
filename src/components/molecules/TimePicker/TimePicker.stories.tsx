@@ -32,8 +32,6 @@ const meta: Meta<typeof TimePicker> = {
         onClear: args({ control: "false", ...propCategory.action }),
         status: args({ control: "select", options: ["rest", "warning", "error"], ...propCategory.validation }),
         helperText: args({ control: "text", ...propCategory.validation }),
-        error: args({ control: "boolean", ...propCategory.validation }),
-        errorMessage: args({ control: "text", ...propCategory.validation }),
         onOpenChange: args({ control: "false", ...propCategory.action }),
         onChange: args({ control: "false", ...propCategory.action }),
         onFocus: args({ control: "false", ...propCategory.action }),
