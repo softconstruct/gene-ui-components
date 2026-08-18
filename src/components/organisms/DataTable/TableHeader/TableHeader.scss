@@ -12,4 +12,15 @@
         width: 100%;
         background-color: var(--guit-sem-color-background-neutral-4);
     }
+
+    // Structural counterpart of the body rows' actions cell: takes no space,
+    // exists only to keep header and body cell counts equal.
+    .tableHeaderCell_actions {
+        width: 0;
+        padding: 0;
+
+        &::after {
+            content: none;
+        }
+    }
 }

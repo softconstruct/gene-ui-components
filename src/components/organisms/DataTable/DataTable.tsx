@@ -19,7 +19,7 @@ import Pagination, { IPaginationProps } from "@components/molecules/Pagination";
 // Styles
 import "./DataTable.scss";
 
-import { INITIAL_PAGE_SIZE } from "./constants";
+import { EXPANDER_COLUMN_ID, INITIAL_PAGE_SIZE } from "./constants";
 // Context
 import { DataTableProvider } from "./context";
 import { adaptColumns, DefaultCellComponent, withExpanderColumn } from "./helper";
@@ -61,7 +61,7 @@ interface IDataTableProps<TData> {
      * Whether set `true` will display the raw pagination.
      * Can accept also a config object with custom handlers and data.
      *
-     * @default true
+     * @default false
      */
     pagination?: boolean | IPaginationProps;
     /**
@@ -186,14 +186,28 @@ interface IDataTableProps<TData> {
      * This object allows fine-grained control over the visibility, order, and position of columns.
      */
     manageColumnsConfig?: ManageColumnsConfig;
+    /**
+     * Resolves a stable, unique id for a row from its data.
+     * Without it rows are identified by their index, so row-bound state (e.g. expanded rows)
+     * sticks to positions instead of records when data is re-sorted or paginated on the server.
+     *
+     * @example
+     * ```tsx
+     * <DataTable getRowId={(row) => String(row.id)} />
+     * ```
+     */
+    getRowId?: (originalRow: TData, index: number) => string;
 }
+
+const EMPTY_DATA: never[] = [];
+const EMPTY_MANAGE_COLUMNS_CONFIG: ManageColumnsConfig = {};
 
 const DataTable = <TData,>({
     className,
-    data = [],
+    data = EMPTY_DATA,
     columns = [],
     pagination = false,
-    loading: externalLoading = false,
+    loading: isTableLoading = false,
     sticky = true,
     loadingText,
     noDataTexts,
@@ -203,22 +217,11 @@ const DataTable = <TData,>({
     onRowExpandChange,
     rowActions,
     getRowStatus,
-    manageColumnsConfig = {}
+    manageColumnsConfig = EMPTY_MANAGE_COLUMNS_CONFIG,
+    getRowId
 }: IDataTableProps<TData>): ReactElement => {
-    const [internalLoading] = useState(false);
     const [expanded, setExpanded] = useState<ExpandedState>({});
-    const [columnPinning, setColumnPinning] = useState<ColumnPinningState>({ left: [], right: [] });
     const [columnOrder, setColumnOrder] = useState<ColumnOrderState>([]);
-
-    const handleExpandedChange = useCallback(
-        (updaterOrValue: ExpandedState | ((old: ExpandedState) => ExpandedState)) => {
-            setExpanded((prevState) => {
-                const newState = typeof updaterOrValue === "function" ? updaterOrValue(prevState) : updaterOrValue;
-                return newState;
-            });
-        },
-        []
-    );
 
     const isExpandable = Boolean(renderExpandedRow);
 
@@ -246,24 +249,63 @@ const DataTable = <TData,>({
         return tableColumns.reduce<ColumnVisibilityState>((acc, column) => {
             if (!column.id) return acc;
 
-            acc[column.id] = (column as { defaultVisible?: boolean }).defaultVisible ?? true;
+            acc[column.id] = column.meta?.defaultVisible ?? true;
             return acc;
         }, {});
     }, [tableColumns]);
 
+    const initialColumnPinning = useMemo<ColumnPinningState>(
+        () => ({
+            left: tableColumns
+                .filter((column) => column.meta?.defaultPinned && column.id)
+                .map((column) => column.id as string),
+            right: []
+        }),
+        [tableColumns]
+    );
+
     const [columnVisibility, setColumnVisibility] = useState<ColumnVisibilityState>(initialColumnVisibility);
+    const [columnPinning, setColumnPinning] = useState<ColumnPinningState>(() => ({
+        left: [...(isExpandable ? [EXPANDER_COLUMN_ID] : []), ...(initialColumnPinning.left ?? [])],
+        right: [...(initialColumnPinning.right ?? [])]
+    }));
+
+    const handleColumnPinningChange = useCallback(
+        (updaterOrValue: ColumnPinningState | ((old: ColumnPinningState) => ColumnPinningState)) => {
+            setColumnPinning((prevState) => {
+                const newState = typeof updaterOrValue === "function" ? updaterOrValue(prevState) : updaterOrValue;
+                const left = (newState.left ?? []).filter((id) => id !== EXPANDER_COLUMN_ID);
+                return { ...newState, left: isExpandable ? [EXPANDER_COLUMN_ID, ...left] : left };
+            });
+        },
+        [isExpandable]
+    );
+
+    useEffect(() => {
+        setColumnPinning((prevState) => {
+            const prevLeft = prevState.left ?? [];
+            const isAlreadyConsistent = isExpandable
+                ? prevLeft[0] === EXPANDER_COLUMN_ID && prevLeft.lastIndexOf(EXPANDER_COLUMN_ID) === 0
+                : !prevLeft.includes(EXPANDER_COLUMN_ID);
+            if (isAlreadyConsistent) return prevState;
+
+            const left = prevLeft.filter((id) => id !== EXPANDER_COLUMN_ID);
+            return { ...prevState, left: isExpandable ? [EXPANDER_COLUMN_ID, ...left] : left };
+        });
+    }, [isExpandable]);
 
     const table = useReactTable({
-        data: data ?? [],
+        data: data ?? EMPTY_DATA,
         columns: tableColumns,
         defaultColumn,
         getCoreRowModel: getCoreRowModel(),
         ...(manualPagination ? {} : { getPaginationRowModel: getPaginationRowModel() }),
         manualPagination,
+        ...(getRowId ? { getRowId } : {}),
         getExpandedRowModel: getExpandedRowModel(),
-        onExpandedChange: handleExpandedChange,
+        onExpandedChange: setExpanded,
         onColumnVisibilityChange: setColumnVisibility,
-        onColumnPinningChange: setColumnPinning,
+        onColumnPinningChange: handleColumnPinningChange,
         onColumnOrderChange: setColumnOrder,
         initialState: {
             ...(pagination && {
@@ -278,7 +320,13 @@ const DataTable = <TData,>({
         }
     });
 
-    const isTableLoading = externalLoading || internalLoading;
+    const pageCount = table.getPageCount();
+    const { pageIndex } = table.getState().pagination;
+    useEffect(() => {
+        if (!manualPagination && pageCount > 0 && pageIndex >= pageCount) {
+            table.setPageIndex(pageCount - 1);
+        }
+    }, [manualPagination, pageCount, pageIndex, table]);
 
     const { paginationProps } = useTablePagination(pagination, table);
 
@@ -286,7 +334,7 @@ const DataTable = <TData,>({
 
     const isTableDataEmpty = isTableLoading || !data?.length;
 
-    const [dirMode, setDirMode] = useState(document.dir || "ltr");
+    const [dirMode, setDirMode] = useState(() => (typeof document === "undefined" ? "ltr" : document.dir || "ltr"));
 
     useEffect(() => {
         const observer = new MutationObserver(() => {
@@ -306,9 +354,10 @@ const DataTable = <TData,>({
             table,
             manageColumnsConfig,
             initialColumnVisibility,
+            initialColumnPinning,
             dirMode
         }),
-        [table, manageColumnsConfig, initialColumnVisibility, dirMode]
+        [table, manageColumnsConfig, initialColumnVisibility, initialColumnPinning, dirMode]
     );
 
     return (
@@ -321,7 +370,11 @@ const DataTable = <TData,>({
                             dataTable__noDataToDisplay: isTableDataEmpty
                         })}
                     >
-                        <TableHeader sticky={sticky} headerGroups={table.getHeaderGroups()} />
+                        <TableHeader
+                            sticky={sticky}
+                            headerGroups={table.getHeaderGroups()}
+                            hasRowActions={Boolean(rowActions?.length)}
+                        />
                         <TableBody
                             loading={isTableLoading}
                             loadingText={loadingText}

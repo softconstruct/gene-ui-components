@@ -27,7 +27,7 @@ import ManageColumnListItem from "./ListItem/ManageColumnListItem";
 import { useManageColumns } from "./useManageColumns";
 
 const ManageColumns = <TData,>() => {
-    const { table, manageColumnsConfig, initialColumnVisibility } = useDataTableContext<TData>();
+    const { table, manageColumnsConfig, initialColumnVisibility, initialColumnPinning } = useDataTableContext<TData>();
 
     const popoverRef = useRef<IPopoverRef>({
         floatingElement: { current: null },
@@ -39,7 +39,8 @@ const ManageColumns = <TData,>() => {
     const manageColumnsData = useManageColumns<TData>({
         table,
         manageColumnsConfig,
-        initialColumnVisibility
+        initialColumnVisibility,
+        initialColumnPinning
     });
 
     const {
@@ -58,6 +59,7 @@ const ManageColumns = <TData,>() => {
         allColumnsChecked,
         allColumnsIndeterminate,
         handleToggleAllColumnsVisibility: onToggleAllColumns,
+        searchValue,
         isSearchActive,
         isDefaultState,
         hasChanges,
@@ -91,6 +93,11 @@ const ManageColumns = <TData,>() => {
         });
     }, []);
 
+    const onColumnReorderRef = useRef(onColumnReorder);
+    useEffect(() => {
+        onColumnReorderRef.current = onColumnReorder;
+    });
+
     useEffect(() => {
         return monitorForElements({
             onDrop({ source }) {
@@ -102,12 +109,12 @@ const ManageColumns = <TData,>() => {
                     const destId = gap.targetId;
 
                     if (sourceId && destId && sourceId !== destId) {
-                        onColumnReorder(sourceId, destId, gap.edge);
+                        onColumnReorderRef.current(sourceId, destId, gap.edge);
                     }
                 }
             }
         });
-    }, [onColumnReorder]);
+    }, []);
 
     useClickOutside(() => {
         if (open) {
@@ -118,7 +125,7 @@ const ManageColumns = <TData,>() => {
     return (
         <>
             <Button
-                disabled={!isManageColumnsEnabled}
+                disabled={isManageColumnsEnabled === false}
                 onClick={openPopover}
                 Icon={Gear}
                 appearance="secondary"
@@ -144,6 +151,7 @@ const ManageColumns = <TData,>() => {
                     <TextField
                         autoComplete="off"
                         placeholder={manageColumnsTexts?.searchPlaceholder ?? "Search"}
+                        value={searchValue}
                         onChange={onSearch}
                         className="manageColumnsPopover__header"
                         disabled={loading}
@@ -161,6 +169,7 @@ const ManageColumns = <TData,>() => {
                                 <Checkbox
                                     id="manageColumns-selectAll"
                                     checked={allColumnsChecked}
+                                    disabled={loading}
                                     indeterminate={allColumnsIndeterminate}
                                     onChange={(e) => onToggleAllColumns(e.target.checked)}
                                     className="manageColumnsPopover__selectAllCheckbox"
@@ -177,7 +186,8 @@ const ManageColumns = <TData,>() => {
                                 >
                                     {columns.map((column: Column<TData>) => {
                                         const isPinnedDraft = (draftPinning.left || []).includes(column.id);
-                                        const isDisabled = manageColumnsConfig?.disabledColumns?.includes(column.id);
+                                        const isDisabled =
+                                            manageColumnsConfig?.disabledColumns?.includes(column.id) || loading;
                                         return (
                                             <ManageColumnListItem
                                                 key={column.id}

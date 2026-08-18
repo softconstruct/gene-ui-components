@@ -9,9 +9,10 @@ import { DROP_TARGET_MIDPOINT_FRACTION } from "../../../constants";
 interface UseColumnListItemDnDProps {
     columnId: string;
     onDragTargetChange?: (edge: string | null) => void;
+    disabled?: boolean;
 }
 
-export const useColumnListItemDnD = ({ columnId, onDragTargetChange }: UseColumnListItemDnDProps) => {
+export const useColumnListItemDnD = ({ columnId, onDragTargetChange, disabled = false }: UseColumnListItemDnDProps) => {
     const itemRef = useRef<HTMLDivElement>(null);
     const dragHandleRef = useRef<HTMLDivElement>(null);
     const onDragTargetChangeRef = useRef(onDragTargetChange);
@@ -37,6 +38,7 @@ export const useColumnListItemDnD = ({ columnId, onDragTargetChange }: UseColumn
             draggable({
                 element: el,
                 dragHandle,
+                canDrag: () => !disabled,
                 getInitialData: () => {
                     const rect = el.getBoundingClientRect();
                     const clone = el.cloneNode(true) as HTMLElement;
@@ -79,7 +81,7 @@ export const useColumnListItemDnD = ({ columnId, onDragTargetChange }: UseColumn
                 }
             })
         );
-    }, [columnId]);
+    }, [columnId, disabled]);
 
     return {
         itemRef,

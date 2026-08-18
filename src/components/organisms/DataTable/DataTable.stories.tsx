@@ -20,7 +20,6 @@ const defaultRowActions: IDataTableRowAction<MockRowType>[] = [
     {
         Icon: Pencil,
         title: "Edit",
-        // Third row (index 2), seventh (6), ... - first action disabled
         disabled: (row) => {
             const i = rowIndexInMockData(row);
             return i >= 0 && i % 4 === 2;
@@ -30,7 +29,6 @@ const defaultRowActions: IDataTableRowAction<MockRowType>[] = [
     {
         Icon: RecycleBin,
         title: "delete",
-        // First row (index 0), fifth (4), ... - second action disabled
         disabled: (row) => {
             const i = rowIndexInMockData(row);
             return i >= 0 && i % 4 === 0;
@@ -175,6 +173,7 @@ export const WithManageColumns: Story = {
     args: {
         data: mockData,
         columns: mockColumns,
+        renderExpandedRow: (row) => renderMockExpandedRow(row),
         manageColumnsConfig: {
             enabled: true,
             available: true,

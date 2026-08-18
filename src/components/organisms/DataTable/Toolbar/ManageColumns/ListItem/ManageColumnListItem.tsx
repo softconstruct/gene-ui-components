@@ -70,28 +70,33 @@ const ManageColumnListItem = <TData,>({
     hasDropGap
 }: IManageColumnListItemProps<TData>) => {
     const { header } = column.columnDef;
-    const headerText = typeof header === "string" ? header : "";
+    const headerText = typeof header === "string" && header ? header : column.id;
     const PinIconElement = isPinnedDraft ? PinFilled : Pin;
 
     const { itemRef, dragHandleRef, isDragging } = useColumnListItemDnD({
         columnId: column.id,
-        onDragTargetChange
+        onDragTargetChange,
+        disabled
     });
+
+    const handlePinToggle = () => {
+        if (disabled) return;
+        onPinToggle(column);
+    };
 
     const onPinKeyDown = (e: KeyboardEvent) => {
         if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
             e.stopPropagation();
-            onPinToggle(column);
+            handlePinToggle();
         }
     };
-
-    if (!headerText) return null;
 
     return (
         <div
             ref={itemRef}
-            className={classNames("manageColumnListItem", `manageColumnListItem__drop-gap-${dropGapEdge}`, {
+            className={classNames("manageColumnListItem", {
+                [`manageColumnListItem__drop-gap-${dropGapEdge}`]: dropGapEdge,
                 manageColumnListItem_dragging: isDragging,
                 manageColumnListItem_collapsed: isDragging && hasDropGap
             })}
@@ -111,11 +116,12 @@ const ManageColumnListItem = <TData,>({
                     className="manageColumnListItem__pinAction"
                     onClick={(e) => {
                         e.stopPropagation();
-                        onPinToggle(column);
+                        handlePinToggle();
                     }}
-                    tabIndex={0}
+                    tabIndex={disabled ? -1 : 0}
                     role="button"
                     aria-label={isPinnedDraft ? "Unpin column" : "Pin column"}
+                    aria-disabled={disabled}
                     onKeyDown={onPinKeyDown}
                 >
                     <PinIconElement />

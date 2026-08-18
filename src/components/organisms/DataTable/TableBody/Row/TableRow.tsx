@@ -83,6 +83,8 @@ const TableRow = <TData,>({ row, rowActions, getRowStatus, renderExpandedRow }: 
                             isPinned={isPinned}
                             offset={offset}
                             dirMode={dirMode}
+                            value={cell.getValue()}
+                            rowData={row.original}
                         />
                     );
                 })}
@@ -116,7 +118,9 @@ const TableRow = <TData,>({ row, rowActions, getRowStatus, renderExpandedRow }: 
                 ) : null}
             </tr>
             {isRowExpanded && hasExpandedRow && (
-                <TableExpandedRow colspan={row.getVisibleCells().length}>{expandedRow}</TableExpandedRow>
+                <TableExpandedRow colspan={row.getVisibleCells().length + (rowActions?.length ? 1 : 0)}>
+                    {expandedRow}
+                </TableExpandedRow>
             )}
         </>
     );

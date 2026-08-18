@@ -23,6 +23,12 @@ interface ITableHeaderProps<TData> {
      * Set sticky header.
      */
     sticky?: boolean;
+    /**
+     * Whether the body rows render a trailing row-actions cell.
+     * When `true` a matching (empty) header cell is rendered so header and body
+     * rows keep an equal cell count.
+     */
+    hasRowActions?: boolean;
 }
 
 /**
@@ -35,7 +41,7 @@ interface ITableHeaderProps<TData> {
  * @param props - The properties for the component.
  * @returns The table header element containing all rendered header rows and cells.
  */
-const TableHeader = <TData,>({ headerGroups, sticky }: ITableHeaderProps<TData>) => (
+const TableHeader = <TData,>({ headerGroups, sticky, hasRowActions }: ITableHeaderProps<TData>) => (
     <thead
         className={classNames("tableHeader", {
             tableHeader__sticky: sticky
@@ -46,6 +52,7 @@ const TableHeader = <TData,>({ headerGroups, sticky }: ITableHeaderProps<TData>)
                 {headerGroup.headers.map((header) => (
                     <TableHeaderCell key={header.id} header={header} offset={header.column.getStart("left")} />
                 ))}
+                {hasRowActions && <th className="tableHeaderCell tableHeaderCell_actions" aria-hidden="true" />}
             </tr>
         ))}
     </thead>

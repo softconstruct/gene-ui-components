@@ -8,7 +8,14 @@ import Tooltip from "@components/molecules/Tooltip";
 // hooks
 import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
-import { CELL_MAX_WIDTH, CUSTOM_CELL_MAX_SIZE, CUSTOM_CELL_MIN_SIZE, EXPANDABLE_CELL_SIZE_REM } from "./constants";
+import {
+    CELL_MAX_WIDTH,
+    CUSTOM_CELL_MAX_SIZE,
+    CUSTOM_CELL_MIN_SIZE,
+    EXPANDABLE_CELL_SIZE_REM,
+    EXPANDER_COLUMN_ID,
+    EXPANDER_COLUMN_SIZE
+} from "./constants";
 import ExpanderCell from "./TableBody/ExpanderCell/ExpanderCell";
 import { DataTableColumn, DataTableRowExpandChangeHandler } from "./types";
 
@@ -22,6 +29,17 @@ export interface ICellProps<TData, TValue> {
     isPinned?: boolean;
     offset: number;
     dirMode: string;
+    /**
+     * Snapshot of `cell.getValue()` captured by the parent at render time.
+     * Keeps memoized cells from going stale when data values change in place.
+     */
+    value: unknown;
+    /**
+     * Snapshot of `row.original` captured by the parent at render time.
+     * Custom `renderCell` renderers read the whole row, so a new row object
+     * must invalidate the memo even when this column's value is unchanged.
+     */
+    rowData: TData;
 }
 
 export const getCellStyle = (
@@ -83,7 +101,9 @@ export const areCellsEqual = <TData, TValue>(prev: ICellProps<TData, TValue>, ne
     prev.renderer === next.renderer &&
     prev.isPinned === next.isPinned &&
     prev.offset === next.offset &&
-    prev.dirMode === next.dirMode;
+    prev.dirMode === next.dirMode &&
+    prev.value === next.value &&
+    prev.rowData === next.rowData;
 
 export const DefaultCellComponent = ({ value }: { value: string }) => {
     const textRef = useRef<HTMLSpanElement | null>(null);
@@ -104,7 +124,7 @@ export const DefaultCellComponent = ({ value }: { value: string }) => {
  */
 export const adaptColumns = <TData,>(columns: DataTableColumn<TData>[]): ColumnDef<TData, ReactNode>[] =>
     columns.map((col, index) => {
-        const { accessorKey, id, header, size, renderCell } = col;
+        const { accessorKey, id, header, size, renderCell, defaultVisible, defaultPinned } = col;
         const isAccessorColumn = Boolean(accessorKey);
         const isCustomCell = Boolean(renderCell);
 
@@ -114,7 +134,9 @@ export const adaptColumns = <TData,>(columns: DataTableColumn<TData>[]): ColumnD
             size: size ?? (isCustomCell ? CUSTOM_CELL_MIN_SIZE : CUSTOM_CELL_MAX_SIZE),
             meta: {
                 isCustomCell,
-                explicitSize: size
+                explicitSize: size,
+                defaultVisible,
+                defaultPinned
             },
             ...(isAccessorColumn ? { accessorKey } : {})
         };
@@ -142,8 +164,12 @@ export const withExpanderColumn = <TData,>(
     onRowExpandChange?: DataTableRowExpandChangeHandler<TData>
 ): ColumnDef<TData, ReactNode>[] => [
     {
-        id: "expander",
+        id: EXPANDER_COLUMN_ID,
         header: "",
+        size: EXPANDER_COLUMN_SIZE,
+        meta: {
+            explicitSize: EXPANDER_COLUMN_SIZE
+        },
         cell: (ctx: CellContext<TData, ReactNode>) => <ExpanderCell {...ctx} onRowExpandChange={onRowExpandChange} />
     },
     ...columns

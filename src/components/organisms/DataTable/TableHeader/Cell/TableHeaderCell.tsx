@@ -9,6 +9,7 @@ import Text from "@components/atoms/Text";
 // Styles
 import "./TableHeaderCell.scss";
 
+import { CUSTOM_CELL_MAX_SIZE, EXPANDER_COLUMN_ID } from "../../constants";
 import { useDataTableContext } from "../../context";
 import { getCellStyle } from "../../helper";
 
@@ -40,7 +41,7 @@ interface ITableHeaderCellProps<TData, TValue> {
  */
 const TableHeaderCell = <TData, TValue>({ header, offset }: ITableHeaderCellProps<TData, TValue>) => {
     const { dirMode } = useDataTableContext();
-    const isExpanderHeader = header.column.id === "expander";
+    const isExpanderHeader = header.column.id === EXPANDER_COLUMN_ID;
     const isPinned = header.column.getIsPinned();
     const isRTL = dirMode === "rtl";
 
@@ -56,10 +57,10 @@ const TableHeaderCell = <TData, TValue>({ header, offset }: ITableHeaderCellProp
             const observer = new ResizeObserver((entries) => {
                 const entry = entries[0];
                 const rect = entry.target.getBoundingClientRect();
-                const newWidth = Math.ceil(rect.width);
+                const newWidth = Math.round(rect.width);
 
                 table.setColumnSizing((old) => {
-                    const currentSize = old[header.column.id] ?? header.column.columnDef.size ?? 150;
+                    const currentSize = old[header.column.id] ?? header.column.columnDef.size ?? CUSTOM_CELL_MAX_SIZE;
                     if (Math.abs(currentSize - newWidth) > 1) {
                         return {
                             ...old,
@@ -84,7 +85,7 @@ const TableHeaderCell = <TData, TValue>({ header, offset }: ITableHeaderCellProp
             })}
             style={getCellStyle(
                 isExpanderHeader,
-                header.column.getSize(),
+                header.column.columnDef.size ?? CUSTOM_CELL_MAX_SIZE,
                 explicitSize,
                 offset,
                 isPinned,

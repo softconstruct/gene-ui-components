@@ -1,5 +1,5 @@
 import React, { Context, createContext, Provider, ReactNode, useContext } from "react";
-import { Table } from "@tanstack/react-table";
+import { ColumnPinningState, Table } from "@tanstack/react-table";
 
 import { ColumnVisibilityState, ManageColumnsConfig } from "./types";
 
@@ -7,6 +7,7 @@ export interface IDataTableContext<TData> {
     table: Table<TData>;
     manageColumnsConfig: ManageColumnsConfig;
     initialColumnVisibility: ColumnVisibilityState;
+    initialColumnPinning: ColumnPinningState;
     dirMode: string;
 }
 

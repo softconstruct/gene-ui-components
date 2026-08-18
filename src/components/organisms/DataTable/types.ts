@@ -75,6 +75,12 @@ export type DataTableColumn<TData> = {
      */
     defaultVisible?: boolean;
     /**
+     * Whether the column is pinned (to the left) by default.
+     * Also used as the baseline for the manage-columns "Restore defaults" action.
+     * @default false
+     */
+    defaultPinned?: boolean;
+    /**
      * Lean cell renderer (no TanStack CellContext exposure).
      * IMPORTANT: For optimal performance on large tables, ensure this function is memoized
      * (e.g., using `useCallback` or defined outside the component) to avoid unnecessary cell re-renders.
@@ -95,11 +101,14 @@ export type ManageColumnsConfig = {
      */
     open?: boolean;
     /**
-     * Whether the manage columns button is visible but disabled.
+     * Whether the manage columns button is interactive.
+     * When `false` the button is rendered in a disabled state.
+     * @default true
      */
     enabled?: boolean;
     /**
-     * Whether the manage columns button is available.
+     * Whether the manage columns button is rendered at all.
+     * @default false
      */
     available?: boolean;
     /**
@@ -162,5 +171,7 @@ declare module "@tanstack/react-table" {
     interface ColumnMeta<TData extends RowData, TValue> {
         isCustomCell?: boolean;
         explicitSize?: number;
+        defaultVisible?: boolean;
+        defaultPinned?: boolean;
     }
 }

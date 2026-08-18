@@ -7,6 +7,8 @@ import { areCellsEqual, getCellStyle } from "@components/organisms/DataTable/hel
 // Styles
 import "./TableBodyCell.scss";
 
+import { CUSTOM_CELL_MAX_SIZE, EXPANDER_COLUMN_ID } from "../../constants";
+
 /**
  * Props for the {@link TableBodyCell} component.
  *
@@ -49,6 +51,20 @@ export interface ITableBodyCellProps<TData, TValue> {
      * Actual rtl/ltr mode.
      */
     dirMode: string;
+    /**
+     * Snapshot of `cell.getValue()` captured by the parent at render time.
+     * Not read during render (the live `cell` context is used instead) — it exists
+     * so the memo invalidates when a data value changes in place.
+     */
+    // eslint-disable-next-line react/no-unused-prop-types -- consumed by the areCellsEqual memo comparator
+    value: unknown;
+    /**
+     * Snapshot of `row.original` captured by the parent at render time.
+     * Invalidates the memo for custom `renderCell` renderers, which can read
+     * any field of the row — not only this column's value.
+     */
+    // eslint-disable-next-line react/no-unused-prop-types -- consumed by the areCellsEqual memo comparator
+    rowData: TData;
 }
 
 /**
@@ -70,7 +86,7 @@ const TableBodyCell = <TData, TValue>({
     offset,
     dirMode
 }: ITableBodyCellProps<TData, TValue>) => {
-    const isExpanderCell = cell.column.id === "expander";
+    const isExpanderCell = cell.column.id === EXPANDER_COLUMN_ID;
     const isRTL = dirMode === "rtl";
 
     const explicitSize = cell.column.columnDef.meta?.explicitSize;
@@ -85,7 +101,7 @@ const TableBodyCell = <TData, TValue>({
             })}
             style={getCellStyle(
                 isExpanderCell,
-                cell.column.getSize(),
+                cell.column.columnDef.size ?? CUSTOM_CELL_MAX_SIZE,
                 explicitSize,
                 offset,
                 isPinned,
