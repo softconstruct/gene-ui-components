@@ -102,6 +102,20 @@ describe("TimePicker helpers", () => {
             });
         });
 
+        it("converts a 12-hour value to the 24-hour format instead of dropping the meridiem", () => {
+            expect(parseTime("10:30:00 PM", false)).toEqual({
+                hours: "22",
+                minutes: "30",
+                seconds: "00",
+                meridiem: undefined
+            });
+        });
+
+        it("maps noon and midnight when converting to the 24-hour format", () => {
+            expect(parseTime("12:15:00 AM", false)).toMatchObject({ hours: "00", minutes: "15" });
+            expect(parseTime("12:15:00 PM", false)).toMatchObject({ hours: "12", minutes: "15" });
+        });
+
         it("treats a missing meridiem as incomplete while the user types", () => {
             // Without this the meridiem could never be deleted: `10:30:00` would be read back as a
             // 24-hour time and completed to `10:30:00 AM` on the next render.
@@ -180,6 +194,19 @@ describe("TimePicker helpers", () => {
             expect(nearest).toEqual({ hours: "12", minutes: "30", seconds: "00", meridiem: undefined });
         });
 
+        it("searches away from a bound instead of giving up", () => {
+            // `11` is past the maximum and `10` is rejected, so the search has to go backwards.
+            const nearest = getNearestAvailableTime(
+                { hours: "11", minutes: "00", seconds: "00" },
+                false,
+                (type, value) => type === "hours" && value === "10",
+                null,
+                { hours: "10", minutes: "30", seconds: "00" }
+            );
+
+            expect(nearest).toEqual({ hours: "09", minutes: "30", seconds: "00", meridiem: undefined });
+        });
+
         it("returns null when nothing is available", () => {
             expect(
                 getNearestAvailableTime({ hours: "09", minutes: "30", seconds: "00" }, false, () => true)
@@ -220,6 +247,15 @@ describe("TimePicker helpers", () => {
 
             expect(isPickerPartDisabled("minutes", "29", parts, false, "end", partsStart)).toBe(true);
             expect(isPickerPartDisabled("minutes", "31", parts, false, "end", partsStart)).toBe(false);
+        });
+
+        it("reads an empty end field in the same half of the day as the start bound", () => {
+            // Without this the whole hours column would be disabled until AM/PM is picked first.
+            const pmStart = { hours: "11", minutes: "00", seconds: "00", meridiem: "PM" as const };
+
+            expect(isPickerPartDisabled("hours", "11", {}, true, "end", pmStart)).toBe(false);
+            expect(isPickerPartDisabled("hours", "10", {}, true, "end", pmStart)).toBe(true);
+            expect(isPickerPartDisabled("meridiem", "AM", {}, true, "end", pmStart)).toBe(true);
         });
     });
 
@@ -655,6 +691,19 @@ describe("TimePicker", () => {
             expect(setup.find("input.pickerInput__input").prop("value")).toBe("06:45:00 PM");
         });
 
+        it("converts the value when the format switches from 12 to 24 hours", () => {
+            const picker = mountSingle({ format: "12h", defaultValue: "10:30:00 PM" });
+
+            expect(picker.find("input.pickerInput__input").prop("value")).toBe("10:30:00 PM");
+
+            picker.setProps({ format: "24h" });
+            picker.update();
+
+            expect(picker.find("input.pickerInput__input").prop("value")).toBe("22:30:00");
+
+            picker.unmount();
+        });
+
         it("clears the selection when the controlled value is reset", () => {
             setup.setProps({ value: "05:00:00" });
             openPopover(setup);
@@ -749,6 +798,24 @@ describe("TimePicker.Range", () => {
             source: "input",
             parts: { hours: "10", minutes: "00", seconds: "00", meridiem: undefined }
         });
+    });
+
+    it("reports which field the focus, blur and keydown events came from", () => {
+        const onFocus = jest.fn();
+        const onBlur = jest.fn();
+        const onKeyDown = jest.fn();
+
+        setup.setProps({ onFocus, onBlur, onKeyDown });
+
+        const endInput = setup.find("input.pickerInput__input").at(1);
+
+        endInput.simulate("focus");
+        endInput.simulate("keydown", { key: "a" });
+        endInput.simulate("blur");
+
+        expect(onFocus).toHaveBeenCalledWith(expect.anything(), "end");
+        expect(onKeyDown).toHaveBeenCalledWith(expect.anything(), "end");
+        expect(onBlur).toHaveBeenCalledWith(expect.anything(), "end");
     });
 
     it("keeps the end field after the start one", () => {

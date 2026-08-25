@@ -32,6 +32,7 @@ import {
     TimePickerFormat,
     TimePickerLocalization,
     TimePickerRangeChangeContext,
+    TimePickerRangeFields,
     TimePickerSizes,
     TimePickerStatus
 } from "./types";
@@ -148,7 +149,7 @@ interface ISingleTimePickerProps extends ITimePickerBaseProps {
     onChange?: (time: string, context: TimePickerChangeContext) => void;
 }
 
-interface IRangeTimePickerProps extends ITimePickerBaseProps {
+interface IRangeTimePickerProps extends Omit<ITimePickerBaseProps, "onFocus" | "onBlur" | "onKeyDown"> {
     /**
      * The placeholder text displayed when the input fields are empty.
      */
@@ -176,6 +177,25 @@ interface IRangeTimePickerProps extends ITimePickerBaseProps {
      * @param context which field changed, what triggered it and the parsed parts
      */
     onChange?: (time: string, context: TimePickerRangeChangeContext) => void;
+    /**
+     * Callback function which triggers when one of the inputs is getting focused.
+     * @param event
+     * @param field the input the event came from
+     */
+    onFocus?: (event: FocusEvent<HTMLInputElement>, field: TimePickerRangeFields) => void;
+    /**
+     * Callback function which triggers when one of the inputs loses focus.
+     * Partially typed values are restored to the last complete one at this point.
+     * @param event
+     * @param field the input the event came from
+     */
+    onBlur?: (event: FocusEvent<HTMLInputElement>, field: TimePickerRangeFields) => void;
+    /**
+     * Callback function which triggers on `keydown` of one of the inputs.
+     * @param event
+     * @param field the input the event came from
+     */
+    onKeyDown?: (event: KeyboardEvent<HTMLInputElement>, field: TimePickerRangeFields) => void;
 }
 
 /**

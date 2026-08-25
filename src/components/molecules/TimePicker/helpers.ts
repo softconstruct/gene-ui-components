@@ -59,6 +59,11 @@ const toMeridiem = (value?: string): TimePickerMeridiem | undefined => {
     return MERIDIEM_INITIALS[normalized];
 };
 
+/**
+ * The meridiem is deliberately left out: a complete 12-hour value always carries one (`parseTime`
+ * returns `null` without it) and a 24-hour one never does. Parts of the two formats must therefore
+ * never be compared with each other.
+ */
 const isValidTimeParts = (parts: TimeParts): boolean =>
     parts.hours !== undefined && parts.minutes !== undefined && parts.seconds !== undefined;
 
@@ -66,7 +71,7 @@ const isValidTimeParts = (parts: TimeParts): boolean =>
 // Core converters
 // ---------------------------------------------------------
 
-export const convertTo24Hour = (hStr?: string, meridiem?: string): number => {
+const convertTo24Hour = (hStr?: string, meridiem?: string): number => {
     if (!hStr) return 0;
 
     let hours = toTimeNumber(hStr);
@@ -82,6 +87,13 @@ export const convertTo24Hour = (hStr?: string, meridiem?: string): number => {
 
     return hours;
 };
+
+/**
+ * @description
+ * Maps an hour onto the 1..12 clock: `00` reads as 12, anything above 12 is clamped.
+ */
+const clampTo12HourClock = (hours: number): number =>
+    hours === 0 ? MERIDIEM_OFFSET : Math.min(Math.max(hours, FIRST_HOUR_IN_12H_FORMAT), MERIDIEM_OFFSET);
 
 export const convertPartsToSeconds = (parts: TimeParts, is12Hour: boolean): number => {
     const hours = is12Hour ? convertTo24Hour(parts.hours, parts.meridiem) : toTimeNumber(parts.hours);
@@ -160,8 +172,12 @@ export const parseTime = (
     let meridiem = toMeridiem(rawMeridiem);
 
     if (!is12Hour) {
+        const hours24 = meridiem
+            ? convertTo24Hour(padTimePart(clampTo12HourClock(hours)), meridiem)
+            : Math.min(hours, LAST_HOUR_IN_24H_FORMAT_DAY);
+
         return {
-            hours: padTimePart(Math.min(hours, LAST_HOUR_IN_24H_FORMAT_DAY)),
+            hours: padTimePart(hours24),
             minutes: padTimePart(minutes),
             seconds: padTimePart(seconds),
             meridiem: undefined
@@ -169,14 +185,8 @@ export const parseTime = (
     }
 
     if (meridiem) {
-        // Already a 12-hour string: `00` means 12 AM/PM, anything above 12 is clamped.
-        if (hours === 0) {
-            hours = MERIDIEM_OFFSET;
-        }
-        hours = Math.min(Math.max(hours, FIRST_HOUR_IN_12H_FORMAT), MERIDIEM_OFFSET);
+        hours = clampTo12HourClock(hours);
     } else if (allow24HourInput) {
-        // An externally supplied 24-hour string: convert it, so `18:45` becomes `06:45 PM`
-        // instead of being truncated to `12:45 AM`.
         const converted = convertSecondsToParts(Math.min(hours, LAST_HOUR_IN_24H_FORMAT_DAY) * SECONDS_IN_HOUR, true);
 
         hours = toTimeNumber(converted.hours);
@@ -298,6 +308,48 @@ export const isTimeDisabled = (
 
 /**
  * @description
+ * Tells whether picking `item` in the `part` column would push the time past a bound.
+ *
+ * The comparison is a lexicographic (prefix) one: only the columns up to and including the edited
+ * one participate, which is what makes a bound disable whole hours rather than single seconds.
+ */
+const isPartOutOfBounds = (
+    part: keyof TimeParts,
+    item: string,
+    currentParts: TimeParts | undefined,
+    boundParts: TimeParts,
+    is12Hour: boolean,
+    isMinBound: boolean
+): boolean => {
+    const currentMeridiem = currentParts?.meridiem ?? (is12Hour ? (boundParts.meridiem ?? MERIDIEMS.AM) : undefined);
+
+    if (part === TIME_PARTS.MERIDIEM) {
+        return isMinBound
+            ? boundParts.meridiem === MERIDIEMS.PM && item === MERIDIEMS.AM
+            : boundParts.meridiem === MERIDIEMS.AM && item === MERIDIEMS.PM;
+    }
+
+    const candidate: TimeParts = {
+        hours: part === TIME_PARTS.HOURS ? item : currentParts?.hours,
+        minutes: part === TIME_PARTS.MINUTES ? item : currentParts?.minutes,
+        seconds: part === TIME_PARTS.SECONDS ? item : currentParts?.seconds,
+        meridiem: currentMeridiem
+    };
+
+    const truncateTo = (value: number): number => {
+        if (part === TIME_PARTS.HOURS) return Math.floor(value / SECONDS_IN_HOUR) * SECONDS_IN_HOUR;
+        if (part === TIME_PARTS.MINUTES) return Math.floor(value / SECONDS_IN_MINUTE) * SECONDS_IN_MINUTE;
+        return value;
+    };
+
+    const candidateSeconds = truncateTo(convertPartsToSeconds(candidate, is12Hour));
+    const boundSeconds = truncateTo(convertPartsToSeconds(boundParts, is12Hour));
+
+    return isMinBound ? candidateSeconds < boundSeconds : candidateSeconds > boundSeconds;
+};
+
+/**
+ * @description
  * Finds the closest allowed value inside a single column, searching forward and backward
  * from the current one. Returns `null` when the whole column is disabled.
  */
@@ -322,36 +374,51 @@ const nearestAllowedValue = (
     return null;
 };
 
+/**
+ * @description
+ * Replaces every rejected column value with the closest allowed one, walking from the most
+ * significant column to the least significant one so that each search already sees the columns
+ * fixed before it.
+ *
+ * The bounds take part in the per column search instead of being applied afterwards only: with
+ * `10:30` as the maximum and the `10` hour rejected by `shouldDisableTime`, the hours column
+ * resolves to `09`, while the search on its own would prefer the `11` that the bound forbids.
+ */
 const resolveDisabledParts = (
     parts: TimeParts,
     is12Hour: boolean,
-    shouldDisableTime?: ShouldDisableTime
+    shouldDisableTime?: ShouldDisableTime,
+    minParts?: TimeParts | null,
+    maxParts?: TimeParts | null
 ): TimeParts | null => {
-    if (!shouldDisableTime) return parts;
+    const min = minParts && isValidTimeParts(minParts) ? minParts : null;
+    const max = maxParts && isValidTimeParts(maxParts) ? maxParts : null;
 
-    const hours = nearestAllowedValue(getTimePartValues(TIME_PARTS.HOURS, is12Hour), parts.hours, (value) =>
-        shouldDisableTime(TIME_PARTS.HOURS, value)
-    );
-    const minutes = nearestAllowedValue(MINUTES, parts.minutes, (value) =>
-        shouldDisableTime(TIME_PARTS.MINUTES, value)
-    );
-    const seconds = nearestAllowedValue(SECONDS, parts.seconds, (value) =>
-        shouldDisableTime(TIME_PARTS.SECONDS, value)
-    );
+    if (!shouldDisableTime && !min && !max) return parts;
 
-    if (hours === null || minutes === null || seconds === null) return null;
+    let resolved: TimeParts = parts;
 
-    if (!is12Hour) {
-        return { hours, minutes, seconds, meridiem: undefined };
-    }
+    const isValueDisabled = (part: keyof TimeParts) => (value: string) =>
+        !!shouldDisableTime?.(part, value) ||
+        (!!min && isPartOutOfBounds(part, value, resolved, min, is12Hour, true)) ||
+        (!!max && isPartOutOfBounds(part, value, resolved, max, is12Hour, false));
 
-    const meridiem = nearestAllowedValue(MERIDIEM_LIST, parts.meridiem ?? MERIDIEMS.AM, (value) =>
-        shouldDisableTime(TIME_PARTS.MERIDIEM, value)
-    );
+    const resolvePart = (part: keyof TimeParts, values: string[]): boolean => {
+        const value = nearestAllowedValue(values, resolved[part], isValueDisabled(part));
 
-    if (meridiem === null) return null;
+        if (value === null) return false;
 
-    return { hours, minutes, seconds, meridiem: toMeridiem(meridiem) };
+        resolved = withTimePart(resolved, part, value);
+
+        return true;
+    };
+
+    if (is12Hour && !resolvePart(TIME_PARTS.MERIDIEM, MERIDIEM_LIST)) return null;
+    if (!resolvePart(TIME_PARTS.HOURS, getTimePartValues(TIME_PARTS.HOURS, is12Hour))) return null;
+    if (!resolvePart(TIME_PARTS.MINUTES, MINUTES)) return null;
+    if (!resolvePart(TIME_PARTS.SECONDS, SECONDS)) return null;
+
+    return is12Hour ? resolved : { ...resolved, meridiem: undefined };
 };
 
 const clampPartsToBounds = (
@@ -378,9 +445,9 @@ const clampPartsToBounds = (
  * @description
  * Returns the closest allowed time, or `null` when no allowed time exists.
  *
- * `shouldDisableTime` is evaluated per column and the bounds are a direct clamp, so the cost is
- * proportional to the number of selectable values (≤ 146 predicate calls) instead of the previous
- * second by second scan over the whole day (up to ~345.000 predicate calls per keystroke).
+ * `shouldDisableTime` and the bounds are evaluated per column, so the cost is proportional to the
+ * number of selectable values (≤ 146 predicate calls) instead of the previous second by second scan
+ * over the whole day (up to ~345.000 predicate calls per keystroke).
  */
 export const getNearestAvailableTime = (
     parts: TimeParts,
@@ -391,62 +458,14 @@ export const getNearestAvailableTime = (
 ): TimeParts | null => {
     if (!isTimeDisabled(parts, is12Hour, shouldDisableTime, minParts, maxParts)) return parts;
 
-    let candidate: TimeParts = parts;
+    const clamped = clampPartsToBounds(parts, is12Hour, minParts, maxParts);
+    const resolved = resolveDisabledParts(clamped, is12Hour, shouldDisableTime, minParts, maxParts);
 
-    // Two passes: clamping to a bound can land on a value the predicate rejects, and fixing a
-    // rejected value can move the time back outside the bounds.
-    for (let pass = 0; pass < 2; pass++) {
-        const resolved = resolveDisabledParts(candidate, is12Hour, shouldDisableTime);
-        if (resolved === null) return null;
+    if (resolved === null) return null;
 
-        candidate = clampPartsToBounds(resolved, is12Hour, minParts, maxParts);
-    }
+    const candidate = clampPartsToBounds(resolved, is12Hour, minParts, maxParts);
 
     return isTimeDisabled(candidate, is12Hour, shouldDisableTime, minParts, maxParts) ? null : candidate;
-};
-
-/**
- * @description
- * Tells whether picking `item` in the `part` column would push the time past a range bound.
- *
- * The comparison is a lexicographic (prefix) one: only the columns up to and including the edited
- * one participate, which is what makes a bound disable whole hours rather than single seconds.
- */
-const isPartOutOfBounds = (
-    part: keyof TimeParts,
-    item: string,
-    currentParts: TimeParts | undefined,
-    boundParts: TimeParts,
-    is12Hour: boolean,
-    isMinBound: boolean
-): boolean => {
-    const currentMeridiem = currentParts?.meridiem ?? (is12Hour ? MERIDIEMS.AM : undefined);
-
-    if (part === TIME_PARTS.MERIDIEM) {
-        return isMinBound
-            ? boundParts.meridiem === MERIDIEMS.PM && item === MERIDIEMS.AM
-            : boundParts.meridiem === MERIDIEMS.AM && item === MERIDIEMS.PM;
-    }
-
-    const candidate: TimeParts = {
-        hours: part === TIME_PARTS.HOURS ? item : currentParts?.hours,
-        minutes: part === TIME_PARTS.MINUTES ? item : currentParts?.minutes,
-        seconds: part === TIME_PARTS.SECONDS ? item : currentParts?.seconds,
-        meridiem: currentMeridiem
-    };
-
-    // Truncating both sides to the depth of the edited column turns the value comparison into a
-    // prefix comparison: hours only, hours + minutes, or the full time.
-    const truncateTo = (value: number): number => {
-        if (part === TIME_PARTS.HOURS) return Math.floor(value / SECONDS_IN_HOUR) * SECONDS_IN_HOUR;
-        if (part === TIME_PARTS.MINUTES) return Math.floor(value / SECONDS_IN_MINUTE) * SECONDS_IN_MINUTE;
-        return value;
-    };
-
-    const candidateSeconds = truncateTo(convertPartsToSeconds(candidate, is12Hour));
-    const boundSeconds = truncateTo(convertPartsToSeconds(boundParts, is12Hour));
-
-    return isMinBound ? candidateSeconds < boundSeconds : candidateSeconds > boundSeconds;
 };
 
 export const isPickerPartDisabled = (

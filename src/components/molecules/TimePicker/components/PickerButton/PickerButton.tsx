@@ -51,8 +51,4 @@ const PickerButton: FC<IPickerButtonProps> = ({
     );
 };
 
-/**
- * A single picker renders up to 146 buttons. They are memoized (and receive only primitive props,
- * clicks being delegated to the column) so unrelated state changes do not re-render all of them.
- */
 export default memo(PickerButton);

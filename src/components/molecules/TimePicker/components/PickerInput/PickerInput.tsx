@@ -337,10 +337,10 @@ interface IRangePickerInputProps extends Omit<IPickerInputBaseProps, "onKeyDown"
     onChange?: (event: ChangeEvent<HTMLInputElement>, field: TimePickerRangeFields) => void;
     /**
      * Callback function which triggers when one of the fields is getting focused.
-     * @param field
      * @param event
+     * @param field
      */
-    onFocus?: (field: TimePickerRangeFields, event: FocusEvent<HTMLInputElement>) => void;
+    onFocus?: (event: FocusEvent<HTMLInputElement>, field: TimePickerRangeFields) => void;
     /**
      * Callback function which triggers when one of the fields is getting blurred.
      * @param event
@@ -613,7 +613,7 @@ const RangePickerInput: FC<IRangePickerInputProps> = ({
                 maskReplacement={maskReplacement}
                 onClick={() => onClick("start")}
                 onChange={(event) => onChange?.(event, "start")}
-                onFocus={(event) => onFocus?.("start", event)}
+                onFocus={(event) => onFocus?.(event, "start")}
                 onBlur={(event) => onBlur?.(event, "start")}
                 onKeyDown={(event) => onKeyDown?.(event, "start")}
             />
@@ -637,7 +637,7 @@ const RangePickerInput: FC<IRangePickerInputProps> = ({
                 maskReplacement={maskReplacement}
                 onClick={() => onClick("end")}
                 onChange={(event) => onChange?.(event, "end")}
-                onFocus={(event) => onFocus?.("end", event)}
+                onFocus={(event) => onFocus?.(event, "end")}
                 onBlur={(event) => onBlur?.(event, "end")}
                 onKeyDown={(event) => onKeyDown?.(event, "end")}
             />

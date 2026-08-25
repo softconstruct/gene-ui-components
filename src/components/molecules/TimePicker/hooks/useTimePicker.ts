@@ -382,9 +382,9 @@ export interface IUseRangeTimePickerOptions {
     onChange?: (time: string, context: TimePickerRangeChangeContext) => void;
     onClear?: () => void;
     onOpenChange?: (open: boolean) => void;
-    onFocus?: (event: FocusEvent<HTMLInputElement>) => void;
-    onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
-    onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void;
+    onFocus?: (event: FocusEvent<HTMLInputElement>, field: TimePickerRangeFields) => void;
+    onBlur?: (event: FocusEvent<HTMLInputElement>, field: TimePickerRangeFields) => void;
+    onKeyDown?: (event: KeyboardEvent<HTMLInputElement>, field: TimePickerRangeFields) => void;
 }
 
 /**
@@ -439,11 +439,10 @@ export const useRangeTimePicker = ({
         base.togglePopover(true);
     };
 
-    const handleInputFocus = (field: TimePickerRangeFields, event: FocusEvent<HTMLInputElement>) => {
-        // Keeps the popover in sync when the field is reached with the keyboard instead of a click.
+    const handleInputFocus = (event: FocusEvent<HTMLInputElement>, field: TimePickerRangeFields) => {
         setActiveField(field);
         getFieldRefs(field).current.setIsEditing(true);
-        onFocus?.(event);
+        onFocus?.(event, field);
     };
 
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>, field: TimePickerRangeFields) => {
@@ -452,7 +451,6 @@ export const useRangeTimePicker = ({
         const { current } = getFieldRefs(field);
         const nextValue = event.target.value;
 
-        // Committed verbatim while the field has focus, exactly like the single picker.
         current.setIsEditing(true);
         current.setValue(nextValue);
         onChange?.(nextValue, { field, source: "input", parts: parseTime(nextValue, is12Hour) });
@@ -463,7 +461,7 @@ export const useRangeTimePicker = ({
         const { minParts, maxParts } = getBounds(field);
 
         current.setIsEditing(false);
-        onBlur?.(event);
+        onBlur?.(event, field);
 
         if (!base.isInteractive) return;
 
@@ -519,7 +517,7 @@ export const useRangeTimePicker = ({
     };
 
     const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>, field: TimePickerRangeFields) => {
-        onKeyDown?.(event);
+        onKeyDown?.(event, field);
 
         if (!base.isInteractive) return;
 
