@@ -108,6 +108,12 @@ const headerTextVariantMap = {
 const TIME_PICKER_INPUT_MASK = "Hh:Mm:Ss";
 const TIME_PICKER_INPUT_MASK_WITH_MERIDIEM = "Hh:Mm:Ss AP";
 
+const PICKER_SHELL_ICON_SIZE_MAPPER = {
+    small: "smallNudge",
+    medium: "small",
+    large: "small"
+} as const;
+
 const MASK_REPLACEMENT_24H: Record<string, RegExp> = {
     H: /[0-2]/,
     h: /[0-9]/,
@@ -196,5 +202,6 @@ export {
     TIME_PARTS,
     TIME_PARTS_RADIX,
     TIME_PICKER_INPUT_MASK,
-    TIME_PICKER_INPUT_MASK_WITH_MERIDIEM
+    TIME_PICKER_INPUT_MASK_WITH_MERIDIEM,
+    PICKER_SHELL_ICON_SIZE_MAPPER
 };

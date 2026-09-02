@@ -13,7 +13,7 @@ import HelperText from "@components/atoms/HelperText";
 import "./PickerInput.scss";
 
 // Constants
-import { helperTextSizeMap } from "../../constants";
+import { helperTextSizeMap, PICKER_SHELL_ICON_SIZE_MAPPER } from "../../constants";
 // Types
 import { TimePickerRangeFields, TimePickerSizes, TimePickerStatus } from "../../types";
 
@@ -449,7 +449,7 @@ const PickerShell: FC<IPickerShellProps> = ({
                                 Icon={X}
                                 appearance="secondary"
                                 aria-label={clearLabel}
-                                size={size}
+                                size={PICKER_SHELL_ICON_SIZE_MAPPER[size]}
                                 layout="text"
                             />
                         )}
