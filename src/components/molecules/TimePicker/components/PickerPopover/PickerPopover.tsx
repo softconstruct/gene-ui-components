@@ -1,6 +1,7 @@
 import React, {
     Dispatch,
     FC,
+    FocusEvent,
     KeyboardEvent,
     MouseEvent,
     Ref,
@@ -78,6 +79,11 @@ interface IPickerPopoverProps {
      */
     onClose?: IPopoverProps["onClose"];
     /**
+     * Callback invoked when the focus leaves an element inside the popover; the owner decides
+     * whether it went outside the picker.
+     */
+    onFocusOut?: (event: FocusEvent<HTMLDivElement>) => void;
+    /**
      * Popover placement position.
      */
     position?: string;
@@ -136,6 +142,18 @@ interface IPickerPopoverProps {
 }
 
 const VERTICAL_KEYS: string[] = [KEYS.ARROW_UP, KEYS.ARROW_DOWN];
+
+/**
+ * @description
+ * Presses on the non focusable parts of the popover (headers, scrollbars, padding) must not take
+ * the focus away from the input: the field would blur and the popover would close itself.
+ * Buttons keep the default so the keyboard can continue from the clicked value.
+ */
+const keepReferenceFocus = (event: MouseEvent<HTMLDivElement>) => {
+    if ((event.target as HTMLElement).closest("button")) return;
+
+    event.preventDefault();
+};
 const HORIZONTAL_KEYS: string[] = [KEYS.ARROW_LEFT, KEYS.ARROW_RIGHT];
 const EDGE_KEYS: string[] = [KEYS.HOME, KEYS.END];
 
@@ -186,6 +204,7 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
     focusOnOpen,
     setProps,
     onClose,
+    onFocusOut,
     size = "medium",
     position,
     onSelect,
@@ -323,7 +342,7 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
 
         if (pendingFocusRef.current) {
             pendingFocusRef.current = false;
-            focusSelectedInColumn(columnOrder[0]);
+            queueMicrotask(() => focusSelectedInColumn(columnOrder[0]));
         }
     };
 
@@ -414,9 +433,12 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
                     <div
                         id={id}
                         ref={wrapperRef}
+                        role="presentation"
                         className={classNames("timePicker__wrapper", `timePicker__wrapper_size_${size}`, {
                             timePicker__wrapper_mobile: isMobile
                         })}
+                        onBlur={onFocusOut}
+                        onMouseDown={keepReferenceFocus}
                     >
                         {columns.map((column) => (
                             <div key={column.part} className="timePicker__column">

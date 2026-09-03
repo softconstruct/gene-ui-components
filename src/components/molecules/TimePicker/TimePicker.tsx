@@ -240,8 +240,11 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
             popoverOpen,
             shouldFocusPopover,
             anchorProps,
+            anchorRef,
             setAnchorProps,
             popoverRef,
+            popoverPosition,
+            shellRef,
             inputRef,
             value: valueToUse,
             parts,
@@ -250,9 +253,11 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
             handleInputFocus,
             handleInputBlur,
             handleInputKeyDown,
+            handleShellClick,
             handleSelect,
             handleClear,
-            handlePopoverClose
+            handlePopoverClose,
+            handlePopoverFocusOut
         } = useSingleTimePicker({
             value,
             defaultValue,
@@ -300,7 +305,10 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
                     disabled={disabled}
                     readOnly={readOnly}
                     required={required}
-                    popoverRefData={anchorProps}
+                    anchorProps={anchorProps}
+                    anchorRef={anchorRef}
+                    shellRef={shellRef}
+                    onAreaClick={handleShellClick}
                     onClick={handleInputClick}
                     onChange={handleInputChange}
                     onFocus={handleInputFocus}
@@ -323,8 +331,9 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
                     setProps={setAnchorProps}
                     popoverRef={popoverRef}
                     onClose={handlePopoverClose}
+                    onFocusOut={handlePopoverFocusOut}
                     size={size}
-                    position="bottom-left"
+                    position={popoverPosition}
                     mobileHeightMode="fit"
                     onSelect={handleSelect}
                     parts={parts}
@@ -377,9 +386,12 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
         const {
             popoverRef,
             popoverOpen,
+            popoverPosition,
             shouldFocusPopover,
             anchorProps,
+            anchorRef,
             setAnchorProps,
+            shellRef,
             activeField,
             startInputRef,
             endInputRef,
@@ -391,9 +403,11 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
             handleInputChange,
             handleInputBlur,
             handleInputKeyDown,
+            handleShellClick,
             handleSelect,
             handleClear,
-            handlePopoverClose
+            handlePopoverClose,
+            handlePopoverFocusOut
         } = useRangeTimePicker({
             value,
             defaultValue,
@@ -443,7 +457,10 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
                     disabled={disabled}
                     readOnly={readOnly}
                     required={required}
-                    popoverRefData={anchorProps}
+                    anchorProps={anchorProps}
+                    anchorRef={anchorRef}
+                    shellRef={shellRef}
+                    onAreaClick={handleShellClick}
                     onClick={handleInputClick}
                     onChange={handleInputChange}
                     onFocus={handleInputFocus}
@@ -466,8 +483,9 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
                     focusOnOpen={shouldFocusPopover}
                     setProps={setAnchorProps}
                     onClose={handlePopoverClose}
+                    onFocusOut={handlePopoverFocusOut}
                     size={size}
-                    position="bottom-left"
+                    position={popoverPosition}
                     mobileHeightMode="fit"
                     parts={activeField === "start" ? partsStart : partsEnd}
                     activeField={activeField}

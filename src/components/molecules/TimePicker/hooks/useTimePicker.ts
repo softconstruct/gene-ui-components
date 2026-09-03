@@ -201,22 +201,29 @@ interface IBasePickerOptions {
     onOpenChange?: (open: boolean) => void;
 }
 
+type PopoverPosition = "bottom-left" | "bottom-right";
+type PopoverAlignment = "start" | "end";
+
 /**
  * @description
  * Shared popover plumbing for the single and the range picker.
  *
+ * The popover follows the focus: focusing an input opens it and it closes as soon as the focus
+ * leaves both the field and the popover, so two pickers can never be open at the same time and
+ * the keyboard always lands in the popover that belongs to the focused field.
+ *
  * No outside click listener is registered here on purpose: `atoms/Popover` already closes itself
- * on outside press and on `Escape` (`useClickOutside` / `useDismiss` inside `Popover`) and reports
- * it through `onClose`. Listening a second time made every outside click emit `onOpenChange`
- * twice and re-registered a `mousedown` listener on every render.
+ * on outside press and on `Escape` and reports it through `onClose`.
  */
 const useBasePicker = ({ disabled, readOnly, onOpenChange }: IBasePickerOptions) => {
     const [popoverOpen, setPopoverOpen] = useState(false);
     const [shouldFocusPopover, setShouldFocusPopover] = useState(false);
-    const [anchorProps, setAnchorProps] = useState({});
+    const [anchorProps, setAnchorProps] = useState<Record<string, unknown>>({});
 
     const popoverOpenRef = useRef(false);
+    const skipOpenOnFocusRef = useRef(false);
 
+    const shellRef = useRef<HTMLDivElement | null>(null);
     const popoverRef = useRef<IPopoverRef>({
         floatingElement: { current: null },
         referenceElement: { current: null }
@@ -225,13 +232,43 @@ const useBasePicker = ({ disabled, readOnly, onOpenChange }: IBasePickerOptions)
     const isInteractive = !disabled && !readOnly;
 
     /**
+     * `Popover` hands over a single props object for its reference element, the shell. Its `ref` is
+     * split out so the shell can merge it with the ref the picker keeps for itself.
+     */
+    const { ref: anchorRef, ...anchorRest } = anchorProps as {
+        ref?: (node: HTMLElement | null) => void;
+    } & Record<string, unknown>;
+
+    /**
+     * `atoms/Popover` positions with RTL detection switched off, so the side is chosen here: the
+     * popover lines up with the border of the field on the side of the edited input.
+     */
+    const getPopoverPosition = (alignment: PopoverAlignment): PopoverPosition => {
+        const isRTL = typeof document !== "undefined" && document.dir === "rtl";
+
+        return (alignment === "start") !== isRTL ? "bottom-left" : "bottom-right";
+    };
+
+    const isWithinPicker = (target: EventTarget | null): boolean => {
+        if (!(target instanceof Node)) return false;
+
+        const floating = popoverRef.current.floatingElement.current;
+
+        return !!shellRef.current?.contains(target) || (floating instanceof Node && floating.contains(target));
+    };
+
+    /**
      * @param nextOpen target state
      * @param focusOnOpen move focus into the popover, used when it was opened from the keyboard
      */
     const togglePopover = (nextOpen: boolean, focusOnOpen = false) => {
         if (nextOpen && !isInteractive) return;
 
-        if (popoverOpenRef.current === nextOpen) return;
+        if (popoverOpenRef.current === nextOpen) {
+            if (nextOpen && focusOnOpen) setShouldFocusPopover(true);
+
+            return;
+        }
 
         popoverOpenRef.current = nextOpen;
         setPopoverOpen(nextOpen);
@@ -239,14 +276,58 @@ const useBasePicker = ({ disabled, readOnly, onOpenChange }: IBasePickerOptions)
         onOpenChange?.(nextOpen);
     };
 
+    const handleFocusIn = () => {
+        setShouldFocusPopover(false);
+
+        if (skipOpenOnFocusRef.current) return;
+
+        togglePopover(true);
+    };
+
+    /**
+     * Shared by the inputs and the popover: the focus moving between them is not a leave.
+     */
+    const handleFocusOut = (event: FocusEvent<Element>) => {
+        if (isWithinPicker(event.relatedTarget)) return;
+
+        togglePopover(false);
+    };
+
+    /**
+     * Moves the focus back to an input without reopening the popover (after `Escape` or clearing).
+     * Focus events are dispatched synchronously, so the flag can be reset right away.
+     */
+    const focusInputSilently = (input: HTMLInputElement | null) => {
+        if (!input || document.activeElement === input) return;
+
+        skipOpenOnFocusRef.current = true;
+        input.focus();
+        skipOpenOnFocusRef.current = false;
+    };
+
+    /**
+     * A click on the shell around the inputs (icons, padding) behaves like a click on the input.
+     */
+    const openFromShell = (input: HTMLInputElement | null) => {
+        input?.focus();
+        togglePopover(true);
+    };
+
     return {
         popoverOpen,
         shouldFocusPopover,
         togglePopover,
-        anchorProps,
+        anchorRef,
+        anchorProps: anchorRest,
         setAnchorProps,
         popoverRef,
-        isInteractive
+        shellRef,
+        getPopoverPosition,
+        isInteractive,
+        handleFocusIn,
+        handleFocusOut,
+        focusInputSilently,
+        openFromShell
     };
 };
 
@@ -296,6 +377,7 @@ export const useSingleTimePicker = ({
 
     const handleInputFocus = (event: FocusEvent<HTMLInputElement>) => {
         onFocus?.(event);
+        base.handleFocusIn();
     };
 
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -311,6 +393,7 @@ export const useSingleTimePicker = ({
     const handleInputBlur = (event: FocusEvent<HTMLInputElement>) => {
         field.setIsEditing(false);
         onBlur?.(event);
+        base.handleFocusOut(event);
 
         if (!base.isInteractive) return;
 
@@ -340,10 +423,12 @@ export const useSingleTimePicker = ({
         field.setValue(null);
         base.togglePopover(false);
         onChange?.("", { source: "clear", parts: null });
-        inputRef.current?.focus();
+        base.focusInputSilently(inputRef.current);
     };
 
     const handleInputClick = () => base.togglePopover(true);
+
+    const handleShellClick = () => base.openFromShell(inputRef.current);
 
     const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
         onKeyDown?.(event);
@@ -360,12 +445,13 @@ export const useSingleTimePicker = ({
         base.togglePopover(false);
 
         if (reason === ESCAPE_CLOSE_REASON) {
-            inputRef.current?.focus();
+            base.focusInputSilently(inputRef.current);
         }
     };
 
     return {
         ...base,
+        popoverPosition: base.getPopoverPosition("start"),
         inputRef,
         value: field.displayValue,
         parts: field.parts,
@@ -374,9 +460,11 @@ export const useSingleTimePicker = ({
         handleInputBlur,
         handleInputClick,
         handleInputKeyDown,
+        handleShellClick,
         handleSelect,
         handleClear,
-        handlePopoverClose
+        handlePopoverClose,
+        handlePopoverFocusOut: base.handleFocusOut
     };
 };
 
@@ -455,6 +543,7 @@ export const useRangeTimePicker = ({
     const handleInputFocus = (event: FocusEvent<HTMLInputElement>, field: TimePickerRangeFields) => {
         setActiveField(field);
         onFocus?.(event, field);
+        base.handleFocusIn();
     };
 
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>, field: TimePickerRangeFields) => {
@@ -474,6 +563,7 @@ export const useRangeTimePicker = ({
 
         current.setIsEditing(false);
         onBlur?.(event, field);
+        base.handleFocusOut(event);
 
         if (!base.isInteractive) return;
 
@@ -525,8 +615,10 @@ export const useRangeTimePicker = ({
         base.togglePopover(false);
 
         onChange?.("", { field: PICKER_RANGE_FIELDS.START, source: "clear", parts: null });
-        startInputRef.current?.focus();
+        base.focusInputSilently(startInputRef.current);
     };
+
+    const handleShellClick = () => base.openFromShell(getFieldRefs(activeField).inputRef.current);
 
     const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>, field: TimePickerRangeFields) => {
         onKeyDown?.(event, field);
@@ -544,12 +636,13 @@ export const useRangeTimePicker = ({
         base.togglePopover(false);
 
         if (reason === ESCAPE_CLOSE_REASON) {
-            getFieldRefs(activeField).inputRef.current?.focus();
+            base.focusInputSilently(getFieldRefs(activeField).inputRef.current);
         }
     };
 
     return {
         ...base,
+        popoverPosition: base.getPopoverPosition(activeField === PICKER_RANGE_FIELDS.END ? "end" : "start"),
         activeField,
         startInputRef,
         endInputRef,
@@ -561,8 +654,10 @@ export const useRangeTimePicker = ({
         handleInputChange,
         handleInputBlur,
         handleInputKeyDown,
+        handleShellClick,
         handleSelect,
         handleClear,
-        handlePopoverClose
+        handlePopoverClose,
+        handlePopoverFocusOut: base.handleFocusOut
     };
 };

@@ -1,4 +1,15 @@
-import React, { ChangeEvent, FC, FocusEvent, HTMLAttributes, KeyboardEvent, ReactNode, Ref } from "react";
+import React, {
+    ChangeEvent,
+    FC,
+    FocusEvent,
+    HTMLAttributes,
+    KeyboardEvent,
+    MouseEvent,
+    MutableRefObject,
+    ReactNode,
+    Ref,
+    useCallback
+} from "react";
 import { InputMask } from "@react-input/mask";
 import classNames from "classnames";
 
@@ -74,9 +85,23 @@ interface IPickerShellProps {
      */
     clearLabel: string;
     /**
-     * Reference data of popover, used for positioning the popover accordingly to the input field.
+     * Props `Popover` assigns to its reference element (ARIA attributes and handlers), without the
+     * `ref`, which is passed separately as `anchorRef`.
      */
-    popoverRefData?: HTMLAttributes<HTMLDivElement>;
+    anchorProps?: HTMLAttributes<HTMLDivElement>;
+    /**
+     * Reference to the field element, used to tell presses inside the field apart from outside ones.
+     */
+    shellRef?: Ref<HTMLDivElement>;
+    /**
+     * `Popover` positioning ref, merged into the field element together with `shellRef`.
+     */
+    anchorRef?: (node: HTMLElement | null) => void;
+    /**
+     * Callback for clicks on the field around the inputs (icons, padding), which behave like a click
+     * on the input.
+     */
+    onAreaClick?: () => void;
 }
 
 interface IPickerMaskedInputProps {
@@ -225,9 +250,23 @@ interface IPickerInputBaseProps {
      */
     clearLabel: string;
     /**
-     * Reference data of popover, used for positioning the popover accordingly to the input field.
+     * Props `Popover` assigns to its reference element (ARIA attributes and handlers), without the
+     * `ref`, which is passed separately as `anchorRef`.
      */
-    popoverRefData?: HTMLAttributes<HTMLDivElement>;
+    anchorProps?: HTMLAttributes<HTMLDivElement>;
+    /**
+     * Reference to the field element, used to tell presses inside the field apart from outside ones.
+     */
+    shellRef?: Ref<HTMLDivElement>;
+    /**
+     * Callback for clicks on the field around the inputs (icons, padding), which behave like a click
+     * on the input.
+     */
+    onAreaClick?: () => void;
+    /**
+     * `Popover` positioning ref, merged into the field element together with `shellRef`.
+     */
+    anchorRef?: (node: HTMLElement | null) => void;
     /**
      * Whether the field should display a clear button to clear the input value.
      */
@@ -377,38 +416,47 @@ const PickerMaskedInput: FC<IPickerMaskedInputProps> = ({
     onFocus,
     onBlur,
     onKeyDown
-}) => (
-    <InputMask
-        id={id}
-        name={name}
-        ref={inputRef}
-        mask={mask}
-        replacement={maskReplacement}
-        className={classNames("pickerInput__input", {
-            [`pickerInput__input_size_${size}`]: size
-        })}
-        showMask={false}
-        placeholder={placeholder}
-        autoComplete="off"
-        value={value ?? ""}
-        disabled={disabled}
-        readOnly={readOnly}
-        separate
-        role="combobox"
-        aria-expanded={isExpanded}
-        aria-haspopup="dialog"
-        aria-controls={controls}
-        aria-invalid={status === "error" || undefined}
-        aria-required={required || undefined}
-        aria-label={ariaLabel}
-        aria-describedby={describedBy}
-        onClick={onClick}
-        onChange={onChange}
-        onFocus={onFocus}
-        onBlur={onBlur}
-        onKeyDown={onKeyDown}
-    />
-);
+}) => {
+    return (
+        <InputMask
+            id={id}
+            name={name}
+            ref={inputRef}
+            mask={mask}
+            replacement={maskReplacement}
+            className={classNames("pickerInput__input", {
+                [`pickerInput__input_size_${size}`]: size
+            })}
+            showMask={false}
+            placeholder={placeholder}
+            autoComplete="off"
+            value={value ?? ""}
+            disabled={disabled}
+            readOnly={readOnly}
+            separate
+            role="combobox"
+            aria-expanded={isExpanded}
+            aria-haspopup="dialog"
+            aria-controls={controls}
+            aria-invalid={status === "error" || undefined}
+            aria-required={required || undefined}
+            aria-label={ariaLabel}
+            aria-describedby={describedBy}
+            onClick={onClick}
+            onChange={onChange}
+            onFocus={onFocus}
+            onBlur={onBlur}
+            onKeyDown={onKeyDown}
+        />
+    );
+};
+
+/**
+ * @description
+ * Inputs and buttons handle their own presses; everything else in the field is "area".
+ */
+const isControlTarget = (target: EventTarget): boolean =>
+    target instanceof Element && !!target.closest("input, button");
 
 const PickerShell: FC<IPickerShellProps> = ({
     className,
@@ -424,13 +472,45 @@ const PickerShell: FC<IPickerShellProps> = ({
     handleClear,
     shouldShowClearableIcon,
     clearLabel,
-    popoverRefData
+    anchorProps,
+    anchorRef,
+    shellRef,
+    onAreaClick
 }) => {
     const shouldShowIconAppends = shouldShowClearableIcon || EndIcon;
+
+    const setShellRef = useCallback(
+        (node: HTMLDivElement | null) => {
+            if (typeof shellRef === "function") {
+                shellRef(node);
+            } else if (shellRef) {
+                // eslint-disable-next-line no-param-reassign
+                (shellRef as MutableRefObject<HTMLDivElement | null>).current = node;
+            }
+
+            anchorRef?.(node);
+        },
+        [shellRef, anchorRef]
+    );
+
+    const handleMouseDown = (event: MouseEvent<HTMLDivElement>) => {
+        if (isControlTarget(event.target)) return;
+
+        event.preventDefault();
+    };
+
+    const handleClick = (event: MouseEvent<HTMLDivElement>) => {
+        if (isControlTarget(event.target)) return;
+
+        onAreaClick?.();
+    };
 
     return (
         <>
             <div
+                {...anchorProps}
+                ref={setShellRef}
+                role="presentation"
                 className={classNames("pickerInput", className, `pickerInput_mode_${mode}`, {
                     pickerInput_state_error: status === "error",
                     pickerInput_state_warning: status === "warning",
@@ -438,7 +518,8 @@ const PickerShell: FC<IPickerShellProps> = ({
                     pickerInput_state_readOnly: readOnly,
                     [`pickerInput_size_${size}`]: size
                 })}
-                {...popoverRefData}
+                onMouseDown={handleMouseDown}
+                onClick={handleClick}
             >
                 {children}
                 {shouldShowIconAppends && (
@@ -493,7 +574,10 @@ const SinglePickerInput: FC<ISinglePickerInputProps> = ({
     onKeyDown,
     mask,
     maskReplacement,
-    popoverRefData,
+    anchorProps,
+    anchorRef,
+    shellRef,
+    onAreaClick,
     id,
     name,
     inputRef,
@@ -517,7 +601,10 @@ const SinglePickerInput: FC<ISinglePickerInputProps> = ({
             handleClear={onClear}
             shouldShowClearableIcon={shouldShowClearableIcon}
             clearLabel={clearLabel}
-            popoverRefData={popoverRefData}
+            anchorProps={anchorProps}
+            anchorRef={anchorRef}
+            shellRef={shellRef}
+            onAreaClick={onAreaClick}
         >
             <PickerMaskedInput
                 id={id}
@@ -566,7 +653,10 @@ const RangePickerInput: FC<IRangePickerInputProps> = ({
     onFocus,
     onBlur,
     onKeyDown,
-    popoverRefData,
+    anchorProps,
+    anchorRef,
+    shellRef,
+    onAreaClick,
     ids,
     labels,
     inputRefs,
@@ -592,7 +682,10 @@ const RangePickerInput: FC<IRangePickerInputProps> = ({
             handleClear={onClear}
             shouldShowClearableIcon={shouldShowClearableIcon}
             clearLabel={clearLabel}
-            popoverRefData={popoverRefData}
+            anchorProps={anchorProps}
+            anchorRef={anchorRef}
+            shellRef={shellRef}
+            onAreaClick={onAreaClick}
         >
             <PickerMaskedInput
                 id={ids.start}

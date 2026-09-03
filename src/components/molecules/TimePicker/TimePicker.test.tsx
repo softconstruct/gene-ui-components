@@ -31,6 +31,18 @@ const openPopover = (setup: ReactWrapper, index = 0) => {
     setup.update();
 };
 
+/**
+ * Drives the `onClose` the popover atom would emit, since jsdom has no real outside press or `Escape`.
+ */
+const closePopover = (setup: ReactWrapper, event: unknown, reason: string) => {
+    const { onClose } = setup.find("PickerPopover").props() as { onClose: (e: unknown, r: string) => void };
+
+    act(() => {
+        onClose(event, reason);
+    });
+    setup.update();
+};
+
 const columnButtons = (setup: ReactWrapper, columnIndex: number) =>
     setup.find(".timePicker__list").at(columnIndex).find("button");
 
@@ -428,6 +440,76 @@ describe("TimePicker", () => {
             expect(onOpenChange).toHaveBeenLastCalledWith(false);
         });
 
+        it("opens on focus and closes when the focus leaves the picker", () => {
+            const onOpenChange = jest.fn();
+            setup.setProps({ onOpenChange });
+
+            setup.find("input.pickerInput__input").simulate("focus");
+            setup.update();
+
+            expect(setup.find(".timePicker__wrapper").exists()).toBeTruthy();
+            expect(onOpenChange).toHaveBeenLastCalledWith(true);
+
+            setup.find("input.pickerInput__input").simulate("blur", { relatedTarget: null });
+            setup.update();
+
+            expect(setup.find(".timePicker__wrapper").exists()).toBeFalsy();
+            expect(onOpenChange).toHaveBeenLastCalledWith(false);
+            expect(onOpenChange).toHaveBeenCalledTimes(2);
+        });
+
+        it("stays open while the focus moves into the popover", () => {
+            openPopover(setup);
+
+            const target = columnButtons(setup, 0).at(3).getDOMNode();
+
+            setup.find("input.pickerInput__input").simulate("blur", { relatedTarget: target });
+            setup.update();
+
+            expect(setup.find(".timePicker__wrapper").exists()).toBeTruthy();
+        });
+
+        it("closes when the focus leaves the popover", () => {
+            openPopover(setup);
+
+            setup.find(".timePicker__wrapper").simulate("blur", { relatedTarget: null });
+            setup.update();
+
+            expect(setup.find(".timePicker__wrapper").exists()).toBeFalsy();
+        });
+
+        it("opens from a click on the field area around the input", () => {
+            setup.find(".pickerInput__append").simulate("click");
+            setup.update();
+
+            expect(setup.find(".timePicker__wrapper").exists()).toBeTruthy();
+        });
+
+        it("keeps opening on focus after Escape returned the focus to the input", () => {
+            openPopover(setup);
+
+            closePopover(setup, new KeyboardEvent("keydown"), "escape-key");
+            expect(setup.find(".timePicker__wrapper").exists()).toBeFalsy();
+
+            setup.find("input.pickerInput__input").simulate("focus");
+            setup.update();
+            expect(setup.find(".timePicker__wrapper").exists()).toBeTruthy();
+        });
+
+        it("moves the focus into a popover that the focus already opened", () => {
+            setup.find("input.pickerInput__input").simulate("focus");
+            setup.update();
+            expect(setup.find("PickerPopover").prop("focusOnOpen")).toBe(false);
+
+            setup.find("input.pickerInput__input").simulate("keydown", { key: "ArrowDown" });
+            setup.update();
+            expect(setup.find("PickerPopover").prop("focusOnOpen")).toBe(true);
+
+            setup.find("input.pickerInput__input").simulate("focus");
+            setup.update();
+            expect(setup.find("PickerPopover").prop("focusOnOpen")).toBe(false);
+        });
+
         it("opens with the keyboard", () => {
             setup.find("input.pickerInput__input").simulate("keydown", { key: "ArrowDown" });
             setup.update();
@@ -803,6 +885,28 @@ describe("Time range picker", () => {
         setup.find("input.pickerInput__input").at(0).simulate("focus");
         setup.update();
         expect(setup.find("PickerPopover").prop("activeField")).toBe("start");
+    });
+
+    it("lines the popover up with the field border on the side of the edited input", () => {
+        openPopover(setup, 0);
+        expect(setup.find("PickerPopover").prop("position")).toBe("bottom-left");
+
+        openPopover(setup, 1);
+        expect(setup.find("PickerPopover").prop("position")).toBe("bottom-right");
+    });
+
+    it("mirrors the popover side in RTL", () => {
+        document.dir = "rtl";
+        const rtl = mountRange({});
+
+        openPopover(rtl, 0);
+        expect(rtl.find("PickerPopover").prop("position")).toBe("bottom-right");
+
+        openPopover(rtl, 1);
+        expect(rtl.find("PickerPopover").prop("position")).toBe("bottom-left");
+
+        rtl.unmount();
+        document.dir = "";
     });
 
     it("reports which field changed", () => {
