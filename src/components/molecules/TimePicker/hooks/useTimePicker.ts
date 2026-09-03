@@ -121,11 +121,16 @@ const resolveBlurValue = (
  * time).
  *
  * Whether the field is being edited decides how the value is read:
- * - while it has focus the typed text is authoritative and is rendered verbatim, so the mask is
- *   never fought and every character (including the meridiem) can be deleted or replaced;
- * - once it is left — and for values that arrive from the `value`/`defaultValue` props or from a
- *   `format` switch — the value is normalized, which keeps the input text and the popover
- *   selection in agreement.
+ * - from the first keystroke until the field is left, the typed text is authoritative and is
+ *   rendered verbatim, so the mask is never fought and every character (including the meridiem)
+ *   can be deleted or replaced;
+ * - otherwise — including a plain focus or click, and for values that arrive from the
+ *   `value`/`defaultValue` props — the value is normalized, which keeps the input text and the
+ *   popover selection in agreement.
+ *
+ * Editing mode must not start on focus: the raw value can be written in the other notation (see the
+ * `format` effect below, or a controlled `value` the consumer did not convert), and rendering it
+ * verbatim would show `12:06:05 AM` inside the 24-hour mask.
  */
 const useTimeField = (value: string | null | undefined, defaultValue: string | null | undefined, is12Hour: boolean) => {
     const isControlled = value !== undefined;
@@ -134,6 +139,16 @@ const useTimeField = (value: string | null | undefined, defaultValue: string | n
     const [isEditing, setIsEditing] = useState(false);
 
     const rawValue = isControlled ? (value ?? null) : internalValue;
+
+    useEffect(() => {
+        if (isControlled) return;
+
+        setInternalValue((current) => {
+            const parsed = parseTime(current, is12Hour, { allow24HourInput: true });
+
+            return parsed ? composeTime(parsed, is12Hour) : current;
+        });
+    }, [is12Hour, isControlled]);
 
     const parsedValue = useMemo(
         () => parseTime(rawValue, is12Hour, { allow24HourInput: !isEditing }),
@@ -215,8 +230,7 @@ const useBasePicker = ({ disabled, readOnly, onOpenChange }: IBasePickerOptions)
      */
     const togglePopover = (nextOpen: boolean, focusOnOpen = false) => {
         if (nextOpen && !isInteractive) return;
-        // Guard against duplicated events: clicking an already open input used to emit
-        // `onOpenChange(true)` again on every click.
+
         if (popoverOpenRef.current === nextOpen) return;
 
         popoverOpenRef.current = nextOpen;
@@ -281,7 +295,6 @@ export const useSingleTimePicker = ({
     const inputRef = useRef<HTMLInputElement | null>(null);
 
     const handleInputFocus = (event: FocusEvent<HTMLInputElement>) => {
-        field.setIsEditing(true);
         onFocus?.(event);
     };
 
@@ -441,7 +454,6 @@ export const useRangeTimePicker = ({
 
     const handleInputFocus = (event: FocusEvent<HTMLInputElement>, field: TimePickerRangeFields) => {
         setActiveField(field);
-        getFieldRefs(field).current.setIsEditing(true);
         onFocus?.(event, field);
     };
 

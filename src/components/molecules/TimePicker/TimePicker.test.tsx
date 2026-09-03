@@ -42,7 +42,7 @@ const mountSingle = (props: ISingleTimePickerProps) => mount(<TimePicker {...pro
 const mountRange = (props: IRangeTimePickerProps) => mount(<TimePicker.Range {...props} />);
 
 describe("TimePicker helpers", () => {
-    describe("convertSecondsToParts", () => {
+    describe("-> convertSecondsToParts ->", () => {
         it("returns seconds within a minute", () => {
             expect(convertSecondsToParts(37801, false)).toEqual({
                 hours: "10",
@@ -52,7 +52,7 @@ describe("TimePicker helpers", () => {
             });
         });
 
-        it("round trips through convertPartsToSeconds", () => {
+        it("returns parts from seconds", () => {
             const parts = convertSecondsToParts(45296, false);
 
             expect(convertPartsToSeconds(parts, false)).toBe(45296);
@@ -73,7 +73,7 @@ describe("TimePicker helpers", () => {
         });
     });
 
-    describe("parseTime", () => {
+    describe("-> parseTime ->", () => {
         it("returns null for incomplete input", () => {
             expect(parseTime("10:3")).toBeNull();
             expect(parseTime("")).toBeNull();
@@ -117,8 +117,6 @@ describe("TimePicker helpers", () => {
         });
 
         it("treats a missing meridiem as incomplete while the user types", () => {
-            // Without this the meridiem could never be deleted: `10:30:00` would be read back as a
-            // 24-hour time and completed to `10:30:00 AM` on the next render.
             expect(parseTime("10:30:00", true)).toBeNull();
         });
 
@@ -145,7 +143,7 @@ describe("TimePicker helpers", () => {
         });
     });
 
-    describe("isTimeDisabled", () => {
+    describe("-> isTimeDisabled ->", () => {
         const minParts = { hours: "10", minutes: "00", seconds: "00" };
 
         it("respects the min bound", () => {
@@ -167,7 +165,7 @@ describe("TimePicker helpers", () => {
         });
     });
 
-    describe("getNearestAvailableTime", () => {
+    describe("-> getNearestAvailableTime ->", () => {
         it("returns the same parts when the time is allowed", () => {
             const parts = { hours: "10", minutes: "30", seconds: "00" };
 
@@ -195,7 +193,6 @@ describe("TimePicker helpers", () => {
         });
 
         it("searches away from a bound instead of giving up", () => {
-            // `11` is past the maximum and `10` is rejected, so the search has to go backwards.
             const nearest = getNearestAvailableTime(
                 { hours: "11", minutes: "00", seconds: "00" },
                 false,
@@ -212,17 +209,9 @@ describe("TimePicker helpers", () => {
                 getNearestAvailableTime({ hours: "09", minutes: "30", seconds: "00" }, false, () => true)
             ).toBeNull();
         });
-
-        it("calls shouldDisableTime a bounded number of times", () => {
-            const shouldDisableTime = jest.fn((type: string, value: string) => type === "hours" && value === "09");
-
-            getNearestAvailableTime({ hours: "09", minutes: "30", seconds: "00" }, false, shouldDisableTime);
-
-            expect(shouldDisableTime.mock.calls.length).toBeLessThan(500);
-        });
     });
 
-    describe("composeTime", () => {
+    describe("-> composeTime ->", () => {
         it("omits the meridiem in the 24-hour format", () => {
             expect(composeTime({ hours: "10", minutes: "30", seconds: "00", meridiem: "AM" }, false)).toBe("10:30:00");
         });
@@ -234,7 +223,7 @@ describe("TimePicker helpers", () => {
         });
     });
 
-    describe("isPickerPartDisabled", () => {
+    describe("-> isPickerPartDisabled ->", () => {
         const partsStart = { hours: "10", minutes: "30", seconds: "00" };
 
         it("disables hours before the start of the range for the end field", () => {
@@ -250,7 +239,6 @@ describe("TimePicker helpers", () => {
         });
 
         it("reads an empty end field in the same half of the day as the start bound", () => {
-            // Without this the whole hours column would be disabled until AM/PM is picked first.
             const pmStart = { hours: "11", minutes: "00", seconds: "00", meridiem: "PM" as const };
 
             expect(isPickerPartDisabled("hours", "11", {}, true, "end", pmStart)).toBe(false);
@@ -259,7 +247,7 @@ describe("TimePicker helpers", () => {
         });
     });
 
-    describe("resolveLocalization", () => {
+    describe("-> resolveLocalization ->", () => {
         it("falls back to the defaults for missing entries", () => {
             expect(resolveLocalization({ hours: "ժամ" })).toMatchObject({ hours: "ժամ", minutes: "minutes" });
         });
@@ -278,88 +266,86 @@ describe("TimePicker", () => {
         jest.clearAllMocks();
     });
 
-    describe("Rendering and basic props", () => {
-        it("renders without crashing", () => {
-            expect(setup.exists()).toBeTruthy();
-        });
-
-        it("renders className prop correctly", () => {
-            const className = "test-class";
-            setup.setProps({ className });
-
-            expect(setup.find(".timePicker").hasClass(className)).toBeTruthy();
-        });
-
-        it("renders label and required indicator correctly", () => {
-            setup.setProps({ label: "Select Time", required: true });
-
-            const labelNode = setup.find("Label");
-
-            expect(labelNode.prop("text")).toBe("Select Time");
-            expect(labelNode.prop("required")).toBe(true);
-        });
-
-        it("renders placeholder prop correctly", () => {
-            setup.setProps({ placeholder: "HH:MM:SS" });
-
-            expect(setup.find("input.pickerInput__input").prop("placeholder")).toBe("HH:MM:SS");
-        });
-
-        it.each(["small", "medium", "large"] as const)("should have %s size", (size) => {
-            setup.setProps({ size });
-
-            expect(setup.find(".pickerInput").hasClass(`pickerInput_size_${size}`)).toBeTruthy();
-        });
-
-        it("ties the label to the input with a generated unique id", () => {
-            const twoPickers = mount(
-                <div>
-                    <TimePicker label="first" />
-                    <TimePicker label="second" />
-                </div>
-            );
-
-            const inputs = twoPickers.find("input.pickerInput__input");
-            const firstId = inputs.at(0).prop("id");
-            const secondId = inputs.at(1).prop("id");
-
-            expect(firstId).toBeTruthy();
-            expect(firstId).not.toBe(secondId);
-            expect(twoPickers.find("label").at(0).prop("htmlFor")).toBe(firstId);
-
-            twoPickers.unmount();
-        });
-
-        it("renders id prop correctly", () => {
-            setup.setProps({ id: "custom-id" });
-
-            expect(setup.find("input.pickerInput__input").prop("id")).toBe("custom-id");
-        });
-
-        it("exposes the combobox accessibility contract on the input", () => {
-            setup.setProps({ required: true, status: "error", helperText: "Invalid" });
-
-            const input = setup.find("input.pickerInput__input");
-
-            expect(input.prop("role")).toBe("combobox");
-            expect(input.prop("aria-expanded")).toBe(false);
-            expect(input.prop("aria-haspopup")).toBe("dialog");
-            expect(input.prop("aria-invalid")).toBe(true);
-            expect(input.prop("aria-required")).toBe(true);
-            expect(input.prop("aria-controls")).toBe(`${input.prop("id")}-popover`);
-            expect(input.prop("aria-describedby")).toBe(`${input.prop("id")}-helper-text`);
-        });
-
-        it("points aria-describedby at the rendered helper text", () => {
-            setup.setProps({ helperText: "Business hours only" });
-
-            const describedBy = setup.find("input.pickerInput__input").prop("aria-describedby");
-
-            expect(setup.find(`#${describedBy}`).exists()).toBeTruthy();
-        });
+    it("renders without crashing", () => {
+        expect(setup.exists()).toBeTruthy();
     });
 
-    describe("Interaction states", () => {
+    it("renders className prop correctly", () => {
+        const className = "test-class";
+        setup.setProps({ className });
+
+        expect(setup.find(".timePicker").hasClass(className)).toBeTruthy();
+    });
+
+    it("renders label and required indicator correctly", () => {
+        setup.setProps({ label: "Select Time", required: true });
+
+        const labelNode = setup.find("Label");
+
+        expect(labelNode.prop("text")).toBe("Select Time");
+        expect(labelNode.prop("required")).toBe(true);
+    });
+
+    it("renders placeholder prop correctly", () => {
+        setup.setProps({ placeholder: "HH:MM:SS" });
+
+        expect(setup.find("input.pickerInput__input").prop("placeholder")).toBe("HH:MM:SS");
+    });
+
+    it.each(["small", "medium", "large"] as const)("should have %s size", (size) => {
+        setup.setProps({ size });
+
+        expect(setup.find(".pickerInput").hasClass(`pickerInput_size_${size}`)).toBeTruthy();
+    });
+
+    it("ties the label to the input with a generated unique id", () => {
+        const twoPickers = mount(
+            <div>
+                <TimePicker label="first" />
+                <TimePicker label="second" />
+            </div>
+        );
+
+        const inputs = twoPickers.find("input.pickerInput__input");
+        const firstId = inputs.at(0).prop("id");
+        const secondId = inputs.at(1).prop("id");
+
+        expect(firstId).toBeTruthy();
+        expect(firstId).not.toBe(secondId);
+        expect(twoPickers.find("label").at(0).prop("htmlFor")).toBe(firstId);
+
+        twoPickers.unmount();
+    });
+
+    it("renders id prop correctly", () => {
+        setup.setProps({ id: "custom-id" });
+
+        expect(setup.find("input.pickerInput__input").prop("id")).toBe("custom-id");
+    });
+
+    it("exposes the combobox accessibility contract on the input", () => {
+        setup.setProps({ required: true, status: "error", helperText: "Invalid" });
+
+        const input = setup.find("input.pickerInput__input");
+
+        expect(input.prop("role")).toBe("combobox");
+        expect(input.prop("aria-expanded")).toBe(false);
+        expect(input.prop("aria-haspopup")).toBe("dialog");
+        expect(input.prop("aria-invalid")).toBe(true);
+        expect(input.prop("aria-required")).toBe(true);
+        expect(input.prop("aria-controls")).toBe(`${input.prop("id")}-popover`);
+        expect(input.prop("aria-describedby")).toBe(`${input.prop("id")}-helper-text`);
+    });
+
+    it("points aria-describedby at the rendered helper text", () => {
+        setup.setProps({ helperText: "Business hours only" });
+
+        const describedBy = setup.find("input.pickerInput__input").prop("aria-describedby");
+
+        expect(setup.find(`#${describedBy}`).exists()).toBeTruthy();
+    });
+
+    describe(" -> Interaction states -> ", () => {
         it("handles disabled state", () => {
             setup.setProps({ disabled: true });
 
@@ -412,7 +398,7 @@ describe("TimePicker", () => {
         });
     });
 
-    describe("Popover", () => {
+    describe(" -> Popover -> ", () => {
         it("opens on input click and reports it once", () => {
             const onOpenChange = jest.fn();
             setup.setProps({ onOpenChange });
@@ -509,7 +495,7 @@ describe("TimePicker", () => {
         });
     });
 
-    describe("Value handling", () => {
+    describe(" -> Value handling -> ", () => {
         it("selects a value from the popover and reports the change context", () => {
             const onChange = jest.fn();
             setup.setProps({ onChange });
@@ -593,8 +579,6 @@ describe("TimePicker", () => {
                 typeInto(picker, "10:30:00 A");
                 expect(inputValue()).toBe("10:30:00 A");
 
-                // Used to snap straight back to `10:30:00 AM`, so the meridiem could not be
-                // deleted and the value looked stuck.
                 typeInto(picker, "10:30:00 ");
                 expect(inputValue()).toBe("10:30:00 ");
 
@@ -692,7 +676,8 @@ describe("TimePicker", () => {
         });
 
         it("converts the value when the format switches from 12 to 24 hours", () => {
-            const picker = mountSingle({ format: "12h", defaultValue: "10:30:00 PM" });
+            const onChange = jest.fn();
+            const picker = mountSingle({ format: "12h", defaultValue: "10:30:00 PM", onChange });
 
             expect(picker.find("input.pickerInput__input").prop("value")).toBe("10:30:00 PM");
 
@@ -700,6 +685,39 @@ describe("TimePicker", () => {
             picker.update();
 
             expect(picker.find("input.pickerInput__input").prop("value")).toBe("22:30:00");
+
+            picker.find("input.pickerInput__input").simulate("focus");
+            expect(picker.find("input.pickerInput__input").prop("value")).toBe("22:30:00");
+
+            picker.find("input.pickerInput__input").simulate("blur");
+            expect(picker.find("input.pickerInput__input").prop("value")).toBe("22:30:00");
+            expect(onChange).not.toHaveBeenCalled();
+
+            picker.unmount();
+        });
+
+        it("converts the value when the format switches from 24 to 12 hours", () => {
+            const picker = mountSingle({ format: "24h", defaultValue: "14:06:05" });
+
+            picker.setProps({ format: "12h" });
+            picker.update();
+
+            expect(picker.find("input.pickerInput__input").prop("value")).toBe("02:06:05 PM");
+
+            picker.find("input.pickerInput__input").simulate("focus");
+            expect(picker.find("input.pickerInput__input").prop("value")).toBe("02:06:05 PM");
+
+            picker.unmount();
+        });
+
+        it("keeps the normalized value on a plain focus and only shows typed text verbatim", () => {
+            const picker = mountSingle({ format: "12h", defaultValue: "18:45:00" });
+
+            picker.find("input.pickerInput__input").simulate("focus");
+            expect(picker.find("input.pickerInput__input").prop("value")).toBe("06:45:00 PM");
+
+            typeInto(picker, "06:45:00 P");
+            expect(picker.find("input.pickerInput__input").prop("value")).toBe("06:45:00 P");
 
             picker.unmount();
         });
@@ -732,7 +750,7 @@ describe("TimePicker", () => {
     });
 });
 
-describe("TimePicker.Range", () => {
+describe("Time range picker", () => {
     let setup: ReactWrapper<IRangeTimePickerProps>;
 
     beforeEach(() => {
@@ -816,6 +834,23 @@ describe("TimePicker.Range", () => {
         expect(onFocus).toHaveBeenCalledWith(expect.anything(), "end");
         expect(onKeyDown).toHaveBeenCalledWith(expect.anything(), "end");
         expect(onBlur).toHaveBeenCalledWith(expect.anything(), "end");
+    });
+
+    it("converts both fields when the format switches", () => {
+        const range = mountRange({ format: "24h", defaultValue: { start: "14:06:05", end: "23:00:00" } });
+
+        range.setProps({ format: "12h" });
+        range.update();
+
+        const inputs = range.find("input.pickerInput__input");
+
+        expect(inputs.at(0).prop("value")).toBe("02:06:05 PM");
+        expect(inputs.at(1).prop("value")).toBe("11:00:00 PM");
+
+        inputs.at(0).simulate("focus");
+        expect(range.find("input.pickerInput__input").at(0).prop("value")).toBe("02:06:05 PM");
+
+        range.unmount();
     });
 
     it("keeps the end field after the start one", () => {

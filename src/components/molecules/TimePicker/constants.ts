@@ -95,6 +95,12 @@ const headerTextVariantMap = {
     small: "captionLargeSemibold"
 } as const;
 
+const pickerShellIconSizeMap = {
+    small: "smallNudge",
+    medium: "small",
+    large: "small"
+} as const;
+
 // ---------------------------------------------------------
 // Input mask
 // ---------------------------------------------------------
@@ -107,12 +113,6 @@ const headerTextVariantMap = {
  */
 const TIME_PICKER_INPUT_MASK = "Hh:Mm:Ss";
 const TIME_PICKER_INPUT_MASK_WITH_MERIDIEM = "Hh:Mm:Ss AP";
-
-const PICKER_SHELL_ICON_SIZE_MAPPER = {
-    small: "smallNudge",
-    medium: "small",
-    large: "small"
-} as const;
 
 const MASK_REPLACEMENT_24H: Record<string, RegExp> = {
     H: /[0-2]/,
@@ -203,5 +203,5 @@ export {
     TIME_PARTS_RADIX,
     TIME_PICKER_INPUT_MASK,
     TIME_PICKER_INPUT_MASK_WITH_MERIDIEM,
-    PICKER_SHELL_ICON_SIZE_MAPPER
+    pickerShellIconSizeMap
 };
