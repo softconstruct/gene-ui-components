@@ -17,10 +17,15 @@ const meta: Meta<typeof TimePicker> = {
     },
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
-        size: args({ control: "select", options: ["small", "medium", "large"], ...propCategory.appearance }),
-        disabled: args({ control: "boolean", ...propCategory.states }),
-        readOnly: args({ control: "boolean", ...propCategory.states }),
-        required: args({ control: "boolean", ...propCategory.functionality }),
+        size: args({
+            control: "select",
+            options: ["small", "medium", "large"],
+            defaultValue: "medium",
+            ...propCategory.appearance
+        }),
+        disabled: args({ control: "boolean", defaultValue: false, ...propCategory.states }),
+        readOnly: args({ control: "boolean", defaultValue: false, ...propCategory.states }),
+        required: args({ control: "boolean", defaultValue: false, ...propCategory.functionality }),
         placeholder: args({ control: "text", ...propCategory.appearance }),
         label: args({ control: "text", ...propCategory.content }),
         infoText: args({ control: "text", ...propCategory.content }),
@@ -30,32 +35,47 @@ const meta: Meta<typeof TimePicker> = {
         name: args({ control: "text", ...propCategory.others }),
         key: args({ control: "false", ...propCategory.functionality }),
         ref: args({ control: "false", ...propCategory.functionality }),
-        clearable: args({ control: "boolean", ...propCategory.functionality }),
+        clearable: args({ control: "boolean", defaultValue: false, ...propCategory.functionality }),
         onClear: args({ control: "false", ...propCategory.action }),
-        status: args({ control: "select", options: ["rest", "warning", "error"], ...propCategory.validation }),
+        status: args({
+            control: "select",
+            options: ["rest", "warning", "error"],
+            defaultValue: "rest",
+            ...propCategory.validation
+        }),
         helperText: args({ control: "text", ...propCategory.validation }),
         onOpenChange: args({ control: "false", ...propCategory.action }),
         onChange: args({ control: "false", ...propCategory.action }),
         onFocus: args({ control: "false", ...propCategory.action }),
         onBlur: args({ control: "false", ...propCategory.action }),
         onKeyDown: args({ control: "false", ...propCategory.action }),
-        format: args({ control: "select", options: ["24h", "12h"], ...propCategory.functionality }),
+        format: args({
+            control: "select",
+            options: ["24h", "12h"],
+            defaultValue: "24h",
+            ...propCategory.functionality
+        }),
         localization: args({ control: "object", ...propCategory.content })
     },
     args: {
         label: "Choose time",
         placeholder: "Select time",
-        defaultValue: "",
-        size: "medium",
-        format: "24h",
-        status: "rest",
-        clearable: false,
-        disabled: false,
-        readOnly: false,
-        required: false,
         localization: DEFAULT_LOCALIZATION
     }
 };
+
+/**
+ * Defaults of the interactive stories, so every control shows the value that is in effect.
+ */
+const interactiveArgs = {
+    size: "medium",
+    format: "24h",
+    status: "rest",
+    clearable: false,
+    disabled: false,
+    readOnly: false,
+    required: false
+} as const;
 
 export default meta;
 
@@ -71,6 +91,15 @@ type RangePickerCase = {
     key: string;
     RenderComponent?: (props: IRangeTimePickerProps) => React.JSX.Element;
 } & IRangeTimePickerProps;
+
+/**
+ * Controls only take part once they hold a value, so the cases keep their own props until then.
+ */
+const definedProps = <T extends object>(props: T): Partial<T> =>
+    Object.fromEntries(Object.entries(props).filter(([, value]) => value !== undefined)) as Partial<T>;
+
+const caseStyle = { display: "flex", flexDirection: "column", gap: "0.8rem" } as const;
+const casesStyle = { display: "flex", flexWrap: "wrap", gap: "2rem" } as const;
 
 const rangePlaceholder = { start: "Start time", end: "End time" };
 
@@ -89,16 +118,16 @@ const UncontrolledSinglePicker = (props: ISingleTimePickerProps) => (
 );
 
 const singlePickerCases: SinglePickerCase[] = [
-    { key: "disabled", label: "Disabled", disabled: true },
-    { key: "readOnly", label: "Read only", readOnly: true, defaultValue: "12:30:00" },
-    { key: "required", label: "Required", required: true },
-    { key: "controlled", label: "With controlled value", RenderComponent: ControlledSinglePicker },
-    { key: "uncontrolled", label: "With default value", RenderComponent: UncontrolledSinglePicker },
-    { key: "clearable", label: "Clearable", RenderComponent: ClearableSinglePicker },
-    { key: "error", label: "Errored with message", status: "error", helperText: "Error message" },
-    { key: "warning", label: "Warning with message", status: "warning", helperText: "Double check the time" },
-    { key: "helperText", label: "With helper text", helperText: "Business hours only", infoText: "Local time" },
-    { key: "12h", label: "12-Hour Format", format: "12h", placeholder: "12:00:00 AM" }
+    { key: "disabled", disabled: true },
+    { key: "readOnly", readOnly: true, defaultValue: "12:30:00" },
+    { key: "required", required: true },
+    { key: "controlled", RenderComponent: ControlledSinglePicker },
+    { key: "uncontrolled", RenderComponent: UncontrolledSinglePicker },
+    { key: "clearable", RenderComponent: ClearableSinglePicker },
+    { key: "error", status: "error", helperText: "Error message" },
+    { key: "warning", status: "warning", helperText: "Double check the time" },
+    { key: "helperText", helperText: "Business hours only", infoText: "Local time" },
+    { key: "12h", format: "12h" }
 ];
 
 const ControlledRangePicker = (props: IRangeTimePickerProps) => {
@@ -116,35 +145,14 @@ const ClearableRangePicker = (props: IRangeTimePickerProps) => (
 );
 
 const rangePickerCases: RangePickerCase[] = [
-    { key: "disabled", label: "Disabled", disabled: true, placeholder: rangePlaceholder },
-    { key: "readOnly", label: "Read only", readOnly: true, placeholder: rangePlaceholder },
-    { key: "required", label: "Required", required: true, placeholder: rangePlaceholder },
-    {
-        key: "controlled",
-        label: "With controlled value",
-        placeholder: rangePlaceholder,
-        RenderComponent: ControlledRangePicker
-    },
-    {
-        key: "clearable",
-        label: "Clearable",
-        placeholder: rangePlaceholder,
-        RenderComponent: ClearableRangePicker
-    },
-    {
-        key: "error",
-        label: "Errored with message",
-        status: "error",
-        helperText: "Error message",
-        placeholder: rangePlaceholder
-    },
-    { key: "12h", label: "12-Hour Format", format: "12h", placeholder: rangePlaceholder },
-    {
-        key: "bounds",
-        label: "Start and end kept in order",
-        placeholder: rangePlaceholder,
-        defaultValue: { start: "09:00:00", end: "17:00:00" }
-    }
+    { key: "disabled", disabled: true },
+    { key: "readOnly", readOnly: true },
+    { key: "required", required: true },
+    { key: "controlled", RenderComponent: ControlledRangePicker },
+    { key: "clearable", RenderComponent: ClearableRangePicker },
+    { key: "error", status: "error", helperText: "Error message" },
+    { key: "12h", format: "12h" },
+    { key: "bounds", defaultValue: { start: "09:00:00", end: "17:00:00" } }
 ];
 
 /**
@@ -152,9 +160,22 @@ const rangePickerCases: RangePickerCase[] = [
  * stories override those controls.
  */
 const rangeArgTypes = {
-    placeholder: args({ control: "object", ...propCategory.appearance }),
-    value: args({ control: "object", ...propCategory.functionality }),
-    defaultValue: args({ control: "object", ...propCategory.functionality })
+    placeholder: args({
+        control: "object",
+        description: "Placeholder texts of the two inputs, as `{ start, end }`.",
+        ...propCategory.appearance
+    }),
+    value: args({
+        control: "object",
+        description:
+            "Values of the two inputs, as `{ start, end }` time strings. Providing it makes the component controlled, so it has to be updated from `onChange`.",
+        ...propCategory.functionality
+    }),
+    defaultValue: args({
+        control: "object",
+        description: "Initial values of an uncontrolled component, as `{ start, end }` time strings.",
+        ...propCategory.functionality
+    })
 };
 
 /**
@@ -164,7 +185,8 @@ const rangeArgTypes = {
 export const Default: SingleStory = {
     render: ({ defaultValue, ...props }) => (
         <TimePicker key={String(defaultValue)} defaultValue={defaultValue} {...props} />
-    )
+    ),
+    args: { ...interactiveArgs, defaultValue: "" }
 };
 
 export const Range: RangeStory = {
@@ -172,6 +194,7 @@ export const Range: RangeStory = {
         <TimePicker.Range key={JSON.stringify(defaultValue)} defaultValue={defaultValue} {...props} />
     ),
     args: {
+        ...interactiveArgs,
         label: "Choose time range",
         placeholder: rangePlaceholder,
         defaultValue: { start: "09:00:00", end: "17:00:00" }
@@ -180,36 +203,46 @@ export const Range: RangeStory = {
 };
 
 export const SinglePickerStates: SingleStory = {
-    render: (props) => (
-        <div style={{ display: "flex", flex: 1, flexWrap: "wrap", gap: "2rem" }}>
-            {singlePickerCases.map(({ key, RenderComponent, ...item }) =>
-                RenderComponent ? (
-                    <RenderComponent {...props} {...item} key={key} />
-                ) : (
-                    <TimePicker {...props} {...item} key={key} />
-                )
-            )}
-        </div>
-    )
+    render: (props) => {
+        const controls = definedProps(props);
+
+        return (
+            <div style={casesStyle}>
+                {singlePickerCases.map(({ key, RenderComponent, ...item }) => (
+                    <div key={`${key}-${String(controls.defaultValue)}`} style={caseStyle}>
+                        {RenderComponent ? (
+                            <RenderComponent {...item} {...controls} />
+                        ) : (
+                            <TimePicker {...item} {...controls} />
+                        )}
+                    </div>
+                ))}
+            </div>
+        );
+    }
 };
 
 export const RangePickerStates: RangeStory = {
-    render: (props) => (
-        <div style={{ display: "flex", flex: 1, flexWrap: "wrap", gap: "2rem" }}>
-            {rangePickerCases.map(({ key, RenderComponent, ...item }) => (
-                <div key={key}>
-                    {RenderComponent ? (
-                        <RenderComponent {...props} {...item} />
-                    ) : (
-                        <TimePicker.Range {...props} {...item} />
-                    )}
-                </div>
-            ))}
-        </div>
-    ),
+    render: (props) => {
+        const controls = definedProps(props);
+
+        return (
+            <div style={casesStyle}>
+                {rangePickerCases.map(({ key, RenderComponent, ...item }) => (
+                    <div key={`${key}-${JSON.stringify(controls.defaultValue)}`} style={caseStyle}>
+                        {RenderComponent ? (
+                            <RenderComponent {...item} {...controls} />
+                        ) : (
+                            <TimePicker.Range {...item} {...controls} />
+                        )}
+                    </div>
+                ))}
+            </div>
+        );
+    },
     args: {
-        placeholder: rangePlaceholder,
-        defaultValue: { start: "09:00:00", end: "17:00:00" }
+        label: "Choose time range",
+        placeholder: rangePlaceholder
     },
     argTypes: rangeArgTypes
 };

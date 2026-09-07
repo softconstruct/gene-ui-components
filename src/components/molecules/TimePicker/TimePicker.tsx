@@ -76,8 +76,9 @@ interface ITimePickerBaseProps {
      */
     readOnly?: boolean;
     /**
-     * Validation state of the component.<br>
-     * @default rest
+     * Validation state of the component: `rest` (no highlight), `warning` or `error`.
+     * Colors the border and the `helperText`.
+     * @default "rest"
      */
     status?: TimePickerStatus;
     /**
@@ -93,7 +94,9 @@ interface ITimePickerBaseProps {
      */
     clearable?: boolean;
     /**
-     * Specifies whether the time picker should use 12 or 24-hour format.
+     * Clock format of both the input and the popover: `24h` reads and writes `HH:mm:ss`
+     * (`18:45:00`), `12h` reads and writes `hh:mm:ss AM|PM` (`06:45:00 PM`) and adds the AM/PM column.
+     * An existing value is converted when the format changes.
      * @default "24h"
      */
     format?: TimePickerFormat;
@@ -103,7 +106,12 @@ interface ITimePickerBaseProps {
      */
     onOpenChange?: (open: boolean) => void;
     /**
-     * Custom localization for the component, including the accessible labels.
+     * Custom texts of the component. Every key is optional and falls back to the English default:<br>
+     * `hours`, `minutes`, `seconds` — headers of the popover columns;<br>
+     * `am`, `pm` — texts of the AM/PM buttons (12-hour format);<br>
+     * `clear` — accessible label of the clear button;<br>
+     * `selectHours`, `selectMinutes`, `selectSeconds`, `selectMeridiem` — accessible labels of the columns;<br>
+     * `startTime`, `endTime` — accessible labels of the two range inputs.
      */
     localization?: TimePickerLocalization;
     /**
@@ -127,11 +135,14 @@ interface ISingleTimePickerProps extends ITimePickerBaseProps {
      */
     placeholder?: string;
     /**
-     * The value of the input field. Providing it makes the component controlled.
+     * The value of the input field as a time string (`HH:mm:ss`, or `hh:mm:ss AM|PM` in the 12-hour
+     * format; a 24-hour string is accepted in either format). Providing it makes the component
+     * controlled, so it has to be updated from `onChange`. `null` or an empty string clears the field.
      */
     value?: string | null;
     /**
-     * Initial value of an uncontrolled component.
+     * Initial value of an uncontrolled component, in the same time string format as `value`.
+     * Read once, when the component mounts.
      */
     defaultValue?: string | null;
     /**
@@ -144,21 +155,24 @@ interface ISingleTimePickerProps extends ITimePickerBaseProps {
 
 interface IRangeTimePickerProps extends Omit<ITimePickerBaseProps, "onFocus" | "onBlur" | "onKeyDown"> {
     /**
-     * The placeholder text displayed when the input fields are empty.
+     * Placeholder texts of the two inputs, as `{ start, end }`.
      */
     placeholder?: {
         start: string;
         end: string;
     };
     /**
-     * The value of the input fields. Providing it makes the component controlled.
+     * Values of the two inputs, as `{ start, end }` time strings (`HH:mm:ss`, or `hh:mm:ss AM|PM` in
+     * the 12-hour format). Providing it makes the component controlled, so it has to be updated from
+     * `onChange`, which reports the changed field in its context. `null` clears a field.
      */
     value?: {
         start: string | null;
         end: string | null;
     };
     /**
-     * Initial value of an uncontrolled component.
+     * Initial values of an uncontrolled component, as `{ start, end }` time strings.
+     * Read once, when the component mounts.
      */
     defaultValue?: {
         start: string | null;
