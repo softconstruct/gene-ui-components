@@ -159,21 +159,12 @@ describe("TimePicker helpers", () => {
         const minParts = { hours: "10", minutes: "00", seconds: "00" };
 
         it("respects the min bound", () => {
-            expect(isTimeDisabled({ hours: "05", minutes: "00", seconds: "00" }, false, undefined, minParts)).toBe(
-                true
-            );
+            expect(isTimeDisabled({ hours: "05", minutes: "00", seconds: "00" }, false, minParts)).toBe(true);
+            expect(isTimeDisabled({ hours: "10", minutes: "00", seconds: "00" }, false, minParts)).toBe(false);
         });
 
-        it("keeps respecting the bounds when shouldDisableTime is provided", () => {
-            expect(isTimeDisabled({ hours: "05", minutes: "00", seconds: "00" }, false, () => false, minParts)).toBe(
-                true
-            );
-        });
-
-        it("respects shouldDisableTime", () => {
-            const shouldDisableTime = (type: string, value: string) => type === "hours" && value === "05";
-
-            expect(isTimeDisabled({ hours: "05", minutes: "00", seconds: "00" }, false, shouldDisableTime)).toBe(true);
+        it("ignores incomplete parts", () => {
+            expect(isTimeDisabled({ hours: "05" }, false, minParts)).toBe(false);
         });
     });
 
@@ -185,7 +176,7 @@ describe("TimePicker helpers", () => {
         });
 
         it("clamps to the min bound with valid parts", () => {
-            const nearest = getNearestAvailableTime({ hours: "05", minutes: "00", seconds: "00" }, false, undefined, {
+            const nearest = getNearestAvailableTime({ hours: "05", minutes: "00", seconds: "00" }, false, {
                 hours: "10",
                 minutes: "00",
                 seconds: "00"
@@ -194,32 +185,14 @@ describe("TimePicker helpers", () => {
             expect(nearest).toEqual({ hours: "10", minutes: "00", seconds: "00" });
         });
 
-        it("moves to the closest allowed hour", () => {
-            const nearest = getNearestAvailableTime(
-                { hours: "09", minutes: "30", seconds: "00" },
-                false,
-                (type, value) => type === "hours" && parseInt(value, 10) < 12
-            );
+        it("clamps to the max bound with valid parts", () => {
+            const nearest = getNearestAvailableTime({ hours: "18", minutes: "00", seconds: "00" }, false, null, {
+                hours: "17",
+                minutes: "30",
+                seconds: "00"
+            });
 
-            expect(nearest).toEqual({ hours: "12", minutes: "30", seconds: "00", meridiem: undefined });
-        });
-
-        it("searches away from a bound instead of giving up", () => {
-            const nearest = getNearestAvailableTime(
-                { hours: "11", minutes: "00", seconds: "00" },
-                false,
-                (type, value) => type === "hours" && value === "10",
-                null,
-                { hours: "10", minutes: "30", seconds: "00" }
-            );
-
-            expect(nearest).toEqual({ hours: "09", minutes: "30", seconds: "00", meridiem: undefined });
-        });
-
-        it("returns null when nothing is available", () => {
-            expect(
-                getNearestAvailableTime({ hours: "09", minutes: "30", seconds: "00" }, false, () => true)
-            ).toBeNull();
+            expect(nearest).toEqual({ hours: "17", minutes: "30", seconds: "00" });
         });
     });
 
@@ -518,11 +491,7 @@ describe("TimePicker", () => {
         });
 
         it("does not build the columns while closed", () => {
-            const shouldDisableTime = jest.fn(() => false);
-            setup.setProps({ shouldDisableTime });
-
             expect(setup.find(".timePicker__pickerButton").length).toBe(0);
-            expect(shouldDisableTime).not.toHaveBeenCalled();
         });
 
         it("renders the AM/PM column only in the 12-hour format", () => {
@@ -565,16 +534,6 @@ describe("TimePicker", () => {
             expect(meridiemButtons.at(0).text()).toBe("Day");
             expect(meridiemButtons.at(1).text()).toBe("Night");
         });
-
-        it("disables specific time values using shouldDisableTime", () => {
-            setup.setProps({ shouldDisableTime: (type, value) => type === "hours" && parseInt(value, 10) < 10 });
-            openPopover(setup);
-
-            const buttons = columnButtons(setup, 0);
-
-            expect(buttons.at(9).prop("disabled")).toBe(true);
-            expect(buttons.at(10).prop("disabled")).toBe(false);
-        });
     });
 
     describe(" -> Value handling -> ", () => {
@@ -592,14 +551,25 @@ describe("TimePicker", () => {
             });
         });
 
-        it("does not commit a selection when no allowed time exists", () => {
+        it("does not report a change when the selected value is picked again", () => {
             const onChange = jest.fn();
-            setup.setProps({ onChange, shouldDisableTime: () => true });
+            setup.setProps({ onChange });
 
             openPopover(setup);
             columnButtons(setup, 0).at(5).simulate("click");
+            columnButtons(setup, 0).at(5).simulate("click");
 
-            expect(onChange).not.toHaveBeenCalled();
+            expect(onChange).toHaveBeenCalledTimes(1);
+        });
+
+        it("does not report a change when the typed text did not change", () => {
+            const onChange = jest.fn();
+            setup.setProps({ onChange });
+
+            typeInto(setup, "10:3");
+            typeInto(setup, "10:3");
+
+            expect(onChange).toHaveBeenCalledTimes(1);
         });
 
         it("reports incomplete input with a null parts context", () => {
@@ -633,20 +603,13 @@ describe("TimePicker", () => {
             expect(setup.find("input.pickerInput__input").prop("value")).toBe("09:30:00");
         });
 
-        it("clamps a disabled typed value on blur", () => {
-            const onChange = jest.fn();
-            const picker = mountSingle({
-                shouldDisableTime: (type, value) => type === "hours" && parseInt(value, 10) < 12,
-                onChange
-            });
+        it("lets disabled win over readOnly", () => {
+            const picker = mountSingle({ disabled: true, readOnly: true });
 
-            typeInto(picker, "09:30:00");
-            picker.find("input.pickerInput__input").simulate("blur");
-
-            expect(onChange).toHaveBeenLastCalledWith("12:30:00", {
-                source: "input",
-                parts: { hours: "12", minutes: "30", seconds: "00", meridiem: undefined }
-            });
+            expect(picker.find(".pickerInput").hasClass("pickerInput_state_disabled")).toBeTruthy();
+            expect(picker.find(".pickerInput").hasClass("pickerInput_state_readOnly")).toBeFalsy();
+            expect(picker.find("input.pickerInput__input").prop("disabled")).toBe(true);
+            expect(picker.find("input.pickerInput__input").prop("readOnly")).toBe(false);
 
             picker.unmount();
         });
@@ -969,22 +932,6 @@ describe("Time range picker", () => {
             source: "input",
             parts: { hours: "10", minutes: "00", seconds: "00", meridiem: undefined }
         });
-
-        bounded.unmount();
-    });
-
-    it("keeps the range bounds while shouldDisableTime is provided", () => {
-        const onChange = jest.fn();
-        const bounded = mountRange({
-            defaultValue: { start: "10:00:00", end: null },
-            shouldDisableTime: () => false,
-            onChange
-        });
-
-        typeInto(bounded, "05:00:00", 1);
-        bounded.find("input.pickerInput__input").at(1).simulate("blur");
-
-        expect(onChange).toHaveBeenLastCalledWith("10:00:00", expect.objectContaining({ field: "end" }));
 
         bounded.unmount();
     });

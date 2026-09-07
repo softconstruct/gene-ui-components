@@ -14,13 +14,7 @@ import {
 // Helpers
 import { composeTime, getNearestAvailableTime, parseTime, withTimePart } from "../helpers";
 // Types
-import {
-    ShouldDisableTime,
-    TimeParts,
-    TimePickerChangeContext,
-    TimePickerRangeChangeContext,
-    TimePickerRangeFields
-} from "../types";
+import { TimeParts, TimePickerChangeContext, TimePickerRangeChangeContext, TimePickerRangeFields } from "../types";
 
 type PopoverCloseHandler = NonNullable<IPopoverProps["onClose"]>;
 
@@ -37,20 +31,17 @@ const OPEN_KEYS: string[] = [KEYS.ARROW_DOWN, KEYS.ENTER, KEYS.SPACE];
 
 /**
  * @description
- * Applies a single column selection on top of the current parts and validates the result.
- *
- * Returns `null` when no allowed time exists, so the caller can reject the interaction instead of
- * committing (and emitting) a value that is actually disabled.
+ * Applies a single column selection on top of the current parts, filling the columns that have no
+ * value yet, and keeps the result inside the range bounds.
  */
 const processTimeSelection = (
     prev: TimeParts,
     column: keyof TimeParts,
     value: string,
     is12Hour: boolean,
-    shouldDisableTime?: ShouldDisableTime,
     minParts: TimeParts | null = null,
     maxParts: TimeParts | null = null
-): { nextParts: TimeParts; composedTime: string } | null => {
+): { nextParts: TimeParts; composedTime: string } => {
     const base: TimeParts = {
         hours: prev.hours ?? (is12Hour ? TIME_PART_DEFAULT_12H_HOUR : TIME_PART_DEFAULT_TEXT_VALUE),
         minutes: prev.minutes ?? TIME_PART_DEFAULT_TEXT_VALUE,
@@ -58,15 +49,7 @@ const processTimeSelection = (
         meridiem: prev.meridiem ?? (is12Hour ? MERIDIEMS.AM : undefined)
     };
 
-    const nearest = getNearestAvailableTime(
-        withTimePart(base, column, value),
-        is12Hour,
-        shouldDisableTime,
-        minParts,
-        maxParts
-    );
-
-    if (!nearest) return null;
+    const nearest = getNearestAvailableTime(withTimePart(base, column, value), is12Hour, minParts, maxParts);
 
     return { nextParts: nearest, composedTime: composeTime(nearest, is12Hour) };
 };
@@ -76,21 +59,19 @@ const processTimeSelection = (
  * Works out what a field should hold once it loses focus.
  *
  * Typed text is committed verbatim while the field has focus, so normalization (padding, 24 to
- * 12-hour conversion) and clamping against `shouldDisableTime` / the range bounds happen here.
+ * 12-hour conversion) and clamping against the range bounds happen here.
  * Returns `null` when there is nothing to change.
  */
 const resolveBlurValue = (
     rawValue: string | null,
     lastValidValue: string | null,
     is12Hour: boolean,
-    shouldDisableTime?: ShouldDisableTime,
     minParts: TimeParts | null = null,
     maxParts: TimeParts | null = null
 ): { value: string | null; parts: TimeParts | null } | null => {
     const parsed = parseTime(rawValue, is12Hour, { allow24HourInput: true });
-    const nearest = parsed && getNearestAvailableTime(parsed, is12Hour, shouldDisableTime, minParts, maxParts);
+    const nearest = parsed && getNearestAvailableTime(parsed, is12Hour, minParts, maxParts);
 
-    // Incomplete, or nothing allowed: fall back to the last complete value, or empty the field.
     if (!nearest) {
         if (!rawValue) return null;
 
@@ -342,7 +323,6 @@ export interface IUseSingleTimePickerOptions {
     disabled?: boolean;
     readOnly?: boolean;
     is12Hour?: boolean;
-    shouldDisableTime?: ShouldDisableTime;
     onChange?: (time: string, context: TimePickerChangeContext) => void;
     onClear?: () => void;
     onOpenChange?: (open: boolean) => void;
@@ -362,7 +342,6 @@ export const useSingleTimePicker = ({
     disabled,
     readOnly,
     is12Hour = false,
-    shouldDisableTime,
     onChange,
     onClear,
     onOpenChange,
@@ -386,6 +365,9 @@ export const useSingleTimePicker = ({
         const nextValue = event.target.value;
 
         field.setIsEditing(true);
+
+        if (nextValue === field.rawValue) return;
+
         field.setValue(nextValue);
         onChange?.(nextValue, { source: "input", parts: parseTime(nextValue, is12Hour) });
     };
@@ -397,7 +379,7 @@ export const useSingleTimePicker = ({
 
         if (!base.isInteractive) return;
 
-        const resolved = resolveBlurValue(field.rawValue, field.lastValidValueRef.current, is12Hour, shouldDisableTime);
+        const resolved = resolveBlurValue(field.rawValue, field.lastValidValueRef.current, is12Hour);
 
         if (!resolved) return;
 
@@ -408,8 +390,9 @@ export const useSingleTimePicker = ({
     const handleSelect = (column: keyof TimeParts, val: string) => {
         if (!base.isInteractive) return;
 
-        const result = processTimeSelection(field.parts, column, val, is12Hour, shouldDisableTime);
-        if (!result) return;
+        const result = processTimeSelection(field.parts, column, val, is12Hour);
+
+        if (result.composedTime === field.rawValue) return;
 
         field.setValue(result.composedTime);
         onChange?.(result.composedTime, { source: "select", parts: result.nextParts });
@@ -420,9 +403,15 @@ export const useSingleTimePicker = ({
 
         if (!clearable) return;
 
+        const hadValue = !!field.rawValue;
+
         field.setValue(null);
         base.togglePopover(false);
-        onChange?.("", { source: "clear", parts: null });
+
+        if (hadValue) {
+            onChange?.("", { source: "clear", parts: null });
+        }
+
         base.focusInputSilently(inputRef.current);
     };
 
@@ -479,7 +468,6 @@ export interface IUseRangeTimePickerOptions {
     disabled?: boolean;
     readOnly?: boolean;
     is12Hour?: boolean;
-    shouldDisableTime?: ShouldDisableTime;
     onChange?: (time: string, context: TimePickerRangeChangeContext) => void;
     onClear?: () => void;
     onOpenChange?: (open: boolean) => void;
@@ -499,7 +487,6 @@ export const useRangeTimePicker = ({
     disabled,
     readOnly,
     is12Hour = false,
-    shouldDisableTime,
     onChange,
     onClear,
     onOpenChange,
@@ -553,6 +540,9 @@ export const useRangeTimePicker = ({
         const nextValue = event.target.value;
 
         current.setIsEditing(true);
+
+        if (nextValue === current.rawValue) return;
+
         current.setValue(nextValue);
         onChange?.(nextValue, { field, source: "input", parts: parseTime(nextValue, is12Hour) });
     };
@@ -571,7 +561,6 @@ export const useRangeTimePicker = ({
             current.rawValue,
             current.lastValidValueRef.current,
             is12Hour,
-            shouldDisableTime,
             minParts,
             maxParts
         );
@@ -588,17 +577,9 @@ export const useRangeTimePicker = ({
         const { current } = getFieldRefs(activeField);
         const { minParts, maxParts } = getBounds(activeField);
 
-        const result = processTimeSelection(
-            current.parts,
-            column,
-            val,
-            is12Hour,
-            shouldDisableTime,
-            minParts,
-            maxParts
-        );
+        const result = processTimeSelection(current.parts, column, val, is12Hour, minParts, maxParts);
 
-        if (!result) return;
+        if (result.composedTime === current.rawValue) return;
 
         current.setValue(result.composedTime);
         onChange?.(result.composedTime, { field: activeField, source: "select", parts: result.nextParts });
@@ -609,12 +590,17 @@ export const useRangeTimePicker = ({
 
         if (!clearable) return;
 
+        const hadValue = !!startField.rawValue || !!endField.rawValue;
+
         startField.setValue(null);
         endField.setValue(null);
         setActiveField(PICKER_RANGE_FIELDS.START);
         base.togglePopover(false);
 
-        onChange?.("", { field: PICKER_RANGE_FIELDS.START, source: "clear", parts: null });
+        if (hadValue) {
+            onChange?.("", { field: PICKER_RANGE_FIELDS.START, source: "clear", parts: null });
+        }
+
         base.focusInputSilently(startInputRef.current);
     };
 

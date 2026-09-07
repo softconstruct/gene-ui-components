@@ -21,13 +21,7 @@ import {
     TIME_PARTS_RADIX
 } from "./constants";
 // Types
-import {
-    ShouldDisableTime,
-    TimeParts,
-    TimePickerLocalization,
-    TimePickerMeridiem,
-    TimePickerRangeFields
-} from "./types";
+import { TimeParts, TimePickerLocalization, TimePickerMeridiem, TimePickerRangeFields } from "./types";
 
 // ---------------------------------------------------------
 // Primitives
@@ -265,33 +259,14 @@ export const getTimePartValues = (part: keyof TimeParts, is12Hour: boolean): str
 
 /**
  * @description
- * A time is disabled when any of its parts is rejected by `shouldDisableTime`
- * **or** when it falls outside the `minParts`/`maxParts` bounds.
- *
- * Both checks are applied: previously a provided `shouldDisableTime` short circuited the
- * function, which silently disabled the range (start/end) bounds.
+ * A complete time is disabled when it falls outside the `minParts`/`maxParts` bounds.
  */
 export const isTimeDisabled = (
     parts: TimeParts,
     is12Hour: boolean,
-    shouldDisableTime?: ShouldDisableTime,
     minParts?: TimeParts | null,
     maxParts?: TimeParts | null
 ): boolean => {
-    if (shouldDisableTime) {
-        const isPartDisabled = ([part, value]: [keyof TimeParts, string | undefined]) =>
-            !!value && shouldDisableTime(part, value);
-
-        const entries: [keyof TimeParts, string | undefined][] = [
-            [TIME_PARTS.HOURS, parts.hours],
-            [TIME_PARTS.MINUTES, parts.minutes],
-            [TIME_PARTS.SECONDS, parts.seconds],
-            [TIME_PARTS.MERIDIEM, parts.meridiem]
-        ];
-
-        if (entries.some(isPartDisabled)) return true;
-    }
-
     if (!isValidTimeParts(parts)) return false;
 
     const currentSeconds = convertPartsToSeconds(parts, is12Hour);
@@ -348,79 +323,6 @@ const isPartOutOfBounds = (
     return isMinBound ? candidateSeconds < boundSeconds : candidateSeconds > boundSeconds;
 };
 
-/**
- * @description
- * Finds the closest allowed value inside a single column, searching forward and backward
- * from the current one. Returns `null` when the whole column is disabled.
- */
-const nearestAllowedValue = (
-    values: string[],
-    current: string | undefined,
-    isDisabled: (value: string) => boolean
-): string | null => {
-    if (current !== undefined && !isDisabled(current)) return current;
-
-    const currentIndex = current === undefined ? 0 : values.indexOf(current);
-    const startIndex = currentIndex < 0 ? 0 : currentIndex;
-
-    for (let offset = 0; offset < values.length; offset++) {
-        const forward = values[startIndex + offset];
-        if (forward !== undefined && !isDisabled(forward)) return forward;
-
-        const backward = values[startIndex - offset];
-        if (backward !== undefined && !isDisabled(backward)) return backward;
-    }
-
-    return null;
-};
-
-/**
- * @description
- * Replaces every rejected column value with the closest allowed one, walking from the most
- * significant column to the least significant one so that each search already sees the columns
- * fixed before it.
- *
- * The bounds take part in the per column search instead of being applied afterwards only: with
- * `10:30` as the maximum and the `10` hour rejected by `shouldDisableTime`, the hours column
- * resolves to `09`, while the search on its own would prefer the `11` that the bound forbids.
- */
-const resolveDisabledParts = (
-    parts: TimeParts,
-    is12Hour: boolean,
-    shouldDisableTime?: ShouldDisableTime,
-    minParts?: TimeParts | null,
-    maxParts?: TimeParts | null
-): TimeParts | null => {
-    const min = minParts && isValidTimeParts(minParts) ? minParts : null;
-    const max = maxParts && isValidTimeParts(maxParts) ? maxParts : null;
-
-    if (!shouldDisableTime && !min && !max) return parts;
-
-    let resolved: TimeParts = parts;
-
-    const isValueDisabled = (part: keyof TimeParts) => (value: string) =>
-        !!shouldDisableTime?.(part, value) ||
-        (!!min && isPartOutOfBounds(part, value, resolved, min, is12Hour, true)) ||
-        (!!max && isPartOutOfBounds(part, value, resolved, max, is12Hour, false));
-
-    const resolvePart = (part: keyof TimeParts, values: string[]): boolean => {
-        const value = nearestAllowedValue(values, resolved[part], isValueDisabled(part));
-
-        if (value === null) return false;
-
-        resolved = withTimePart(resolved, part, value);
-
-        return true;
-    };
-
-    if (is12Hour && !resolvePart(TIME_PARTS.MERIDIEM, MERIDIEM_LIST)) return null;
-    if (!resolvePart(TIME_PARTS.HOURS, getTimePartValues(TIME_PARTS.HOURS, is12Hour))) return null;
-    if (!resolvePart(TIME_PARTS.MINUTES, MINUTES)) return null;
-    if (!resolvePart(TIME_PARTS.SECONDS, SECONDS)) return null;
-
-    return is12Hour ? resolved : { ...resolved, meridiem: undefined };
-};
-
 const clampPartsToBounds = (
     parts: TimeParts,
     is12Hour: boolean,
@@ -443,30 +345,15 @@ const clampPartsToBounds = (
 
 /**
  * @description
- * Returns the closest allowed time, or `null` when no allowed time exists.
- *
- * `shouldDisableTime` and the bounds are evaluated per column, so the cost is proportional to the
- * number of selectable values (≤ 146 predicate calls) instead of the previous second by second scan
- * over the whole day (up to ~345.000 predicate calls per keystroke).
+ * Returns the closest allowed time: the time itself while it is inside the bounds, otherwise the
+ * bound it went past. Incomplete parts are returned untouched.
  */
 export const getNearestAvailableTime = (
     parts: TimeParts,
     is12Hour: boolean,
-    shouldDisableTime?: ShouldDisableTime,
     minParts?: TimeParts | null,
     maxParts?: TimeParts | null
-): TimeParts | null => {
-    if (!isTimeDisabled(parts, is12Hour, shouldDisableTime, minParts, maxParts)) return parts;
-
-    const clamped = clampPartsToBounds(parts, is12Hour, minParts, maxParts);
-    const resolved = resolveDisabledParts(clamped, is12Hour, shouldDisableTime, minParts, maxParts);
-
-    if (resolved === null) return null;
-
-    const candidate = clampPartsToBounds(resolved, is12Hour, minParts, maxParts);
-
-    return isTimeDisabled(candidate, is12Hour, shouldDisableTime, minParts, maxParts) ? null : candidate;
-};
+): TimeParts => clampPartsToBounds(parts, is12Hour, minParts, maxParts);
 
 export const isPickerPartDisabled = (
     part: keyof TimeParts,
@@ -475,13 +362,8 @@ export const isPickerPartDisabled = (
     is12Hour: boolean,
     activeField?: TimePickerRangeFields,
     partsStart?: TimeParts,
-    partsEnd?: TimeParts,
-    shouldDisableTime?: ShouldDisableTime
+    partsEnd?: TimeParts
 ): boolean => {
-    if (shouldDisableTime?.(part, item)) {
-        return true;
-    }
-
     if (activeField === PICKER_RANGE_FIELDS.END && partsStart?.hours) {
         return isPartOutOfBounds(part, item, parts, partsStart, is12Hour, true);
     }

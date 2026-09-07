@@ -424,6 +424,7 @@ const PickerMaskedInput: FC<IPickerMaskedInputProps> = ({
             ref={inputRef}
             mask={mask}
             replacement={maskReplacement}
+            size={mask.length + 1}
             className={classNames("pickerInput__input", {
                 [`pickerInput__input_size_${size}`]: size
             })}

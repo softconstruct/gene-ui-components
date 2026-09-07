@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
+// Constants
+import { DEFAULT_LOCALIZATION } from "./constants";
 // Components
 import TimePicker, { IRangeTimePickerProps, ISingleTimePickerProps, RangeTimePicker } from "./index";
 // Types
@@ -38,12 +40,20 @@ const meta: Meta<typeof TimePicker> = {
         onBlur: args({ control: "false", ...propCategory.action }),
         onKeyDown: args({ control: "false", ...propCategory.action }),
         format: args({ control: "select", options: ["24h", "12h"], ...propCategory.functionality }),
-        localization: args({ control: "object", ...propCategory.content }),
-        shouldDisableTime: args({ control: "false", ...propCategory.functionality })
+        localization: args({ control: "object", ...propCategory.content })
     },
     args: {
         label: "Choose time",
-        placeholder: "Select time"
+        placeholder: "Select time",
+        defaultValue: "",
+        size: "medium",
+        format: "24h",
+        status: "rest",
+        clearable: false,
+        disabled: false,
+        readOnly: false,
+        required: false,
+        localization: DEFAULT_LOCALIZATION
     }
 };
 
@@ -88,12 +98,7 @@ const singlePickerCases: SinglePickerCase[] = [
     { key: "error", label: "Errored with message", status: "error", helperText: "Error message" },
     { key: "warning", label: "Warning with message", status: "warning", helperText: "Double check the time" },
     { key: "helperText", label: "With helper text", helperText: "Business hours only", infoText: "Local time" },
-    { key: "12h", label: "12-Hour Format", format: "12h", placeholder: "12:00:00 AM" },
-    {
-        key: "disabledTimes",
-        label: "Disabled Specific Times",
-        shouldDisableTime: (type, value) => type === "hours" && parseInt(value, 10) < 12
-    }
+    { key: "12h", label: "12-Hour Format", format: "12h", placeholder: "12:00:00 AM" }
 ];
 
 const ControlledRangePicker = (props: IRangeTimePickerProps) => {
@@ -139,16 +144,40 @@ const rangePickerCases: RangePickerCase[] = [
         label: "Start and end kept in order",
         placeholder: rangePlaceholder,
         defaultValue: { start: "09:00:00", end: "17:00:00" }
-    },
-    {
-        key: "disabledTimes",
-        label: "Disabled Specific Times",
-        placeholder: rangePlaceholder,
-        shouldDisableTime: (type, value) => type === "hours" && parseInt(value, 10) > 18
     }
 ];
 
-export const Default: SingleStory = {};
+/**
+ * The range picker takes `{ start, end }` objects where the single picker takes strings, so its
+ * stories override those controls.
+ */
+const rangeArgTypes = {
+    placeholder: args({ control: "object", ...propCategory.appearance }),
+    value: args({ control: "object", ...propCategory.functionality }),
+    defaultValue: args({ control: "object", ...propCategory.functionality })
+};
+
+/**
+ * `defaultValue` is only read when the component mounts, so the interactive stories remount it
+ * when that control changes.
+ */
+export const Default: SingleStory = {
+    render: ({ defaultValue, ...props }) => (
+        <TimePicker key={String(defaultValue)} defaultValue={defaultValue} {...props} />
+    )
+};
+
+export const Range: RangeStory = {
+    render: ({ defaultValue, ...props }) => (
+        <TimePicker.Range key={JSON.stringify(defaultValue)} defaultValue={defaultValue} {...props} />
+    ),
+    args: {
+        label: "Choose time range",
+        placeholder: rangePlaceholder,
+        defaultValue: { start: "09:00:00", end: "17:00:00" }
+    },
+    argTypes: rangeArgTypes
+};
 
 export const SinglePickerStates: SingleStory = {
     render: (props) => (
@@ -177,5 +206,10 @@ export const RangePickerStates: RangeStory = {
                 </div>
             ))}
         </div>
-    )
+    ),
+    args: {
+        placeholder: rangePlaceholder,
+        defaultValue: { start: "09:00:00", end: "17:00:00" }
+    },
+    argTypes: rangeArgTypes
 };

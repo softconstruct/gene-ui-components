@@ -21,8 +21,6 @@ export type TimePickerStatus = "rest" | "warning" | "error";
  */
 export type TimePickerChangeSource = "input" | "select" | "clear";
 
-export type ShouldDisableTime = (type: keyof TimeParts, value: string) => boolean;
-
 export type TimePickerChangeContext = {
     source: TimePickerChangeSource;
     /**

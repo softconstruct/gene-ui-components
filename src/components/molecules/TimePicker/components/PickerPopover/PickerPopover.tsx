@@ -24,13 +24,7 @@ import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider"
 import { headerTextVariantMap, KEYS, MERIDIEM_LIST, MERIDIEMS, TIME_COLUMNS_ORDER, TIME_PARTS } from "../../constants";
 import { getTimePartValues, isPickerPartDisabled, resolveLocalization } from "../../helpers";
 // Types
-import {
-    ShouldDisableTime,
-    TimeParts,
-    TimePickerLocalization,
-    TimePickerRangeFields,
-    TimePickerSizes
-} from "../../types";
+import { TimeParts, TimePickerLocalization, TimePickerRangeFields, TimePickerSizes } from "../../types";
 import PickerButton from "../PickerButton/PickerButton";
 
 type PickerColumnEntry = {
@@ -135,10 +129,6 @@ interface IPickerPopoverProps {
      * Time parts of both range fields, used to keep start and end in order.
      */
     partsEnd?: TimeParts;
-    /**
-     * Callback invoked to determine whether a time part should be disabled.
-     */
-    shouldDisableTime?: ShouldDisableTime;
 }
 
 const VERTICAL_KEYS: string[] = [KEYS.ARROW_UP, KEYS.ARROW_DOWN];
@@ -170,11 +160,22 @@ const getTabStopIndex = (entries: PickerColumnEntry[]): number => {
     return firstEnabledIndex >= 0 ? firstEnabledIndex : 0;
 };
 
+/**
+ * @description
+ * Overflowing content alone does not make a node scrollable: the custom scrollbar wraps the list in
+ * a clipped content node whose `scrollTop` is inert, so only an ancestor that scrolls counts.
+ */
+const isScrollable = (node: HTMLElement): boolean => {
+    const { overflowY } = getComputedStyle(node);
+
+    return (overflowY === "auto" || overflowY === "scroll") && node.scrollHeight > node.clientHeight;
+};
+
 const getScrollableAncestor = (element: HTMLElement, boundary: HTMLElement | null): HTMLElement | null => {
     let node: HTMLElement | null = element.parentElement;
 
     while (node) {
-        if (node.scrollHeight > node.clientHeight) return node;
+        if (isScrollable(node)) return node;
         if (node === boundary) return null;
 
         node = node.parentElement;
@@ -213,7 +214,6 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
     parts,
     is12Hour,
     localization,
-    shouldDisableTime,
     activeField,
     partsStart,
     partsEnd
@@ -239,18 +239,9 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
                 value,
                 text: getText(value),
                 selected: parts?.[part] === value,
-                disabled: isPickerPartDisabled(
-                    part,
-                    value,
-                    parts,
-                    is12Hour,
-                    activeField,
-                    partsStart,
-                    partsEnd,
-                    shouldDisableTime
-                )
+                disabled: isPickerPartDisabled(part, value, parts, is12Hour, activeField, partsStart, partsEnd)
             })),
-        [parts, is12Hour, activeField, partsStart, partsEnd, shouldDisableTime]
+        [parts, is12Hour, activeField, partsStart, partsEnd]
     );
 
     const columns = useMemo<PickerColumn[]>(() => {
@@ -331,12 +322,14 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
         if (pendingScrollRef.current) {
             pendingScrollRef.current = false;
 
-            columnOrder.forEach((part) => {
-                const selected = columnRefs.current[part]?.querySelector<HTMLElement>('[aria-selected="true"]');
+            queueMicrotask(() => {
+                columnOrder.forEach((part) => {
+                    const selected = columnRefs.current[part]?.querySelector<HTMLElement>('[aria-selected="true"]');
 
-                if (selected) {
-                    scrollIntoCenter(selected, wrapperRef.current);
-                }
+                    if (selected) {
+                        scrollIntoCenter(selected, wrapperRef.current);
+                    }
+                });
             });
         }
 
@@ -362,6 +355,35 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
             applyPendingColumnEffects();
         }
     }, [open, focusOnOpen, columnOrder]);
+
+    /**
+     * Columns whose selected value changed while the popover is open (a value picked in another
+     * column filling this one with `00`, or the range switching fields) scroll to the new selection.
+     * The first render after opening is covered by the pending scroll above.
+     */
+    const previousPartsRef = useRef<TimeParts | undefined>(undefined);
+
+    useEffect(() => {
+        if (!open) {
+            previousPartsRef.current = undefined;
+            return;
+        }
+
+        const previous = previousPartsRef.current;
+        previousPartsRef.current = parts;
+
+        if (!previous) return;
+
+        columnOrder.forEach((part) => {
+            if (previous[part] === parts?.[part]) return;
+
+            const selected = columnRefs.current[part]?.querySelector<HTMLElement>('[aria-selected="true"]');
+
+            if (selected) {
+                scrollIntoCenter(selected, wrapperRef.current);
+            }
+        });
+    }, [open, parts, columnOrder]);
 
     const handleColumnClick = (part: keyof TimeParts) => (event: MouseEvent<HTMLDivElement>) => {
         const button = (event.target as HTMLElement).closest("button");

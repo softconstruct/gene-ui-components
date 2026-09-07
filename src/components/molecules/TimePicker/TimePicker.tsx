@@ -27,7 +27,6 @@ import { resolveLocalization } from "./helpers";
 import { useRangeTimePicker, useSingleTimePicker } from "./hooks/useTimePicker";
 // Types
 import {
-    ShouldDisableTime,
     TimePickerChangeContext,
     TimePickerFormat,
     TimePickerLocalization,
@@ -78,7 +77,7 @@ interface ITimePickerBaseProps {
     readOnly?: boolean;
     /**
      * Validation state of the component.<br>
-     * @default "rest"
+     * @default rest
      */
     status?: TimePickerStatus;
     /**
@@ -107,12 +106,6 @@ interface ITimePickerBaseProps {
      * Custom localization for the component, including the accessible labels.
      */
     localization?: TimePickerLocalization;
-    /**
-     * Disabled specific time programmatically.
-     * @param type
-     * @param value
-     */
-    shouldDisableTime?: ShouldDisableTime;
     /**
      * Callback function which triggers when an input of the component is getting focused.
      */
@@ -227,7 +220,6 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
             helperText,
             format = "24h",
             localization,
-            shouldDisableTime,
             onFocus,
             onBlur,
             onKeyDown
@@ -235,6 +227,7 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
         ref
     ) => {
         const is12Hour = format === "12h";
+        const isReadOnly = !!readOnly && !disabled;
 
         const {
             popoverOpen,
@@ -263,9 +256,8 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
             defaultValue,
             clearable,
             disabled,
-            readOnly,
+            readOnly: isReadOnly,
             is12Hour,
-            shouldDisableTime,
             onChange,
             onClear,
             onOpenChange,
@@ -288,7 +280,7 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
                     labelFor={generatedId}
                     size={labelSizeMap[size]}
                     disabled={disabled}
-                    readOnly={readOnly}
+                    readOnly={isReadOnly}
                     className="pickerInput__label"
                     required={required}
                     infoText={infoText}
@@ -303,7 +295,7 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
                     value={valueToUse}
                     EndIcon={Clock}
                     disabled={disabled}
-                    readOnly={readOnly}
+                    readOnly={isReadOnly}
                     required={required}
                     anchorProps={anchorProps}
                     anchorRef={anchorRef}
@@ -339,7 +331,6 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
                     parts={parts}
                     is12Hour={is12Hour}
                     localization={localization}
-                    shouldDisableTime={shouldDisableTime}
                 />
             </div>
         );
@@ -374,7 +365,6 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
             helperText,
             format = "24h",
             localization,
-            shouldDisableTime,
             onFocus,
             onBlur,
             onKeyDown
@@ -382,6 +372,7 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
         ref
     ) => {
         const is12Hour = format === "12h";
+        const isReadOnly = !!readOnly && !disabled;
 
         const {
             popoverRef,
@@ -413,9 +404,8 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
             defaultValue,
             clearable,
             disabled,
-            readOnly,
+            readOnly: isReadOnly,
             is12Hour,
-            shouldDisableTime,
             onChange,
             onClear,
             onOpenChange,
@@ -439,7 +429,7 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
                     labelFor={fieldIds.start}
                     size={labelSizeMap[size]}
                     disabled={disabled}
-                    readOnly={readOnly}
+                    readOnly={isReadOnly}
                     className="pickerInput__label"
                     required={required}
                     infoText={infoText}
@@ -455,7 +445,7 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
                     value={valueToUse}
                     EndIcon={Clock}
                     disabled={disabled}
-                    readOnly={readOnly}
+                    readOnly={isReadOnly}
                     required={required}
                     anchorProps={anchorProps}
                     anchorRef={anchorRef}
@@ -494,7 +484,6 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
                     onSelect={handleSelect}
                     is12Hour={is12Hour}
                     localization={localization}
-                    shouldDisableTime={shouldDisableTime}
                 />
             </div>
         );
