@@ -1,1 +1,1 @@
-export { IStackedBarChartProps, default } from "./StackedBarChart";
+export { IStackedBarChartProps, IStackedBarChartSeries, default } from "./StackedBarChart";

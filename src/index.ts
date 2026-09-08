@@ -145,7 +145,11 @@ export {
     IGroupedBarChartProps,
     IGroupedBarChartSeries
 } from "./components/charts/GroupedBarChart";
-export { default as StackedBarChart } from "./components/charts/StackedBarChart";
+export {
+    default as StackedBarChart,
+    IStackedBarChartProps,
+    IStackedBarChartSeries
+} from "./components/charts/StackedBarChart";
 
 // Providers
 export {

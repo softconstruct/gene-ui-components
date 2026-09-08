@@ -1,23 +1,77 @@
 import React from "react";
-import { mount, ReactWrapper } from "enzyme";
+import { mount } from "enzyme";
 
-// Components
-import StackedBarChart, { IStackedBarChartProps } from "./index";
+import Loader from "@components/atoms/Loader";
+import Empty from "@components/molecules/Empty";
+import GeneUIProvider from "@components/providers/GeneUIProvider";
 
-describe("StackedBarChart ", () => {
-    let setup: ReactWrapper<IStackedBarChartProps>;
-    beforeEach(() => {
-        setup = mount(<StackedBarChart />);
-    });
+import StackedBarChart from "./index";
+
+jest.mock("highcharts-react-official", () => {
+    const MockHighchartsReact = ({
+        options
+    }: {
+        options: { chart?: { animation?: boolean }; plotOptions?: { series?: { animation?: boolean } } };
+    }) => (
+        <div
+            className="highcharts-react-mock"
+            data-animation={String(options?.chart?.animation)}
+            data-series-animation={String(options?.plotOptions?.series?.animation)}
+        />
+    );
+
+    return {
+        __esModule: true,
+        default: MockHighchartsReact
+    };
+});
+
+jest.mock("highcharts", () => ({
+    addEvent: jest.fn(() => jest.fn())
+}));
+
+describe("StackedBarChart", () => {
+    const categories = ["Segment", "Segment", "Segment", "Segment"];
+    const series = [
+        { name: "Channel 1", data: [10, 20, 30, 40], color: "#b91c1c" },
+        { name: "Channel 2", data: [15, 25, 35, 45], color: "#0057b8" }
+    ];
+
+    const mountStackedBarChart = (props = {}) =>
+        mount(<StackedBarChart categories={categories} series={series} {...props} />, {
+            wrappingComponent: GeneUIProvider
+        });
 
     it("renders without crashing", () => {
-        expect(setup.exists()).toBeTruthy();
+        const wrapper = mountStackedBarChart();
+        expect(wrapper.exists()).toBeTruthy();
+        expect(wrapper.find(".highcharts-react-mock").exists()).toBeTruthy();
     });
 
-    it("renders className prop correctly", () => {
-        const className = "test-class";
-        const wrapper = setup.setProps({ className });
+    it("renders loading state", () => {
+        const wrapper = mountStackedBarChart({ loading: true, loadingText: "Loading Info" });
+        expect(wrapper.find(Loader).exists()).toBeTruthy();
+        expect(wrapper.find(".highcharts-react-mock").exists()).toBeFalsy();
+    });
 
-        expect(wrapper.hasClass(className)).toBeTruthy();
+    it("renders empty state when series has no data", () => {
+        const wrapper = mount(
+            <StackedBarChart
+                categories={categories}
+                series={undefined}
+                emptyTitle="No Data Available"
+                emptyDescription="No data is available for display at this moment."
+            />,
+            { wrappingComponent: GeneUIProvider }
+        );
+        expect(wrapper.find(Empty).exists()).toBeTruthy();
+        expect(wrapper.find(".highcharts-react-mock").exists()).toBeFalsy();
+    });
+
+    it("disables chart animations by default", () => {
+        const wrapper = mountStackedBarChart();
+        const mock = wrapper.find(".highcharts-react-mock");
+        expect(mock.prop("data-animation")).toBe("false");
+        expect(mock.prop("data-series-animation")).toBe("false");
     });
 });
