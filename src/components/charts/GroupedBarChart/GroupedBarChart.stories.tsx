@@ -47,7 +47,6 @@ const meta: Meta<IGroupedBarChartProps> = {
         xAxisTitle: "X axis name",
         yAxisTitle: "Y axis name",
         min: 0,
-        max: 300,
         showLegend: true,
         loading: false,
         valueFormatter: (value) => `${value}`
