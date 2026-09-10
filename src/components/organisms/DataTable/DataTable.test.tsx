@@ -1,12 +1,16 @@
-import React, { MouseEvent } from "react";
+import React, { MouseEvent, ReactNode } from "react";
 import { mount, ReactWrapper } from "enzyme";
 import { act } from "react-dom/test-utils";
 
+import Button from "@components/atoms/Button";
 import Loader from "@components/atoms/Loader";
+import { Popover } from "@components/atoms/Popover";
+import Checkbox from "@components/molecules/Checkbox";
 import Empty from "@components/molecules/Empty";
 import Pagination from "@components/molecules/Pagination";
 import { INITIAL_PAGE_SIZE } from "@components/organisms/DataTable/constants";
-import { DataTableColumn } from "@components/organisms/DataTable/types";
+import Toolbar from "@components/organisms/DataTable/Toolbar/Toolbar";
+import { DataTableColumn, DataTableRenderCellArgs } from "@components/organisms/DataTable/types";
 
 import { mockColumns, mockData } from "../../../../stories/data/__dataTable";
 // Components
@@ -292,7 +296,7 @@ describe("Table Component", () => {
 
         expect(onRowExpandChange).toHaveBeenCalled();
         expect(onRowExpandChange).toHaveBeenCalledWith(
-            expect.objectContaining({ isExpanded: true, row: mockData[0], rowId: expect.any(String) })
+            expect.objectContaining({ isExpanded: true, row: mockData[0], rowId: expect.stringMatching(/.+/) })
         );
     });
 
@@ -317,7 +321,7 @@ describe("Table Component", () => {
 
         expect(onRowExpandChange).toHaveBeenNthCalledWith(
             1,
-            expect.objectContaining({ isExpanded: true, row: mockData[0], rowId: expect.any(String) })
+            expect.objectContaining({ isExpanded: true, row: mockData[0], rowId: expect.stringMatching(/.+/) })
         );
 
         await act(async () => {
@@ -328,7 +332,7 @@ describe("Table Component", () => {
         expect(onRowExpandChange).toHaveBeenCalledTimes(2);
         expect(onRowExpandChange).toHaveBeenNthCalledWith(
             2,
-            expect.objectContaining({ isExpanded: false, row: mockData[0], rowId: expect.any(String) })
+            expect.objectContaining({ isExpanded: false, row: mockData[0], rowId: expect.stringMatching(/.+/) })
         );
     });
 
@@ -342,13 +346,28 @@ describe("Table Component", () => {
 
         expect(onRowExpandChange).not.toHaveBeenCalled();
     });
+
+    it("renders Toolbar when manage columns enabled prop is true", async () => {
+        await act(async () => {
+            setup.setProps({ manageColumnsConfig: { enabled: true, available: true } });
+        });
+        setup.update();
+
+        const toolbar = setup.find(Toolbar);
+        expect(toolbar.exists()).toBeTruthy();
+
+        const manageButton = setup.find(Button).filterWhere((b) => b.text().includes("Manage columns"));
+        expect(manageButton.prop("disabled")).toBe(false);
+    });
 });
 
 describe("Table Component - body cell memoization", () => {
     const visibleData = mockData.slice(0, 3);
 
     const buildSpyColumns = () => {
-        const renderSpy = jest.fn(({ value }: { value: unknown }) => <span>{String(value ?? "")}</span>);
+        const renderSpy = jest.fn(({ value }: DataTableRenderCellArgs<MockDataType, ReactNode>) => (
+            <span>{String(value ?? "")}</span>
+        ));
         const columns: DataTableColumn<MockDataType>[] = [
             { accessorKey: "Id", header: "Id", renderCell: renderSpy },
             { accessorKey: "Email", header: "Email", renderCell: renderSpy }
@@ -373,12 +392,9 @@ describe("Table Component - body cell memoization", () => {
         });
         setupLocal.update();
 
-        // Sibling rows must not re-render — their snapshot inputs are unchanged.
         expect(cellsRenderedFor(renderSpy, visibleData[1].Id)).toBe(0);
         expect(cellsRenderedFor(renderSpy, visibleData[2].Id)).toBe(0);
 
-        // Row 0's data cells also don't re-render (their value/size didn't change),
-        // but the expander cell does — the snapshot's `isExpanded` flipped.
         const expandedButtons = setupLocal.find("button[aria-expanded=true]");
         expect(expandedButtons.length).toBe(1);
 
@@ -403,7 +419,7 @@ describe("Table Component - body cell memoization", () => {
         setupLocal.unmount();
     });
 
-    it("does not re-render cells when row references change but cell id/renderer stay stable", async () => {
+    it("re-renders cells when row references change (custom renderers may read any row field)", async () => {
         const { renderSpy, columns } = buildSpyColumns();
         const setupLocal: ReactWrapper<IDataTableProps<MockDataType>> = mount(
             <DataTable columns={columns} data={visibleData} />
@@ -417,8 +433,349 @@ describe("Table Component - body cell memoization", () => {
         });
         setupLocal.update();
 
-        expect(renderSpy).not.toHaveBeenCalled();
+        expect(renderSpy).toHaveBeenCalled();
 
         setupLocal.unmount();
+    });
+
+    it("updates rendered cell content when data values change in place", async () => {
+        const { columns } = buildSpyColumns();
+        const setupLocal: ReactWrapper<IDataTableProps<MockDataType>> = mount(
+            <DataTable columns={columns} data={visibleData} />
+        );
+
+        const updated = visibleData.map((row) => ({ ...row, Email: `updated-${row.Email}` }));
+        await act(async () => {
+            setupLocal.setProps({ data: updated });
+        });
+        setupLocal.update();
+
+        expect(setupLocal.text()).toContain(`updated-${visibleData[0].Email}`);
+
+        setupLocal.unmount();
+    });
+});
+
+describe("Table Component - Manage Columns Integration", () => {
+    let setup: ReactWrapper<IDataTableProps<MockDataType>>;
+
+    beforeEach(async () => {
+        await act(async () => {
+            setup = mount(
+                <DataTable
+                    columns={mockColumns}
+                    data={mockData}
+                    manageColumnsConfig={{
+                        enabled: true,
+                        available: true
+                    }}
+                />
+            );
+        });
+        setup.update();
+    });
+
+    afterEach(() => {
+        setup.unmount();
+    });
+
+    it("respects the controlled open state and configuration within ManageColumns", async () => {
+        await act(async () => {
+            setup.setProps({
+                manageColumnsConfig: {
+                    open: true,
+                    enabled: true,
+                    available: true,
+                    texts: { label: "Custom Manage Label" }
+                }
+            });
+        });
+        setup.update();
+
+        const manageButton = setup.find(Button).filterWhere((b) => b.text().includes("Custom Manage Label"));
+        expect(manageButton.exists()).toBeTruthy();
+
+        const popover = setup.find(Popover);
+        expect(popover.prop("open")).toBe(true);
+    });
+
+    it("updates table column visibility when a column checkbox is toggled and saved", async () => {
+        expect(setup.find("thead th").length).toBe(mockColumns.length);
+
+        await act(async () => {
+            setup
+                .find(Button)
+                .filterWhere((b) => b.text().includes("Manage columns"))
+                .simulate("click");
+        });
+        setup.update();
+
+        const firstColId = mockColumns[0].accessorKey as string;
+
+        const checkbox = setup.find(Checkbox).filterWhere((c) => c.prop("id") === firstColId);
+        await act(async () => {
+            checkbox.prop("onChange")();
+        });
+        setup.update();
+
+        const saveButton = setup.find(Button).filterWhere((b) => b.text().includes("Save"));
+        await act(async () => {
+            saveButton.simulate("click");
+        });
+        setup.update();
+
+        expect(setup.find("thead th").length).toBe(mockColumns.length - 1);
+    });
+
+    it("keeps the expander column first when a column is pinned and saved", async () => {
+        await act(async () => {
+            setup.setProps({ renderExpandedRow: () => <div>Expanded</div> });
+        });
+        setup.update();
+
+        expect(setup.find("thead th").first().hasClass("tableHeaderCell_expander")).toBeTruthy();
+
+        await act(async () => {
+            setup
+                .find(Button)
+                .filterWhere((b) => b.text().includes("Manage columns"))
+                .simulate("click");
+        });
+        setup.update();
+
+        const firstPinAction = setup.find(".manageColumnListItem__pinAction").first();
+        await act(async () => {
+            firstPinAction.simulate("click");
+        });
+        setup.update();
+
+        const saveButton = setup.find(Button).filterWhere((b) => b.text().includes("Save"));
+        await act(async () => {
+            saveButton.simulate("click");
+        });
+        setup.update();
+
+        const headerCells = setup.find("thead th");
+        expect(headerCells.first().hasClass("tableHeaderCell_expander")).toBeTruthy();
+        expect(headerCells.at(1).hasClass("tableHeaderCell_pinned")).toBeTruthy();
+    });
+
+    it("does not hide the expander column when 'All Columns' is unchecked and saved", async () => {
+        await act(async () => {
+            setup.setProps({ renderExpandedRow: () => <div>Expanded</div> });
+        });
+        setup.update();
+
+        await act(async () => {
+            setup
+                .find(Button)
+                .filterWhere((b) => b.text().includes("Manage columns"))
+                .simulate("click");
+        });
+        setup.update();
+
+        const selectAll = setup.find(Checkbox).filterWhere((c) => c.prop("id") === "manageColumns-selectAll");
+        const onSelectAllChange = selectAll.prop("onChange") as (e: { target: { checked: boolean } }) => void;
+        await act(async () => {
+            onSelectAllChange({ target: { checked: false } });
+        });
+        setup.update();
+
+        const saveButton = setup.find(Button).filterWhere((b) => b.text().includes("Save"));
+        await act(async () => {
+            saveButton.simulate("click");
+        });
+        setup.update();
+
+        const headerCells = setup.find("thead th");
+        expect(headerCells.length).toBe(1);
+        expect(headerCells.first().hasClass("tableHeaderCell_expander")).toBeTruthy();
+    });
+
+    it("does not enable Save when pinning is attempted on a disabled column", async () => {
+        const firstColId = mockColumns[0].accessorKey as string;
+
+        await act(async () => {
+            setup.setProps({
+                manageColumnsConfig: { enabled: true, available: true, disabledColumns: [firstColId] }
+            });
+        });
+        setup.update();
+
+        await act(async () => {
+            setup
+                .find(Button)
+                .filterWhere((b) => b.text().includes("Manage columns"))
+                .simulate("click");
+        });
+        setup.update();
+
+        const firstPinAction = setup.find(".manageColumnListItem__pinAction").first();
+        await act(async () => {
+            firstPinAction.simulate("click");
+        });
+        setup.update();
+
+        const saveButton = setup.find(Button).filterWhere((b) => b.text().includes("Save"));
+        expect(saveButton.prop("disabled")).toBe(true);
+    });
+
+    it("applies pinning classes to body and header cells when a column is pinned and saved", async () => {
+        await act(async () => {
+            setup
+                .find(Button)
+                .filterWhere((b) => b.text().includes("Manage columns"))
+                .simulate("click");
+        });
+        setup.update();
+
+        const firstPinAction = setup.find(".manageColumnListItem__pinAction").first();
+        await act(async () => {
+            firstPinAction.simulate("click");
+        });
+        setup.update();
+
+        const saveButton = setup.find(Button).filterWhere((b) => b.text().includes("Save"));
+        await act(async () => {
+            saveButton.simulate("click");
+        });
+        setup.update();
+
+        const firstHeaderCell = setup.find("thead th").first();
+        expect(firstHeaderCell.hasClass("tableHeaderCell_pinned")).toBeTruthy();
+
+        const firstBodyCell = setup.find("tbody tr").first().find("td").first();
+        expect(firstBodyCell.hasClass("tableBodyCell_pinned")).toBeTruthy();
+    });
+});
+
+describe("Table Component - column defaults, row identity and structure", () => {
+    type SimpleRow = { Id: number; Email: string };
+
+    const simpleData: SimpleRow[] = [
+        { Id: 1, Email: "first@mail.com" },
+        { Id: 2, Email: "second@mail.com" },
+        { Id: 3, Email: "third@mail.com" }
+    ];
+
+    const simpleColumns: DataTableColumn<SimpleRow>[] = [
+        { accessorKey: "Id", header: "Id" },
+        { accessorKey: "Email", header: "Email" }
+    ];
+
+    it("hides columns with defaultVisible=false initially", async () => {
+        const cols: DataTableColumn<SimpleRow>[] = [
+            { accessorKey: "Id", header: "Id" },
+            { accessorKey: "Email", header: "Email", defaultVisible: false }
+        ];
+
+        let wrapper: ReactWrapper<IDataTableProps<SimpleRow>>;
+        await act(async () => {
+            wrapper = mount(<DataTable columns={cols} data={simpleData} />);
+        });
+        wrapper!.update();
+
+        const headers = wrapper!.find("thead th");
+        expect(headers.length).toBe(1);
+        expect(headers.first().text()).toBe("Id");
+
+        wrapper!.unmount();
+    });
+
+    it("pins columns with defaultPinned=true initially", async () => {
+        const cols: DataTableColumn<SimpleRow>[] = [
+            { accessorKey: "Id", header: "Id", defaultPinned: true },
+            { accessorKey: "Email", header: "Email" }
+        ];
+
+        let wrapper: ReactWrapper<IDataTableProps<SimpleRow>>;
+        await act(async () => {
+            wrapper = mount(<DataTable columns={cols} data={simpleData} />);
+        });
+        wrapper!.update();
+
+        const headers = wrapper!.find("thead th");
+        expect(headers.first().hasClass("tableHeaderCell_pinned")).toBeTruthy();
+        expect(headers.at(1).hasClass("tableHeaderCell_pinned")).toBeFalsy();
+
+        wrapper!.unmount();
+    });
+
+    it("keeps the expanded row bound to the record (not the index) when getRowId is provided", async () => {
+        let wrapper: ReactWrapper<IDataTableProps<SimpleRow>>;
+        await act(async () => {
+            wrapper = mount(
+                <DataTable
+                    columns={simpleColumns}
+                    data={simpleData}
+                    getRowId={(row) => String(row.Id)}
+                    renderExpandedRow={(row) => <div className="expandedProbe">{row.Email}</div>}
+                />
+            );
+        });
+        wrapper!.update();
+
+        await act(async () => {
+            wrapper!.find("button[aria-label='Expand row']").at(0).simulate("click");
+        });
+        wrapper!.update();
+        expect(wrapper!.find(".expandedProbe").text()).toBe(simpleData[0].Email);
+
+        await act(async () => {
+            wrapper!.setProps({ data: [...simpleData].reverse() });
+        });
+        wrapper!.update();
+
+        const expanded = wrapper!.find(".expandedProbe");
+        expect(expanded.length).toBe(1);
+        expect(expanded.text()).toBe(simpleData[0].Email);
+
+        wrapper!.unmount();
+    });
+
+    it("spans the expanded row across the row-actions cell too", async () => {
+        let wrapper: ReactWrapper<IDataTableProps<SimpleRow>>;
+        await act(async () => {
+            wrapper = mount(
+                <DataTable
+                    columns={simpleColumns}
+                    data={simpleData}
+                    renderExpandedRow={(row) => <div>{row.Email}</div>}
+                    rowActions={[{ Icon: TestIcon, title: "Edit", onClick: jest.fn(() => undefined) }]}
+                />
+            );
+        });
+        wrapper!.update();
+
+        await act(async () => {
+            wrapper!.find("button[aria-label='Expand row']").at(0).simulate("click");
+        });
+        wrapper!.update();
+
+        const firstRowCellCount = wrapper!.find("tbody tr.tableRow").first().find("td").length;
+        expect(wrapper!.find("td.tableExpandedCell").first().prop("colSpan")).toBe(firstRowCellCount);
+
+        wrapper!.unmount();
+    });
+
+    it("renders a matching header cell for the row-actions column", async () => {
+        let wrapper: ReactWrapper<IDataTableProps<SimpleRow>>;
+        await act(async () => {
+            wrapper = mount(
+                <DataTable
+                    columns={simpleColumns}
+                    data={simpleData}
+                    rowActions={[{ Icon: TestIcon, title: "Edit", onClick: jest.fn(() => undefined) }]}
+                />
+            );
+        });
+        wrapper!.update();
+
+        const headerCellCount = wrapper!.find("thead th").length;
+        const bodyCellCount = wrapper!.find("tbody tr.tableRow").first().find("td").length;
+        expect(headerCellCount).toBe(bodyCellCount);
+        expect(wrapper!.find("th.tableHeaderCell_actions").length).toBe(1);
+
+        wrapper!.unmount();
     });
 });

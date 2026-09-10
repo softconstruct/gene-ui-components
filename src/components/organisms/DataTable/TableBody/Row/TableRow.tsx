@@ -5,16 +5,14 @@ import classNames from "classnames";
 // Components
 import Button from "@components/atoms/Button";
 import Tooltip from "@components/molecules/Tooltip";
-import TableBodyCell from "@components/organisms/DataTable/TableBody/Cell/TableBodyCell";
-import TableExpandedRow from "@components/organisms/DataTable/TableBody/Row/TableExpandedRow";
-import {
-    DataTableGetRowStatus,
-    DataTableRenderExpandedRow,
-    IDataTableRowAction
-} from "@components/organisms/DataTable/types";
 
 // Styles
 import "./TableRow.scss";
+
+import { useDataTableContext } from "../../context";
+import TableBodyCell from "../../TableBody/Cell/TableBodyCell";
+import { DataTableGetRowStatus, DataTableRenderExpandedRow, IDataTableRowAction } from "../../types";
+import TableExpandedRow from "../Row/TableExpandedRow";
 
 /**
  * Props for the {@link TableRow} component.
@@ -60,6 +58,7 @@ const RowActionsWrapper: FC<IRowActionsWrapperProps> = ({ title, children }) => 
  * @returns A table row element containing its respective rendered cells.
  */
 const TableRow = <TData,>({ row, rowActions, getRowStatus, renderExpandedRow }: ITableRowProps<TData>) => {
+    const { dirMode } = useDataTableContext();
     const rowStatus = getRowStatus?.(row.original);
     const isRowExpanded = row.getIsExpanded();
     const expandedRow = isRowExpanded ? renderExpandedRow?.(row.original) : null;
@@ -72,14 +71,23 @@ const TableRow = <TData,>({ row, rowActions, getRowStatus, renderExpandedRow }: 
                     [`tableRow_status_${rowStatus}`]: rowStatus
                 })}
             >
-                {row.getVisibleCells().map((cell) => (
-                    <TableBodyCell
-                        key={cell.id}
-                        cell={cell}
-                        isExpanded={isRowExpanded}
-                        renderer={cell.column.columnDef.cell}
-                    />
-                ))}
+                {row.getVisibleCells().map((cell) => {
+                    const isPinned = !!cell.column.getIsPinned();
+                    const offset = isPinned ? cell.column.getStart("left") : 0;
+                    return (
+                        <TableBodyCell<TData, unknown>
+                            key={cell.id}
+                            cell={cell}
+                            isExpanded={isRowExpanded}
+                            renderer={cell.column.columnDef.cell}
+                            isPinned={isPinned}
+                            offset={offset}
+                            dirMode={dirMode}
+                            value={cell.getValue()}
+                            rowData={row.original}
+                        />
+                    );
+                })}
 
                 {rowActions?.length ? (
                     <td className="tableRow__actionsWrapper">
@@ -110,7 +118,9 @@ const TableRow = <TData,>({ row, rowActions, getRowStatus, renderExpandedRow }: 
                 ) : null}
             </tr>
             {isRowExpanded && hasExpandedRow && (
-                <TableExpandedRow colspan={row.getVisibleCells().length}>{expandedRow}</TableExpandedRow>
+                <TableExpandedRow colspan={row.getVisibleCells().length + (rowActions?.length ? 1 : 0)}>
+                    {expandedRow}
+                </TableExpandedRow>
             )}
         </>
     );

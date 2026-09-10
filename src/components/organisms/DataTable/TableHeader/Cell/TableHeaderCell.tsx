@@ -1,14 +1,17 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { flexRender } from "@tanstack/react-table";
 import { Header } from "@tanstack/table-core";
 import classNames from "classnames";
 
 // Components
 import Text from "@components/atoms/Text";
-import { EXPANDABLE_CELL_SIZE_REM } from "@components/organisms/DataTable/constants";
 
 // Styles
 import "./TableHeaderCell.scss";
+
+import { CUSTOM_CELL_MAX_SIZE, EXPANDER_COLUMN_ID } from "../../constants";
+import { useDataTableContext } from "../../context";
+import { getCellStyle } from "../../helper";
 
 /**
  * Props for the {@link TableHeaderCell} component.
@@ -22,6 +25,7 @@ interface ITableHeaderCellProps<TData, TValue> {
      * (like whether this specific cell is a placeholder in a grouped header setup).
      */
     header: Header<TData, TValue>;
+    offset: number;
 }
 
 /**
@@ -35,17 +39,59 @@ interface ITableHeaderCellProps<TData, TValue> {
  * @param props - The properties for the component.
  * @returns A table header cell element containing the rendered column header, or an empty cell if it's a placeholder.
  */
-const TableHeaderCell = <TData, TValue>({ header }: ITableHeaderCellProps<TData, TValue>) => {
-    const isExpanderHeader = header.column.id === "expander";
+const TableHeaderCell = <TData, TValue>({ header, offset }: ITableHeaderCellProps<TData, TValue>) => {
+    const { dirMode } = useDataTableContext();
+    const isExpanderHeader = header.column.id === EXPANDER_COLUMN_ID;
+    const isPinned = header.column.getIsPinned();
+    const isRTL = dirMode === "rtl";
+
+    const explicitSize = header.column.columnDef.meta?.explicitSize;
+    const isCustomCell = Boolean(header.column.columnDef.meta?.isCustomCell);
+
+    const { table } = header.getContext();
+    const thRef = useRef<HTMLTableCellElement>(null);
+
+    // eslint-disable-next-line consistent-return
+    useEffect(() => {
+        if (thRef.current && explicitSize === undefined) {
+            const observer = new ResizeObserver((entries) => {
+                const entry = entries[0];
+                const rect = entry.target.getBoundingClientRect();
+                const newWidth = Math.round(rect.width);
+
+                table.setColumnSizing((old) => {
+                    const currentSize = old[header.column.id] ?? header.column.columnDef.size ?? CUSTOM_CELL_MAX_SIZE;
+                    if (Math.abs(currentSize - newWidth) > 1) {
+                        return {
+                            ...old,
+                            [header.column.id]: newWidth
+                        };
+                    }
+                    return old;
+                });
+            });
+
+            observer.observe(thRef.current);
+            return () => observer.disconnect();
+        }
+    }, [explicitSize, header.column.id, table]);
 
     return (
         <th
-            className={classNames("tableHeaderCell", { tableHeaderCell_expander: isExpanderHeader })}
-            style={{
-                width: isExpanderHeader ? EXPANDABLE_CELL_SIZE_REM : undefined,
-                minWidth: isExpanderHeader ? EXPANDABLE_CELL_SIZE_REM : undefined,
-                maxWidth: 250 // temp
-            }}
+            ref={thRef}
+            className={classNames("tableHeaderCell", {
+                tableHeaderCell_expander: isExpanderHeader,
+                tableHeaderCell_pinned: isPinned
+            })}
+            style={getCellStyle(
+                isExpanderHeader,
+                header.column.columnDef.size ?? CUSTOM_CELL_MAX_SIZE,
+                explicitSize,
+                offset,
+                isPinned,
+                isRTL,
+                isCustomCell
+            )}
         >
             {!isExpanderHeader ? (
                 <div className="tableHeaderCell__content">

@@ -20,7 +20,6 @@ const defaultRowActions: IDataTableRowAction<MockRowType>[] = [
     {
         Icon: Pencil,
         title: "Edit",
-        // Third row (index 2), seventh (6), ... - first action disabled
         disabled: (row) => {
             const i = rowIndexInMockData(row);
             return i >= 0 && i % 4 === 2;
@@ -30,7 +29,6 @@ const defaultRowActions: IDataTableRowAction<MockRowType>[] = [
     {
         Icon: RecycleBin,
         title: "delete",
-        // First row (index 0), fifth (4), ... - second action disabled
         disabled: (row) => {
             const i = rowIndexInMockData(row);
             return i >= 0 && i % 4 === 0;
@@ -57,7 +55,8 @@ const meta: Meta<IDataTableProps<MockRowType>> = {
         renderExpandedRow: args({ control: "false", ...propCategory.content }),
         onRowExpandChange: args({ control: "false", ...propCategory.functionality }),
         rowActions: args({ control: "object", ...propCategory.functionality }),
-        getRowStatus: args({ control: "false", ...propCategory.appearance })
+        getRowStatus: args({ control: "false", ...propCategory.appearance }),
+        manageColumnsConfig: args({ control: "object", ...propCategory.functionality })
     },
     args: {}
 };
@@ -165,6 +164,30 @@ export const AsyncDataFetchingWithPagination: Story = {
             pageSize: 10,
             rowsPerPageOptions: [5, 10, 20],
             showInputPageField: true
+        }
+    }
+};
+
+export const WithManageColumns: Story = {
+    render: (props) => <DataTable {...props} />,
+    args: {
+        data: mockData,
+        columns: mockColumns,
+        renderExpandedRow: (row) => renderMockExpandedRow(row),
+        manageColumnsConfig: {
+            enabled: true,
+            available: true,
+            loading: false,
+            disabledColumns: ["DayOffs"],
+            texts: {
+                searchPlaceholder: "Search...",
+                cancelButton: "Cancel",
+                saveButton: "Save changes",
+                restoreDefaultsButton: "Restore defaults",
+                label: "Manage columns",
+                noResultsFound: "No results found",
+                noResultsFoundDescription: undefined
+            }
         }
     }
 };
