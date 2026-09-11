@@ -2,20 +2,20 @@ import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-import GroupedBarChart, { IGroupedBarChartProps } from "./index";
+import StackedBarChart, { IStackedBarChartProps } from "./index";
 
 const sampleCategories = ["Segment", "Segment", "Segment", "Segment", "Segment", "Segment", "Segment"];
 
 const sampleSeries = [
-    { name: "Channel 1", data: [220, 180, 90, 250, 160, 70, 200] },
-    { name: "Channel 2", data: [120, 200, 140, 170, 90, 150, 180] },
-    { name: "Channel 3", data: [90, 140, 200, 110, 180, 120, 160] },
-    { name: "Channel 4", data: [160, 90, 120, 200, 140, 190, 100] }
+    { name: "Channel 1", data: [15, 85, 50, 30, 50, 85, 65] },
+    { name: "Channel 2", data: [75, 55, 60, 55, 45, 30, 55] },
+    { name: "Channel 3", data: [70, 45, 55, 50, 55, 55, 40] },
+    { name: "Channel 4", data: [65, 55, 60, 40, 65, 90, 25] }
 ];
 
-const meta: Meta<IGroupedBarChartProps> = {
-    title: "Charts/GroupedBarChart",
-    component: GroupedBarChart,
+const meta: Meta<IStackedBarChartProps> = {
+    title: "Charts/StackedBarChart",
+    component: StackedBarChart,
     decorators: [
         (Story) => (
             <div style={{ height: "32rem" }}>
@@ -58,6 +58,6 @@ const meta: Meta<IGroupedBarChartProps> = {
 
 export default meta;
 
-type Story = StoryObj<IGroupedBarChartProps>;
+type Story = StoryObj<IStackedBarChartProps>;
 
 export const Rest: Story = {};
