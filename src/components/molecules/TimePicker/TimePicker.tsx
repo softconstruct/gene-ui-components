@@ -15,14 +15,16 @@ import PickerPopover from "./components/PickerPopover/PickerPopover";
 // Constants
 import {
     DEFAULT_ID_PREFIX,
-    labelSizeMap,
     MASK_REPLACEMENT_12H,
     MASK_REPLACEMENT_24H,
+    MASK_SLOT_RULES_12H,
+    MASK_SLOT_RULES_24H,
+    textSizeMap,
     TIME_PICKER_INPUT_MASK,
     TIME_PICKER_INPUT_MASK_WITH_MERIDIEM
 } from "./constants";
 // Helpers
-import { resolveLocalization } from "./helpers";
+import { createMaskTrack, resolveLocalization } from "./helpers";
 // Hooks
 import { useRangeTimePicker, useSingleTimePicker } from "./hooks/useTimePicker";
 // Types
@@ -205,6 +207,34 @@ interface IRangeTimePickerProps extends Omit<ITimePickerBaseProps, "onFocus" | "
     onKeyDown?: (event: KeyboardEvent<HTMLInputElement>, field: TimePickerRangeFields) => void;
 }
 
+type PickerSetupOptions = Pick<ITimePickerBaseProps, "id" | "format" | "localization" | "disabled" | "readOnly">;
+
+/**
+ * Derived values shared by both pickers: ids, texts, the mask of the active format, and the
+ * read-only state, which `disabled` takes precedence over.
+ */
+const usePickerSetup = ({ id, format = "24h", localization, disabled, readOnly }: PickerSetupOptions) => {
+    const is12Hour = format === "12h";
+    const generatedId = useMemo(() => id || `${DEFAULT_ID_PREFIX}${nanoid()}`, [id]);
+    const texts = useMemo(() => resolveLocalization(localization), [localization]);
+    const mask = is12Hour ? TIME_PICKER_INPUT_MASK_WITH_MERIDIEM : TIME_PICKER_INPUT_MASK;
+    const maskTrack = useMemo(
+        () => createMaskTrack(mask, is12Hour ? MASK_SLOT_RULES_12H : MASK_SLOT_RULES_24H),
+        [mask, is12Hour]
+    );
+
+    return {
+        is12Hour,
+        isReadOnly: !!readOnly && !disabled,
+        generatedId,
+        popoverId: `${generatedId}-popover`,
+        texts,
+        mask,
+        maskReplacement: is12Hour ? MASK_REPLACEMENT_12H : MASK_REPLACEMENT_24H,
+        maskTrack
+    };
+};
+
 /**
  * Component for selecting a single time value.
  *
@@ -224,126 +254,61 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
             required,
             readOnly,
             placeholder,
-            value,
-            defaultValue,
             clearable,
-            onClear,
-            onChange,
-            onOpenChange,
             status,
             helperText,
-            format = "24h",
+            format,
             localization,
-            onFocus,
-            onBlur,
-            onKeyDown
+            ...pickerOptions
         },
         ref
     ) => {
-        const is12Hour = format === "12h";
-        const isReadOnly = !!readOnly && !disabled;
-
-        const {
-            popoverOpen,
-            shouldFocusPopover,
-            anchorProps,
-            anchorRef,
-            setAnchorProps,
-            popoverRef,
-            popoverPosition,
-            shellRef,
-            inputRef,
-            value: valueToUse,
-            parts,
-            handleInputChange,
-            handleInputClick,
-            handleInputFocus,
-            handleInputBlur,
-            handleInputKeyDown,
-            handleShellClick,
-            handleSelect,
-            handleClear,
-            handlePopoverClose,
-            handlePopoverFocusOut
-        } = useSingleTimePicker({
-            value,
-            defaultValue,
+        const setup = usePickerSetup({ id, format, localization, disabled, readOnly });
+        const { inputProps, popoverProps } = useSingleTimePicker({
+            ...pickerOptions,
             clearable,
             disabled,
-            readOnly: isReadOnly,
-            is12Hour,
-            onChange,
-            onClear,
-            onOpenChange,
-            onFocus,
-            onBlur,
-            onKeyDown
+            readOnly: setup.isReadOnly,
+            is12Hour: setup.is12Hour
         });
-
-        const generatedId = useMemo(() => id || `${DEFAULT_ID_PREFIX}${nanoid()}`, [id]);
-        const popoverId = `${generatedId}-popover`;
-
-        const texts = useMemo(() => resolveLocalization(localization), [localization]);
-
-        const maskToUse = is12Hour ? TIME_PICKER_INPUT_MASK_WITH_MERIDIEM : TIME_PICKER_INPUT_MASK;
-        const maskReplacement = is12Hour ? MASK_REPLACEMENT_12H : MASK_REPLACEMENT_24H;
 
         return (
             <div className={classNames("timePicker", className)} ref={ref}>
                 <Label
-                    labelFor={generatedId}
-                    size={labelSizeMap[size]}
+                    labelFor={setup.generatedId}
+                    size={textSizeMap[size]}
                     disabled={disabled}
-                    readOnly={isReadOnly}
+                    readOnly={setup.isReadOnly}
                     className="pickerInput__label"
                     required={required}
                     infoText={infoText}
                     text={label}
                 />
                 <PickerInput
-                    id={generatedId}
+                    {...inputProps}
+                    id={setup.generatedId}
                     name={name}
-                    inputRef={inputRef}
                     size={size}
                     placeholder={placeholder}
-                    value={valueToUse}
                     EndIcon={Clock}
                     disabled={disabled}
-                    readOnly={isReadOnly}
+                    readOnly={setup.isReadOnly}
                     required={required}
-                    anchorProps={anchorProps}
-                    anchorRef={anchorRef}
-                    shellRef={shellRef}
-                    onAreaClick={handleShellClick}
-                    onClick={handleInputClick}
-                    onChange={handleInputChange}
-                    onFocus={handleInputFocus}
-                    onBlur={handleInputBlur}
-                    onKeyDown={handleInputKeyDown}
-                    onClear={handleClear}
                     clearable={clearable}
-                    clearLabel={texts.clear}
+                    clearLabel={setup.texts.clear}
                     status={status}
                     helperText={helperText}
-                    isExpanded={popoverOpen}
-                    popoverId={popoverId}
-                    mask={maskToUse}
-                    maskReplacement={maskReplacement}
+                    popoverId={setup.popoverId}
+                    mask={setup.mask}
+                    maskReplacement={setup.maskReplacement}
+                    maskTrack={setup.maskTrack}
                 />
                 <PickerPopover
-                    id={popoverId}
-                    open={popoverOpen}
-                    focusOnOpen={shouldFocusPopover}
-                    setProps={setAnchorProps}
-                    popoverRef={popoverRef}
-                    onClose={handlePopoverClose}
-                    onFocusOut={handlePopoverFocusOut}
+                    {...popoverProps}
+                    id={setup.popoverId}
                     size={size}
-                    position={popoverPosition}
                     mobileHeightMode="fit"
-                    onSelect={handleSelect}
-                    parts={parts}
-                    is12Hour={is12Hour}
+                    is12Hour={setup.is12Hour}
                     localization={localization}
                 />
             </div>
@@ -369,134 +334,64 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
             required,
             readOnly,
             placeholder,
-            value,
-            defaultValue,
             clearable,
-            onClear,
-            onChange,
-            onOpenChange,
             status,
             helperText,
-            format = "24h",
+            format,
             localization,
-            onFocus,
-            onBlur,
-            onKeyDown
+            ...pickerOptions
         },
         ref
     ) => {
-        const is12Hour = format === "12h";
-        const isReadOnly = !!readOnly && !disabled;
-
-        const {
-            popoverRef,
-            popoverOpen,
-            popoverPosition,
-            shouldFocusPopover,
-            anchorProps,
-            anchorRef,
-            setAnchorProps,
-            shellRef,
-            activeField,
-            startInputRef,
-            endInputRef,
-            value: valueToUse,
-            partsStart,
-            partsEnd,
-            handleInputClick,
-            handleInputFocus,
-            handleInputChange,
-            handleInputBlur,
-            handleInputKeyDown,
-            handleShellClick,
-            handleSelect,
-            handleClear,
-            handlePopoverClose,
-            handlePopoverFocusOut
-        } = useRangeTimePicker({
-            value,
-            defaultValue,
+        const setup = usePickerSetup({ id, format, localization, disabled, readOnly });
+        const { inputProps, popoverProps } = useRangeTimePicker({
+            ...pickerOptions,
             clearable,
             disabled,
-            readOnly: isReadOnly,
-            is12Hour,
-            onChange,
-            onClear,
-            onOpenChange,
-            onFocus,
-            onBlur,
-            onKeyDown
+            readOnly: setup.isReadOnly,
+            is12Hour: setup.is12Hour
         });
 
-        const generatedId = useMemo(() => id || `${DEFAULT_ID_PREFIX}${nanoid()}`, [id]);
-        const fieldIds = useMemo(() => ({ start: `${generatedId}-start`, end: `${generatedId}-end` }), [generatedId]);
-        const popoverId = `${generatedId}-popover`;
-
-        const texts = useMemo(() => resolveLocalization(localization), [localization]);
-
-        const maskToUse = is12Hour ? TIME_PICKER_INPUT_MASK_WITH_MERIDIEM : TIME_PICKER_INPUT_MASK;
-        const maskReplacement = is12Hour ? MASK_REPLACEMENT_12H : MASK_REPLACEMENT_24H;
+        const ids = { start: `${setup.generatedId}-start`, end: `${setup.generatedId}-end` };
 
         return (
             <div className={classNames("timePicker", className)} ref={ref}>
                 <Label
-                    labelFor={fieldIds.start}
-                    size={labelSizeMap[size]}
+                    labelFor={ids.start}
+                    size={textSizeMap[size]}
                     disabled={disabled}
-                    readOnly={isReadOnly}
+                    readOnly={setup.isReadOnly}
                     className="pickerInput__label"
                     required={required}
                     infoText={infoText}
                     text={label}
                 />
                 <PickerInput.Range
-                    ids={fieldIds}
-                    labels={{ start: texts.startTime, end: texts.endTime }}
-                    inputRefs={{ start: startInputRef, end: endInputRef }}
+                    {...inputProps}
+                    ids={ids}
+                    labels={{ start: setup.texts.startTime, end: setup.texts.endTime }}
                     name={name}
                     size={size}
                     placeholder={placeholder}
-                    value={valueToUse}
                     EndIcon={Clock}
                     disabled={disabled}
-                    readOnly={isReadOnly}
+                    readOnly={setup.isReadOnly}
                     required={required}
-                    anchorProps={anchorProps}
-                    anchorRef={anchorRef}
-                    shellRef={shellRef}
-                    onAreaClick={handleShellClick}
-                    onClick={handleInputClick}
-                    onChange={handleInputChange}
-                    onFocus={handleInputFocus}
-                    onBlur={handleInputBlur}
-                    onKeyDown={handleInputKeyDown}
-                    onClear={handleClear}
                     clearable={clearable}
-                    clearLabel={texts.clear}
+                    clearLabel={setup.texts.clear}
                     status={status}
                     helperText={helperText}
-                    isExpanded={popoverOpen}
-                    popoverId={popoverId}
-                    mask={maskToUse}
-                    maskReplacement={maskReplacement}
+                    popoverId={setup.popoverId}
+                    mask={setup.mask}
+                    maskReplacement={setup.maskReplacement}
+                    maskTrack={setup.maskTrack}
                 />
                 <PickerPopover
-                    id={popoverId}
-                    popoverRef={popoverRef}
-                    open={popoverOpen}
-                    focusOnOpen={shouldFocusPopover}
-                    setProps={setAnchorProps}
-                    onClose={handlePopoverClose}
-                    onFocusOut={handlePopoverFocusOut}
+                    {...popoverProps}
+                    id={setup.popoverId}
                     size={size}
-                    position={popoverPosition}
                     mobileHeightMode="fit"
-                    parts={activeField === "start" ? partsStart : partsEnd}
-                    activeField={activeField}
-                    partsStart={partsStart}
-                    partsEnd={partsEnd}
-                    onSelect={handleSelect}
-                    is12Hour={is12Hour}
+                    is12Hour={setup.is12Hour}
                     localization={localization}
                 />
             </div>

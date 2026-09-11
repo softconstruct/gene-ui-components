@@ -1,10 +1,14 @@
-import { ChangeEvent, FocusEvent, KeyboardEvent, useEffect, useMemo, useRef, useState } from "react";
+import { ChangeEvent, FocusEvent, KeyboardEvent, MutableRefObject, useEffect, useMemo, useRef, useState } from "react";
 
 import { IPopoverProps, IPopoverRef } from "@components/atoms/Popover";
+
+// Hooks
+import useDebouncedCallback from "@hooks/useDebounceCallback";
 
 // Constants
 import {
     EMPTY_TIME_PARTS,
+    INPUT_CHANGE_DEBOUNCE_MS,
     KEYS,
     MERIDIEMS,
     PICKER_RANGE_FIELDS,
@@ -17,6 +21,9 @@ import { composeTime, getNearestAvailableTime, parseTime, withTimePart } from ".
 import { TimeParts, TimePickerChangeContext, TimePickerRangeChangeContext, TimePickerRangeFields } from "../types";
 
 type PopoverCloseHandler = NonNullable<IPopoverProps["onClose"]>;
+type PopoverPosition = "bottom-left" | "bottom-right";
+type Bounds = { minParts?: TimeParts | null; maxParts?: TimeParts | null };
+type InputRef = MutableRefObject<HTMLInputElement | null>;
 
 const ESCAPE_CLOSE_REASON = "escape-key";
 
@@ -39,8 +46,7 @@ const processTimeSelection = (
     column: keyof TimeParts,
     value: string,
     is12Hour: boolean,
-    minParts: TimeParts | null = null,
-    maxParts: TimeParts | null = null
+    { minParts, maxParts }: Bounds
 ): { nextParts: TimeParts; composedTime: string } => {
     const base: TimeParts = {
         hours: prev.hours ?? (is12Hour ? TIME_PART_DEFAULT_12H_HOUR : TIME_PART_DEFAULT_TEXT_VALUE),
@@ -66,8 +72,7 @@ const resolveBlurValue = (
     rawValue: string | null,
     lastValidValue: string | null,
     is12Hour: boolean,
-    minParts: TimeParts | null = null,
-    maxParts: TimeParts | null = null
+    { minParts, maxParts }: Bounds
 ): { value: string | null; parts: TimeParts | null } | null => {
     const parsed = parseTime(rawValue, is12Hour, { allow24HourInput: true });
     const nearest = parsed && getNearestAvailableTime(parsed, is12Hour, minParts, maxParts);
@@ -86,6 +91,41 @@ const resolveBlurValue = (
     if (composedTime === rawValue) return null;
 
     return { value: composedTime, parts: nearest };
+};
+
+// ---------------------------------------------------------
+// Typed changes
+// ---------------------------------------------------------
+
+/**
+ * Reports typed text through `onChange` after a pause, or at once when the field is left.
+ */
+const useTypedChange = <TArgs extends unknown[]>(onChange?: (...args: TArgs) => void) => {
+    const pendingRef = useRef<TArgs | null>(null);
+
+    const emitPending = () => {
+        const pending = pendingRef.current;
+        pendingRef.current = null;
+
+        if (pending) {
+            onChange?.(...pending);
+        }
+    };
+
+    const { debouncedCallback: emitLater, clearDebounce } = useDebouncedCallback(emitPending, INPUT_CHANGE_DEBOUNCE_MS);
+
+    useEffect(() => clearDebounce, [clearDebounce]);
+
+    return {
+        report: (...args: TArgs) => {
+            pendingRef.current = args;
+            emitLater();
+        },
+        flush: () => {
+            clearDebounce();
+            emitPending();
+        }
+    };
 };
 
 // ---------------------------------------------------------
@@ -108,18 +148,16 @@ const resolveBlurValue = (
  * - otherwise — including a plain focus or click, and for values that arrive from the
  *   `value`/`defaultValue` props — the value is normalized, which keeps the input text and the
  *   popover selection in agreement.
- *
- * Editing mode must not start on focus: the raw value can be written in the other notation (see the
- * `format` effect below, or a controlled `value` the consumer did not convert), and rendering it
- * verbatim would show `12:06:05 AM` inside the 24-hour mask.
  */
 const useTimeField = (value: string | null | undefined, defaultValue: string | null | undefined, is12Hour: boolean) => {
     const isControlled = value !== undefined;
 
     const [internalValue, setInternalValue] = useState<string | null>(defaultValue ?? null);
+    const [draftValue, setDraftValue] = useState<string | null>(null);
     const [isEditing, setIsEditing] = useState(false);
 
-    const rawValue = isControlled ? (value ?? null) : internalValue;
+    const committedValue = isControlled ? (value ?? null) : internalValue;
+    const rawValue = isEditing && draftValue !== null ? draftValue : committedValue;
 
     useEffect(() => {
         if (isControlled) return;
@@ -136,9 +174,6 @@ const useTimeField = (value: string | null | undefined, defaultValue: string | n
         [rawValue, is12Hour, isEditing]
     );
 
-    const displayValue = !isEditing && parsedValue ? composeTime(parsedValue, is12Hour) : rawValue;
-    const parts = parsedValue ?? EMPTY_TIME_PARTS;
-
     /**
      * Last complete value, used to restore the field when the user leaves partially typed input.
      */
@@ -147,84 +182,107 @@ const useTimeField = (value: string | null | undefined, defaultValue: string | n
     useEffect(() => {
         if (parsedValue) {
             lastValidValueRef.current = composeTime(parsedValue, is12Hour);
-            return;
-        }
-
-        if (!rawValue) {
+        } else if (!rawValue) {
             lastValidValueRef.current = null;
         }
     }, [parsedValue, rawValue, is12Hour]);
 
     const setValue = (nextValue: string | null) => {
-        if (isControlled) return;
-        setInternalValue(nextValue);
+        if (!isControlled) setInternalValue(nextValue);
     };
 
     return {
-        isControlled,
         rawValue,
-        displayValue,
-        parsedValue,
-        parts,
+        displayValue: !isEditing && parsedValue ? composeTime(parsedValue, is12Hour) : rawValue,
+        parts: parsedValue ?? EMPTY_TIME_PARTS,
+        lastValidValueRef,
         setValue,
-        setIsEditing,
-        lastValidValueRef
+        setTypedValue: (nextValue: string) => {
+            setDraftValue(nextValue);
+            setValue(nextValue);
+        },
+        setIsEditing: (editing: boolean) => {
+            setIsEditing(editing);
+            if (!editing) setDraftValue(null);
+        }
     };
 };
 
+type TimeField = ReturnType<typeof useTimeField>;
+
 // ---------------------------------------------------------
-// Base picker
+// Core
 // ---------------------------------------------------------
 
-interface IBasePickerOptions {
+interface ITimePickerCoreOptions<F extends string> {
+    fields: Record<F, TimeField>;
+    inputRefs: Record<F, InputRef>;
+    initialField: F;
+    is12Hour: boolean;
+    clearable?: boolean;
     disabled?: boolean;
     readOnly?: boolean;
+    getBounds?: (field: F) => Bounds;
+    onChange?: (field: F, time: string, context: TimePickerChangeContext) => void;
+    onClear?: () => void;
     onOpenChange?: (open: boolean) => void;
+    onFocus?: (event: FocusEvent<HTMLInputElement>, field: F) => void;
+    onBlur?: (event: FocusEvent<HTMLInputElement>, field: F) => void;
+    onKeyDown?: (event: KeyboardEvent<HTMLInputElement>, field: F) => void;
 }
-
-type PopoverPosition = "bottom-left" | "bottom-right";
-type PopoverAlignment = "start" | "end";
 
 /**
  * @description
- * Shared popover plumbing for the single and the range picker.
- *
- * The popover follows the focus: focusing an input opens it and it closes as soon as the focus
- * leaves both the field and the popover, so two pickers can never be open at the same time and
- * the keyboard always lands in the popover that belongs to the focused field.
+ * Popover and field interaction shared by the single and the range picker. The popover follows the
+ * focus: it opens on focus-in and closes once the focus leaves both the field and the popover.
  *
  * No outside click listener is registered here on purpose: `atoms/Popover` already closes itself
  * on outside press and on `Escape` and reports it through `onClose`.
  */
-const useBasePicker = ({ disabled, readOnly, onOpenChange }: IBasePickerOptions) => {
+const useTimePickerCore = <F extends string>({
+    fields,
+    inputRefs,
+    initialField,
+    is12Hour,
+    clearable,
+    disabled,
+    readOnly,
+    getBounds = () => ({}),
+    onChange,
+    onClear,
+    onOpenChange,
+    onFocus,
+    onBlur,
+    onKeyDown
+}: ITimePickerCoreOptions<F>) => {
     const [popoverOpen, setPopoverOpen] = useState(false);
     const [shouldFocusPopover, setShouldFocusPopover] = useState(false);
     const [anchorProps, setAnchorProps] = useState<Record<string, unknown>>({});
+    const [activeField, setActiveField] = useState<F>(initialField);
 
     const popoverOpenRef = useRef(false);
     const skipOpenOnFocusRef = useRef(false);
-
     const shellRef = useRef<HTMLDivElement | null>(null);
     const popoverRef = useRef<IPopoverRef>({
         floatingElement: { current: null },
         referenceElement: { current: null }
     });
 
+    const typedChange = useTypedChange(onChange);
     const isInteractive = !disabled && !readOnly;
 
     /**
-     * `Popover` hands over a single props object for its reference element, the shell. Its `ref` is
-     * split out so the shell can merge it with the ref the picker keeps for itself.
+     * `Popover`'s reference props go to the shell without their ARIA attributes; the `ref` is merged
+     * with the shell's own ref.
      */
-    const { ref: anchorRef, ...anchorRest } = anchorProps as {
-        ref?: (node: HTMLElement | null) => void;
-    } & Record<string, unknown>;
+    const { ref: anchorRef, ...anchorRest } = Object.fromEntries(
+        Object.entries(anchorProps).filter(([key]) => !key.startsWith("aria-"))
+    ) as { ref?: (node: HTMLElement | null) => void } & Record<string, unknown>;
 
     /**
-     * `atoms/Popover` positions with RTL detection switched off, so the side is chosen here: the
-     * popover lines up with the border of the field on the side of the edited input.
+     * `atoms/Popover` ignores RTL, so the side follows the edited field here.
      */
-    const getPopoverPosition = (alignment: PopoverAlignment): PopoverPosition => {
+    const getPopoverPosition = (alignment: "start" | "end"): PopoverPosition => {
         const isRTL = typeof document !== "undefined" && document.dir === "rtl";
 
         return (alignment === "start") !== isRTL ? "bottom-left" : "bottom-right";
@@ -257,27 +315,10 @@ const useBasePicker = ({ disabled, readOnly, onOpenChange }: IBasePickerOptions)
         onOpenChange?.(nextOpen);
     };
 
-    const handleFocusIn = () => {
-        setShouldFocusPopover(false);
-
-        if (skipOpenOnFocusRef.current) return;
-
-        togglePopover(true);
-    };
-
-    /**
-     * Shared by the inputs and the popover: the focus moving between them is not a leave.
-     */
     const handleFocusOut = (event: FocusEvent<Element>) => {
-        if (isWithinPicker(event.relatedTarget)) return;
-
-        togglePopover(false);
+        if (!isWithinPicker(event.relatedTarget)) togglePopover(false);
     };
 
-    /**
-     * Moves the focus back to an input without reopening the popover (after `Escape` or clearing).
-     * Focus events are dispatched synchronously, so the flag can be reset right away.
-     */
     const focusInputSilently = (input: HTMLInputElement | null) => {
         if (!input || document.activeElement === input) return;
 
@@ -286,29 +327,131 @@ const useBasePicker = ({ disabled, readOnly, onOpenChange }: IBasePickerOptions)
         skipOpenOnFocusRef.current = false;
     };
 
-    /**
-     * A click on the shell around the inputs (icons, padding) behaves like a click on the input.
-     */
-    const openFromShell = (input: HTMLInputElement | null) => {
-        input?.focus();
+    const getFieldHandlers = (field: F) => {
+        const current = fields[field];
+
+        return {
+            onClick: () => {
+                setActiveField(field);
+                togglePopover(true);
+            },
+            onFocus: (event: FocusEvent<HTMLInputElement>) => {
+                setActiveField(field);
+                onFocus?.(event, field);
+                setShouldFocusPopover(false);
+
+                if (!skipOpenOnFocusRef.current) togglePopover(true);
+            },
+            onChange: (event: ChangeEvent<HTMLInputElement>) => {
+                if (!isInteractive) return;
+
+                const nextValue = event.target.value;
+
+                current.setIsEditing(true);
+
+                if (nextValue === current.rawValue) return;
+
+                current.setTypedValue(nextValue);
+                typedChange.report(field, nextValue, { source: "input", parts: parseTime(nextValue, is12Hour) });
+            },
+            onBlur: (event: FocusEvent<HTMLInputElement>) => {
+                current.setIsEditing(false);
+                onBlur?.(event, field);
+                handleFocusOut(event);
+
+                if (!isInteractive) return;
+
+                typedChange.flush();
+
+                const resolved = resolveBlurValue(
+                    current.rawValue,
+                    current.lastValidValueRef.current,
+                    is12Hour,
+                    getBounds(field)
+                );
+
+                if (!resolved) return;
+
+                current.setValue(resolved.value);
+                onChange?.(field, resolved.value ?? "", { source: "input", parts: resolved.parts });
+            },
+            onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => {
+                onKeyDown?.(event, field);
+
+                if (!isInteractive || !OPEN_KEYS.includes(event.key)) return;
+
+                event.preventDefault();
+                setActiveField(field);
+                togglePopover(true, true);
+            }
+        };
+    };
+
+    const handleSelect = (column: keyof TimeParts, value: string) => {
+        if (!isInteractive) return;
+
+        const current = fields[activeField];
+        const result = processTimeSelection(current.parts, column, value, is12Hour, getBounds(activeField));
+
+        if (result.composedTime === current.rawValue) return;
+
+        current.setValue(result.composedTime);
+        onChange?.(activeField, result.composedTime, { source: "select", parts: result.nextParts });
+    };
+
+    const handleClear = () => {
+        onClear?.();
+
+        if (!clearable) return;
+
+        const allFields = Object.values<TimeField>(fields);
+        const hadValue = allFields.some((field) => !!field.rawValue);
+
+        allFields.forEach((field) => field.setValue(null));
+        setActiveField(initialField);
+        togglePopover(false);
+
+        if (hadValue) {
+            onChange?.(initialField, "", { source: "clear", parts: null });
+        }
+
+        focusInputSilently(inputRefs[initialField].current);
+    };
+
+    const handlePopoverClose: PopoverCloseHandler = (_event, reason) => {
+        togglePopover(false);
+
+        if (reason === ESCAPE_CLOSE_REASON) {
+            focusInputSilently(inputRefs[activeField].current);
+        }
+    };
+
+    const handleShellClick = () => {
+        inputRefs[activeField].current?.focus();
         togglePopover(true);
     };
 
     return {
-        popoverOpen,
-        shouldFocusPopover,
-        togglePopover,
-        anchorRef,
-        anchorProps: anchorRest,
-        setAnchorProps,
-        popoverRef,
-        shellRef,
+        activeField,
+        getFieldHandlers,
         getPopoverPosition,
-        isInteractive,
-        handleFocusIn,
-        handleFocusOut,
-        focusInputSilently,
-        openFromShell
+        inputProps: {
+            isExpanded: popoverOpen,
+            anchorProps: anchorRest,
+            anchorRef,
+            shellRef,
+            onAreaClick: handleShellClick,
+            onClear: handleClear
+        },
+        popoverProps: {
+            open: popoverOpen,
+            focusOnOpen: shouldFocusPopover,
+            setProps: setAnchorProps,
+            popoverRef,
+            onClose: handlePopoverClose,
+            onFocusOut: handleFocusOut,
+            onSelect: handleSelect
+        }
     };
 };
 
@@ -333,127 +476,33 @@ export interface IUseSingleTimePickerOptions {
 
 /**
  * @description
- * State and interaction handling of the single time picker.
+ * State and interaction handling of the single time picker, returned as the props of its input and
+ * of its popover.
  */
 export const useSingleTimePicker = ({
     value,
     defaultValue,
-    clearable,
-    disabled,
-    readOnly,
     is12Hour = false,
     onChange,
-    onClear,
-    onOpenChange,
-    onFocus,
-    onBlur,
-    onKeyDown
+    ...options
 }: IUseSingleTimePickerOptions) => {
-    const base = useBasePicker({ disabled, readOnly, onOpenChange });
     const field = useTimeField(value, defaultValue, is12Hour);
-
     const inputRef = useRef<HTMLInputElement | null>(null);
 
-    const handleInputFocus = (event: FocusEvent<HTMLInputElement>) => {
-        onFocus?.(event);
-        base.handleFocusIn();
-    };
+    const core = useTimePickerCore({
+        ...options,
+        is12Hour,
+        fields: { single: field },
+        inputRefs: { single: inputRef },
+        initialField: "single",
+        onChange: (_field, time, context) => onChange?.(time, context)
+    });
 
-    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-        if (!base.isInteractive) return;
-
-        const nextValue = event.target.value;
-
-        field.setIsEditing(true);
-
-        if (nextValue === field.rawValue) return;
-
-        field.setValue(nextValue);
-        onChange?.(nextValue, { source: "input", parts: parseTime(nextValue, is12Hour) });
-    };
-
-    const handleInputBlur = (event: FocusEvent<HTMLInputElement>) => {
-        field.setIsEditing(false);
-        onBlur?.(event);
-        base.handleFocusOut(event);
-
-        if (!base.isInteractive) return;
-
-        const resolved = resolveBlurValue(field.rawValue, field.lastValidValueRef.current, is12Hour);
-
-        if (!resolved) return;
-
-        field.setValue(resolved.value);
-        onChange?.(resolved.value ?? "", { source: "input", parts: resolved.parts });
-    };
-
-    const handleSelect = (column: keyof TimeParts, val: string) => {
-        if (!base.isInteractive) return;
-
-        const result = processTimeSelection(field.parts, column, val, is12Hour);
-
-        if (result.composedTime === field.rawValue) return;
-
-        field.setValue(result.composedTime);
-        onChange?.(result.composedTime, { source: "select", parts: result.nextParts });
-    };
-
-    const handleClear = () => {
-        onClear?.();
-
-        if (!clearable) return;
-
-        const hadValue = !!field.rawValue;
-
-        field.setValue(null);
-        base.togglePopover(false);
-
-        if (hadValue) {
-            onChange?.("", { source: "clear", parts: null });
-        }
-
-        base.focusInputSilently(inputRef.current);
-    };
-
-    const handleInputClick = () => base.togglePopover(true);
-
-    const handleShellClick = () => base.openFromShell(inputRef.current);
-
-    const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-        onKeyDown?.(event);
-
-        if (!base.isInteractive) return;
-
-        if (OPEN_KEYS.includes(event.key)) {
-            event.preventDefault();
-            base.togglePopover(true, true);
-        }
-    };
-
-    const handlePopoverClose: PopoverCloseHandler = (_event, reason) => {
-        base.togglePopover(false);
-
-        if (reason === ESCAPE_CLOSE_REASON) {
-            base.focusInputSilently(inputRef.current);
-        }
-    };
+    const handlers = core.getFieldHandlers("single");
 
     return {
-        ...base,
-        popoverPosition: base.getPopoverPosition("start"),
-        inputRef,
-        value: field.displayValue,
-        parts: field.parts,
-        handleInputChange,
-        handleInputFocus,
-        handleInputBlur,
-        handleInputClick,
-        handleInputKeyDown,
-        handleShellClick,
-        handleSelect,
-        handleClear,
-        handlePopoverClose,
-        handlePopoverFocusOut: base.handleFocusOut
+        inputProps: { ...core.inputProps, ...handlers, inputRef, value: field.displayValue },
+        popoverProps: { ...core.popoverProps, position: core.getPopoverPosition("start"), parts: field.parts }
     };
 };
 
@@ -478,172 +527,63 @@ export interface IUseRangeTimePickerOptions {
 
 /**
  * @description
- * State and interaction handling of the range time picker.
+ * State and interaction handling of the range time picker, returned as the props of its inputs and
+ * of its popover. The start field can never go past the end one and vice versa, which is expressed
+ * as a min/max bound around the value of the opposite field.
  */
 export const useRangeTimePicker = ({
     value,
     defaultValue,
-    clearable,
-    disabled,
-    readOnly,
     is12Hour = false,
     onChange,
-    onClear,
-    onOpenChange,
-    onFocus,
-    onBlur,
-    onKeyDown
+    ...options
 }: IUseRangeTimePickerOptions) => {
-    const base = useBasePicker({ disabled, readOnly, onOpenChange });
-
-    const startField = useTimeField(value ? value.start : undefined, defaultValue?.start, is12Hour);
-    const endField = useTimeField(value ? value.end : undefined, defaultValue?.end, is12Hour);
-
-    const [activeField, setActiveField] = useState<TimePickerRangeFields>(PICKER_RANGE_FIELDS.START);
-
-    const startInputRef = useRef<HTMLInputElement | null>(null);
-    const endInputRef = useRef<HTMLInputElement | null>(null);
-
-    const getFieldRefs = (field: TimePickerRangeFields) =>
-        field === PICKER_RANGE_FIELDS.START
-            ? { current: startField, inputRef: startInputRef }
-            : { current: endField, inputRef: endInputRef };
-
-    /**
-     * The start field can never go past the end one and vice versa, which is expressed as a
-     * min/max bound around the value of the opposite field.
-     */
-    const getBounds = (field: TimePickerRangeFields) => {
-        const isStart = field === PICKER_RANGE_FIELDS.START;
-
-        return {
-            minParts: !isStart && startField.parts.hours ? startField.parts : null,
-            maxParts: isStart && endField.parts.hours ? endField.parts : null
-        };
+    const fields = {
+        start: useTimeField(value ? value.start : undefined, defaultValue?.start, is12Hour),
+        end: useTimeField(value ? value.end : undefined, defaultValue?.end, is12Hour)
+    };
+    const inputRefs = {
+        start: useRef<HTMLInputElement | null>(null),
+        end: useRef<HTMLInputElement | null>(null)
     };
 
-    const handleInputClick = (field: TimePickerRangeFields) => {
-        setActiveField(field);
-        base.togglePopover(true);
-    };
+    const core = useTimePickerCore<TimePickerRangeFields>({
+        ...options,
+        is12Hour,
+        fields,
+        inputRefs,
+        initialField: PICKER_RANGE_FIELDS.START,
+        getBounds: (field) => ({
+            minParts: field === PICKER_RANGE_FIELDS.END && fields.start.parts.hours ? fields.start.parts : null,
+            maxParts: field === PICKER_RANGE_FIELDS.START && fields.end.parts.hours ? fields.end.parts : null
+        }),
+        onChange: (field, time, context) => onChange?.(time, { ...context, field })
+    });
 
-    const handleInputFocus = (event: FocusEvent<HTMLInputElement>, field: TimePickerRangeFields) => {
-        setActiveField(field);
-        onFocus?.(event, field);
-        base.handleFocusIn();
-    };
-
-    const handleInputChange = (event: ChangeEvent<HTMLInputElement>, field: TimePickerRangeFields) => {
-        if (!base.isInteractive) return;
-
-        const { current } = getFieldRefs(field);
-        const nextValue = event.target.value;
-
-        current.setIsEditing(true);
-
-        if (nextValue === current.rawValue) return;
-
-        current.setValue(nextValue);
-        onChange?.(nextValue, { field, source: "input", parts: parseTime(nextValue, is12Hour) });
-    };
-
-    const handleInputBlur = (event: FocusEvent<HTMLInputElement>, field: TimePickerRangeFields) => {
-        const { current } = getFieldRefs(field);
-        const { minParts, maxParts } = getBounds(field);
-
-        current.setIsEditing(false);
-        onBlur?.(event, field);
-        base.handleFocusOut(event);
-
-        if (!base.isInteractive) return;
-
-        const resolved = resolveBlurValue(
-            current.rawValue,
-            current.lastValidValueRef.current,
-            is12Hour,
-            minParts,
-            maxParts
-        );
-
-        if (!resolved) return;
-
-        current.setValue(resolved.value);
-        onChange?.(resolved.value ?? "", { field, source: "input", parts: resolved.parts });
-    };
-
-    const handleSelect = (column: keyof TimeParts, val: string) => {
-        if (!base.isInteractive) return;
-
-        const { current } = getFieldRefs(activeField);
-        const { minParts, maxParts } = getBounds(activeField);
-
-        const result = processTimeSelection(current.parts, column, val, is12Hour, minParts, maxParts);
-
-        if (result.composedTime === current.rawValue) return;
-
-        current.setValue(result.composedTime);
-        onChange?.(result.composedTime, { field: activeField, source: "select", parts: result.nextParts });
-    };
-
-    const handleClear = () => {
-        onClear?.();
-
-        if (!clearable) return;
-
-        const hadValue = !!startField.rawValue || !!endField.rawValue;
-
-        startField.setValue(null);
-        endField.setValue(null);
-        setActiveField(PICKER_RANGE_FIELDS.START);
-        base.togglePopover(false);
-
-        if (hadValue) {
-            onChange?.("", { field: PICKER_RANGE_FIELDS.START, source: "clear", parts: null });
-        }
-
-        base.focusInputSilently(startInputRef.current);
-    };
-
-    const handleShellClick = () => base.openFromShell(getFieldRefs(activeField).inputRef.current);
-
-    const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>, field: TimePickerRangeFields) => {
-        onKeyDown?.(event, field);
-
-        if (!base.isInteractive) return;
-
-        if (OPEN_KEYS.includes(event.key)) {
-            event.preventDefault();
-            setActiveField(field);
-            base.togglePopover(true, true);
-        }
-    };
-
-    const handlePopoverClose: PopoverCloseHandler = (_event, reason) => {
-        base.togglePopover(false);
-
-        if (reason === ESCAPE_CLOSE_REASON) {
-            base.focusInputSilently(getFieldRefs(activeField).inputRef.current);
-        }
-    };
+    const { activeField, getFieldHandlers } = core;
 
     return {
-        ...base,
-        popoverPosition: base.getPopoverPosition(activeField === PICKER_RANGE_FIELDS.END ? "end" : "start"),
-        activeField,
-        startInputRef,
-        endInputRef,
-        value: { start: startField.displayValue, end: endField.displayValue },
-        partsStart: startField.parts,
-        partsEnd: endField.parts,
-        handleInputClick,
-        handleInputFocus,
-        handleInputChange,
-        handleInputBlur,
-        handleInputKeyDown,
-        handleShellClick,
-        handleSelect,
-        handleClear,
-        handlePopoverClose,
-        handlePopoverFocusOut: base.handleFocusOut
+        inputProps: {
+            ...core.inputProps,
+            inputRefs,
+            value: { start: fields.start.displayValue, end: fields.end.displayValue },
+            onClick: (field: TimePickerRangeFields) => getFieldHandlers(field).onClick(),
+            onFocus: (event: FocusEvent<HTMLInputElement>, field: TimePickerRangeFields) =>
+                getFieldHandlers(field).onFocus(event),
+            onChange: (event: ChangeEvent<HTMLInputElement>, field: TimePickerRangeFields) =>
+                getFieldHandlers(field).onChange(event),
+            onBlur: (event: FocusEvent<HTMLInputElement>, field: TimePickerRangeFields) =>
+                getFieldHandlers(field).onBlur(event),
+            onKeyDown: (event: KeyboardEvent<HTMLInputElement>, field: TimePickerRangeFields) =>
+                getFieldHandlers(field).onKeyDown(event)
+        },
+        popoverProps: {
+            ...core.popoverProps,
+            position: core.getPopoverPosition(activeField === PICKER_RANGE_FIELDS.END ? "end" : "start"),
+            parts: fields[activeField].parts,
+            activeField,
+            partsStart: fields.start.parts,
+            partsEnd: fields.end.parts
+        }
     };
 };

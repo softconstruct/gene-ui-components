@@ -6,11 +6,11 @@ import React, {
     MouseEvent,
     Ref,
     SetStateAction,
-    useCallback,
     useContext,
     useEffect,
     useMemo,
-    useRef
+    useRef,
+    useState
 } from "react";
 import classNames from "classnames";
 
@@ -21,7 +21,7 @@ import Text from "@components/atoms/Text";
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
 // Constants & Helpers
-import { headerTextVariantMap, KEYS, MERIDIEM_LIST, MERIDIEMS, TIME_COLUMNS_ORDER, TIME_PARTS } from "../../constants";
+import { headerTextVariantMap, KEYS, TIME_COLUMNS_ORDER, TIME_PARTS } from "../../constants";
 import { getTimePartValues, isPickerPartDisabled, resolveLocalization } from "../../helpers";
 // Types
 import { TimeParts, TimePickerLocalization, TimePickerRangeFields, TimePickerSizes } from "../../types";
@@ -132,20 +132,15 @@ interface IPickerPopoverProps {
 }
 
 const VERTICAL_KEYS: string[] = [KEYS.ARROW_UP, KEYS.ARROW_DOWN];
-
-/**
- * @description
- * Presses on the non focusable parts of the popover (headers, scrollbars, padding) must not take
- * the focus away from the input: the field would blur and the popover would close itself.
- * Buttons keep the default so the keyboard can continue from the clicked value.
- */
-const keepReferenceFocus = (event: MouseEvent<HTMLDivElement>) => {
-    if ((event.target as HTMLElement).closest("button")) return;
-
-    event.preventDefault();
-};
 const HORIZONTAL_KEYS: string[] = [KEYS.ARROW_LEFT, KEYS.ARROW_RIGHT];
 const EDGE_KEYS: string[] = [KEYS.HOME, KEYS.END];
+
+/**
+ * Presses outside the buttons must not blur the input, or the popover would close.
+ */
+const keepReferenceFocus = (event: MouseEvent<HTMLDivElement>) => {
+    if (!(event.target as HTMLElement).closest("button")) event.preventDefault();
+};
 
 /**
  * @description
@@ -156,26 +151,19 @@ const getTabStopIndex = (entries: PickerColumnEntry[]): number => {
     const selectedIndex = entries.findIndex((entry) => entry.selected);
     if (selectedIndex >= 0) return selectedIndex;
 
-    const firstEnabledIndex = entries.findIndex((entry) => !entry.disabled);
-    return firstEnabledIndex >= 0 ? firstEnabledIndex : 0;
-};
-
-/**
- * @description
- * Overflowing content alone does not make a node scrollable: the custom scrollbar wraps the list in
- * a clipped content node whose `scrollTop` is inert, so only an ancestor that scrolls counts.
- */
-const isScrollable = (node: HTMLElement): boolean => {
-    const { overflowY } = getComputedStyle(node);
-
-    return (overflowY === "auto" || overflowY === "scroll") && node.scrollHeight > node.clientHeight;
+    return Math.max(
+        0,
+        entries.findIndex((entry) => !entry.disabled)
+    );
 };
 
 const getScrollableAncestor = (element: HTMLElement, boundary: HTMLElement | null): HTMLElement | null => {
     let node: HTMLElement | null = element.parentElement;
 
     while (node) {
-        if (isScrollable(node)) return node;
+        const { overflowY } = getComputedStyle(node);
+
+        if ((overflowY === "auto" || overflowY === "scroll") && node.scrollHeight > node.clientHeight) return node;
         if (node === boundary) return null;
 
         node = node.parentElement;
@@ -184,20 +172,8 @@ const getScrollableAncestor = (element: HTMLElement, boundary: HTMLElement | nul
     return null;
 };
 
-/**
- * @description
- * Centers the selected value inside its own scroll container, without scrolling the page
- * (which `scrollIntoView` would do).
- */
-const scrollIntoCenter = (element: HTMLElement, boundary: HTMLElement | null) => {
-    const scroller = getScrollableAncestor(element, boundary);
-    if (!scroller) return;
-
-    const elementRect = element.getBoundingClientRect();
-    const scrollerRect = scroller.getBoundingClientRect();
-
-    scroller.scrollTop += elementRect.top - scrollerRect.top - (scroller.clientHeight - elementRect.height) / 2;
-};
+const hasAnyValue = (parts: TimeParts | undefined): boolean =>
+    !!parts && Object.values(parts).some((value) => value !== undefined);
 
 const PickerPopover: FC<IPickerPopoverProps> = ({
     popoverRef,
@@ -225,6 +201,16 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
     const columnRefs = useRef<Partial<Record<keyof TimeParts, HTMLDivElement | null>>>({});
     const pendingScrollRef = useRef(false);
     const pendingFocusRef = useRef(false);
+    const pickedColumnRef = useRef<keyof TimeParts | null>(null);
+    const previousPartsRef = useRef<TimeParts | undefined>(undefined);
+    const previousActiveFieldRef = useRef(activeField);
+
+    /**
+     * The column scrollbars stay hidden after the picker positions the columns itself and come back
+     * with the first scroll gesture of the user.
+     */
+    const [scrollbarsHidden, setScrollbarsHidden] = useState(false);
+    const revealScrollbars = () => setScrollbarsHidden(false);
 
     const texts = useMemo(() => resolveLocalization(localization), [localization]);
 
@@ -233,104 +219,88 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
         [is12Hour]
     );
 
-    const buildEntries = useCallback(
-        (part: keyof TimeParts, values: string[], getText: (value: string) => string): PickerColumnEntry[] =>
-            values.map((value) => ({
-                value,
-                text: getText(value),
-                selected: parts?.[part] === value,
-                disabled: isPickerPartDisabled(part, value, parts, is12Hour, activeField, partsStart, partsEnd)
-            })),
-        [parts, is12Hour, activeField, partsStart, partsEnd]
-    );
-
     const columns = useMemo<PickerColumn[]>(() => {
         if (!open) return [];
 
-        const headers: Record<string, string> = {
-            [TIME_PARTS.HOURS]: texts.hours,
-            [TIME_PARTS.MINUTES]: texts.minutes,
-            [TIME_PARTS.SECONDS]: texts.seconds
+        const headers: Partial<Record<keyof TimeParts, string>> = {
+            hours: texts.hours,
+            minutes: texts.minutes,
+            seconds: texts.seconds
         };
-
-        const ariaLabels: Record<string, string> = {
-            [TIME_PARTS.HOURS]: texts.selectHours,
-            [TIME_PARTS.MINUTES]: texts.selectMinutes,
-            [TIME_PARTS.SECONDS]: texts.selectSeconds
+        const ariaLabels: Record<keyof TimeParts, string> = {
+            hours: texts.selectHours,
+            minutes: texts.selectMinutes,
+            seconds: texts.selectSeconds,
+            meridiem: texts.selectMeridiem
         };
+        const valueTexts: Record<string, string> = { AM: texts.am, PM: texts.pm };
 
-        return TIME_COLUMNS_ORDER.map((part) => {
-            const entries = buildEntries(part, getTimePartValues(part, is12Hour), (value) => value);
+        return columnOrder.map((part) => {
+            const entries = getTimePartValues(part, is12Hour).map((value) => ({
+                value,
+                text: valueTexts[value] ?? value,
+                selected: parts?.[part] === value,
+                disabled: isPickerPartDisabled(part, value, parts, is12Hour, activeField, partsStart, partsEnd)
+            }));
 
             return {
                 part,
-                header: headers[part],
+                header: headers[part] ?? "",
                 ariaLabel: ariaLabels[part],
                 entries,
                 tabStopIndex: getTabStopIndex(entries)
             };
         });
-    }, [open, texts, buildEntries, is12Hour]);
+    }, [open, texts, columnOrder, parts, is12Hour, activeField, partsStart, partsEnd]);
 
-    const meridiemColumn = useMemo<PickerColumn | null>(() => {
-        if (!open || !is12Hour) return null;
-
-        const meridiemTexts: Record<string, string> = {
-            [MERIDIEMS.AM]: texts.am,
-            [MERIDIEMS.PM]: texts.pm
-        };
-
-        const entries = buildEntries(TIME_PARTS.MERIDIEM, MERIDIEM_LIST, (value) => meridiemTexts[value]);
-
-        return {
-            part: TIME_PARTS.MERIDIEM,
-            header: "",
-            ariaLabel: texts.selectMeridiem,
-            entries,
-            tabStopIndex: getTabStopIndex(entries)
-        };
-    }, [open, is12Hour, texts, buildEntries]);
-
-    const getEnabledButtons = (part: keyof TimeParts): HTMLButtonElement[] => {
-        const container = columnRefs.current[part];
-        if (!container) return [];
-
-        return Array.from(container.querySelectorAll<HTMLButtonElement>("button:not([disabled])"));
-    };
+    const getEnabledButtons = (part: keyof TimeParts): HTMLButtonElement[] =>
+        Array.from(columnRefs.current[part]?.querySelectorAll<HTMLButtonElement>("button:not([disabled])") ?? []);
 
     const focusColumnItem = (part: keyof TimeParts, index: number) => {
         const buttons = getEnabledButtons(part);
-        if (!buttons.length) return;
 
-        buttons[Math.max(0, Math.min(index, buttons.length - 1))].focus();
+        buttons[Math.max(0, Math.min(index, buttons.length - 1))]?.focus();
     };
 
     const focusSelectedInColumn = (part?: keyof TimeParts) => {
         if (!part) return;
 
         const buttons = getEnabledButtons(part);
-        if (!buttons.length) return;
 
-        const selectedIndex = buttons.findIndex((button) => button.getAttribute("aria-selected") === "true");
-        buttons[selectedIndex < 0 ? 0 : selectedIndex].focus();
+        focusColumnItem(
+            part,
+            buttons.findIndex((button) => button.getAttribute("aria-selected") === "true")
+        );
+    };
+
+    /**
+     * Centers the selected value of the given columns.
+     */
+    const scrollColumnsToSelection = (targets: (keyof TimeParts)[]) => {
+        if (!wrapperRef.current) return;
+
+        setScrollbarsHidden(true);
+
+        targets.forEach((part) => {
+            const selected = columnRefs.current[part]?.querySelector<HTMLElement>('[aria-selected="true"]');
+            const scroller = selected && getScrollableAncestor(selected, wrapperRef.current);
+
+            if (!selected || !scroller) return;
+
+            const selectedRect = selected.getBoundingClientRect();
+            const scrollerRect = scroller.getBoundingClientRect();
+            const centered = selectedRect.top - scrollerRect.top - (scroller.clientHeight - selectedRect.height) / 2;
+
+            scroller.scrollTo({ top: Math.max(0, scroller.scrollTop + centered) });
+        });
     };
 
     const applyPendingColumnEffects = () => {
-        if (!pendingScrollRef.current && !pendingFocusRef.current) return;
         if (!columnOrder.every((part) => columnRefs.current[part])) return;
 
         if (pendingScrollRef.current) {
             pendingScrollRef.current = false;
-
-            queueMicrotask(() => {
-                columnOrder.forEach((part) => {
-                    const selected = columnRefs.current[part]?.querySelector<HTMLElement>('[aria-selected="true"]');
-
-                    if (selected) {
-                        scrollIntoCenter(selected, wrapperRef.current);
-                    }
-                });
-            });
+            queueMicrotask(() => scrollColumnsToSelection(columnOrder));
         }
 
         if (pendingFocusRef.current) {
@@ -342,47 +312,47 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
     const registerColumn = (part: keyof TimeParts) => (node: HTMLDivElement | null) => {
         columnRefs.current[part] = node;
 
-        if (node) {
-            applyPendingColumnEffects();
-        }
+        if (node) applyPendingColumnEffects();
     };
 
     useEffect(() => {
         pendingScrollRef.current = open === true;
         pendingFocusRef.current = open === true && focusOnOpen === true;
 
-        if (open) {
-            applyPendingColumnEffects();
-        }
+        if (open) applyPendingColumnEffects();
     }, [open, focusOnOpen, columnOrder]);
 
-    /**
-     * Columns whose selected value changed while the popover is open (a value picked in another
-     * column filling this one with `00`, or the range switching fields) scroll to the new selection.
-     * The first render after opening is covered by the pending scroll above.
-     */
-    const previousPartsRef = useRef<TimeParts | undefined>(undefined);
+    useEffect(() => {
+        if (!open) {
+            previousActiveFieldRef.current = activeField;
+            return;
+        }
+
+        if (previousActiveFieldRef.current !== activeField) {
+            previousActiveFieldRef.current = activeField;
+            scrollColumnsToSelection(columnOrder);
+        }
+    }, [open, activeField, columnOrder]);
 
     useEffect(() => {
         if (!open) {
             previousPartsRef.current = undefined;
+            pickedColumnRef.current = null;
+            setScrollbarsHidden(false);
             return;
         }
 
         const previous = previousPartsRef.current;
         previousPartsRef.current = parts;
 
-        if (!previous) return;
+        if (!previous || hasAnyValue(previous) || !hasAnyValue(parts)) return;
 
-        columnOrder.forEach((part) => {
-            if (previous[part] === parts?.[part]) return;
-
-            const selected = columnRefs.current[part]?.querySelector<HTMLElement>('[aria-selected="true"]');
-
-            if (selected) {
-                scrollIntoCenter(selected, wrapperRef.current);
-            }
-        });
+        scrollColumnsToSelection(
+            columnOrder.filter(
+                (part) =>
+                    part !== pickedColumnRef.current && previous[part] === undefined && parts?.[part] !== undefined
+            )
+        );
     }, [open, parts, columnOrder]);
 
     const handleColumnClick = (part: keyof TimeParts) => (event: MouseEvent<HTMLDivElement>) => {
@@ -390,6 +360,7 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
 
         if (!button || button.disabled || !button.dataset.value) return;
 
+        pickedColumnRef.current = part;
         onSelect?.(part, button.dataset.value);
     };
 
@@ -399,44 +370,48 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
         if (!VERTICAL_KEYS.includes(key) && !HORIZONTAL_KEYS.includes(key) && !EDGE_KEYS.includes(key)) return;
 
         event.preventDefault();
+        revealScrollbars();
 
         if (HORIZONTAL_KEYS.includes(key)) {
-            const step = key === KEYS.ARROW_RIGHT ? 1 : -1;
-            focusSelectedInColumn(columnOrder[columnOrder.indexOf(part) + step]);
+            focusSelectedInColumn(columnOrder[columnOrder.indexOf(part) + (key === KEYS.ARROW_RIGHT ? 1 : -1)]);
             return;
         }
 
         const buttons = getEnabledButtons(part);
-        if (!buttons.length) return;
-
-        if (key === KEYS.HOME) {
-            focusColumnItem(part, 0);
-            return;
-        }
-
-        if (key === KEYS.END) {
-            focusColumnItem(part, buttons.length - 1);
-            return;
-        }
-
         const currentIndex = buttons.indexOf(event.target as HTMLButtonElement);
-        focusColumnItem(part, key === KEYS.ARROW_DOWN ? currentIndex + 1 : currentIndex - 1);
+
+        if (key === KEYS.HOME) focusColumnItem(part, 0);
+        else if (key === KEYS.END) focusColumnItem(part, buttons.length - 1);
+        else focusColumnItem(part, key === KEYS.ARROW_DOWN ? currentIndex + 1 : currentIndex - 1);
     };
 
-    const renderEntry = (column: PickerColumn, entry: PickerColumnEntry, index: number) => (
-        <PickerButton
-            key={entry.value}
-            role="option"
-            aria-selected={entry.selected}
-            tabIndex={index === column.tabStopIndex ? 0 : -1}
-            data-value={entry.value}
-            selected={entry.selected}
-            disabled={entry.disabled}
-            size={size}
-            className={classNames("timePicker__pickerButton", `timePicker__pickerButton_size_${size}`)}
+    const renderList = (column: PickerColumn, className: string) => (
+        <div
+            key={column.part}
+            ref={registerColumn(column.part)}
+            className={className}
+            role="listbox"
+            tabIndex={-1}
+            aria-label={column.ariaLabel}
+            onClick={handleColumnClick(column.part)}
+            onKeyDown={handleColumnKeyDown(column.part)}
         >
-            {entry.text}
-        </PickerButton>
+            {column.entries.map((entry, index) => (
+                <PickerButton
+                    key={entry.value}
+                    role="option"
+                    aria-selected={entry.selected}
+                    tabIndex={index === column.tabStopIndex ? 0 : -1}
+                    data-value={entry.value}
+                    selected={entry.selected}
+                    disabled={entry.disabled}
+                    size={size}
+                    className={classNames("timePicker__pickerButton", `timePicker__pickerButton_size_${size}`)}
+                >
+                    {entry.text}
+                </PickerButton>
+            ))}
+        </div>
     );
 
     return (
@@ -457,51 +432,31 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
                         ref={wrapperRef}
                         role="presentation"
                         className={classNames("timePicker__wrapper", `timePicker__wrapper_size_${size}`, {
-                            timePicker__wrapper_mobile: isMobile
+                            timePicker__wrapper_mobile: isMobile,
+                            timePicker__wrapper_scrollbarsHidden: scrollbarsHidden
                         })}
                         onBlur={onFocusOut}
                         onMouseDown={keepReferenceFocus}
+                        onWheel={revealScrollbars}
+                        onTouchMove={revealScrollbars}
                     >
-                        {columns.map((column) => (
-                            <div key={column.part} className="timePicker__column">
-                                <div className="timePicker__headerWrapper">
-                                    <div className="timePicker__header">
-                                        <Text className="ellipsis-text" as="p" variant={headerTextVariantMap[size]}>
-                                            {column.header}
-                                        </Text>
+                        {columns.map((column) =>
+                            column.part === TIME_PARTS.MERIDIEM ? (
+                                renderList(column, "timePicker__column timePicker__column_meridiem")
+                            ) : (
+                                <div key={column.part} className="timePicker__column">
+                                    <div className="timePicker__headerWrapper">
+                                        <div className="timePicker__header">
+                                            <Text className="ellipsis-text" as="p" variant={headerTextVariantMap[size]}>
+                                                {column.header}
+                                            </Text>
+                                        </div>
+                                    </div>
+                                    <div className="timePicker__body">
+                                        <Scrollbar>{renderList(column, "timePicker__list")}</Scrollbar>
                                     </div>
                                 </div>
-                                <div className="timePicker__body">
-                                    <Scrollbar>
-                                        <div
-                                            ref={registerColumn(column.part)}
-                                            className="timePicker__list"
-                                            role="listbox"
-                                            tabIndex={-1}
-                                            aria-label={column.ariaLabel}
-                                            onClick={handleColumnClick(column.part)}
-                                            onKeyDown={handleColumnKeyDown(column.part)}
-                                        >
-                                            {column.entries.map((entry, index) => renderEntry(column, entry, index))}
-                                        </div>
-                                    </Scrollbar>
-                                </div>
-                            </div>
-                        ))}
-                        {meridiemColumn && (
-                            <div
-                                ref={registerColumn(meridiemColumn.part)}
-                                className="timePicker__column timePicker__column_meridiem"
-                                role="listbox"
-                                tabIndex={-1}
-                                aria-label={meridiemColumn.ariaLabel}
-                                onClick={handleColumnClick(meridiemColumn.part)}
-                                onKeyDown={handleColumnKeyDown(meridiemColumn.part)}
-                            >
-                                {meridiemColumn.entries.map((entry, index) =>
-                                    renderEntry(meridiemColumn, entry, index)
-                                )}
-                            </div>
+                            )
                         )}
                     </div>
                 )}

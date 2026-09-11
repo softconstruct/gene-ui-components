@@ -28,6 +28,7 @@
         &_selected {
             background-color: var(--guit-sem-color-background-selected-2);
             color: var(--guit-sem-color-foreground-inverse);
+            cursor: default;
         }
 
         &_disabled {

@@ -56,6 +56,12 @@
                 width: 100%;
             }
         }
+
+        &_scrollbarsHidden {
+            .scrollbar__track {
+                display: none;
+            }
+        }
     }
 
     &__skeleton {

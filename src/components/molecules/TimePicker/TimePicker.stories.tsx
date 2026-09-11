@@ -64,9 +64,6 @@ const meta: Meta<typeof TimePicker> = {
     }
 };
 
-/**
- * Defaults of the interactive stories, so every control shows the value that is in effect.
- */
 const interactiveArgs = {
     size: "medium",
     format: "24h",
@@ -92,9 +89,6 @@ type RangePickerCase = {
     RenderComponent?: (props: IRangeTimePickerProps) => React.JSX.Element;
 } & IRangeTimePickerProps;
 
-/**
- * Controls only take part once they hold a value, so the cases keep their own props until then.
- */
 const definedProps = <T extends object>(props: T): Partial<T> =>
     Object.fromEntries(Object.entries(props).filter(([, value]) => value !== undefined)) as Partial<T>;
 
@@ -155,10 +149,6 @@ const rangePickerCases: RangePickerCase[] = [
     { key: "bounds", defaultValue: { start: "09:00:00", end: "17:00:00" } }
 ];
 
-/**
- * The range picker takes `{ start, end }` objects where the single picker takes strings, so its
- * stories override those controls.
- */
 const rangeArgTypes = {
     placeholder: args({
         control: "object",
@@ -179,8 +169,7 @@ const rangeArgTypes = {
 };
 
 /**
- * `defaultValue` is only read when the component mounts, so the interactive stories remount it
- * when that control changes.
+ * `defaultValue` is only read on mount, so the interactive stories remount when it changes.
  */
 export const Default: SingleStory = {
     render: ({ defaultValue, ...props }) => (

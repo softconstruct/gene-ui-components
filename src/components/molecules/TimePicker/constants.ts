@@ -56,6 +56,11 @@ const TIME_PART_DEFAULT_12H_HOUR = "12";
 const TIME_PARTS_RADIX = 10;
 
 /**
+ * Typing reports through `onChange` once the user pauses for this long.
+ */
+const INPUT_CHANGE_DEBOUNCE_MS = 300;
+
+/**
  * Shared "nothing selected yet" value. Kept as a single frozen object so that the derived
  * `parts` reference stays stable across renders and does not invalidate memoized children.
  */
@@ -86,9 +91,6 @@ const textSizeMap = {
     small: "small"
 } as const;
 
-const labelSizeMap = textSizeMap;
-const helperTextSizeMap = textSizeMap;
-
 const headerTextVariantMap = {
     large: "bodyMediumSemibold",
     medium: "bodyMediumSemibold",
@@ -106,33 +108,20 @@ const pickerShellIconSizeMap = {
 // ---------------------------------------------------------
 
 /**
- * Every slot of the mask has its own replacement character so that structurally impossible
- * values can never be typed (e.g. `99:99:99`):
- * `H`/`h` hour tens/units, `M`/`m` minute tens/units, `S`/`s` second tens/units,
- * `A` the first meridiem character, `P` the trailing `M`.
+ * The mask library displays its replacement character in every empty slot, so a single `_` is
+ * used for all of them and the `replacement` only lists the characters a time can contain.
+ * The rules of the individual slots (hour tens `0-2`, minute tens `0-5`, the meridiem letters, ...)
+ * are enforced by `createMaskTrack`, which receives them in mask order.
  */
-const TIME_PICKER_INPUT_MASK = "Hh:Mm:Ss";
-const TIME_PICKER_INPUT_MASK_WITH_MERIDIEM = "Hh:Mm:Ss AP";
+const MASK_PLACEHOLDER = "_";
+const TIME_PICKER_INPUT_MASK = "__:__:__";
+const TIME_PICKER_INPUT_MASK_WITH_MERIDIEM = "__:__:__ __";
 
-const MASK_REPLACEMENT_24H: Record<string, RegExp> = {
-    H: /[0-2]/,
-    h: /[0-9]/,
-    M: /[0-5]/,
-    m: /[0-9]/,
-    S: /[0-5]/,
-    s: /[0-9]/
-};
+const MASK_REPLACEMENT_24H: Record<string, RegExp> = { [MASK_PLACEHOLDER]: /[0-9]/ };
+const MASK_REPLACEMENT_12H: Record<string, RegExp> = { [MASK_PLACEHOLDER]: /[0-9aApPmM]/ };
 
-const MASK_REPLACEMENT_12H: Record<string, RegExp> = {
-    H: /[0-1]/,
-    h: /[0-9]/,
-    M: /[0-5]/,
-    m: /[0-9]/,
-    S: /[0-5]/,
-    s: /[0-9]/,
-    A: /[aApP]/,
-    P: /[mM]/
-};
+const MASK_SLOT_RULES_24H: RegExp[] = [/[0-2]/, /[0-9]/, /[0-5]/, /[0-9]/, /[0-5]/, /[0-9]/];
+const MASK_SLOT_RULES_12H: RegExp[] = [/[0-1]/, /[0-9]/, /[0-5]/, /[0-9]/, /[0-5]/, /[0-9]/, /[aApP]/, /[mM]/];
 
 // ---------------------------------------------------------
 // Accessibility & localization
@@ -176,17 +165,19 @@ export {
     EMPTY_TIME_PARTS,
     FIRST_HOUR_IN_12H_FORMAT,
     headerTextVariantMap,
-    helperTextSizeMap,
     HOURS_12,
     HOURS_24,
     HOURS_IN_DAY,
+    INPUT_CHANGE_DEBOUNCE_MS,
     KEYS,
-    labelSizeMap,
     LAST_HOUR_IN_24H_FORMAT_DAY,
     LAST_MINUTE_IN_HOUR,
     LAST_SECOND_IN_MINUTE,
+    MASK_PLACEHOLDER,
     MASK_REPLACEMENT_12H,
     MASK_REPLACEMENT_24H,
+    MASK_SLOT_RULES_12H,
+    MASK_SLOT_RULES_24H,
     MERIDIEM_LIST,
     MERIDIEM_OFFSET,
     MERIDIEMS,
@@ -196,6 +187,7 @@ export {
     SECONDS_IN_DAY,
     SECONDS_IN_HOUR,
     SECONDS_IN_MINUTE,
+    textSizeMap,
     TIME_COLUMNS_ORDER,
     TIME_PART_DEFAULT_12H_HOUR,
     TIME_PART_DEFAULT_TEXT_VALUE,

@@ -1,3 +1,5 @@
+import { Track } from "@react-input/mask";
+
 // Constants
 import {
     DEFAULT_LOCALIZATION,
@@ -7,6 +9,7 @@ import {
     LAST_HOUR_IN_24H_FORMAT_DAY,
     LAST_MINUTE_IN_HOUR,
     LAST_SECOND_IN_MINUTE,
+    MASK_PLACEHOLDER,
     MERIDIEM_LIST,
     MERIDIEM_OFFSET,
     MERIDIEMS,
@@ -38,19 +41,13 @@ const toTimeNumber = (value?: string): number => {
  * A single leading letter is accepted so the meridiem can be switched with one keystroke:
  * typing `P` over the `A` of `10:30:00 AM` already reads as PM.
  */
-const MERIDIEM_INITIALS: Record<string, TimePickerMeridiem> = {
-    A: MERIDIEMS.AM,
-    P: MERIDIEMS.PM
-};
-
 const toMeridiem = (value?: string): TimePickerMeridiem | undefined => {
-    const normalized = value?.trim().toUpperCase();
+    const initial = value?.trim().toUpperCase()[0];
 
-    if (!normalized) return undefined;
-    if (normalized === MERIDIEMS.AM) return MERIDIEMS.AM;
-    if (normalized === MERIDIEMS.PM) return MERIDIEMS.PM;
+    if (initial === "A") return MERIDIEMS.AM;
+    if (initial === "P") return MERIDIEMS.PM;
 
-    return MERIDIEM_INITIALS[normalized];
+    return undefined;
 };
 
 /**
@@ -66,18 +63,10 @@ const isValidTimeParts = (parts: TimeParts): boolean =>
 // ---------------------------------------------------------
 
 const convertTo24Hour = (hStr?: string, meridiem?: string): number => {
-    if (!hStr) return 0;
+    const hours = toTimeNumber(hStr);
 
-    let hours = toTimeNumber(hStr);
-
-    if (meridiem) {
-        if (meridiem === MERIDIEMS.PM && hours !== MERIDIEM_OFFSET) {
-            hours += MERIDIEM_OFFSET;
-        }
-        if (meridiem === MERIDIEMS.AM && hours === MERIDIEM_OFFSET) {
-            hours = 0;
-        }
-    }
+    if (meridiem === MERIDIEMS.PM && hours !== MERIDIEM_OFFSET) return hours + MERIDIEM_OFFSET;
+    if (meridiem === MERIDIEMS.AM && hours === MERIDIEM_OFFSET) return 0;
 
     return hours;
 };
@@ -259,30 +248,6 @@ export const getTimePartValues = (part: keyof TimeParts, is12Hour: boolean): str
 
 /**
  * @description
- * A complete time is disabled when it falls outside the `minParts`/`maxParts` bounds.
- */
-export const isTimeDisabled = (
-    parts: TimeParts,
-    is12Hour: boolean,
-    minParts?: TimeParts | null,
-    maxParts?: TimeParts | null
-): boolean => {
-    if (!isValidTimeParts(parts)) return false;
-
-    const currentSeconds = convertPartsToSeconds(parts, is12Hour);
-
-    if (minParts && isValidTimeParts(minParts) && currentSeconds < convertPartsToSeconds(minParts, is12Hour)) {
-        return true;
-    }
-    if (maxParts && isValidTimeParts(maxParts) && currentSeconds > convertPartsToSeconds(maxParts, is12Hour)) {
-        return true;
-    }
-
-    return false;
-};
-
-/**
- * @description
  * Tells whether picking `item` in the `part` column would push the time past a bound.
  *
  * The comparison is a lexicographic (prefix) one: only the columns up to and including the edited
@@ -323,26 +288,6 @@ const isPartOutOfBounds = (
     return isMinBound ? candidateSeconds < boundSeconds : candidateSeconds > boundSeconds;
 };
 
-const clampPartsToBounds = (
-    parts: TimeParts,
-    is12Hour: boolean,
-    minParts?: TimeParts | null,
-    maxParts?: TimeParts | null
-): TimeParts => {
-    if (!isValidTimeParts(parts)) return parts;
-
-    const currentSeconds = convertPartsToSeconds(parts, is12Hour);
-
-    if (minParts && isValidTimeParts(minParts) && currentSeconds < convertPartsToSeconds(minParts, is12Hour)) {
-        return { ...minParts };
-    }
-    if (maxParts && isValidTimeParts(maxParts) && currentSeconds > convertPartsToSeconds(maxParts, is12Hour)) {
-        return { ...maxParts };
-    }
-
-    return parts;
-};
-
 /**
  * @description
  * Returns the closest allowed time: the time itself while it is inside the bounds, otherwise the
@@ -353,7 +298,32 @@ export const getNearestAvailableTime = (
     is12Hour: boolean,
     minParts?: TimeParts | null,
     maxParts?: TimeParts | null
-): TimeParts => clampPartsToBounds(parts, is12Hour, minParts, maxParts);
+): TimeParts => {
+    if (!isValidTimeParts(parts)) return parts;
+
+    const toSeconds = (bound?: TimeParts | null) =>
+        bound && isValidTimeParts(bound) ? convertPartsToSeconds(bound, is12Hour) : null;
+
+    const current = convertPartsToSeconds(parts, is12Hour);
+    const min = toSeconds(minParts);
+    const max = toSeconds(maxParts);
+
+    if (minParts && min !== null && current < min) return { ...minParts };
+    if (maxParts && max !== null && current > max) return { ...maxParts };
+
+    return parts;
+};
+
+/**
+ * @description
+ * A complete time is disabled when it falls outside the `minParts`/`maxParts` bounds.
+ */
+export const isTimeDisabled = (
+    parts: TimeParts,
+    is12Hour: boolean,
+    minParts?: TimeParts | null,
+    maxParts?: TimeParts | null
+): boolean => getNearestAvailableTime(parts, is12Hour, minParts, maxParts) !== parts;
 
 export const isPickerPartDisabled = (
     part: keyof TimeParts,
@@ -374,3 +344,33 @@ export const isPickerPartDisabled = (
 
     return false;
 };
+
+// ---------------------------------------------------------
+// Input mask
+// ---------------------------------------------------------
+
+/**
+ * @description
+ * Builds the `track` callback of the input mask: every inserted character is matched against the
+ * rule of the slot it lands in, and the ones that do not fit are dropped, so structurally impossible
+ * values (`99:99:99`) can never be typed.
+ * @param mask the mask the rules belong to
+ * @param slotRules one regular expression per placeholder of the mask, in mask order
+ */
+export const createMaskTrack =
+    (mask: string, slotRules: RegExp[]): Track =>
+    ({ inputType, data, selectionStart }) => {
+        if (inputType !== "insert") return undefined;
+
+        let slot = mask.slice(0, selectionStart).split(MASK_PLACEHOLDER).length - 1;
+        let accepted = "";
+
+        Array.from(data).forEach((char) => {
+            if (slot < slotRules.length && slotRules[slot].test(char)) {
+                accepted += char;
+                slot += 1;
+            }
+        });
+
+        return accepted || false;
+    };
