@@ -106,6 +106,16 @@ export { default as List, IListProps, IListItemData } from "./components/molecul
 export { default as ImagePreview, IImagePreviewImage, IImagePreviewProps } from "./components/molecules/ImagePreview";
 export { default as Widget, IWidgetProps } from "./components/molecules/Widget";
 
+export {
+    default as TimePicker,
+    ISingleTimePickerProps,
+    IRangeTimePickerProps,
+    TimeParts,
+    TimePickerChangeContext,
+    TimePickerLocalization,
+    TimePickerRangeChangeContext
+} from "./components/molecules/TimePicker";
+
 // Organisms
 export {
     default as DataTable,
