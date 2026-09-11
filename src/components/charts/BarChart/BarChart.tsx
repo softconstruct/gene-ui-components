@@ -40,13 +40,17 @@ interface IBarChartProps {
      */
     className?: string;
     /**
-     * Category labels for the X axis.
+     * Category labels for the category axis.
      */
     categories: string[];
     /**
-     * Single column series. Multi-series / grouped bars belong in `GroupedBarChart`.
+     * Single series. Multi-series / grouped bars belong in `GroupedBarChart`.
      */
     series?: IBarChartSeries;
+    /**
+     * Bar orientation. `"vertical"` renders a column; `"horizontal"` renders a horizontal bar.
+     */
+    direction?: "vertical" | "horizontal";
     /**
      * Optional subtitle rendered above the chart body.
      */
@@ -60,11 +64,11 @@ interface IBarChartProps {
      */
     yAxisTitle?: string;
     /**
-     * Minimum value of the Y axis.
+     * Minimum value of the value axis.
      */
     min?: number;
     /**
-     * Maximum value of the Y axis.
+     * Maximum value of the value axis.
      */
     max?: number;
     /**
@@ -102,13 +106,15 @@ const defaultValueFormatter = (value: number) => `${value}`;
 const defaultSeriesColor = `var(${DEFAULT_CHART_SERIES_COLOR_TOKEN})`;
 
 /**
- * Vertical single-series bar (column) chart built on Highcharts.
- * Use GroupedBarChart for multiple series per category. Chart animations are disabled by default.
+ * Single-series bar (column) chart built on Highcharts. `direction` renders a vertical column
+ * (default) or a horizontal bar. Use GroupedBarChart for multiple series per category.
+ * Chart animations are disabled by default.
  */
 const BarChart: FC<IBarChartProps> = ({
     className,
     categories,
     series,
+    direction = "vertical",
     subtitle,
     xAxisTitle,
     yAxisTitle,
@@ -131,6 +137,7 @@ const BarChart: FC<IBarChartProps> = ({
     const [isSeriesVisible, setIsSeriesVisible] = useState(true);
     const hasData = Boolean(series?.data?.length);
     const isRtl = typeof document !== "undefined" && document.dir === "rtl";
+    const isHorizontal = direction === "horizontal";
 
     const tooltipHandlersRef = useRef<{
         show: (point: Highcharts.Point) => void;
@@ -144,10 +151,29 @@ const BarChart: FC<IBarChartProps> = ({
         show: (point) => {
             const { chart } = point.series;
 
-            setAnchorPosition({
-                left: chart.plotLeft + (point.plotX ?? 0),
-                top: chart.plotTop + (point.plotY ?? 0)
-            });
+            // Anchor from the bar's actual on-screen rectangle (correct in both orientations, unlike
+            // `shapeArgs`, which is in Highcharts' pre-inversion space): vertical anchors at the
+            // top-center of the bar, horizontal at the right-center (the end of the bar).
+            const barElement = point.graphic?.element;
+
+            if (barElement) {
+                const barRect = barElement.getBoundingClientRect();
+                const containerRect = chart.container.getBoundingClientRect();
+                const left = barRect.left - containerRect.left;
+                const top = barRect.top - containerRect.top;
+                const right = barRect.right - containerRect.left;
+                const bottom = barRect.bottom - containerRect.top;
+
+                setAnchorPosition(
+                    isHorizontal ? { left: right, top: (top + bottom) / 2 } : { left: (left + right) / 2, top }
+                );
+            } else {
+                setAnchorPosition({
+                    left: chart.plotLeft + (point.plotX ?? 0),
+                    top: chart.plotTop + (point.plotY ?? 0)
+                });
+            }
+
             setTooltipPointIndex(point.index);
             setTooltipItems([
                 {
@@ -211,9 +237,17 @@ const BarChart: FC<IBarChartProps> = ({
             return {};
         }
 
+        let valueAxisLabelAlign: Highcharts.AlignValue = "right";
+        if (isHorizontal) {
+            valueAxisLabelAlign = "center";
+        } else if (isRtl) {
+            valueAxisLabelAlign = "left";
+        }
+
         const baseOptions: Highcharts.Options = {
             chart: {
                 type: "column",
+                inverted: isHorizontal,
                 height: null,
                 animation: false,
                 backgroundColor: "transparent",
@@ -249,7 +283,7 @@ const BarChart: FC<IBarChartProps> = ({
                 lineColor: "var(--guit-sem-color-border-neutral-2)",
                 tickColor: "var(--guit-sem-color-border-neutral-2)",
                 tickWidth: 1,
-                reversed: isRtl
+                reversed: isHorizontal ? true : isRtl
             },
             yAxis: {
                 min,
@@ -269,7 +303,7 @@ const BarChart: FC<IBarChartProps> = ({
                         fontSize: "1.2rem",
                         fontWeight: "600"
                     },
-                    align: isRtl ? "left" : "right"
+                    align: valueAxisLabelAlign
                 },
                 gridLineDashStyle: "Dot",
                 gridLineColor: "var(--guit-sem-color-border-neutral-2)",
@@ -314,7 +348,7 @@ const BarChart: FC<IBarChartProps> = ({
         };
 
         return mergeChartOptions(baseOptions, options);
-    }, [categories, isRtl, isSeriesVisible, max, min, options, resolvedSeries, xAxisTitle, yAxisTitle]);
+    }, [categories, isHorizontal, isRtl, isSeriesVisible, max, min, options, resolvedSeries, xAxisTitle, yAxisTitle]);
 
     const tooltipAnchorKey = tooltipPointIndex ?? "idle";
 
