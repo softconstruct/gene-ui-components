@@ -165,7 +165,9 @@ const BarChart: FC<IBarChartProps> = ({
                 const bottom = barRect.bottom - containerRect.top;
 
                 setAnchorPosition(
-                    isHorizontal ? { left: right, top: (top + bottom) / 2 } : { left: (left + right) / 2, top }
+                    isHorizontal
+                        ? { left: isRtl ? left : right, top: (top + bottom) / 2 }
+                        : { left: (left + right) / 2, top }
                 );
             } else {
                 setAnchorPosition({
@@ -244,6 +246,11 @@ const BarChart: FC<IBarChartProps> = ({
             valueAxisLabelAlign = "left";
         }
 
+        const categoryAxisReversed = isHorizontal ? true : isRtl;
+        const categoryAxisOpposite = isHorizontal && isRtl;
+        const valueAxisOpposite = isHorizontal ? false : isRtl;
+        const valueAxisReversed = isHorizontal && isRtl;
+
         const baseOptions: Highcharts.Options = {
             chart: {
                 type: "column",
@@ -283,12 +290,14 @@ const BarChart: FC<IBarChartProps> = ({
                 lineColor: "var(--guit-sem-color-border-neutral-2)",
                 tickColor: "var(--guit-sem-color-border-neutral-2)",
                 tickWidth: 1,
-                reversed: isHorizontal ? true : isRtl
+                reversed: categoryAxisReversed,
+                opposite: categoryAxisOpposite
             },
             yAxis: {
                 min,
                 max,
-                opposite: isRtl,
+                opposite: valueAxisOpposite,
+                reversed: valueAxisReversed,
                 title: {
                     text: yAxisTitle,
                     style: {
