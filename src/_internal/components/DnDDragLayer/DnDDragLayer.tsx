@@ -1,8 +1,12 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { FC, useContext, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import classNames from "classnames";
 
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
+
+// Styles
+import "./DnDDragLayer.scss";
 
 const ClonedNodeRenderer = ({ node }: { node: HTMLElement }) => {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -29,7 +33,15 @@ type TDragState = {
     initialTransform: string;
 } | null;
 
-const CustomDragLayer = () => {
+interface IDnDDragLayer {
+    /**
+     * Additional class for the parent element.
+     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
+     */
+    className?: string;
+}
+
+const DnDDragLayer: FC<IDnDDragLayer> = ({ className }) => {
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
     const [dragState, setDragState] = useState<TDragState>(null);
 
@@ -104,11 +116,11 @@ const CustomDragLayer = () => {
     };
 
     return createPortal(
-        <div ref={layerRef} className="actionableListItem__dragLayer" style={dragLayerStyle}>
+        <div ref={layerRef} className={classNames("dndDragLayer", className)} style={dragLayerStyle}>
             <ClonedNodeRenderer node={dragState.previewNode} />
         </div>,
         providerCurrent
     );
 };
 
-export default CustomDragLayer;
+export default DnDDragLayer;

@@ -11,7 +11,6 @@ import { ChevronDown, ChevronLeft, ChevronRight, GripDots } from "@geneui/icons"
 import Button from "@components/atoms/Button";
 import Info from "@components/atoms/Info";
 import Text from "@components/atoms/Text";
-import CustomDragLayer from "@components/molecules/ActionableList/ActionableListItem/CustomDragLayer";
 import Checkbox from "@components/molecules/Checkbox";
 import Tooltip from "@components/molecules/Tooltip";
 
@@ -21,6 +20,7 @@ import useEllipsisDetection from "@hooks/useEllipsisDetection";
 // Styles
 import "./ActionableListItem.scss";
 
+import DnDDragLayer from "../../../../_internal/components/DnDDragLayer/DnDDragLayer";
 import type { TActionableListLevel } from "../ActionableListNodeWrapper/ActionableListNodeWrapper";
 
 type TDropGapEdge = "top" | "bottom";
@@ -257,7 +257,7 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
                 actionableListItem_dropGapBottom: dropGapEdge === "bottom"
             })}
         >
-            <CustomDragLayer />
+            <DnDDragLayer />
             {isExpandable && (
                 <Button
                     size="smallNudge"

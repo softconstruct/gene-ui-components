@@ -5,16 +5,12 @@ import { Row } from "@tanstack/table-core";
 import { IButtonProps } from "@components/atoms/Button";
 import Loader from "@components/atoms/Loader";
 import Empty from "@components/molecules/Empty";
-import TableRow from "@components/organisms/DataTable/TableBody/Row/TableRow";
-import {
-    DataTableGetRowStatus,
-    DataTableRenderExpandedRow,
-    IDataTableRowAction,
-    ITableNoDataTexts
-} from "@components/organisms/DataTable/types";
 
 // Styles
 import "./TableBody.scss";
+
+import { DataTableGetRowStatus, DataTableRenderExpandedRow, IDataTableRowAction, ITableNoDataTexts } from "../types";
+import TableRow from "./Row/TableRow";
 
 /**
  * Props for the {@link TableBody} component.

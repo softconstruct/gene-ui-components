@@ -1,18 +1,114 @@
 import React, { ReactNode, useRef } from "react";
-import { CellContext, ColumnDef } from "@tanstack/react-table";
+import { Cell, CellContext, ColumnDef } from "@tanstack/react-table";
 
 // Components
 import Text from "@components/atoms/Text";
 import Tooltip from "@components/molecules/Tooltip";
-import ExpanderCell from "@components/organisms/DataTable/TableBody/ExpanderCell/ExpanderCell";
-import { DataTableColumn, DataTableRowExpandChangeHandler } from "@components/organisms/DataTable/types";
 
 // hooks
 import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
+import {
+    CELL_MAX_WIDTH,
+    CUSTOM_CELL_MAX_SIZE,
+    CUSTOM_CELL_MIN_SIZE,
+    EXPANDABLE_CELL_SIZE_REM,
+    EXPANDER_COLUMN_ID,
+    EXPANDER_COLUMN_SIZE
+} from "./constants";
+import ExpanderCell from "./TableBody/ExpanderCell/ExpanderCell";
+import { DataTableColumn, DataTableRowExpandChangeHandler } from "./types";
+
+/**
+ * Props for the TableBodyCell component, defined here to be used by areCellsEqual.
+ */
+export interface ICellProps<TData, TValue> {
+    cell: Cell<TData, TValue>;
+    isExpanded: boolean;
+    renderer: ColumnDef<TData, TValue>["cell"];
+    isPinned?: boolean;
+    offset: number;
+    dirMode: string;
+    /**
+     * Snapshot of `cell.getValue()` captured by the parent at render time.
+     * Keeps memoized cells from going stale when data values change in place.
+     */
+    value: unknown;
+    /**
+     * Snapshot of `row.original` captured by the parent at render time.
+     * Custom `renderCell` renderers read the whole row, so a new row object
+     * must invalidate the memo even when this column's value is unchanged.
+     */
+    rowData: TData;
+}
+
+export const getCellStyle = (
+    isExpander: boolean,
+    columnSize: number,
+    explicitSize: number | undefined,
+    offset: number,
+    isPinned: boolean | string | undefined,
+    isRTL: boolean,
+    isCustomCell: boolean = false
+) => {
+    const roundedOffset = Math.round(offset);
+
+    const baseStyle = {
+        ...(isPinned && {
+            left: !isRTL ? `${roundedOffset}px` : undefined,
+            right: isRTL ? `${roundedOffset}px` : undefined
+        })
+    };
+
+    if (isExpander) {
+        return {
+            ...baseStyle,
+            width: EXPANDABLE_CELL_SIZE_REM,
+            minWidth: EXPANDABLE_CELL_SIZE_REM,
+            maxWidth: EXPANDABLE_CELL_SIZE_REM
+        };
+    }
+
+    if (explicitSize !== undefined) {
+        return {
+            ...baseStyle,
+            width: `${explicitSize}px`,
+            minWidth: `${explicitSize}px`,
+            maxWidth: isCustomCell ? "max-content" : CELL_MAX_WIDTH
+        };
+    }
+
+    if (isCustomCell) {
+        return {
+            ...baseStyle,
+            width: `${columnSize}px`,
+            minWidth: "max-content",
+            maxWidth: "max-content"
+        };
+    }
+
+    return {
+        ...baseStyle,
+        width: `${columnSize}px`,
+        minWidth: `${columnSize}px`,
+        maxWidth: CELL_MAX_WIDTH
+    };
+};
+
+export const areCellsEqual = <TData, TValue>(prev: ICellProps<TData, TValue>, next: ICellProps<TData, TValue>) =>
+    prev.cell.id === next.cell.id &&
+    prev.isExpanded === next.isExpanded &&
+    prev.renderer === next.renderer &&
+    prev.isPinned === next.isPinned &&
+    prev.offset === next.offset &&
+    prev.dirMode === next.dirMode &&
+    prev.value === next.value &&
+    prev.rowData === next.rowData;
+
 export const DefaultCellComponent = ({ value }: { value: string }) => {
     const textRef = useRef<HTMLSpanElement | null>(null);
     const isTruncated = useEllipsisDetection(textRef);
+
     return (
         <Tooltip text={value} isVisible={isTruncated}>
             <Text ref={textRef} className="tableBodyCell__text" as="span" variant="labelMediumMedium">
@@ -28,13 +124,20 @@ export const DefaultCellComponent = ({ value }: { value: string }) => {
  */
 export const adaptColumns = <TData,>(columns: DataTableColumn<TData>[]): ColumnDef<TData, ReactNode>[] =>
     columns.map((col, index) => {
-        const { accessorKey, id, header, size, renderCell } = col;
+        const { accessorKey, id, header, size, renderCell, defaultVisible, defaultPinned } = col;
         const isAccessorColumn = Boolean(accessorKey);
+        const isCustomCell = Boolean(renderCell);
 
         const base: ColumnDef<TData> = {
             id: id ?? accessorKey ?? `display_${index}`,
             header: header ?? accessorKey ?? "",
-            size,
+            size: size ?? (isCustomCell ? CUSTOM_CELL_MIN_SIZE : CUSTOM_CELL_MAX_SIZE),
+            meta: {
+                isCustomCell,
+                explicitSize: size,
+                defaultVisible,
+                defaultPinned
+            },
             ...(isAccessorColumn ? { accessorKey } : {})
         };
 
@@ -61,8 +164,12 @@ export const withExpanderColumn = <TData,>(
     onRowExpandChange?: DataTableRowExpandChangeHandler<TData>
 ): ColumnDef<TData, ReactNode>[] => [
     {
-        id: "expander",
+        id: EXPANDER_COLUMN_ID,
         header: "",
+        size: EXPANDER_COLUMN_SIZE,
+        meta: {
+            explicitSize: EXPANDER_COLUMN_SIZE
+        },
         cell: (ctx: CellContext<TData, ReactNode>) => <ExpanderCell {...ctx} onRowExpandChange={onRowExpandChange} />
     },
     ...columns
