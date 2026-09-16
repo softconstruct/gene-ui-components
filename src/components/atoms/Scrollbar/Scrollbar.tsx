@@ -73,6 +73,7 @@ const Scrollbar = forwardRef<ScrollbarRefType, IScrollbarProps>((props, ref) => 
     const grabbedDirectionRef = useRef<"x" | "y" | null>(null);
     const previousScrollPosition = useRef({ scrollTop: 0, scrollLeft: 0 });
     const scrollbarRef = useRef<Scrollbars | null>(null);
+    const isUnmountedRef = useRef(false);
 
     useImperativeHandle(ref, () => ({
         scrollbarRef: scrollbarRef.current
@@ -145,11 +146,21 @@ const Scrollbar = forwardRef<ScrollbarRefType, IScrollbarProps>((props, ref) => 
     };
 
     const releaseScrollbarHandler = () => {
+        if (isUnmountedRef.current) return;
+
         grabbedDirectionRef.current = null;
         setGrabbedDirection(null);
         clearDebounce();
         debouncedCallback();
     };
+
+    useEffect(
+        () => () => {
+            isUnmountedRef.current = true;
+            clearDebounce();
+        },
+        []
+    );
 
     useEffect(() => {
         const scrollRefCurrent = scrollbarRef.current;
