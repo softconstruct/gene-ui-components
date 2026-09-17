@@ -67,6 +67,7 @@ interface ITimePickerBaseProps {
     name?: string;
     /**
      * Disables the input field, making it uneditable and non-interactive.
+     * The value stays visible but cannot be selected or copied.
      */
     disabled?: boolean;
     /**
@@ -110,7 +111,6 @@ interface ITimePickerBaseProps {
     /**
      * Custom texts of the component. Every key is optional and falls back to the English default:<br>
      * `hours`, `minutes`, `seconds` — headers of the popover columns;<br>
-     * `am`, `pm` — texts of the AM/PM buttons (12-hour format);<br>
      * `clear` — accessible label of the clear button;<br>
      * `selectHours`, `selectMinutes`, `selectSeconds`, `selectMeridiem` — accessible labels of the columns;<br>
      * `startTime`, `endTime` — accessible labels of the two range inputs.

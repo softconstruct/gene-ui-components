@@ -53,7 +53,13 @@
 
         &_mobile {
             #{$this}__column {
-                width: 100%;
+                flex: 1 1 0;
+                min-width: 0;
+                width: auto;
+            }
+
+            #{$this}__column_meridiem {
+                padding-inline: 0;
             }
         }
 
@@ -104,7 +110,13 @@
         align-items: center;
         justify-content: center;
         width: 100%;
+        min-width: 0;
         color: var(--guit-sem-color-foreground-neutral-1);
+    }
+
+    &__headerText {
+        min-width: 0;
+        max-width: 100%;
     }
 
     &__body {

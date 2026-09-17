@@ -465,14 +465,17 @@ describe("TimePicker", () => {
             expect(onOpenChange).toHaveBeenLastCalledWith(false);
         });
 
-        it("opens the popover on focus and closes it on blur", () => {
+        it("does not open the popover on focus and closes it on blur", () => {
             const onOpenChange = jest.fn();
             setup.setProps({ onOpenChange });
 
             setup.find("input.pickerInput__input").simulate("focus");
             setup.update();
 
-            expect(setup.find(".timePicker__wrapper").exists()).toBeTruthy();
+            expect(setup.find(".timePicker__wrapper").exists()).toBeFalsy();
+            expect(onOpenChange).not.toHaveBeenCalled();
+
+            openPopover(setup);
             expect(onOpenChange).toHaveBeenLastCalledWith(true);
 
             setup.find("input.pickerInput__input").simulate("blur", { relatedTarget: null });
@@ -481,6 +484,49 @@ describe("TimePicker", () => {
             expect(setup.find(".timePicker__wrapper").exists()).toBeFalsy();
             expect(onOpenChange).toHaveBeenLastCalledWith(false);
             expect(onOpenChange).toHaveBeenCalledTimes(2);
+        });
+
+        it("opens the popover with Enter and keeps the focus on the input", () => {
+            setup.find("input.pickerInput__input").simulate("keydown", { key: "Enter" });
+            setup.update();
+
+            expect(setup.find(".timePicker__wrapper").exists()).toBeTruthy();
+            expect(setup.find("PickerPopover").prop("focusOnOpen")).toBe(false);
+        });
+
+        it("keeps the focus on the input when a value is pressed with the mouse", () => {
+            openPopover(setup);
+
+            const preventDefault = jest.fn();
+
+            columnButtons(setup, 0).at(3).simulate("mousedown", { preventDefault });
+
+            expect(preventDefault).toHaveBeenCalled();
+        });
+
+        it("hands the focus back to the input on Tab inside the popover", () => {
+            openPopover(setup);
+
+            const focus = jest.spyOn(setup.find("input.pickerInput__input").getDOMNode<HTMLInputElement>(), "focus");
+
+            setup.find(".timePicker__wrapper").simulate("keydown", { key: "Tab" });
+
+            expect(focus).toHaveBeenCalled();
+        });
+
+        it("closes the popover when the focus leaves the clear button", () => {
+            setup.setProps({ clearable: true, value: "10:00:00" });
+            openPopover(setup);
+
+            const clearButton = setup.find(".pickerInput__append button").first();
+
+            setup.find("input.pickerInput__input").simulate("blur", { relatedTarget: clearButton.getDOMNode() });
+            setup.update();
+            expect(setup.find(".timePicker__wrapper").exists()).toBeTruthy();
+
+            clearButton.simulate("blur", { relatedTarget: null });
+            setup.update();
+            expect(setup.find(".timePicker__wrapper").exists()).toBeFalsy();
         });
 
         it("keeps the popover open when the focus moves into it", () => {
@@ -510,13 +556,13 @@ describe("TimePicker", () => {
             expect(setup.find(".timePicker__wrapper").exists()).toBeTruthy();
         });
 
-        it("opens the popover again on focus after closing with Escape", () => {
+        it("opens the popover again with Enter after closing with Escape", () => {
             openPopover(setup);
 
             closePopover(setup, new KeyboardEvent("keydown"), "escape-key");
             expect(setup.find(".timePicker__wrapper").exists()).toBeFalsy();
 
-            setup.find("input.pickerInput__input").simulate("focus");
+            setup.find("input.pickerInput__input").simulate("keydown", { key: "Enter" });
             setup.update();
             expect(setup.find(".timePicker__wrapper").exists()).toBeTruthy();
         });
@@ -595,10 +641,10 @@ describe("TimePicker", () => {
             expect(buttons.filterWhere((button) => button.prop("tabIndex") === 0).length).toBe(1);
         });
 
-        it("applies custom localization to the headers and the AM/PM buttons", () => {
+        it("applies custom localization to the headers and keeps the AM/PM texts fixed", () => {
             setup.setProps({
                 format: "12h",
-                localization: { hours: "H", minutes: "M", seconds: "S", am: "Day", pm: "Night" }
+                localization: { hours: "H", minutes: "M", seconds: "S" }
             });
             openPopover(setup);
 
@@ -610,8 +656,8 @@ describe("TimePicker", () => {
 
             const meridiemButtons = setup.find(".timePicker__column_meridiem button");
 
-            expect(meridiemButtons.at(0).text()).toBe("Day");
-            expect(meridiemButtons.at(1).text()).toBe("Night");
+            expect(meridiemButtons.at(0).text()).toBe("AM");
+            expect(meridiemButtons.at(1).text()).toBe("PM");
         });
     });
 
@@ -725,6 +771,16 @@ describe("TimePicker", () => {
                 parts: { hours: "09", minutes: "30", seconds: "00", meridiem: undefined }
             });
             expect(setup.find("input.pickerInput__input").prop("value")).toBe("09:30:00");
+        });
+
+        it("shows the value of a disabled field as a placeholder so it cannot be selected", () => {
+            const picker = mountSingle({ disabled: true, defaultValue: "12:30:00" });
+            const input = picker.find("input.pickerInput__input");
+
+            expect(input.prop("value")).toBe("");
+            expect(input.prop("placeholder")).toBe("12:30:00");
+
+            picker.unmount();
         });
 
         it("applies the disabled state when disabled and readOnly are both set", () => {
@@ -975,6 +1031,27 @@ describe("Time range picker", () => {
         setup.find("input.pickerInput__input").at(0).simulate("focus");
         setup.update();
         expect(setup.find("PickerPopover").prop("activeField")).toBe("start");
+    });
+
+    it("keeps the focus on the start field after Enter and moves to the end field on Tab", () => {
+        const inputs = () => setup.find("input.pickerInput__input");
+
+        inputs().at(0).simulate("focus");
+        inputs().at(0).simulate("keydown", { key: "Enter" });
+        setup.update();
+
+        expect(setup.find(".timePicker__wrapper").exists()).toBeTruthy();
+        expect(setup.find("PickerPopover").prop("focusOnOpen")).toBe(false);
+        expect(setup.find("PickerPopover").prop("activeField")).toBe("start");
+
+        inputs()
+            .at(0)
+            .simulate("blur", { relatedTarget: inputs().at(1).getDOMNode() });
+        inputs().at(1).simulate("focus");
+        setup.update();
+
+        expect(setup.find(".timePicker__wrapper").exists()).toBeTruthy();
+        expect(setup.find("PickerPopover").prop("activeField")).toBe("end");
     });
 
     it("keeps the popover open and switches the active field when the other input is clicked", () => {

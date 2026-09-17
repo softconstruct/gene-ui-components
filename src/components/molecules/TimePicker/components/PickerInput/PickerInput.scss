@@ -66,6 +66,7 @@
             border-color: var(--guit-sem-color-border-disabled-1);
 
             #{$this}__input {
+                user-select: none;
                 color: var(--guit-sem-color-foreground-disabled);
 
                 &::placeholder {
@@ -81,9 +82,16 @@
         &_readOnly {
             border-color: transparent;
             background-color: var(--guit-sem-color-background-neutral-3);
-            pointer-events: none;
+            cursor: default;
+
+            @include mixins.media-hover {
+                &:hover {
+                    background-color: var(--guit-sem-color-background-neutral-3);
+                }
+            }
 
             #{$this}__input {
+                cursor: text;
                 color: var(--guit-sem-color-foreground-neutral-2);
 
                 &::placeholder {

@@ -1,9 +1,5 @@
 import { TimeParts, TimePickerLocalization } from "./types";
 
-// ---------------------------------------------------------
-// Range generation
-// ---------------------------------------------------------
-
 /**
  * @description
  * Generates an inclusive list of zero padded numeric strings.
@@ -136,8 +132,6 @@ const DEFAULT_LOCALIZATION: Required<TimePickerLocalization> = {
     hours: "hours",
     minutes: "minutes",
     seconds: "seconds",
-    am: "AM",
-    pm: "PM",
     clear: "Clear time selection",
     selectHours: "Select hours",
     selectMinutes: "Select minutes",
@@ -148,6 +142,7 @@ const DEFAULT_LOCALIZATION: Required<TimePickerLocalization> = {
 };
 
 const KEYS = {
+    TAB: "Tab",
     ENTER: "Enter",
     SPACE: " ",
     ESCAPE: "Escape",

@@ -92,7 +92,8 @@ type RangePickerCase = {
 const definedProps = <T extends object>(props: T): Partial<T> =>
     Object.fromEntries(Object.entries(props).filter(([, value]) => value !== undefined)) as Partial<T>;
 
-const caseStyle = { display: "flex", flexDirection: "column", gap: "0.8rem" } as const;
+const singleStoryStyle = { width: 300 } as const;
+const rangeStoryStyle = { width: 460 } as const;
 const casesStyle = { display: "flex", flexWrap: "wrap", gap: "2rem" } as const;
 
 const rangePlaceholder = { start: "Start time", end: "End time" };
@@ -112,16 +113,16 @@ const UncontrolledSinglePicker = (props: ISingleTimePickerProps) => (
 );
 
 const singlePickerCases: SinglePickerCase[] = [
-    { key: "disabled", disabled: true },
-    { key: "readOnly", readOnly: true, defaultValue: "12:30:00" },
-    { key: "required", required: true },
-    { key: "controlled", RenderComponent: ControlledSinglePicker },
-    { key: "uncontrolled", RenderComponent: UncontrolledSinglePicker },
-    { key: "clearable", RenderComponent: ClearableSinglePicker },
-    { key: "error", status: "error", helperText: "Error message" },
-    { key: "warning", status: "warning", helperText: "Double check the time" },
-    { key: "helperText", helperText: "Business hours only", infoText: "Local time" },
-    { key: "12h", format: "12h" }
+    { key: "disabled", label: "Disabled", disabled: true },
+    { key: "readOnly", label: "Read only", readOnly: true, defaultValue: "12:30:00" },
+    { key: "required", label: "Required", required: true },
+    { key: "controlled", label: "With controlled value", RenderComponent: ControlledSinglePicker },
+    { key: "uncontrolled", label: "With default value", RenderComponent: UncontrolledSinglePicker },
+    { key: "clearable", label: "Clearable", RenderComponent: ClearableSinglePicker },
+    { key: "error", label: "Errored with message", status: "error", helperText: "Error message" },
+    { key: "warning", label: "Warning with message", status: "warning", helperText: "Double check the time" },
+    { key: "helperText", label: "With helper text", helperText: "Business hours only", infoText: "Local time" },
+    { key: "12h", label: "12-Hour Format", format: "12h" }
 ];
 
 const ControlledRangePicker = (props: IRangeTimePickerProps) => {
@@ -139,14 +140,14 @@ const ClearableRangePicker = (props: IRangeTimePickerProps) => (
 );
 
 const rangePickerCases: RangePickerCase[] = [
-    { key: "disabled", disabled: true },
-    { key: "readOnly", readOnly: true },
-    { key: "required", required: true },
-    { key: "controlled", RenderComponent: ControlledRangePicker },
-    { key: "clearable", RenderComponent: ClearableRangePicker },
-    { key: "error", status: "error", helperText: "Error message" },
-    { key: "12h", format: "12h" },
-    { key: "bounds", defaultValue: { start: "09:00:00", end: "17:00:00" } }
+    { key: "disabled", label: "Disabled", disabled: true },
+    { key: "readOnly", label: "Read only", readOnly: true },
+    { key: "required", label: "Required", required: true },
+    { key: "controlled", label: "With controlled value", RenderComponent: ControlledRangePicker },
+    { key: "clearable", label: "Clearable", RenderComponent: ClearableRangePicker },
+    { key: "error", label: "Errored with message", status: "error", helperText: "Error message" },
+    { key: "12h", label: "12-Hour Format", format: "12h" },
+    { key: "bounds", label: "Start and end kept in order", defaultValue: { start: "09:00:00", end: "17:00:00" } }
 ];
 
 const rangeArgTypes = {
@@ -173,14 +174,18 @@ const rangeArgTypes = {
  */
 export const Default: SingleStory = {
     render: ({ defaultValue, ...props }) => (
-        <TimePicker key={String(defaultValue)} defaultValue={defaultValue} {...props} />
+        <div style={singleStoryStyle}>
+            <TimePicker key={String(defaultValue)} defaultValue={defaultValue} {...props} />
+        </div>
     ),
     args: { ...interactiveArgs, defaultValue: "" }
 };
 
 export const Range: RangeStory = {
     render: ({ defaultValue, ...props }) => (
-        <TimePicker.Range key={JSON.stringify(defaultValue)} defaultValue={defaultValue} {...props} />
+        <div style={rangeStoryStyle}>
+            <TimePicker.Range key={JSON.stringify(defaultValue)} defaultValue={defaultValue} {...props} />
+        </div>
     ),
     args: {
         ...interactiveArgs,
@@ -192,37 +197,38 @@ export const Range: RangeStory = {
 };
 
 export const SinglePickerStates: SingleStory = {
-    render: (props) => {
+    render: ({ label, ...props }) => {
         const controls = definedProps(props);
 
         return (
             <div style={casesStyle}>
                 {singlePickerCases.map(({ key, RenderComponent, ...item }) => (
-                    <div key={`${key}-${String(controls.defaultValue)}`} style={caseStyle}>
+                    <div key={`${key}-${String(controls.defaultValue)}`} style={singleStoryStyle}>
                         {RenderComponent ? (
-                            <RenderComponent {...item} {...controls} />
+                            <RenderComponent {...item} {...controls} label={label || item.label} />
                         ) : (
-                            <TimePicker {...item} {...controls} />
+                            <TimePicker {...item} {...controls} label={label || item.label} />
                         )}
                     </div>
                 ))}
             </div>
         );
-    }
+    },
+    args: { label: "" }
 };
 
 export const RangePickerStates: RangeStory = {
-    render: (props) => {
+    render: ({ label, ...props }) => {
         const controls = definedProps(props);
 
         return (
             <div style={casesStyle}>
                 {rangePickerCases.map(({ key, RenderComponent, ...item }) => (
-                    <div key={`${key}-${JSON.stringify(controls.defaultValue)}`} style={caseStyle}>
+                    <div key={`${key}-${JSON.stringify(controls.defaultValue)}`} style={rangeStoryStyle}>
                         {RenderComponent ? (
-                            <RenderComponent {...item} {...controls} />
+                            <RenderComponent {...item} {...controls} label={label || item.label} />
                         ) : (
-                            <TimePicker.Range {...item} {...controls} />
+                            <TimePicker.Range {...item} {...controls} label={label || item.label} />
                         )}
                     </div>
                 ))}
@@ -230,7 +236,7 @@ export const RangePickerStates: RangeStory = {
         );
     },
     args: {
-        label: "Choose time range",
+        label: "",
         placeholder: rangePlaceholder
     },
     argTypes: rangeArgTypes

@@ -18,7 +18,11 @@ import classNames from "classnames";
 import { IPopoverProps, IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Text from "@components/atoms/Text";
+import Tooltip from "@components/molecules/Tooltip";
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
+
+// Hooks
+import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
 // Constants & Helpers
 import { headerTextVariantMap, KEYS, TIME_COLUMNS_ORDER, TIME_PARTS } from "../../constants";
@@ -78,6 +82,11 @@ interface IPickerPopoverProps {
      */
     onFocusOut?: (event: FocusEvent<HTMLDivElement>) => void;
     /**
+     * Callback invoked on `Tab` while the focus is inside the popover, before the browser moves it,
+     * so the owner can hand the focus back to the field and let `Tab` continue from there.
+     */
+    onTabOut?: () => void;
+    /**
      * Popover placement position.
      */
     position?: string;
@@ -136,10 +145,11 @@ const HORIZONTAL_KEYS: string[] = [KEYS.ARROW_LEFT, KEYS.ARROW_RIGHT];
 const EDGE_KEYS: string[] = [KEYS.HOME, KEYS.END];
 
 /**
- * Presses outside the buttons must not blur the input, or the popover would close.
+ * Presses inside the popover must not move the focus away from the input: the field keeps the caret
+ * while values are picked with the mouse, and `Tab` continues from the field afterwards.
  */
 const keepReferenceFocus = (event: MouseEvent<HTMLDivElement>) => {
-    if (!(event.target as HTMLElement).closest("button")) event.preventDefault();
+    event.preventDefault();
 };
 
 /**
@@ -175,6 +185,55 @@ const getScrollableAncestor = (element: HTMLElement, boundary: HTMLElement | nul
 const hasAnyValue = (parts: TimeParts | undefined): boolean =>
     !!parts && Object.values(parts).some((value) => value !== undefined);
 
+type ColumnHeaderProps = {
+    text: string;
+    size: TimePickerSizes;
+};
+
+/**
+ * Header of a picker column: long texts are truncated and shown in full in a tooltip, on hover or,
+ * for touch devices, after a tap on the header. A tap anywhere else hides it again.
+ */
+const ColumnHeader: FC<ColumnHeaderProps> = ({ text, size }) => {
+    const textRef = useRef<HTMLParagraphElement | null>(null);
+    const headerRef = useRef<HTMLDivElement | null>(null);
+    const isTruncated = useEllipsisDetection(textRef, [text]);
+    const [isPinned, setIsPinned] = useState(false);
+
+    useEffect(() => {
+        if (!isPinned) return undefined;
+
+        const unpin = (event: PointerEvent) => {
+            if (!headerRef.current?.contains(event.target as Node)) setIsPinned(false);
+        };
+
+        document.addEventListener("pointerdown", unpin);
+
+        return () => document.removeEventListener("pointerdown", unpin);
+    }, [isPinned]);
+
+    const togglePinned = () => {
+        if (isTruncated) setIsPinned((pinned) => !pinned);
+    };
+
+    return (
+        <div className="timePicker__headerWrapper">
+            <div ref={headerRef} role="presentation" className="timePicker__header" onClick={togglePinned}>
+                <Tooltip text={text} isVisible={isTruncated} alwaysShow={isPinned && isTruncated}>
+                    <Text
+                        ref={textRef}
+                        as="p"
+                        className="ellipsis-text timePicker__headerText"
+                        variant={headerTextVariantMap[size]}
+                    >
+                        {text}
+                    </Text>
+                </Tooltip>
+            </div>
+        </div>
+    );
+};
+
 const PickerPopover: FC<IPickerPopoverProps> = ({
     popoverRef,
     open,
@@ -182,6 +241,7 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
     setProps,
     onClose,
     onFocusOut,
+    onTabOut,
     size = "medium",
     position,
     onSelect,
@@ -233,12 +293,11 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
             seconds: texts.selectSeconds,
             meridiem: texts.selectMeridiem
         };
-        const valueTexts: Record<string, string> = { AM: texts.am, PM: texts.pm };
 
         return columnOrder.map((part) => {
             const entries = getTimePartValues(part, is12Hour).map((value) => ({
                 value,
-                text: valueTexts[value] ?? value,
+                text: value,
                 selected: parts?.[part] === value,
                 disabled: isPickerPartDisabled(part, value, parts, is12Hour, activeField, partsStart, partsEnd)
             }));
@@ -355,6 +414,10 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
         );
     }, [open, parts, columnOrder]);
 
+    const handleWrapperKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+        if (event.key === KEYS.TAB) onTabOut?.();
+    };
+
     const handleColumnClick = (part: keyof TimeParts) => (event: MouseEvent<HTMLDivElement>) => {
         const button = (event.target as HTMLElement).closest("button");
 
@@ -436,6 +499,7 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
                             timePicker__wrapper_scrollbarsHidden: scrollbarsHidden
                         })}
                         onBlur={onFocusOut}
+                        onKeyDown={handleWrapperKeyDown}
                         onMouseDown={keepReferenceFocus}
                         onWheel={revealScrollbars}
                         onTouchMove={revealScrollbars}
@@ -445,13 +509,7 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
                                 renderList(column, "timePicker__column timePicker__column_meridiem")
                             ) : (
                                 <div key={column.part} className="timePicker__column">
-                                    <div className="timePicker__headerWrapper">
-                                        <div className="timePicker__header">
-                                            <Text className="ellipsis-text" as="p" variant={headerTextVariantMap[size]}>
-                                                {column.header}
-                                            </Text>
-                                        </div>
-                                    </div>
+                                    <ColumnHeader text={column.header} size={size} />
                                     <div className="timePicker__body">
                                         <Scrollbar>{renderList(column, "timePicker__list")}</Scrollbar>
                                     </div>

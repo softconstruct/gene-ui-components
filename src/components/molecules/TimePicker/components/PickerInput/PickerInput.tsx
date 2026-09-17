@@ -108,6 +108,10 @@ interface IPickerInputBaseProps {
      */
     onAreaClick?: () => void;
     /**
+     * Callback for focus leaving the field, including its clear button.
+     */
+    onFocusOut?: (event: FocusEvent<HTMLDivElement>) => void;
+    /**
      * Whether the field should display a clear button to clear the input value.
      */
     clearable?: boolean;
@@ -249,6 +253,7 @@ type PickerShellProps = Pick<
     | "anchorRef"
     | "shellRef"
     | "onAreaClick"
+    | "onFocusOut"
 > & {
     mode: "single" | "range";
     children: ReactNode;
@@ -316,6 +321,7 @@ const getSharedProps = (
         anchorRef,
         shellRef,
         onAreaClick,
+        onFocusOut,
         isExpanded,
         popoverId
     }: Omit<IPickerInputBaseProps, "onKeyDown">,
@@ -335,7 +341,8 @@ const getSharedProps = (
         anchorProps,
         anchorRef,
         shellRef,
-        onAreaClick
+        onAreaClick,
+        onFocusOut
     },
     input: {
         size,
@@ -386,9 +393,9 @@ const PickerMaskedInput: FC<PickerMaskedInputProps> = ({
         size={INPUT_SIZE}
         className={classNames("pickerInput__input", `pickerInput__input_size_${size}`)}
         showMask={false}
-        placeholder={placeholder}
+        placeholder={(disabled && value) || placeholder}
         autoComplete="off"
-        value={value ?? ""}
+        value={disabled ? "" : (value ?? "")}
         disabled={disabled}
         readOnly={readOnly}
         separate
@@ -425,7 +432,8 @@ const PickerShell: FC<PickerShellProps> = ({
     anchorProps,
     anchorRef,
     shellRef,
-    onAreaClick
+    onAreaClick,
+    onFocusOut
 }) => {
     const setShellRef = useCallback(
         (node: HTMLDivElement | null) => {
@@ -469,6 +477,7 @@ const PickerShell: FC<PickerShellProps> = ({
                 )}
                 onMouseDown={handleMouseDown}
                 onClick={handleClick}
+                onBlur={onFocusOut}
             >
                 {children}
                 {(showClearButton || EndIcon) && (

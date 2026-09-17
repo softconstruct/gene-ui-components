@@ -128,10 +128,6 @@ const useTypedChange = <TArgs extends unknown[]>(onChange?: (...args: TArgs) => 
     };
 };
 
-// ---------------------------------------------------------
-// Field state
-// ---------------------------------------------------------
-
 /**
  * @description
  * Owns the value of a single time input (the single picker has one, the range picker two).
@@ -233,8 +229,9 @@ interface ITimePickerCoreOptions<F extends string> {
 
 /**
  * @description
- * Popover and field interaction shared by the single and the range picker. The popover follows the
- * focus: it opens on focus-in and closes once the focus leaves both the field and the popover.
+ * Popover and field interaction shared by the single and the range picker. The popover opens on a
+ * click on the field or on `Enter`, `Space` and `ArrowDown`, never on focus alone, and closes once
+ * the focus leaves both the field (clear button included) and the popover.
  *
  * No outside click listener is registered here on purpose: `atoms/Popover` already closes itself
  * on outside press and on `Escape` and reports it through `onClose`.
@@ -261,7 +258,6 @@ const useTimePickerCore = <F extends string>({
     const [activeField, setActiveField] = useState<F>(initialField);
 
     const popoverOpenRef = useRef(false);
-    const skipOpenOnFocusRef = useRef(false);
     const shellRef = useRef<HTMLDivElement | null>(null);
     const popoverRef = useRef<IPopoverRef>({
         floatingElement: { current: null },
@@ -298,7 +294,8 @@ const useTimePickerCore = <F extends string>({
 
     /**
      * @param nextOpen target state
-     * @param focusOnOpen move focus into the popover, used when it was opened from the keyboard
+     * @param focusOnOpen move focus into the popover, used for `ArrowDown`; `Enter` and `Space` open
+     * it while the input keeps the focus, so `Tab` continues to the next field
      */
     const togglePopover = (nextOpen: boolean, focusOnOpen = false) => {
         if (nextOpen && !isInteractive) return;
@@ -319,12 +316,8 @@ const useTimePickerCore = <F extends string>({
         if (!isWithinPicker(event.relatedTarget)) togglePopover(false);
     };
 
-    const focusInputSilently = (input: HTMLInputElement | null) => {
-        if (!input || document.activeElement === input) return;
-
-        skipOpenOnFocusRef.current = true;
-        input.focus();
-        skipOpenOnFocusRef.current = false;
+    const focusInput = (input: HTMLInputElement | null) => {
+        if (input && document.activeElement !== input) input.focus();
     };
 
     const getFieldHandlers = (field: F) => {
@@ -339,8 +332,6 @@ const useTimePickerCore = <F extends string>({
                 setActiveField(field);
                 onFocus?.(event, field);
                 setShouldFocusPopover(false);
-
-                if (!skipOpenOnFocusRef.current) togglePopover(true);
             },
             onChange: (event: ChangeEvent<HTMLInputElement>) => {
                 if (!isInteractive) return;
@@ -357,7 +348,6 @@ const useTimePickerCore = <F extends string>({
             onBlur: (event: FocusEvent<HTMLInputElement>) => {
                 current.setIsEditing(false);
                 onBlur?.(event, field);
-                handleFocusOut(event);
 
                 if (!isInteractive) return;
 
@@ -382,7 +372,7 @@ const useTimePickerCore = <F extends string>({
 
                 event.preventDefault();
                 setActiveField(field);
-                togglePopover(true, true);
+                togglePopover(true, event.key === KEYS.ARROW_DOWN);
             }
         };
     };
@@ -415,14 +405,14 @@ const useTimePickerCore = <F extends string>({
             onChange?.(initialField, "", { source: "clear", parts: null });
         }
 
-        focusInputSilently(inputRefs[initialField].current);
+        focusInput(inputRefs[initialField].current);
     };
 
     const handlePopoverClose: PopoverCloseHandler = (_event, reason) => {
         togglePopover(false);
 
         if (reason === ESCAPE_CLOSE_REASON) {
-            focusInputSilently(inputRefs[activeField].current);
+            focusInput(inputRefs[activeField].current);
         }
     };
 
@@ -441,6 +431,7 @@ const useTimePickerCore = <F extends string>({
             anchorRef,
             shellRef,
             onAreaClick: handleShellClick,
+            onFocusOut: handleFocusOut,
             onClear: handleClear
         },
         popoverProps: {
@@ -450,6 +441,7 @@ const useTimePickerCore = <F extends string>({
             popoverRef,
             onClose: handlePopoverClose,
             onFocusOut: handleFocusOut,
+            onTabOut: () => focusInput(inputRefs[activeField].current),
             onSelect: handleSelect
         }
     };

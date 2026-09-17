@@ -47,14 +47,6 @@ export type TimePickerLocalization = {
      */
     seconds?: string;
     /**
-     * Text of the AM button.
-     */
-    am?: string;
-    /**
-     * Text of the PM button.
-     */
-    pm?: string;
-    /**
      * Accessible label of the clear button.
      */
     clear?: string;
