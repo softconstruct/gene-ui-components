@@ -9,22 +9,19 @@ const meta: Meta<IEditorProps> = {
     title: "Organisms/Editor",
     component: Editor,
     argTypes: {
+        defaultValue: args({ control: "false", ...propCategory.content }),
+        placeholder: args({ control: "text", ...propCategory.content }),
         className: args({ control: "false", ...propCategory.appearance }),
-        defaultValue: args({ control: "false", ...propCategory.others }),
-        placeholder: args({ control: "false", ...propCategory.others }),
-        readOnly: args({ control: "false", ...propCategory.others }),
-        autofocus: args({ control: "false", ...propCategory.others }),
-        onChange: args({ control: "false", ...propCategory.others }),
-        footerActions: args({ control: "false", ...propCategory.others })
+        readOnly: args({ control: "boolean", ...propCategory.states }),
+        onChange: args({ control: "false", ...propCategory.action }),
+        id: args({ control: "text", ...propCategory.others }),
+        "aria-label": args({ control: "text", ...propCategory.others }),
+        ref: args({ control: "false", ...propCategory.others }),
+        key: args({ control: "false", ...propCategory.others })
     },
     args: {
-        className: "fill the className prop value",
-        defaultValue: "fill the defaultValue prop value",
-        placeholder: "fill the placeholder prop value",
-        readOnly: "fill the readOnly prop value",
-        autofocus: "fill the autofocus prop value",
-        onChange: "fill the onChange prop value",
-        footerActions: "fill the footerActions prop value"
+        placeholder: "Start writing...",
+        readOnly: false
     }
 };
 

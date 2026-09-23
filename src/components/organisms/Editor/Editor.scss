@@ -1,5 +1,51 @@
 .editor {
-    // Your styles here
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--guit-sem-color-border-neutral-2);
+    border-radius: var(--guit-ref-radius-2xsmall);
+
+    &__header {
+        display: flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-3xsmall);
+        padding-block: var(--guit-ref-spacing-xsmall);
+        padding-inline: var(--guit-ref-spacing-large);
+        border-block-end: 1px solid var(--guit-sem-color-border-neutral-2);
+    }
+
+    // Quill adds `ql-container` to this element and renders `.ql-editor` inside it.
+    &__body {
+        flex: 1 1 auto;
+        min-block-size: 0;
+    }
+
+    &__footer {
+        display: flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-3xsmall);
+        padding-block: var(--guit-ref-spacing-xsmall);
+        padding-inline: var(--guit-ref-spacing-large);
+        border-block-start: 1px solid var(--guit-sem-color-border-neutral-2);
+    }
+
+    // `quill.core.css` hard-codes Helvetica at 13px and stretches the container to `height: 100%`,
+    // which fights the column layout above; the surrounding type and the flex sizing own both.
+    .ql-container {
+        block-size: auto;
+        font-size: inherit;
+        font-family: inherit;
+    }
+
+    .ql-editor {
+        block-size: auto;
+        min-block-size: 10.4rem;
+        padding-block: var(--guit-ref-spacing-medium);
+        padding-inline: var(--guit-ref-spacing-large);
+    }
+
+    .ql-editor.ql-blank::before {
+        inset-inline: var(--guit-ref-spacing-large);
+        font-style: normal;
+    }
 }
