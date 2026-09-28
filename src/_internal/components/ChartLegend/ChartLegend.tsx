@@ -3,6 +3,10 @@ import classNames from "classnames";
 
 // Components
 import Text from "@components/atoms/Text";
+import Tooltip from "@components/molecules/Tooltip";
+
+// Hooks
+import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
 // Styles
 import "./ChartLegend.scss";
@@ -44,12 +48,20 @@ interface IChartLegendProps {
     onExpandedChange?: (expanded: boolean) => void;
 }
 
-const renderLegendItem = (item: IChartLegendItem, index: number, onItemClick: IChartLegendProps["onItemClick"]) => {
+interface IChartLegendItemProps {
+    item: IChartLegendItem;
+    index: number;
+    onItemClick: IChartLegendProps["onItemClick"];
+}
+
+const ChartLegendItem: FC<IChartLegendItemProps> = ({ item, index, onItemClick }) => {
     const { name, color, visible = true } = item;
+    const labelRef = useRef<HTMLSpanElement>(null);
+    const isTruncated = useEllipsisDetection(labelRef, [name]);
     const isInteractive = Boolean(onItemClick);
 
     return (
-        <li key={`${name}-${color}`} className="chartLegend__item">
+        <li className="chartLegend__item">
             <button
                 type="button"
                 className={classNames("chartLegend__button", {
@@ -65,9 +77,16 @@ const renderLegendItem = (item: IChartLegendItem, index: number, onItemClick: IC
                     style={{ backgroundColor: color, borderColor: color }}
                     aria-hidden
                 />
-                <Text as="span" variant="captionLargeMedium" className="chartLegend__label">
-                    {name}
-                </Text>
+                <Tooltip text={name} isVisible={isTruncated}>
+                    <Text
+                        ref={labelRef}
+                        as="span"
+                        variant="captionLargeMedium"
+                        className="ellipsis-text chartLegend__label"
+                    >
+                        {name}
+                    </Text>
+                </Tooltip>
             </button>
         </li>
     );
@@ -77,8 +96,9 @@ const renderLegendItem = (item: IChartLegendItem, index: number, onItemClick: IC
  * Horizontal chart legend with color swatches. Item order and alignment follow the nearest `dir` context.
  * When `onItemClick` is provided, items act as toggles for series visibility.
  *
- * The list wraps with flexbox; while collapsed it is clipped to a single row (`overflow: hidden`) and any
- * items that wrapped onto a second row are hidden behind a "Show N more" toggle. Expanding removes the clip.
+ * Long labels truncate with an ellipsis and reveal the full text in a Tooltip on hover (only when
+ * actually truncated). The list wraps with flexbox; while collapsed it is clipped to a single row and
+ * any items that wrapped are hidden behind a "Show N more" toggle. Expanding removes the clip.
  */
 const ChartLegend: FC<IChartLegendProps> = ({ className, items, onItemClick, onExpandedChange }) => {
     const listRef = useRef<HTMLUListElement>(null);
@@ -155,7 +175,14 @@ const ChartLegend: FC<IChartLegendProps> = ({ className, items, onItemClick, onE
                 })}
                 style={isOverflowing && !isExpanded ? { maxHeight: rowHeight } : undefined}
             >
-                {items.map((item, index) => renderLegendItem(item, index, onItemClick))}
+                {items.map((item, index) => (
+                    <ChartLegendItem
+                        key={`${item.name}-${item.color}`}
+                        item={item}
+                        index={index}
+                        onItemClick={onItemClick}
+                    />
+                ))}
             </ul>
             {isOverflowing && (
                 <button

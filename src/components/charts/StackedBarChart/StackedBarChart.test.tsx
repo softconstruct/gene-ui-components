@@ -5,22 +5,18 @@ import Loader from "@components/atoms/Loader";
 import Empty from "@components/molecules/Empty";
 import GeneUIProvider from "@components/providers/GeneUIProvider";
 
-import BarChart from "./index";
+import StackedBarChart from "./index";
 
 jest.mock("highcharts-react-official", () => {
     const MockHighchartsReact = ({
         options
     }: {
-        options: {
-            chart?: { animation?: boolean; inverted?: boolean };
-            plotOptions?: { series?: { animation?: boolean } };
-        };
+        options: { chart?: { animation?: boolean }; plotOptions?: { series?: { animation?: boolean } } };
     }) => (
         <div
             className="highcharts-react-mock"
             data-animation={String(options?.chart?.animation)}
             data-series-animation={String(options?.plotOptions?.series?.animation)}
-            data-inverted={String(options?.chart?.inverted)}
         />
     );
 
@@ -34,30 +30,33 @@ jest.mock("highcharts", () => ({
     addEvent: jest.fn(() => jest.fn())
 }));
 
-describe("BarChart", () => {
+describe("StackedBarChart", () => {
     const categories = ["Segment", "Segment", "Segment", "Segment"];
-    const series = { name: "Channel", data: [10, 20, 30, 40], color: "#0057b8" };
+    const series = [
+        { name: "Channel 1", data: [10, 20, 30, 40], color: "#b91c1c" },
+        { name: "Channel 2", data: [15, 25, 35, 45], color: "#0057b8" }
+    ];
 
-    const mountBarChart = (props = {}) =>
-        mount(<BarChart categories={categories} series={series} {...props} />, {
+    const mountStackedBarChart = (props = {}) =>
+        mount(<StackedBarChart categories={categories} series={series} {...props} />, {
             wrappingComponent: GeneUIProvider
         });
 
     it("renders without crashing", () => {
-        const wrapper = mountBarChart();
+        const wrapper = mountStackedBarChart();
         expect(wrapper.exists()).toBeTruthy();
         expect(wrapper.find(".highcharts-react-mock").exists()).toBeTruthy();
     });
 
     it("renders loading state", () => {
-        const wrapper = mountBarChart({ loading: true, loadingText: "Loading Info" });
+        const wrapper = mountStackedBarChart({ loading: true, loadingText: "Loading Info" });
         expect(wrapper.find(Loader).exists()).toBeTruthy();
         expect(wrapper.find(".highcharts-react-mock").exists()).toBeFalsy();
     });
 
     it("renders empty state when series has no data", () => {
         const wrapper = mount(
-            <BarChart
+            <StackedBarChart
                 categories={categories}
                 series={undefined}
                 emptyTitle="No Data Available"
@@ -70,19 +69,9 @@ describe("BarChart", () => {
     });
 
     it("disables chart animations by default", () => {
-        const wrapper = mountBarChart();
+        const wrapper = mountStackedBarChart();
         const mock = wrapper.find(".highcharts-react-mock");
         expect(mock.prop("data-animation")).toBe("false");
         expect(mock.prop("data-series-animation")).toBe("false");
-    });
-
-    it("renders vertical (not inverted) by default", () => {
-        const wrapper = mountBarChart();
-        expect(wrapper.find(".highcharts-react-mock").prop("data-inverted")).toBe("false");
-    });
-
-    it("inverts the chart when direction is horizontal", () => {
-        const wrapper = mountBarChart({ direction: "horizontal" });
-        expect(wrapper.find(".highcharts-react-mock").prop("data-inverted")).toBe("true");
     });
 });
