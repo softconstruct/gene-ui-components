@@ -1,0 +1,250 @@
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { Column } from "@tanstack/react-table";
+import classNames from "classnames";
+
+import { Gear, Magnifier } from "@geneui/icons";
+
+// Components
+import Button from "@components/atoms/Button";
+import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
+import Scrollbar from "@components/atoms/Scrollbar";
+import ButtonGroup from "@components/molecules/ButtonGroup";
+import Checkbox from "@components/molecules/Checkbox";
+import Empty from "@components/molecules/Empty";
+import TextField from "@components/molecules/TextField";
+
+import useClickOutside from "@hooks/useClickOutside";
+
+// Styles
+import "./ManageColumns.scss";
+
+import DnDDragLayer from "../../../../../_internal/components/DnDDragLayer/DnDDragLayer";
+// Context
+import { useDataTableContext } from "../../context";
+import ManageColumnListItem from "./ListItem/ManageColumnListItem";
+// Hooks
+import { useManageColumns } from "./useManageColumns";
+
+const ManageColumns = <TData,>() => {
+    const { table, manageColumnsConfig, initialColumnVisibility, initialColumnPinning } = useDataTableContext<TData>();
+
+    const popoverRef = useRef<IPopoverRef>({
+        floatingElement: { current: null },
+        referenceElement: { current: null }
+    });
+
+    const { texts: manageColumnsTexts, enabled: isManageColumnsEnabled, loading } = manageColumnsConfig;
+
+    const manageColumnsData = useManageColumns<TData>({
+        table,
+        manageColumnsConfig,
+        initialColumnVisibility,
+        initialColumnPinning
+    });
+
+    const {
+        popoverOpen: open,
+        handleSearch: onSearch,
+        columnsToRender: columns,
+        draftVisibility,
+        handleToggleColumnVisibility: onColumnVisibilityChange,
+        draftPinning,
+        handleToggleColumnPinning: onColumnPinningChange,
+        handleColumnReorder: onColumnReorder,
+        handleSave: onSave,
+        handleCancel: onCancel,
+        handleRestoreDefaults: onRestoreDefaults,
+        handleSearchClear,
+        allColumnsChecked,
+        allColumnsIndeterminate,
+        handleToggleAllColumnsVisibility: onToggleAllColumns,
+        searchValue,
+        isSearchActive,
+        isDefaultState,
+        hasChanges,
+        propsForPopover,
+        setPropsForPopover,
+        openPopover
+    } = manageColumnsData;
+
+    const hasColumns = columns && columns.length > 0;
+
+    const [dropGap, setDropGap] = useState<{ targetId: string; edge: string } | null>(null);
+    const dropGapRef = useRef(dropGap);
+    useEffect(() => {
+        dropGapRef.current = dropGap;
+    }, [dropGap]);
+
+    const bodyRef = useRef<HTMLDivElement>(null);
+    const [cachedBodyHeight, setCachedBodyHeight] = useState<number | undefined>(undefined);
+
+    useEffect(() => {
+        if (!isSearchActive && bodyRef.current) {
+            setCachedBodyHeight(bodyRef.current.getBoundingClientRect().height);
+        }
+    }, [isSearchActive, columns]);
+
+    const handleDragTargetChange = useCallback((targetId: string, edge: string | null) => {
+        setDropGap((prev) => {
+            if (edge === null) return prev;
+            if (prev?.targetId === targetId && prev?.edge === edge) return prev;
+            return { targetId, edge };
+        });
+    }, []);
+
+    const onColumnReorderRef = useRef(onColumnReorder);
+    useEffect(() => {
+        onColumnReorderRef.current = onColumnReorder;
+    });
+
+    useEffect(() => {
+        return monitorForElements({
+            onDrop({ source }) {
+                const gap = dropGapRef.current;
+                setDropGap(null);
+
+                if (gap) {
+                    const sourceId = source.data.id as string;
+                    const destId = gap.targetId;
+
+                    if (sourceId && destId && sourceId !== destId) {
+                        onColumnReorderRef.current(sourceId, destId, gap.edge);
+                    }
+                }
+            }
+        });
+    }, []);
+
+    useClickOutside(() => {
+        if (open) {
+            onCancel();
+        }
+    }, [popoverRef.current.floatingElement, popoverRef.current.referenceElement]);
+
+    return (
+        <>
+            <Button
+                disabled={isManageColumnsEnabled === false}
+                onClick={openPopover}
+                Icon={Gear}
+                appearance="secondary"
+                layout="outline"
+                size="medium"
+                {...propsForPopover}
+            >
+                {manageColumnsTexts?.label ?? "Manage columns"}
+            </Button>
+
+            <Popover
+                position="bottom-right"
+                ref={popoverRef}
+                withArrow={false}
+                open={open}
+                setProps={setPropsForPopover}
+                onClose={onCancel}
+                size="fitContent"
+                mobileHeightMode="fit"
+            >
+                <PopoverBody withScrollbar={false} withPadding={false} className="manageColumnsPopover__main">
+                    <DnDDragLayer />
+                    <TextField
+                        autoComplete="off"
+                        placeholder={manageColumnsTexts?.searchPlaceholder ?? "Search"}
+                        value={searchValue}
+                        onChange={onSearch}
+                        className="manageColumnsPopover__header"
+                        disabled={loading}
+                        IconBefore={Magnifier}
+                        clearable
+                        onClear={handleSearchClear}
+                    />
+                    <div
+                        className="manageColumnsPopover__body"
+                        ref={bodyRef}
+                        style={{ minHeight: isSearchActive && cachedBodyHeight ? `${cachedBodyHeight}px` : undefined }}
+                    >
+                        {hasColumns && (
+                            <div className="manageColumnsPopover__selectAll">
+                                <Checkbox
+                                    id="manageColumns-selectAll"
+                                    checked={allColumnsChecked}
+                                    disabled={loading}
+                                    indeterminate={allColumnsIndeterminate}
+                                    onChange={(e) => onToggleAllColumns(e.target.checked)}
+                                    className="manageColumnsPopover__selectAllCheckbox"
+                                    label={manageColumnsTexts?.selectAllColumns ?? "All Columns"}
+                                />
+                            </div>
+                        )}
+                        {hasColumns ? (
+                            <Scrollbar className="manageColumnsPopover__scrollbar">
+                                <div
+                                    className={classNames("manageColumnsPopover__list", {
+                                        manageColumnsPopover__list_empty: !hasColumns
+                                    })}
+                                >
+                                    {columns.map((column: Column<TData>) => {
+                                        const isPinnedDraft = (draftPinning.left || []).includes(column.id);
+                                        const isDisabled =
+                                            manageColumnsConfig?.disabledColumns?.includes(column.id) || loading;
+                                        return (
+                                            <ManageColumnListItem
+                                                key={column.id}
+                                                column={column}
+                                                checked={draftVisibility[column.id] ?? true}
+                                                disabled={isDisabled}
+                                                isPinnedDraft={isPinnedDraft}
+                                                onPinToggle={onColumnPinningChange}
+                                                onChange={onColumnVisibilityChange}
+                                                dropGapEdge={dropGap?.targetId === column.id ? dropGap.edge : null}
+                                                hasDropGap={dropGap !== null}
+                                                onDragTargetChange={(edge) => handleDragTargetChange(column.id, edge)}
+                                            />
+                                        );
+                                    })}
+                                </div>
+                            </Scrollbar>
+                        ) : (
+                            <Empty
+                                appearance="noResult"
+                                className="manageColumnsPopover__empty"
+                                size="small"
+                                title={manageColumnsTexts?.noResultsFound ?? "No results found"}
+                                description={manageColumnsTexts?.noResultsFoundDescription}
+                            />
+                        )}
+                    </div>
+                    <div className="manageColumnsPopover__footer">
+                        <Button
+                            disabled={loading || isDefaultState}
+                            layout="text"
+                            size="medium"
+                            onClick={onRestoreDefaults}
+                            appearance="secondary"
+                        >
+                            {manageColumnsTexts?.restoreDefaultsButton ?? "Restore defaults"}
+                        </Button>
+
+                        <ButtonGroup size="medium" className="manageColumnsPopover__actions">
+                            <Button disabled={loading} onClick={onCancel} size="medium" appearance="secondary">
+                                {manageColumnsTexts?.cancelButton ?? "Cancel"}
+                            </Button>
+                            <Button
+                                disabled={!hasChanges}
+                                loading={loading}
+                                onClick={onSave}
+                                size="medium"
+                                appearance="primary"
+                            >
+                                {manageColumnsTexts?.saveButton ?? "Save"}
+                            </Button>
+                        </ButtonGroup>
+                    </div>
+                </PopoverBody>
+            </Popover>
+        </>
+    );
+};
+
+export default ManageColumns;
