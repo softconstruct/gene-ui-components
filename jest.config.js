@@ -19,7 +19,6 @@ module.exports = {
     moduleNameMapper: {
         "\\.(css|scss)$": "identity-obj-proxy",
         ".svg": "<rootDir>/tests/__mocks__/svg.js",
-        "^quill$": "<rootDir>/tests/__mocks__/quill.js",
         "^src": "<rootDir>/src",
         "^@components/(.*)$": "<rootDir>/src/components/$1",
         "^@internal/(.*)$": "<rootDir>/src/_internal/$1",

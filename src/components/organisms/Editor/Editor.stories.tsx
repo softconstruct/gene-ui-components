@@ -13,11 +13,9 @@ const meta: Meta<IEditorProps> = {
         placeholder: args({ control: "text", ...propCategory.content }),
         className: args({ control: "false", ...propCategory.appearance }),
         readOnly: args({ control: "boolean", ...propCategory.states }),
-        onChange: args({ control: "false", ...propCategory.action }),
+        onChange: args({ control: "false", action: "onChange", ...propCategory.action }),
         id: args({ control: "text", ...propCategory.others }),
-        "aria-label": args({ control: "text", ...propCategory.others }),
-        ref: args({ control: "false", ...propCategory.others }),
-        key: args({ control: "false", ...propCategory.others })
+        "aria-label": args({ control: "text", ...propCategory.others })
     },
     args: {
         placeholder: "Start writing...",
