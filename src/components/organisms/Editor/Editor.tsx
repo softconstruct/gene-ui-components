@@ -1,7 +1,8 @@
 import React, { FC, useEffect, useRef, useState } from "react";
-import { Editor as TiptapEditor, Extension } from "@tiptap/core";
+import { Editor as TiptapEditor } from "@tiptap/core";
 import Subscript from "@tiptap/extension-subscript";
 import Superscript from "@tiptap/extension-superscript";
+import TextAlign from "@tiptap/extension-text-align";
 import { TextStyleKit } from "@tiptap/extension-text-style";
 import { Placeholder } from "@tiptap/extensions";
 import StarterKit from "@tiptap/starter-kit";
@@ -21,26 +22,6 @@ const getEditingAreaAttributes = (id?: string, ariaLabel?: string): Record<strin
     "aria-multiline": "true",
     ...(id === undefined ? {} : { id }),
     ...(ariaLabel === undefined ? {} : { "aria-label": ariaLabel })
-});
-
-const TextCase = Extension.create({
-    name: "textCase",
-
-    addGlobalAttributes() {
-        return [
-            {
-                types: ["textStyle"],
-                attributes: {
-                    textTransform: {
-                        default: null,
-                        parseHTML: (element) => element.style.textTransform || null,
-                        renderHTML: (attributes) =>
-                            attributes.textTransform ? { style: `text-transform: ${attributes.textTransform}` } : {}
-                    }
-                }
-            }
-        ];
-    }
 });
 
 interface IEditorProps {
@@ -120,13 +101,12 @@ const Editor: FC<IEditorProps> = ({
                 StarterKit,
                 Subscript,
                 Superscript,
+                TextAlign.configure({ types: ["heading", "paragraph"] }),
                 TextStyleKit.configure({
-                    backgroundColor: false,
                     fontFamily: false,
                     fontSize: false,
                     lineHeight: false
                 }),
-                TextCase,
                 Placeholder.configure({
                     placeholder: () => placeholderRef.current,
                     emptyEditorClass: "editor__content_empty",

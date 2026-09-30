@@ -1,46 +1,197 @@
-import React, { FC, memo, ReactNode, useEffect, useState } from "react";
+import React, { FC, memo, useEffect, useState } from "react";
 import type { Editor as TiptapEditor } from "@tiptap/core";
 import { redoDepth, undoDepth } from "@tiptap/pm/history";
-import classNames from "classnames";
 
-const TEXT_COLORS = [
+import {
+    ArrowRedo,
+    ArrowUndo,
+    ColorFill,
+    EqualOff,
+    Globe,
+    IconProps,
+    RecycleBin,
+    TextAlignCenter,
+    TextAlignJustify,
+    TextAlignLeft,
+    TextAlignRight,
+    TextBold,
+    TextBulletList,
+    TextCase,
+    TextColor,
+    TextItalic,
+    TextNumberList,
+    TextUnderline
+} from "@geneui/icons";
+
+// Components
+import Divider from "@components/atoms/Divider";
+import ToolbarButton from "@components/organisms/Editor/ToolbarButton/ToolbarButton";
+import ToolbarMenuButton, {
+    IToolbarMenuButtonItem
+} from "@components/organisms/Editor/ToolbarMenuButton/ToolbarMenuButton";
+
+const getToolbarState = (editor: TiptapEditor) => {
+    const paragraphAlign = editor.getAttributes("paragraph").textAlign as string | undefined;
+    const headingAlign = editor.getAttributes("heading").textAlign as string | undefined;
+    const textStyle = editor.getAttributes("textStyle");
+
+    return {
+        canUndo: undoDepth(editor.state) > 0,
+        canRedo: redoDepth(editor.state) > 0,
+        bold: editor.isActive("bold"),
+        italic: editor.isActive("italic"),
+        headingLevel: ([1, 2, 3] as const).find((level) => editor.isActive("heading", { level })) ?? 0,
+        strike: editor.isActive("strike"),
+        textAlign: paragraphAlign ?? headingAlign ?? "",
+        underline: editor.isActive("underline"),
+        subscript: editor.isActive("subscript"),
+        superscript: editor.isActive("superscript"),
+        bulletList: editor.isActive("bulletList"),
+        orderedList: editor.isActive("orderedList"),
+        color: (textStyle.color as string) ?? "",
+        backgroundColor: (textStyle.backgroundColor as string) ?? ""
+    };
+};
+
+type ToolbarState = ReturnType<typeof getToolbarState>;
+
+type ToolbarChain = ReturnType<TiptapEditor["chain"]>;
+
+type ToolbarAction = {
+    id: string;
+    label: string;
+    Icon?: FC<IconProps>;
+    divider?: boolean;
+    isActive: (state: ToolbarState) => boolean;
+    apply: (chain: ToolbarChain, state: ToolbarState) => { run: () => boolean };
+};
+
+const toMenuItems = (actions: ToolbarAction[], state: ToolbarState | null): IToolbarMenuButtonItem[] =>
+    actions.map(({ id, label, Icon, divider, isActive }) => ({
+        id,
+        label,
+        Icon,
+        divider,
+        selected: state ? isActive(state) : false
+    }));
+
+const COLORS = [
     { value: "#d93025", label: "Red" },
     { value: "#1a73e8", label: "Blue" },
     { value: "#188038", label: "Green" }
 ];
 
-const TEXT_CASES = [
-    { value: "uppercase", label: "UPPERCASE" },
-    { value: "lowercase", label: "lowercase" },
-    { value: "capitalize", label: "Capitalize" }
+const FILL_COLOR_MENU_ACTIONS: ToolbarAction[] = COLORS.map(({ value, label }) => ({
+    id: `fill-${value}`,
+    label,
+    isActive: (state) => state.backgroundColor === value,
+    apply: (chain, state) =>
+        state.backgroundColor === value ? chain.unsetBackgroundColor() : chain.setBackgroundColor(value)
+}));
+
+const TEXT_COLOR_MENU_ACTIONS: ToolbarAction[] = COLORS.map(({ value, label }) => ({
+    id: `color-${value}`,
+    label,
+    isActive: (state) => state.color === value,
+    apply: (chain, state) => (state.color === value ? chain.unsetColor() : chain.setColor(value))
+}));
+
+const BLOCK_MENU_ACTIONS: ToolbarAction[] = [
+    {
+        id: "paragraph",
+        label: "Normal",
+        Icon: TextAlignLeft,
+        isActive: (state) => state.headingLevel === 0,
+        apply: (chain) => chain.setParagraph()
+    },
+    {
+        id: "heading1",
+        label: "Heading 1",
+        Icon: Globe,
+        isActive: (state) => state.headingLevel === 1,
+        apply: (chain) => chain.setHeading({ level: 1 })
+    },
+    {
+        id: "heading2",
+        label: "Heading 2",
+        Icon: Globe,
+        isActive: (state) => state.headingLevel === 2,
+        apply: (chain) => chain.setHeading({ level: 2 })
+    },
+    {
+        id: "heading3",
+        label: "Heading 3",
+        Icon: Globe,
+        isActive: (state) => state.headingLevel === 3,
+        apply: (chain) => chain.setHeading({ level: 3 })
+    }
 ];
 
-const getToolbarState = (editor: TiptapEditor) => ({
-    canUndo: undoDepth(editor.state) > 0,
-    canRedo: redoDepth(editor.state) > 0,
-    bold: editor.isActive("bold"),
-    italic: editor.isActive("italic"),
-    subscript: editor.isActive("subscript"),
-    superscript: editor.isActive("superscript"),
-    bulletList: editor.isActive("bulletList"),
-    orderedList: editor.isActive("orderedList"),
-    textTransform: (editor.getAttributes("textStyle").textTransform as string) ?? "",
-    color: (editor.getAttributes("textStyle").color as string) ?? ""
-});
+const ALIGN_MENU_ACTIONS: ToolbarAction[] = [
+    {
+        id: "alignLeft",
+        label: "Left Align",
+        Icon: TextAlignLeft,
+        isActive: (state) => state.textAlign === "left",
+        apply: (chain) => chain.toggleTextAlign("left")
+    },
+    {
+        id: "alignCenter",
+        label: "Centre Align",
+        Icon: TextAlignCenter,
+        isActive: (state) => state.textAlign === "center",
+        apply: (chain) => chain.toggleTextAlign("center")
+    },
+    {
+        id: "alignRight",
+        label: "Right Align",
+        Icon: TextAlignRight,
+        isActive: (state) => state.textAlign === "right",
+        apply: (chain) => chain.toggleTextAlign("right")
+    },
+    {
+        id: "alignJustify",
+        label: "Justify Align",
+        Icon: TextAlignJustify,
+        isActive: (state) => state.textAlign === "justify",
+        apply: (chain) => chain.toggleTextAlign("justify")
+    }
+];
 
-type ToolbarState = ReturnType<typeof getToolbarState>;
+const FORMAT_MENU_ACTIONS: ToolbarAction[] = [
+    {
+        id: "strike",
+        label: "Strikethrough",
+        Icon: EqualOff,
+        isActive: (state) => state.strike,
+        apply: (chain) => chain.toggleStrike()
+    },
+    {
+        id: "subscript",
+        label: "Subscript",
+        Icon: EqualOff,
+        isActive: (state) => state.subscript,
+        apply: (chain) => chain.toggleSubscript()
+    },
+    {
+        id: "superscript",
+        label: "Superscript",
+        Icon: EqualOff,
+        divider: true,
+        isActive: (state) => state.superscript,
+        apply: (chain) => chain.toggleSuperscript()
+    },
+    {
+        id: "clearFormat",
+        label: "Clear Formatting",
+        Icon: RecycleBin,
+        isActive: () => false,
+        apply: (chain) => chain.unsetStrike().unsetSubscript().unsetSuperscript()
+    }
+];
 
-const isToolbarStateEqual = (a: ToolbarState, b: ToolbarState): boolean =>
-    a.canUndo === b.canUndo &&
-    a.canRedo === b.canRedo &&
-    a.bold === b.bold &&
-    a.italic === b.italic &&
-    a.subscript === b.subscript &&
-    a.superscript === b.superscript &&
-    a.bulletList === b.bulletList &&
-    a.orderedList === b.orderedList &&
-    a.textTransform === b.textTransform &&
-    a.color === b.color;
+const isToolbarStateEqual = (previous: ToolbarState, next: ToolbarState): boolean =>
+    (Object.keys(previous) as (keyof ToolbarState)[]).every((key) => previous[key] === next[key]);
 
 /**
  * Bridges the editor's state into React.
@@ -72,29 +223,6 @@ const useToolbarState = (editor: TiptapEditor | null): ToolbarState | null => {
     return toolbarState;
 };
 
-interface IToolbarButtonProps {
-    label: string;
-    isActive?: boolean;
-    disabled?: boolean;
-    onClick: () => void;
-    children: ReactNode;
-}
-
-const ToolbarButton: FC<IToolbarButtonProps> = ({ label, isActive, disabled, onClick, children }) => (
-    <button
-        type="button"
-        className={classNames("editor__button", { editor__button_active: isActive })}
-        title={label}
-        aria-label={label}
-        aria-pressed={isActive}
-        disabled={disabled}
-        onMouseDown={(event) => event.preventDefault()}
-        onClick={onClick}
-    >
-        {children}
-    </button>
-);
-
 interface IEditorToolbarProps {
     editor: TiptapEditor | null;
     disabled?: boolean;
@@ -104,116 +232,116 @@ const EditorToolbar: FC<IEditorToolbarProps> = ({ editor, disabled = false }) =>
     const toolbarState = useToolbarState(editor);
     const isOff = disabled || !editor || !toolbarState;
 
-    const run = (apply: (chain: ReturnType<TiptapEditor["chain"]>) => { run: () => boolean }): void => {
+    const run = (apply: (chain: ToolbarChain) => { run: () => boolean }): void => {
         if (editor) {
             apply(editor.chain().focus()).run();
         }
     };
 
+    const handleMenuChange =
+        (actions: ToolbarAction[]) =>
+        (id: string): void => {
+            const action = actions.find((item) => item.id === id);
+
+            if (action && toolbarState) {
+                run((chain) => action.apply(chain, toolbarState));
+            }
+        };
+
+    const activeBlock = toolbarState ? BLOCK_MENU_ACTIONS.find(({ isActive }) => isActive(toolbarState)) : undefined;
+    const activeAlign = toolbarState ? ALIGN_MENU_ACTIONS.find(({ isActive }) => isActive(toolbarState)) : undefined;
+    const AlignIcon = activeAlign?.Icon ?? TextAlignLeft;
+
     return (
         <div className="editor__header">
             <ToolbarButton
-                label="Undo"
+                IconBefore={ArrowUndo}
+                aria-label="Undo"
                 disabled={isOff || !toolbarState?.canUndo}
                 onClick={() => run((chain) => chain.undo())}
-            >
-                ↶
-            </ToolbarButton>
+            />
             <ToolbarButton
-                label="Redo"
+                IconBefore={ArrowRedo}
+                aria-label="Redo"
                 disabled={isOff || !toolbarState?.canRedo}
                 onClick={() => run((chain) => chain.redo())}
-            >
-                ↷
-            </ToolbarButton>
+            />
+            <Divider direction="vertical" className="editor__divider" />
+            <ToolbarMenuButton
+                label={activeBlock?.label ?? ""}
+                aria-label="Text style"
+                disabled={isOff}
+                items={toMenuItems(BLOCK_MENU_ACTIONS, toolbarState)}
+                onChange={handleMenuChange(BLOCK_MENU_ACTIONS)}
+            />
+            <Divider direction="vertical" className="editor__divider" />
 
             <ToolbarButton
-                label="Bold"
-                isActive={toolbarState?.bold}
+                IconBefore={TextBold}
+                aria-label="Bold"
+                selected={toolbarState?.bold}
                 disabled={isOff}
                 onClick={() => run((chain) => chain.toggleBold())}
-            >
-                <b>B</b>
-            </ToolbarButton>
+            />
             <ToolbarButton
-                label="Italic"
-                isActive={toolbarState?.italic}
+                IconBefore={TextItalic}
+                aria-label="Italic"
+                selected={toolbarState?.italic}
                 disabled={isOff}
                 onClick={() => run((chain) => chain.toggleItalic())}
-            >
-                <i>I</i>
-            </ToolbarButton>
+            />
             <ToolbarButton
-                label="Subscript"
-                isActive={toolbarState?.subscript}
+                IconBefore={TextUnderline}
+                aria-label="Underline"
+                selected={toolbarState?.underline}
                 disabled={isOff}
-                onClick={() => run((chain) => chain.toggleSubscript())}
-            >
-                X₂
-            </ToolbarButton>
-            <ToolbarButton
-                label="Superscript"
-                isActive={toolbarState?.superscript}
+                onClick={() => run((chain) => chain.toggleUnderline())}
+            />
+            <ToolbarMenuButton
+                Icon={TextCase}
+                aria-label="Formatting"
                 disabled={isOff}
-                onClick={() => run((chain) => chain.toggleSuperscript())}
-            >
-                X²
-            </ToolbarButton>
-
-            <select
-                aria-label="Text case"
-                title="Text case"
+                items={toMenuItems(FORMAT_MENU_ACTIONS, toolbarState)}
+                onChange={handleMenuChange(FORMAT_MENU_ACTIONS)}
+            />
+            <ToolbarMenuButton
+                Icon={ColorFill}
+                aria-label="Fill color"
                 disabled={isOff}
-                value={toolbarState?.textTransform ?? ""}
-                onChange={(event) =>
-                    run((chain) =>
-                        event.target.value
-                            ? chain.setMark("textStyle", { textTransform: event.target.value })
-                            : chain.setMark("textStyle", { textTransform: null }).removeEmptyTextStyle()
-                    )
-                }
-            >
-                <option value="">Ab</option>
-                {TEXT_CASES.map(({ value, label }) => (
-                    <option key={value} value={value}>
-                        {label}
-                    </option>
-                ))}
-            </select>
-
-            <select
+                items={toMenuItems(FILL_COLOR_MENU_ACTIONS, toolbarState)}
+                onChange={handleMenuChange(FILL_COLOR_MENU_ACTIONS)}
+            />
+            <ToolbarMenuButton
+                Icon={TextColor}
                 aria-label="Text color"
-                title="Text color"
                 disabled={isOff}
-                value={toolbarState?.color ?? ""}
-                onChange={(event) =>
-                    run((chain) => (event.target.value ? chain.setColor(event.target.value) : chain.unsetColor()))
-                }
-            >
-                <option value="">Color</option>
-                {TEXT_COLORS.map(({ value, label }) => (
-                    <option key={value} value={value}>
-                        {label}
-                    </option>
-                ))}
-            </select>
+                items={toMenuItems(TEXT_COLOR_MENU_ACTIONS, toolbarState)}
+                onChange={handleMenuChange(TEXT_COLOR_MENU_ACTIONS)}
+            />
+            <Divider direction="vertical" className="editor__divider" />
+            <ToolbarMenuButton
+                Icon={AlignIcon}
+                aria-label="Alignment"
+                disabled={isOff}
+                items={toMenuItems(ALIGN_MENU_ACTIONS, toolbarState)}
+                onChange={handleMenuChange(ALIGN_MENU_ACTIONS)}
+            />
 
             <ToolbarButton
-                label="Bulleted list"
-                isActive={toolbarState?.bulletList}
+                IconBefore={TextBulletList}
+                aria-label="Bulleted list"
+                selected={toolbarState?.bulletList}
                 disabled={isOff}
                 onClick={() => run((chain) => chain.toggleBulletList())}
-            >
-                •
-            </ToolbarButton>
+            />
             <ToolbarButton
-                label="Numbered list"
-                isActive={toolbarState?.orderedList}
+                IconBefore={TextNumberList}
+                aria-label="Numbered list"
+                selected={toolbarState?.orderedList}
                 disabled={isOff}
                 onClick={() => run((chain) => chain.toggleOrderedList())}
-            >
-                1.
-            </ToolbarButton>
+            />
+            <Divider direction="vertical" className="editor__divider" />
         </div>
     );
 };
