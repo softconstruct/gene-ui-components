@@ -223,12 +223,12 @@ const useToolbarState = (editor: TiptapEditor | null): ToolbarState | null => {
     return toolbarState;
 };
 
-interface IEditorToolbarProps {
+interface IToolbarProps {
     editor: TiptapEditor | null;
     disabled?: boolean;
 }
 
-const EditorToolbar: FC<IEditorToolbarProps> = ({ editor, disabled = false }) => {
+const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false }) => {
     const toolbarState = useToolbarState(editor);
     const isOff = disabled || !editor || !toolbarState;
 
@@ -346,6 +346,6 @@ const EditorToolbar: FC<IEditorToolbarProps> = ({ editor, disabled = false }) =>
     );
 };
 
-const MemoizedEditorToolbar = memo(EditorToolbar);
+const MemoizedToolbar = memo(Toolbar);
 
-export { IEditorToolbarProps, MemoizedEditorToolbar as default };
+export { IToolbarProps, MemoizedToolbar as default };

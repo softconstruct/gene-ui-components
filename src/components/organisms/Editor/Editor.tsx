@@ -8,11 +8,11 @@ import { Placeholder } from "@tiptap/extensions";
 import StarterKit from "@tiptap/starter-kit";
 import classNames from "classnames";
 
+// Components
+import Toolbar from "@components/organisms/Editor/Toolbar/Toolbar";
+
 // Styles
 import "./Editor.scss";
-
-// Components
-import EditorToolbar from "./EditorToolbar";
 
 const PLACEHOLDER_ATTRIBUTE = "editor-placeholder";
 
@@ -150,7 +150,7 @@ const Editor: FC<IEditorProps> = ({
 
     return (
         <div className={classNames("editor", className)}>
-            <EditorToolbar editor={editor} disabled={readOnly} />
+            <Toolbar editor={editor} disabled={readOnly} />
 
             <div ref={bodyRef} className="editor__body" />
         </div>
