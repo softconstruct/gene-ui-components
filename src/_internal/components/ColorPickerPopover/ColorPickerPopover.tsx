@@ -55,7 +55,7 @@ interface IColorPickerPopoverProps {
     recentColors?: string[];
     /**
      * The color syntax format shown in the input fields.
-     * @default "hex"
+     * Leave it out to render the palette on its own, with no format dropdown and no input fields.
      */
     format?: ColorFormat;
     /**
@@ -80,7 +80,7 @@ const ColorPickerPopover: FC<IColorPickerPopoverProps> = ({
     colorControl,
     alphaEnabled = false,
     recentColors,
-    format = "hex",
+    format,
     position = "bottom-left",
     popoverRef,
     className
@@ -88,7 +88,7 @@ const ColorPickerPopover: FC<IColorPickerPopoverProps> = ({
     const { breakpoint } = useContext(GeneUIDesignSystemContext);
     const isMobileBreakpoint = breakpoint?.isMobileBreakpoint;
 
-    const [colorFormatMode, setColorFormatMode] = useState<ColorFormat>(format);
+    const [colorFormatMode, setColorFormatMode] = useState<ColorFormat | undefined>(format);
     const [isFormatDropdownOpen, setIsFormatDropdownOpen] = useState(false);
 
     const {
@@ -136,61 +136,65 @@ const ColorPickerPopover: FC<IColorPickerPopoverProps> = ({
                     ) : (
                         <HexColorPicker color={hex} onChange={handlePickerChange as (val: string) => void} />
                     )}
-                    <div
-                        className={classNames("colorPicker__inputs", {
-                            colorPicker__inputsRgb: colorFormatMode === "rgb",
-                            colorPicker__inputsHex: colorFormatMode === "hex"
-                        })}
-                    >
-                        <Dropdown
-                            className="colorPicker__formatDropdown"
-                            options={FORMAT_OPTIONS}
-                            value={colorFormatMode}
-                            size="small"
-                            onOpenChange={setIsFormatDropdownOpen}
-                            onChange={(option) => setColorFormatMode((option as IDropdownOption).value as ColorFormat)}
-                        />
-                        {colorFormatMode === "hex" ? (
-                            <TextField
-                                type="text"
+                    {colorFormatMode && (
+                        <div
+                            className={classNames("colorPicker__inputs", {
+                                colorPicker__inputsRgb: colorFormatMode === "rgb",
+                                colorPicker__inputsHex: colorFormatMode === "hex"
+                            })}
+                        >
+                            <Dropdown
+                                className="colorPicker__formatDropdown"
+                                options={FORMAT_OPTIONS}
+                                value={colorFormatMode}
                                 size="small"
-                                value={localHex}
-                                onChange={handleHexInputChange}
-                                placeholder="Hex"
-                                autoComplete="off"
-                                className="colorPicker__hexInput"
+                                onOpenChange={setIsFormatDropdownOpen}
+                                onChange={(option) =>
+                                    setColorFormatMode((option as IDropdownOption).value as ColorFormat)
+                                }
                             />
-                        ) : (
-                            <div className="colorPicker__rgbInputs">
-                                {RGB_CHANNELS.map((channel) => (
-                                    <TextField
-                                        className="colorPicker__rgbInput"
-                                        key={channel}
-                                        size="small"
-                                        value={rgba[channel]}
-                                        autoComplete="off"
-                                        placeholder={channel}
-                                        type="number"
-                                        name={channel}
-                                        onChange={(e) => handleRGBInputChange(channel, Number(e.target.value))}
-                                    />
-                                ))}
-                            </div>
-                        )}
+                            {colorFormatMode === "hex" ? (
+                                <TextField
+                                    type="text"
+                                    size="small"
+                                    value={localHex}
+                                    onChange={handleHexInputChange}
+                                    placeholder="Hex"
+                                    autoComplete="off"
+                                    className="colorPicker__hexInput"
+                                />
+                            ) : (
+                                <div className="colorPicker__rgbInputs">
+                                    {RGB_CHANNELS.map((channel) => (
+                                        <TextField
+                                            className="colorPicker__rgbInput"
+                                            key={channel}
+                                            size="small"
+                                            value={rgba[channel]}
+                                            autoComplete="off"
+                                            placeholder={channel}
+                                            type="number"
+                                            name={channel}
+                                            onChange={(e) => handleRGBInputChange(channel, Number(e.target.value))}
+                                        />
+                                    ))}
+                                </div>
+                            )}
 
-                        {alphaEnabled && (
-                            <TextField
-                                type="number"
-                                size="small"
-                                placeholder="Alpha"
-                                autoComplete="off"
-                                value={alpha}
-                                className="colorPicker__alphaInput"
-                                onChange={handleAlphaChange}
-                                IconAfter={Percent}
-                            />
-                        )}
-                    </div>
+                            {alphaEnabled && (
+                                <TextField
+                                    type="number"
+                                    size="small"
+                                    placeholder="Alpha"
+                                    autoComplete="off"
+                                    value={alpha}
+                                    className="colorPicker__alphaInput"
+                                    onChange={handleAlphaChange}
+                                    IconAfter={Percent}
+                                />
+                            )}
+                        </div>
+                    )}
 
                     {recentColors && recentColors?.length > 0 && (
                         <div className="colorPicker__recents">
