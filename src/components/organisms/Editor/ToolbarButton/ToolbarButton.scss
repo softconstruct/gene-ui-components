@@ -5,10 +5,10 @@
     align-items: center;
     gap: var(--guit-ref-spacing-4xsmall);
     box-sizing: border-box;
-    block-size: 3.2rem;
-    max-inline-size: 12.6rem;
+    height: 3.2rem;
+    max-width: 12.6rem;
     padding-block: var(--guit-ref-spacing-2xsmall);
-    padding-inline: var(--guit-ref-spacing-medium) var(--guit-ref-spacing-xsmall);
+    padding-inline: var(--guit-ref-spacing-medium);
     border-radius: var(--guit-ref-radius-3xsmall);
     background-color: var(--guit-sem-color-background-transparent-1);
     color: var(--guit-sem-color-foreground-neutral-1);
@@ -35,13 +35,17 @@
         background-color: var(--guit-sem-color-background-transparent-1-pressed);
     }
 
-    &_noText {
-        padding-inline: var(--guit-ref-spacing-xsmall);
+    &_iconStart {
+        padding-inline-start: var(--guit-ref-spacing-xsmall);
     }
 
-    &_iconOnly {
+    &_iconEnd {
+        padding-inline-end: var(--guit-ref-spacing-xsmall);
+    }
+
+    &_square {
         justify-content: center;
-        inline-size: 3.2rem;
+        width: 3.2rem;
         padding-inline: var(--guit-ref-spacing-2xsmall);
     }
 
@@ -50,6 +54,8 @@
     }
 
     &__text {
-        min-inline-size: 0;
+        flex: 1 1 auto;
+        min-width: 0;
+        text-align: start;
     }
 }

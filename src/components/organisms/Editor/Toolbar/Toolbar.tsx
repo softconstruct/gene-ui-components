@@ -268,6 +268,7 @@ const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false }) => {
             />
             <Divider direction="vertical" className="editor__divider" />
             <ToolbarMenuButton
+                className="editor__textStyleTrigger"
                 label={activeBlock?.label ?? ""}
                 aria-label="Text style"
                 disabled={isOff}

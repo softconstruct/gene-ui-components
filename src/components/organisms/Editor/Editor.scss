@@ -23,18 +23,22 @@
 
         .editor__divider {
             align-self: stretch;
-            block-size: auto;
+            height: auto;
             flex: none;
         }
     }
 
+    &__textStyleTrigger {
+        width: 11rem;
+    }
+
     &__body {
         flex: 1 1 auto;
-        min-block-size: 0;
+        min-height: 0;
     }
 
     &__content {
-        min-block-size: 10.4rem;
+        min-height: 10.4rem;
         padding-block: var(--guit-ref-spacing-medium);
         padding-inline: var(--guit-ref-spacing-large);
         color: var(--guit-sem-color-foreground-neutral-1);
@@ -44,7 +48,7 @@
         .editor__content_empty:first-child::before {
             content: attr(data-editor-placeholder);
             float: inline-start;
-            block-size: 0;
+            height: 0;
             pointer-events: none;
             color: var(--guit-sem-color-foreground-neutral-2);
             font-size: var(--guit-sem-font-body-medium-default-regular-font-size);

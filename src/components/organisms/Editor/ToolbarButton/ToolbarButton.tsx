@@ -74,8 +74,9 @@ const ToolbarButton: FC<IToolbarButtonProps> = ({
         type="button"
         className={classNames("toolbarButton", className, {
             toolbarButton_selected: selected,
-            toolbarButton_noText: !children,
-            toolbarButton_iconOnly: !children && !(IconBefore && IconAfter)
+            toolbarButton_iconStart: !!IconBefore,
+            toolbarButton_iconEnd: !!IconAfter,
+            toolbarButton_square: !children && !(IconBefore && IconAfter)
         })}
         disabled={disabled}
         title={title}
