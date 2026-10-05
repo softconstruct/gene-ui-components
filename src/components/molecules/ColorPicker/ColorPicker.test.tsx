@@ -2,7 +2,8 @@ import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 import { act } from "react-dom/test-utils";
 
-import { HexColorPicker } from "./components/CustomColorPickers/CustomColorPickers";
+import { HexColorPicker } from "@internal/components/ColorPickerPopover/components/CustomColorPickers/CustomColorPickers";
+
 import ColorPicker, { IColorPickerProps } from "./index";
 
 describe("ColorPicker", () => {

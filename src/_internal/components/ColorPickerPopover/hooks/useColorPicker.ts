@@ -1,14 +1,14 @@
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 
-// Constants
-import { ALPHA_SCALE_MAX, EMPTY_RGBA } from "@components/molecules/ColorPicker/constants";
-// Types
-import { RGB, RGBA } from "@components/molecules/ColorPicker/types";
-// Utils
-import { clamp, hexToRgb, parseColor, rgbToHex } from "@components/molecules/ColorPicker/utils";
-
 // Hooks
 import useDebouncedCallback from "@hooks/useDebounceCallback";
+
+// Constants
+import { ALPHA_SCALE_MAX, EMPTY_RGBA } from "../constants";
+// Types
+import { RGB, RGBA } from "../types";
+// Utils
+import { clamp, hexToRgb, parseColor, rgbToHex } from "../utils";
 
 interface IUseColorPickerOptions {
     /**

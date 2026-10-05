@@ -7,12 +7,11 @@ import { IPopoverRef } from "@components/atoms/Popover";
 import ColorPickerTextField from "@components/molecules/ColorPicker/components/ColorPickerTextField/ColorPickerTextField";
 
 import ColorPickerPopover, { useColorPicker } from "@internal/components/ColorPickerPopover";
+// Types
+import { ColorFormat, RGB, RGBA } from "@internal/components/ColorPickerPopover/types";
 
 // Styles
 import "./ColorPicker.scss";
-
-// Types
-import { ColorFormat, RGB, RGBA } from "./types";
 
 /**
  * Configuration properties for the ColorPicker component.

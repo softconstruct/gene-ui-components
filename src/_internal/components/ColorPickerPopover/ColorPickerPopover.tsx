@@ -6,14 +6,6 @@ import { Percent } from "@geneui/icons";
 
 // Components
 import { IPopoverProps, IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
-import {
-    HexColorPicker,
-    RgbaColorPicker
-} from "@components/molecules/ColorPicker/components/CustomColorPickers/CustomColorPickers";
-// Constants
-import { FORMAT_OPTIONS, RGB_CHANNELS } from "@components/molecules/ColorPicker/constants";
-// Types
-import { ColorFormat, RGBA } from "@components/molecules/ColorPicker/types";
 import Dropdown from "@components/molecules/Dropdown";
 import { IDropdownOption } from "@components/molecules/Dropdown/types";
 import TextField from "@components/molecules/TextField";
@@ -22,8 +14,13 @@ import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider"
 // Styles
 import "./ColorPickerPopover.scss";
 
+import { HexColorPicker, RgbaColorPicker } from "./components/CustomColorPickers/CustomColorPickers";
+// Constants
+import { FORMAT_OPTIONS, RGB_CHANNELS } from "./constants";
 // Hooks
 import { IColorPickerControl } from "./hooks/useColorPicker";
+// Types
+import { ColorFormat, RGBA } from "./types";
 
 interface IColorPickerPopoverProps extends IColorPickerControl {
     /**
