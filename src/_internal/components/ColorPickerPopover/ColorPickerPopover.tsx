@@ -127,8 +127,8 @@ const ColorPickerPopover: FC<IColorPickerPopoverProps> = ({
         >
             <PopoverBody withPadding={false}>
                 <div
-                    className={classNames("colorPicker__wrapper", className, {
-                        colorPicker__wrapper_mobile: isMobileBreakpoint
+                    className={classNames("colorPickerPopover__wrapper", className, {
+                        colorPickerPopover__wrapper_mobile: isMobileBreakpoint
                     })}
                 >
                     {alphaEnabled ? (
@@ -138,13 +138,13 @@ const ColorPickerPopover: FC<IColorPickerPopoverProps> = ({
                     )}
                     {colorFormatMode && (
                         <div
-                            className={classNames("colorPicker__inputs", {
-                                colorPicker__inputsRgb: colorFormatMode === "rgb",
-                                colorPicker__inputsHex: colorFormatMode === "hex"
+                            className={classNames("colorPickerPopover__inputs", {
+                                colorPickerPopover__inputsRgb: colorFormatMode === "rgb",
+                                colorPickerPopover__inputsHex: colorFormatMode === "hex"
                             })}
                         >
                             <Dropdown
-                                className="colorPicker__formatDropdown"
+                                className="colorPickerPopover__formatDropdown"
                                 options={FORMAT_OPTIONS}
                                 value={colorFormatMode}
                                 size="small"
@@ -161,13 +161,13 @@ const ColorPickerPopover: FC<IColorPickerPopoverProps> = ({
                                     onChange={handleHexInputChange}
                                     placeholder="Hex"
                                     autoComplete="off"
-                                    className="colorPicker__hexInput"
+                                    className="colorPickerPopover__hexInput"
                                 />
                             ) : (
-                                <div className="colorPicker__rgbInputs">
+                                <div className="colorPickerPopover__rgbInputs">
                                     {RGB_CHANNELS.map((channel) => (
                                         <TextField
-                                            className="colorPicker__rgbInput"
+                                            className="colorPickerPopover__rgbInput"
                                             key={channel}
                                             size="small"
                                             value={rgba[channel]}
@@ -188,7 +188,7 @@ const ColorPickerPopover: FC<IColorPickerPopoverProps> = ({
                                     placeholder="Alpha"
                                     autoComplete="off"
                                     value={alpha}
-                                    className="colorPicker__alphaInput"
+                                    className="colorPickerPopover__alphaInput"
                                     onChange={handleAlphaChange}
                                     IconAfter={Percent}
                                 />
@@ -197,14 +197,14 @@ const ColorPickerPopover: FC<IColorPickerPopoverProps> = ({
                     )}
 
                     {recentColors && recentColors?.length > 0 && (
-                        <div className="colorPicker__recents">
+                        <div className="colorPickerPopover__recents">
                             {recentColors.map((recentColor) => (
-                                <div className="colorPicker__recentColorWrapper" key={recentColor}>
+                                <div className="colorPickerPopover__recentColorWrapper" key={recentColor}>
                                     <button
                                         key={recentColor}
                                         type="button"
-                                        className={classNames("colorPicker__recentColor", {
-                                            colorPicker__recentColor__empty: !recentColor
+                                        className={classNames("colorPickerPopover__recentColor", {
+                                            colorPickerPopover__recentColor__empty: !recentColor
                                         })}
                                         aria-label={`Select recent color ${recentColor}`}
                                         onClick={() => applyRecentColor(recentColor)}
