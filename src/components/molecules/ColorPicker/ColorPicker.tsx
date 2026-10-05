@@ -117,7 +117,17 @@ const ColorPicker: FC<IColorPickerProps> = ({
         referenceElement: { current: null }
     });
 
-    const colorControl = useColorPicker({ value, defaultColor, alphaEnabled: isAlphaEnabled, alphaValue, onChange });
+    const {
+        rgba,
+        hex,
+        localHex,
+        alpha,
+        handlePickerChange,
+        handleHexInputChange,
+        handleRGBInputChange,
+        handleAlphaChange,
+        applyRecentColor
+    } = useColorPicker({ value, defaultColor, alphaEnabled: isAlphaEnabled, alphaValue, onChange });
 
     const handleOpen = useCallback(
         (openState: boolean) => {
@@ -147,11 +157,11 @@ const ColorPicker: FC<IColorPickerProps> = ({
             />
             <ColorPickerTextField
                 id="colorPickerTextField"
-                value={colorControl.localHex}
-                alpha={colorControl.alpha}
+                value={localHex}
+                alpha={alpha}
                 alphaEnabled={isAlphaEnabled}
-                onChange={colorControl.handleHexInputChange}
-                onAlphaChange={colorControl.handleAlphaChange}
+                onChange={handleHexInputChange}
+                onAlphaChange={handleAlphaChange}
                 placeholder={placeholder}
                 onPickerOpen={handleOpen}
                 size={size}
@@ -161,7 +171,15 @@ const ColorPicker: FC<IColorPickerProps> = ({
                 open={isOpen}
                 setProps={setPropsForPopover}
                 onClose={() => handleOpen(false)}
-                colorControl={colorControl}
+                rgba={rgba}
+                hex={hex}
+                localHex={localHex}
+                alpha={alpha}
+                handlePickerChange={handlePickerChange}
+                handleHexInputChange={handleHexInputChange}
+                handleRGBInputChange={handleRGBInputChange}
+                handleAlphaChange={handleAlphaChange}
+                applyRecentColor={applyRecentColor}
                 alphaEnabled={isAlphaEnabled}
                 recentColors={recentColors}
                 format={format}

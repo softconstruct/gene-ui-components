@@ -25,7 +25,7 @@ import "./ColorPickerPopover.scss";
 // Hooks
 import { IColorPickerControl } from "./hooks/useColorPicker";
 
-interface IColorPickerPopoverProps {
+interface IColorPickerPopoverProps extends IColorPickerControl {
     /**
      * The open/closed state of the palette.
      */
@@ -39,10 +39,6 @@ interface IColorPickerPopoverProps {
      * Called when the palette is dismissed, with the reason it closed.
      */
     onClose?: IPopoverProps["onClose"];
-    /**
-     * The color being edited and the handlers its controls need, from `useColorPicker`.
-     */
-    colorControl: IColorPickerControl;
     /**
      * Determines whether the alpha slider and input field are active.
      * @default false
@@ -77,7 +73,15 @@ const ColorPickerPopover: FC<IColorPickerPopoverProps> = ({
     open,
     setProps,
     onClose,
-    colorControl,
+    rgba,
+    hex,
+    localHex,
+    alpha,
+    handlePickerChange,
+    handleHexInputChange,
+    handleRGBInputChange,
+    handleAlphaChange,
+    applyRecentColor,
     alphaEnabled = false,
     recentColors,
     format,
@@ -90,18 +94,6 @@ const ColorPickerPopover: FC<IColorPickerPopoverProps> = ({
 
     const [colorFormatMode, setColorFormatMode] = useState<ColorFormat | undefined>(format);
     const [isFormatDropdownOpen, setIsFormatDropdownOpen] = useState(false);
-
-    const {
-        rgba,
-        hex,
-        localHex,
-        alpha,
-        handlePickerChange,
-        handleHexInputChange,
-        handleRGBInputChange,
-        handleAlphaChange,
-        applyRecentColor
-    } = colorControl;
 
     useEffect(() => {
         setColorFormatMode(format);
