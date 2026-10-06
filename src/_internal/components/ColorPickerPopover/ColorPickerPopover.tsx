@@ -6,8 +6,7 @@ import { Percent } from "@geneui/icons";
 
 // Components
 import { IPopoverProps, IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
-import Dropdown from "@components/molecules/Dropdown";
-import { IDropdownOption } from "@components/molecules/Dropdown/types";
+import Dropdown, { IDropdownOption } from "@components/molecules/Dropdown";
 import TextField from "@components/molecules/TextField";
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 

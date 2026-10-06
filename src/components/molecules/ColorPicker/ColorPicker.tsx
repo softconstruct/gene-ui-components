@@ -6,9 +6,7 @@ import Label from "@components/atoms/Label";
 import { IPopoverRef } from "@components/atoms/Popover";
 import ColorPickerTextField from "@components/molecules/ColorPicker/components/ColorPickerTextField/ColorPickerTextField";
 
-import ColorPickerPopover, { useColorPicker } from "@internal/components/ColorPickerPopover";
-// Types
-import { ColorFormat, RGB, RGBA } from "@internal/components/ColorPickerPopover/types";
+import ColorPickerPopover, { ColorFormat, RGB, RGBA, useColorPicker } from "@internal/components/ColorPickerPopover";
 
 // Styles
 import "./ColorPicker.scss";
