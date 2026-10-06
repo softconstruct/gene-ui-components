@@ -1,18 +1,15 @@
 import React, { FC, useCallback, useEffect, useState } from "react";
 
-// Styles
-import "./CustomColorPickers.scss";
-
 import { RGBA } from "../../types";
-// Utils
 import { hexToRgb, rgbToHex } from "../../utils";
 import { AlphaSlider } from "./components/AlphaSlider";
 import { HueSlider } from "./components/HueSlider";
-// Sub-components
 import { SaturationBrightnessPalette } from "./components/SaturationBrightnessPalette";
 import { IHsvColor } from "./types";
-// Types
 import { convertHsvToRgb, convertRgbToHsv } from "./utils/colorMath";
+
+// Styles
+import "./CustomColorPickers.scss";
 
 export interface IHexColorPickerProps {
     color: string;
