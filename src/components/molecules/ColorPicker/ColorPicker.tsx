@@ -1,34 +1,15 @@
-import React, { ChangeEvent, FC, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import classNames from "classnames";
-
-// Icons
-import { Percent } from "@geneui/icons";
 
 // Components
 import Label from "@components/atoms/Label";
-import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
+import { IPopoverRef } from "@components/atoms/Popover";
 import ColorPickerTextField from "@components/molecules/ColorPicker/components/ColorPickerTextField/ColorPickerTextField";
-import {
-    HexColorPicker,
-    RgbaColorPicker
-} from "@components/molecules/ColorPicker/components/CustomColorPickers/CustomColorPickers";
-// Constants
-import { ALPHA_SCALE_MAX, EMPTY_RGBA, FORMAT_OPTIONS, RGB_CHANNELS } from "@components/molecules/ColorPicker/constants";
-import Dropdown from "@components/molecules/Dropdown";
-import { IDropdownOption } from "@components/molecules/Dropdown/types";
-import TextField from "@components/molecules/TextField";
-import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
-// Hooks
-import useDebouncedCallback from "@hooks/useDebounceCallback";
+import ColorPickerPopover, { ColorFormat, RGBA, useColorPicker } from "@internal/components/ColorPickerPopover";
 
 // Styles
 import "./ColorPicker.scss";
-
-// Types
-import { ColorFormat, RGB, RGBA } from "./types";
-// Utils
-import { clamp, hexToRgb, parseColor, rgbToHex } from "./utils";
 
 /**
  * Configuration properties for the ColorPicker component.
@@ -97,9 +78,8 @@ interface IColorPickerProps {
      * Callback fired continuously as the user modifies the color.
      * @param hex - The 6 or 8 character HEX string representation of the color.
      * @param rgba - The parsed RGBA/RGB object representing the current state.
-     * @param alpha - The alpha integer value mapped from 0 to 100.
      */
-    onChange?: (hex?: string, rgba?: RGBA | RGB | null, alpha?: number) => void;
+    onChange?: (hex: string, rgba: RGBA) => void;
 }
 
 /**
@@ -121,131 +101,29 @@ const ColorPicker: FC<IColorPickerProps> = ({
     size = "medium",
     placeholder
 }) => {
-    const isColorControlled = value !== undefined;
     const isOpenControlled = open !== undefined;
 
     const [isOpen, setIsOpen] = useState(!!open);
     const [isAlphaEnabled, setIsAlphaEnabled] = useState(alphaEnabled);
-    const [colorFormatMode, setColorFormatMode] = useState<ColorFormat>(format);
-    const [isFormatDropdownOpen, setIsFormatDropdownOpen] = useState(false);
 
     const [propsForPopover, setPropsForPopover] = useState({});
-
-    const { breakpoint } = useContext(GeneUIDesignSystemContext);
-
-    const isMobileBreakpoint = breakpoint?.isMobileBreakpoint;
 
     const popoverRef = useRef<IPopoverRef>({
         floatingElement: { current: null },
         referenceElement: { current: null }
     });
 
-    const [rgba, setRgba] = useState<RGBA>(() => {
-        const initialColor = value ?? defaultColor;
-        const parsed = initialColor ? parseColor(initialColor) : null;
-
-        if (parsed) {
-            const hasExplicitAlpha = initialColor?.toLowerCase().startsWith("rgba");
-            return { ...parsed, a: hasExplicitAlpha ? parsed.a : (alphaValue ?? ALPHA_SCALE_MAX) / ALPHA_SCALE_MAX };
-        }
-
-        return EMPTY_RGBA;
-    });
-
-    const hex = useMemo(() => rgbToHex(rgba), [defaultColor, rgba]);
-    const alpha = useMemo(() => Math.round(rgba.a * ALPHA_SCALE_MAX), [rgba.a]);
-
-    const [localHex, setLocalHex] = useState<string>(hex);
-
-    const triggerOnChange = useCallback(
-        (next: unknown) => {
-            const newColor = next as RGBA;
-            onChange?.(rgbToHex(newColor), newColor, Math.round(newColor.a * ALPHA_SCALE_MAX));
-        },
-        [onChange]
-    );
-
-    const { debouncedCallback: emitChange } = useDebouncedCallback(triggerOnChange, 200);
-
-    const updateRGBA = (updater: (prev: RGBA) => RGBA) => {
-        setRgba((prev) => {
-            const next = updater(prev);
-            emitChange(next);
-            setLocalHex(rgbToHex(next));
-            return next;
-        });
-    };
-
-    const handlePickerChange = useCallback(
-        (colorValue: string | RGBA) => {
-            if (typeof colorValue === "string") {
-                const rgb = hexToRgb(colorValue);
-                if (!rgb) return;
-
-                updateRGBA((prev) => ({ ...rgb, a: prev.a }));
-                setLocalHex(colorValue);
-            } else {
-                updateRGBA(() => ({
-                    ...colorValue,
-                    a: isAlphaEnabled ? colorValue.a : (alphaValue ?? ALPHA_SCALE_MAX) / ALPHA_SCALE_MAX
-                }));
-            }
-        },
-        [alphaEnabled, alphaValue, updateRGBA]
-    );
-
-    const applyRecentColor = (colorStr: string) => {
-        if (colorStr === "") {
-            setRgba(EMPTY_RGBA);
-            setLocalHex("");
-            emitChange(EMPTY_RGBA);
-            return;
-        }
-
-        const parsed = parseColor(colorStr);
-        if (!parsed) return;
-
-        const hasExplicitAlpha = colorStr.toLowerCase().startsWith("rgba");
-        updateRGBA((prev) => ({
-            r: parsed.r,
-            g: parsed.g,
-            b: parsed.b,
-            a: hasExplicitAlpha ? parsed.a : prev.a
-        }));
-    };
-
-    const handleHexInputChange = useCallback(
-        (e: ChangeEvent<HTMLInputElement>) => {
-            const newValue = e.target.value;
-            setLocalHex(newValue);
-
-            const rgb = hexToRgb(newValue);
-
-            if (rgb) {
-                setRgba((prev) => ({ ...rgb, a: prev.a }));
-                emitChange({ ...rgb, a: rgba.a });
-                return;
-            }
-            setRgba(EMPTY_RGBA);
-            emitChange(EMPTY_RGBA);
-        },
-        [rgba.a, emitChange]
-    );
-
-    const handleRGBInputChange = (key: keyof RGB, colorValue: number) => {
-        updateRGBA((prev) => ({
-            ...prev,
-            [key]: clamp(colorValue, 0, 255)
-        }));
-    };
-
-    const handleAlphaChange = useCallback(
-        (e: ChangeEvent<HTMLInputElement>) => {
-            const nextAlpha = clamp(Number(e.target.value), 0, ALPHA_SCALE_MAX) / ALPHA_SCALE_MAX;
-            updateRGBA((prev) => ({ ...prev, a: nextAlpha }));
-        },
-        [updateRGBA]
-    );
+    const {
+        rgba,
+        hex,
+        localHex,
+        alpha,
+        handlePickerChange,
+        handleHexInputChange,
+        handleRGBInputChange,
+        handleAlphaChange,
+        applyRecentColor
+    } = useColorPicker({ value, defaultColor, alphaEnabled: isAlphaEnabled, alphaValue, onChange });
 
     const handleOpen = useCallback(
         (openState: boolean) => {
@@ -257,54 +135,9 @@ const ColorPicker: FC<IColorPickerProps> = ({
     );
 
     useEffect(() => {
-        if (!isColorControlled || !value) return;
-
-        const parsed = parseColor(value);
-        if (!parsed) return;
-
-        const hasExplicitAlpha = value.toLowerCase().startsWith("rgba");
-        setRgba((prev) => ({
-            r: parsed.r,
-            g: parsed.g,
-            b: parsed.b,
-            a: hasExplicitAlpha ? parsed.a : prev.a
-        }));
-        setLocalHex(rgbToHex(parsed));
-    }, [value, isColorControlled]);
-
-    useEffect(() => {
-        if (!defaultColor) return;
-
-        const parsed = parseColor(defaultColor);
-        if (!parsed) return;
-
-        const hasExplicitAlpha = defaultColor.toLowerCase().startsWith("rgba");
-
-        setRgba((prev) => ({
-            r: parsed.r,
-            g: parsed.g,
-            b: parsed.b,
-            a: hasExplicitAlpha ? parsed.a : prev.a
-        }));
-        setLocalHex(rgbToHex(parsed));
-    }, [defaultColor, isColorControlled]);
-
-    useEffect(() => {
-        if (alphaValue === undefined) return;
-        setRgba((prev) => ({
-            ...prev,
-            a: clamp(alphaValue, 0, ALPHA_SCALE_MAX) / ALPHA_SCALE_MAX
-        }));
-    }, [alphaValue]);
-
-    useEffect(() => {
         if (!isOpenControlled || open === undefined) return;
         setIsOpen(open);
     }, [open, isOpenControlled]);
-
-    useEffect(() => {
-        setColorFormatMode(format);
-    }, [format]);
 
     useEffect(() => {
         setIsAlphaEnabled(alphaEnabled);
@@ -329,110 +162,24 @@ const ColorPicker: FC<IColorPickerProps> = ({
                 onPickerOpen={handleOpen}
                 size={size}
             />
-            <Popover
-                onClose={() => {
-                    if (isFormatDropdownOpen) return;
-                    handleOpen(false);
-                }}
-                withArrow={false}
-                ref={popoverRef}
-                position="bottom-left"
+            <ColorPickerPopover
+                popoverRef={popoverRef}
                 open={isOpen}
                 setProps={setPropsForPopover}
-                mobileHeightMode="fit"
-            >
-                <PopoverBody withPadding={false}>
-                    <div
-                        className={classNames("colorPicker__wrapper", {
-                            colorPicker__wrapper_mobile: isMobileBreakpoint
-                        })}
-                    >
-                        {isAlphaEnabled ? (
-                            <RgbaColorPicker color={rgba} onChange={handlePickerChange as (val: RGBA) => void} />
-                        ) : (
-                            <HexColorPicker color={hex} onChange={handlePickerChange as (val: string) => void} />
-                        )}
-                        <div
-                            className={classNames("colorPicker__inputs", {
-                                colorPicker__inputsRgb: colorFormatMode === "rgb",
-                                colorPicker__inputsHex: colorFormatMode === "hex"
-                            })}
-                        >
-                            <Dropdown
-                                className="colorPicker__formatDropdown"
-                                options={FORMAT_OPTIONS}
-                                value={colorFormatMode}
-                                size="small"
-                                onOpenChange={setIsFormatDropdownOpen}
-                                onChange={(option) =>
-                                    setColorFormatMode((option as IDropdownOption).value as ColorFormat)
-                                }
-                            />
-                            {colorFormatMode === "hex" ? (
-                                <TextField
-                                    type="text"
-                                    size="small"
-                                    value={localHex}
-                                    onChange={handleHexInputChange}
-                                    placeholder="Hex"
-                                    autoComplete="off"
-                                    className="colorPicker__hexInput"
-                                />
-                            ) : (
-                                <div className="colorPicker__rgbInputs">
-                                    {RGB_CHANNELS.map((channel) => (
-                                        <TextField
-                                            className="colorPicker__rgbInput"
-                                            key={channel}
-                                            size="small"
-                                            value={rgba[channel]}
-                                            autoComplete="off"
-                                            placeholder={channel}
-                                            type="number"
-                                            name={channel}
-                                            onChange={(e) => handleRGBInputChange(channel, Number(e.target.value))}
-                                        />
-                                    ))}
-                                </div>
-                            )}
-
-                            {isAlphaEnabled && (
-                                <TextField
-                                    type="number"
-                                    size="small"
-                                    placeholder="Alpha"
-                                    autoComplete="off"
-                                    value={alpha}
-                                    className="colorPicker__alphaInput"
-                                    onChange={handleAlphaChange}
-                                    IconAfter={Percent}
-                                />
-                            )}
-                        </div>
-
-                        {recentColors && recentColors?.length > 0 && (
-                            <div className="colorPicker__recents">
-                                {recentColors.map((recentColor) => (
-                                    <div className="colorPicker__recentColorWrapper" key={recentColor}>
-                                        <button
-                                            key={recentColor}
-                                            type="button"
-                                            className={classNames("colorPicker__recentColor", {
-                                                colorPicker__recentColor__empty: !recentColor
-                                            })}
-                                            aria-label={`Select recent color ${recentColor}`}
-                                            onClick={() => applyRecentColor(recentColor)}
-                                            style={{
-                                                "--color-picker-recent-color": recentColor
-                                            }}
-                                        />
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                </PopoverBody>
-            </Popover>
+                onClose={() => handleOpen(false)}
+                rgba={rgba}
+                hex={hex}
+                localHex={localHex}
+                alpha={alpha}
+                handlePickerChange={handlePickerChange}
+                handleHexInputChange={handleHexInputChange}
+                handleRGBInputChange={handleRGBInputChange}
+                handleAlphaChange={handleAlphaChange}
+                applyRecentColor={applyRecentColor}
+                alphaEnabled={isAlphaEnabled}
+                recentColors={recentColors}
+                format={format}
+            />
         </div>
     );
 };

@@ -1,14 +1,10 @@
 import React, { FC } from "react";
 import classNames from "classnames";
 
-// Constants
-import { ALPHA_SCALE_MAX } from "@components/molecules/ColorPicker/constants";
+import { ALPHA_SCALE_MAX, hexToRgb } from "@internal/components/ColorPickerPopover";
 
 // Styles
 import "./ColorIndicator.scss";
-
-// Utils
-import { hexToRgb } from "../../utils";
 
 /**
  * Configuration properties for the ColorIndicator component.

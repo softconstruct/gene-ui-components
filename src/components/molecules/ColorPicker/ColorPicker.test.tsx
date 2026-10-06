@@ -2,7 +2,8 @@ import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 import { act } from "react-dom/test-utils";
 
-import { HexColorPicker } from "./components/CustomColorPickers/CustomColorPickers";
+import { HexColorPicker } from "@internal/components/ColorPickerPopover/components/CustomColorPickers/CustomColorPickers";
+
 import ColorPicker, { IColorPickerProps } from "./index";
 
 describe("ColorPicker", () => {
@@ -49,10 +50,10 @@ describe("ColorPicker", () => {
             });
             setup.update();
 
-            const recentColorNodes = setup.find(".colorPicker__recentColor");
+            const recentColorNodes = setup.find(".colorPickerPopover__recentColor");
             expect(recentColorNodes).toHaveLength(3);
 
-            expect(recentColorNodes.at(1).hasClass("colorPicker__recentColor__empty")).toBeTruthy();
+            expect(recentColorNodes.at(1).hasClass("colorPickerPopover__recentColor__empty")).toBeTruthy();
         });
 
         it("renders alphaEnabled prop correctly", () => {
@@ -82,7 +83,7 @@ describe("ColorPicker", () => {
                 setup.setProps({ open: true });
             });
             setup.update();
-            expect(setup.find(".colorPicker__wrapper").exists()).toBeTruthy();
+            expect(setup.find(".colorPickerPopover__wrapper").exists()).toBeTruthy();
         });
 
         it("renders format prop correctly", () => {
@@ -90,7 +91,7 @@ describe("ColorPicker", () => {
                 setup.setProps({ format: "rgb", open: true });
             });
             setup.update();
-            expect(setup.find(".colorPicker__rgbInputs").exists()).toBeTruthy();
+            expect(setup.find(".colorPickerPopover__rgbInputs").exists()).toBeTruthy();
         });
     });
 
@@ -98,13 +99,13 @@ describe("ColorPicker", () => {
         it("should open on indicator click and close on outside click", () => {
             setup.find("button.colorIndicator").simulate("click");
             setup.update();
-            expect(setup.find(".colorPicker__wrapper").exists()).toBeTruthy();
+            expect(setup.find(".colorPickerPopover__wrapper").exists()).toBeTruthy();
 
             act(() => {
                 document.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
             });
             setup.update();
-            expect(setup.find(".colorPicker__wrapper").exists()).toBeFalsy();
+            expect(setup.find(".colorPickerPopover__wrapper").exists()).toBeFalsy();
         });
 
         it("should close on outside click after focusing main textfield", () => {
@@ -120,14 +121,14 @@ describe("ColorPicker", () => {
                 document.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
             });
             setup.update();
-            expect(setup.find(".colorPicker__wrapper").exists()).toBeFalsy();
+            expect(setup.find(".colorPickerPopover__wrapper").exists()).toBeFalsy();
         });
 
         it("should close on outside click after mousedown inside popover hex input", () => {
             setup.find("button.colorIndicator").simulate("click");
             setup.update();
 
-            const hexInput = setup.find(".colorPicker__hexInput input").getDOMNode() as HTMLInputElement;
+            const hexInput = setup.find(".colorPickerPopover__hexInput input").getDOMNode() as HTMLInputElement;
             act(() => {
                 hexInput.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
             });
@@ -137,7 +138,7 @@ describe("ColorPicker", () => {
                 document.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
             });
             setup.update();
-            expect(setup.find(".colorPicker__wrapper").exists()).toBeFalsy();
+            expect(setup.find(".colorPickerPopover__wrapper").exists()).toBeFalsy();
         });
     });
 
@@ -148,12 +149,12 @@ describe("ColorPicker", () => {
             });
             setup.update();
 
-            setup.find(".colorPicker__formatDropdown .textField__wrapper").simulate("click");
+            setup.find(".colorPickerPopover__formatDropdown .textField__wrapper").simulate("click");
             setup.update();
             setup.find(".dropdownItem__action").at(0).simulate("click");
             setup.update();
 
-            expect(setup.find(".colorPicker__rgbInputs").exists()).toBeTruthy();
+            expect(setup.find(".colorPickerPopover__rgbInputs").exists()).toBeTruthy();
         });
 
         it("should keep ColorPicker open and select dropdown item on mobile", () => {
@@ -169,13 +170,13 @@ describe("ColorPicker", () => {
             });
             setup.update();
 
-            setup.find(".colorPicker__formatDropdown .textField__wrapper").simulate("click");
+            setup.find(".colorPickerPopover__formatDropdown .textField__wrapper").simulate("click");
             setup.update();
             setup.find(".dropdownItem__action").at(0).simulate("click");
             setup.update();
 
-            expect(setup.find(".colorPicker__wrapper").exists()).toBeTruthy();
-            expect(setup.find(".colorPicker__rgbInputs").exists()).toBeTruthy();
+            expect(setup.find(".colorPickerPopover__wrapper").exists()).toBeTruthy();
+            expect(setup.find(".colorPickerPopover__rgbInputs").exists()).toBeTruthy();
         });
 
         it("Should update color via HEX input field", () => {
@@ -185,10 +186,10 @@ describe("ColorPicker", () => {
             setup.update();
 
             const newHexValue = "#123456";
-            setup.find(".colorPicker__hexInput input").simulate("change", { target: { value: newHexValue } });
+            setup.find(".colorPickerPopover__hexInput input").simulate("change", { target: { value: newHexValue } });
             setup.update();
 
-            expect(setup.find(".colorPicker__hexInput input").props().value).toEqual(newHexValue);
+            expect(setup.find(".colorPickerPopover__hexInput input").props().value).toEqual(newHexValue);
         });
 
         it("Should fallback to empty/white if invalid HEX is typed", () => {
@@ -197,10 +198,10 @@ describe("ColorPicker", () => {
             });
             setup.update();
 
-            setup.find(".colorPicker__hexInput input").simulate("change", { target: { value: "invalid" } });
+            setup.find(".colorPickerPopover__hexInput input").simulate("change", { target: { value: "invalid" } });
             setup.update();
 
-            expect(setup.find(".colorPicker__hexInput input").props().value).toEqual("invalid");
+            expect(setup.find(".colorPickerPopover__hexInput input").props().value).toEqual("invalid");
         });
 
         it("Should update color via RGB inputs and clamp values", () => {
@@ -209,12 +210,12 @@ describe("ColorPicker", () => {
             });
             setup.update();
 
-            const rInput = setup.find(".colorPicker__rgbInputs input[name='r']");
+            const rInput = setup.find(".colorPickerPopover__rgbInputs input[name='r']");
 
             rInput.simulate("change", { target: { value: "999" } });
             setup.update();
 
-            expect(String(setup.find(".colorPicker__rgbInputs input[name='r']").props().value)).toBe("255");
+            expect(String(setup.find(".colorPickerPopover__rgbInputs input[name='r']").props().value)).toBe("255");
         });
 
         it("processing onChange prop correctly via CustomColorPickers", () => {
@@ -269,11 +270,11 @@ describe("ColorPicker", () => {
             });
             setup.update();
 
-            setup.find(".colorPicker__recentColor").at(0).simulate("click");
+            setup.find(".colorPickerPopover__recentColor").at(0).simulate("click");
             setup.update();
             expect(setup.find("input.colorPickerTextField__input").at(0).props().value).toBe("#111111");
 
-            setup.find(".colorPicker__recentColor").at(1).simulate("click");
+            setup.find(".colorPickerPopover__recentColor").at(1).simulate("click");
             setup.update();
             expect(setup.find("input.colorPickerTextField__input").at(0).props().value).toBe("");
         });

@@ -75,6 +75,7 @@
                     ["^@hooks"],
                     ["^@types"],
                     ["^@assets"],
+                    ["^\\."],
                     ["\\.scss$"],
                     ["\\.svg$", "\\.(png|jpe?g|gif)$"]
                 ]
