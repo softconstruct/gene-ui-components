@@ -11,12 +11,16 @@ jest.mock("highcharts-react-official", () => {
     const MockHighchartsReact = ({
         options
     }: {
-        options: { chart?: { animation?: boolean }; plotOptions?: { series?: { animation?: boolean } } };
+        options: {
+            chart?: { animation?: boolean; inverted?: boolean };
+            plotOptions?: { series?: { animation?: boolean } };
+        };
     }) => (
         <div
             className="highcharts-react-mock"
             data-animation={String(options?.chart?.animation)}
             data-series-animation={String(options?.plotOptions?.series?.animation)}
+            data-inverted={String(options?.chart?.inverted)}
         />
     );
 
@@ -70,5 +74,15 @@ describe("BarChart", () => {
         const mock = wrapper.find(".highcharts-react-mock");
         expect(mock.prop("data-animation")).toBe("false");
         expect(mock.prop("data-series-animation")).toBe("false");
+    });
+
+    it("renders vertical (not inverted) by default", () => {
+        const wrapper = mountBarChart();
+        expect(wrapper.find(".highcharts-react-mock").prop("data-inverted")).toBe("false");
+    });
+
+    it("inverts the chart when direction is horizontal", () => {
+        const wrapper = mountBarChart({ direction: "horizontal" });
+        expect(wrapper.find(".highcharts-react-mock").prop("data-inverted")).toBe("true");
     });
 });

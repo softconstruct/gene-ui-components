@@ -25,6 +25,7 @@ const meta: Meta<IBarChartProps> = {
         className: args({ control: "false", ...propCategory.appearance }),
         categories: args({ control: "object", ...propCategory.content }),
         series: args({ control: "object", ...propCategory.content }),
+        direction: args({ control: "select", options: ["vertical", "horizontal"], ...propCategory.appearance }),
         subtitle: args({ control: "text", ...propCategory.content }),
         xAxisTitle: args({ control: "text", ...propCategory.content }),
         yAxisTitle: args({ control: "text", ...propCategory.content }),
@@ -41,6 +42,7 @@ const meta: Meta<IBarChartProps> = {
     args: {
         categories: sampleCategories,
         series: sampleSeries,
+        direction: "vertical",
         subtitle: "Subtitle",
         xAxisTitle: "X axis name",
         yAxisTitle: "Y axis name",
@@ -59,3 +61,9 @@ export default meta;
 type Story = StoryObj<IBarChartProps>;
 
 export const Rest: Story = {};
+
+export const Horizontal: Story = {
+    args: {
+        direction: "horizontal"
+    }
+};

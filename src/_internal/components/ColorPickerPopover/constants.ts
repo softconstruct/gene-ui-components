@@ -1,5 +1,6 @@
-import { RGB, RGBA } from "@components/molecules/ColorPicker/types";
 import { IDropdownOption } from "@components/molecules/Dropdown/types";
+
+import { RGB, RGBA } from "./types";
 
 const ALPHA_SCALE_MAX = 100;
 const RGB_CHANNELS: (keyof RGB)[] = ["r", "g", "b"];
