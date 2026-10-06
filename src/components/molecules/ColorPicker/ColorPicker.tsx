@@ -6,7 +6,7 @@ import Label from "@components/atoms/Label";
 import { IPopoverRef } from "@components/atoms/Popover";
 import ColorPickerTextField from "@components/molecules/ColorPicker/components/ColorPickerTextField/ColorPickerTextField";
 
-import ColorPickerPopover, { ColorFormat, RGB, RGBA, useColorPicker } from "@internal/components/ColorPickerPopover";
+import ColorPickerPopover, { ColorFormat, RGBA, useColorPicker } from "@internal/components/ColorPickerPopover";
 
 // Styles
 import "./ColorPicker.scss";
@@ -78,9 +78,8 @@ interface IColorPickerProps {
      * Callback fired continuously as the user modifies the color.
      * @param hex - The 6 or 8 character HEX string representation of the color.
      * @param rgba - The parsed RGBA/RGB object representing the current state.
-     * @param alpha - The alpha integer value mapped from 0 to 100.
      */
-    onChange?: (hex?: string, rgba?: RGBA | RGB | null, alpha?: number) => void;
+    onChange?: (hex: string, rgba: RGBA) => void;
 }
 
 /**

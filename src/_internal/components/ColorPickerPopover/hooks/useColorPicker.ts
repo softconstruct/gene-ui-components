@@ -30,7 +30,7 @@ interface IUseColorPickerOptions {
     /**
      * Callback fired continuously as the color is modified.
      */
-    onChange?: (hex?: string, rgba?: RGBA | RGB | null, alpha?: number) => void;
+    onChange?: (hex: string, rgba: RGBA) => void;
 }
 
 /**
@@ -104,7 +104,7 @@ const useColorPicker = ({
     const triggerOnChange = useCallback(
         (next: unknown) => {
             const newColor = next as RGBA;
-            onChange?.(rgbToHex(newColor), newColor, Math.round(newColor.a * ALPHA_SCALE_MAX));
+            onChange?.(rgbToHex(newColor), newColor);
         },
         [onChange]
     );
