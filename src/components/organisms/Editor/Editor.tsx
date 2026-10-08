@@ -53,6 +53,11 @@ interface IEditorProps {
      */
     "aria-label"?: string;
     /**
+     * HEX strings offered in the text and fill color pickers. Twenty colors are shown:
+     * a "no color" one, then these, then as many of the editor's own palette as still fit.
+     */
+    presetColors?: string[];
+    /**
      * Callback function which triggers when the content is changed by the user.
      */
     onChange?: (value: string) => void;
@@ -68,6 +73,7 @@ const Editor: FC<IEditorProps> = ({
     placeholder = "Start writing...",
     readOnly = false,
     "aria-label": ariaLabel,
+    presetColors,
     onChange
 }) => {
     const bodyRef = useRef<HTMLDivElement>(null);
@@ -150,7 +156,7 @@ const Editor: FC<IEditorProps> = ({
 
     return (
         <div className={classNames("editor", className)}>
-            <Toolbar editor={editor} disabled={readOnly} />
+            <Toolbar editor={editor} disabled={readOnly} presetColors={presetColors} />
 
             <div ref={bodyRef} className="editor__body" />
         </div>

@@ -26,6 +26,7 @@ import {
 // Components
 import Divider from "@components/atoms/Divider";
 import ToolbarButton from "@components/organisms/Editor/ToolbarButton/ToolbarButton";
+import ToolbarColorButton from "@components/organisms/Editor/ToolbarColorButton/ToolbarColorButton";
 import ToolbarMenuButton, {
     IToolbarMenuButtonItem
 } from "@components/organisms/Editor/ToolbarMenuButton/ToolbarMenuButton";
@@ -63,7 +64,7 @@ type ToolbarAction = {
     Icon?: FC<IconProps>;
     divider?: boolean;
     isActive: (state: ToolbarState) => boolean;
-    apply: (chain: ToolbarChain, state: ToolbarState) => { run: () => boolean };
+    buildChain: (chain: ToolbarChain) => ToolbarChain;
 };
 
 const toMenuItems = (actions: ToolbarAction[], state: ToolbarState | null): IToolbarMenuButtonItem[] =>
@@ -75,26 +76,34 @@ const toMenuItems = (actions: ToolbarAction[], state: ToolbarState | null): IToo
         selected: state ? isActive(state) : false
     }));
 
-const COLORS = [
-    { value: "#d93025", label: "Red" },
-    { value: "#1a73e8", label: "Blue" },
-    { value: "#188038", label: "Green" }
+const NO_COLOR = "";
+
+const EDITOR_COLORS = [
+    "#000000",
+    "#434343",
+    "#666666",
+    "#999999",
+    "#B7B7B7",
+    "#CCCCCC",
+    "#D9D9D9",
+    "#EFEFEF",
+    "#FFFFFF",
+    "#980000",
+    "#FF0000",
+    "#FF9900",
+    "#FFFF00",
+    "#00FF00",
+    "#00FFFF",
+    "#4A86E8",
+    "#0000FF",
+    "#9900FF",
+    "#FF00FF"
 ];
 
-const FILL_COLOR_MENU_ACTIONS: ToolbarAction[] = COLORS.map(({ value, label }) => ({
-    id: `fill-${value}`,
-    label,
-    isActive: (state) => state.backgroundColor === value,
-    apply: (chain, state) =>
-        state.backgroundColor === value ? chain.unsetBackgroundColor() : chain.setBackgroundColor(value)
-}));
+const PRESET_COLOR_COUNT = 20;
 
-const TEXT_COLOR_MENU_ACTIONS: ToolbarAction[] = COLORS.map(({ value, label }) => ({
-    id: `color-${value}`,
-    label,
-    isActive: (state) => state.color === value,
-    apply: (chain, state) => (state.color === value ? chain.unsetColor() : chain.setColor(value))
-}));
+const toPresetColors = (customColors: string[] = []): string[] =>
+    [NO_COLOR, ...customColors, ...EDITOR_COLORS].slice(0, PRESET_COLOR_COUNT);
 
 const BLOCK_MENU_ACTIONS: ToolbarAction[] = [
     {
@@ -102,28 +111,28 @@ const BLOCK_MENU_ACTIONS: ToolbarAction[] = [
         label: "Normal",
         Icon: TextAlignLeft,
         isActive: (state) => state.headingLevel === 0,
-        apply: (chain) => chain.setParagraph()
+        buildChain: (chain) => chain.setParagraph()
     },
     {
         id: "heading1",
         label: "Heading 1",
         Icon: Globe,
         isActive: (state) => state.headingLevel === 1,
-        apply: (chain) => chain.setHeading({ level: 1 })
+        buildChain: (chain) => chain.setHeading({ level: 1 })
     },
     {
         id: "heading2",
         label: "Heading 2",
         Icon: Globe,
         isActive: (state) => state.headingLevel === 2,
-        apply: (chain) => chain.setHeading({ level: 2 })
+        buildChain: (chain) => chain.setHeading({ level: 2 })
     },
     {
         id: "heading3",
         label: "Heading 3",
         Icon: Globe,
         isActive: (state) => state.headingLevel === 3,
-        apply: (chain) => chain.setHeading({ level: 3 })
+        buildChain: (chain) => chain.setHeading({ level: 3 })
     }
 ];
 
@@ -133,28 +142,28 @@ const ALIGN_MENU_ACTIONS: ToolbarAction[] = [
         label: "Left Align",
         Icon: TextAlignLeft,
         isActive: (state) => state.textAlign === "left",
-        apply: (chain) => chain.toggleTextAlign("left")
+        buildChain: (chain) => chain.toggleTextAlign("left")
     },
     {
         id: "alignCenter",
         label: "Centre Align",
         Icon: TextAlignCenter,
         isActive: (state) => state.textAlign === "center",
-        apply: (chain) => chain.toggleTextAlign("center")
+        buildChain: (chain) => chain.toggleTextAlign("center")
     },
     {
         id: "alignRight",
         label: "Right Align",
         Icon: TextAlignRight,
         isActive: (state) => state.textAlign === "right",
-        apply: (chain) => chain.toggleTextAlign("right")
+        buildChain: (chain) => chain.toggleTextAlign("right")
     },
     {
         id: "alignJustify",
         label: "Justify Align",
         Icon: TextAlignJustify,
         isActive: (state) => state.textAlign === "justify",
-        apply: (chain) => chain.toggleTextAlign("justify")
+        buildChain: (chain) => chain.toggleTextAlign("justify")
     }
 ];
 
@@ -164,14 +173,14 @@ const FORMAT_MENU_ACTIONS: ToolbarAction[] = [
         label: "Strikethrough",
         Icon: EqualOff,
         isActive: (state) => state.strike,
-        apply: (chain) => chain.toggleStrike()
+        buildChain: (chain) => chain.toggleStrike()
     },
     {
         id: "subscript",
         label: "Subscript",
         Icon: EqualOff,
         isActive: (state) => state.subscript,
-        apply: (chain) => chain.toggleSubscript()
+        buildChain: (chain) => chain.toggleSubscript()
     },
     {
         id: "superscript",
@@ -179,14 +188,14 @@ const FORMAT_MENU_ACTIONS: ToolbarAction[] = [
         Icon: EqualOff,
         divider: true,
         isActive: (state) => state.superscript,
-        apply: (chain) => chain.toggleSuperscript()
+        buildChain: (chain) => chain.toggleSuperscript()
     },
     {
         id: "clearFormat",
         label: "Clear Formatting",
         Icon: RecycleBin,
         isActive: () => false,
-        apply: (chain) => chain.unsetStrike().unsetSubscript().unsetSuperscript()
+        buildChain: (chain) => chain.unsetStrike().unsetSubscript().unsetSuperscript()
     }
 ];
 
@@ -226,15 +235,23 @@ const useToolbarState = (editor: TiptapEditor | null): ToolbarState | null => {
 interface IToolbarProps {
     editor: TiptapEditor | null;
     disabled?: boolean;
+    presetColors?: string[];
 }
 
-const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false }) => {
+const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false, presetColors }) => {
     const toolbarState = useToolbarState(editor);
+    const colors = toPresetColors(presetColors);
     const isOff = disabled || !editor || !toolbarState;
 
-    const run = (apply: (chain: ToolbarChain) => { run: () => boolean }): void => {
+    const applyWithFocus = (buildChain: (chain: ToolbarChain) => ToolbarChain): void => {
         if (editor) {
-            apply(editor.chain().focus()).run();
+            buildChain(editor.chain().focus()).run();
+        }
+    };
+
+    const applyWithoutFocus = (buildChain: (chain: ToolbarChain) => ToolbarChain): void => {
+        if (editor) {
+            buildChain(editor.chain()).run();
         }
     };
 
@@ -243,10 +260,16 @@ const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false }) => {
         (id: string): void => {
             const action = actions.find((item) => item.id === id);
 
-            if (action && toolbarState) {
-                run((chain) => action.apply(chain, toolbarState));
+            if (action) {
+                applyWithFocus(action.buildChain);
             }
         };
+
+    const applyBackgroundColor = (color: string): void =>
+        applyWithoutFocus((chain) => (color ? chain.setBackgroundColor(color) : chain.unsetBackgroundColor()));
+
+    const applyTextColor = (color: string): void =>
+        applyWithoutFocus((chain) => (color ? chain.setColor(color) : chain.unsetColor()));
 
     const activeBlock = toolbarState ? BLOCK_MENU_ACTIONS.find(({ isActive }) => isActive(toolbarState)) : undefined;
     const activeAlign = toolbarState ? ALIGN_MENU_ACTIONS.find(({ isActive }) => isActive(toolbarState)) : undefined;
@@ -258,13 +281,13 @@ const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false }) => {
                 IconBefore={ArrowUndo}
                 aria-label="Undo"
                 disabled={isOff || !toolbarState?.canUndo}
-                onClick={() => run((chain) => chain.undo())}
+                onClick={() => applyWithFocus((chain) => chain.undo())}
             />
             <ToolbarButton
                 IconBefore={ArrowRedo}
                 aria-label="Redo"
                 disabled={isOff || !toolbarState?.canRedo}
-                onClick={() => run((chain) => chain.redo())}
+                onClick={() => applyWithFocus((chain) => chain.redo())}
             />
             <Divider direction="vertical" className="editor__divider" />
             <ToolbarMenuButton
@@ -282,21 +305,21 @@ const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false }) => {
                 aria-label="Bold"
                 selected={toolbarState?.bold}
                 disabled={isOff}
-                onClick={() => run((chain) => chain.toggleBold())}
+                onClick={() => applyWithFocus((chain) => chain.toggleBold())}
             />
             <ToolbarButton
                 IconBefore={TextItalic}
                 aria-label="Italic"
                 selected={toolbarState?.italic}
                 disabled={isOff}
-                onClick={() => run((chain) => chain.toggleItalic())}
+                onClick={() => applyWithFocus((chain) => chain.toggleItalic())}
             />
             <ToolbarButton
                 IconBefore={TextUnderline}
                 aria-label="Underline"
                 selected={toolbarState?.underline}
                 disabled={isOff}
-                onClick={() => run((chain) => chain.toggleUnderline())}
+                onClick={() => applyWithFocus((chain) => chain.toggleUnderline())}
             />
             <ToolbarMenuButton
                 Icon={TextCase}
@@ -305,19 +328,23 @@ const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false }) => {
                 items={toMenuItems(FORMAT_MENU_ACTIONS, toolbarState)}
                 onChange={handleMenuChange(FORMAT_MENU_ACTIONS)}
             />
-            <ToolbarMenuButton
+            <ToolbarColorButton
                 Icon={ColorFill}
                 aria-label="Fill color"
                 disabled={isOff}
-                items={toMenuItems(FILL_COLOR_MENU_ACTIONS, toolbarState)}
-                onChange={handleMenuChange(FILL_COLOR_MENU_ACTIONS)}
+                onChange={applyBackgroundColor}
+                onClose={() => editor?.commands.focus()}
+                color={toolbarState?.backgroundColor}
+                recentColors={colors}
             />
-            <ToolbarMenuButton
+            <ToolbarColorButton
                 Icon={TextColor}
                 aria-label="Text color"
                 disabled={isOff}
-                items={toMenuItems(TEXT_COLOR_MENU_ACTIONS, toolbarState)}
-                onChange={handleMenuChange(TEXT_COLOR_MENU_ACTIONS)}
+                onChange={applyTextColor}
+                onClose={() => editor?.commands.focus()}
+                color={toolbarState?.color}
+                recentColors={colors}
             />
             <Divider direction="vertical" className="editor__divider" />
             <ToolbarMenuButton
@@ -333,14 +360,14 @@ const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false }) => {
                 aria-label="Bulleted list"
                 selected={toolbarState?.bulletList}
                 disabled={isOff}
-                onClick={() => run((chain) => chain.toggleBulletList())}
+                onClick={() => applyWithFocus((chain) => chain.toggleBulletList())}
             />
             <ToolbarButton
                 IconBefore={TextNumberList}
                 aria-label="Numbered list"
                 selected={toolbarState?.orderedList}
                 disabled={isOff}
-                onClick={() => run((chain) => chain.toggleOrderedList())}
+                onClick={() => applyWithFocus((chain) => chain.toggleOrderedList())}
             />
             <Divider direction="vertical" className="editor__divider" />
         </div>

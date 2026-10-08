@@ -13,7 +13,8 @@ const meta: Meta<IEditorProps> = {
         placeholder: args({ control: "text", ...propCategory.content }),
         className: args({ control: "false", ...propCategory.appearance }),
         readOnly: args({ control: "boolean", ...propCategory.states }),
-        onChange: args({ control: "false", action: "onChange", ...propCategory.action }),
+        onChange: args({ control: "false", ...propCategory.action }),
+        presetColors: args({ control: "object", ...propCategory.content }),
         id: args({ control: "text", ...propCategory.others }),
         "aria-label": args({ control: "text", ...propCategory.others })
     },
@@ -28,3 +29,9 @@ export default meta;
 type Story = StoryObj<IEditorProps>;
 
 export const Default: Story = {};
+
+export const WithPresetColors: Story = {
+    args: {
+        presetColors: ["#FF6B00", "#00A3FF", "#AE3D80"]
+    }
+};
