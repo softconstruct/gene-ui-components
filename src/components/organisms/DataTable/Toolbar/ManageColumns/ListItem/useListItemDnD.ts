@@ -6,13 +6,37 @@ import { preventUnhandled } from "@atlaskit/pragmatic-drag-and-drop/prevent-unha
 
 import { DROP_TARGET_MIDPOINT_FRACTION } from "../../../constants";
 
+/**
+ * Marks drag data as a manage-columns list item, so drops and monitors can
+ * ignore drags that come from other lists (another DataTable, ActionableList, ...).
+ */
+export const MANAGE_COLUMNS_DRAG_TYPE = "manageColumnsItem";
+
+export const isManageColumnsDragData = (data: Record<string | symbol, unknown>, listId: string) =>
+    data.type === MANAGE_COLUMNS_DRAG_TYPE && data.listId === listId;
+
+/**
+ * Marks the list container itself as a drop target. The drop gap is a margin outside the items,
+ * so the pointer is often over the list but not over an item, which is still a valid drop.
+ */
+export const MANAGE_COLUMNS_LIST_DROP_TYPE = "manageColumnsList";
+
 interface UseColumnListItemDnDProps {
     columnId: string;
+    /**
+     * Id of the list the item belongs to. Items can only be dropped inside the same list.
+     */
+    listId: string;
     onDragTargetChange?: (edge: string | null) => void;
     disabled?: boolean;
 }
 
-export const useColumnListItemDnD = ({ columnId, onDragTargetChange, disabled = false }: UseColumnListItemDnDProps) => {
+export const useColumnListItemDnD = ({
+    columnId,
+    listId,
+    onDragTargetChange,
+    disabled = false
+}: UseColumnListItemDnDProps) => {
     const itemRef = useRef<HTMLDivElement>(null);
     const dragHandleRef = useRef<HTMLDivElement>(null);
     const onDragTargetChangeRef = useRef(onDragTargetChange);
@@ -52,6 +76,8 @@ export const useColumnListItemDnD = ({ columnId, onDragTargetChange, disabled = 
                     });
 
                     return {
+                        type: MANAGE_COLUMNS_DRAG_TYPE,
+                        listId,
                         id: columnId,
                         previewNode: clone,
                         initialRect: rect
@@ -71,8 +97,8 @@ export const useColumnListItemDnD = ({ columnId, onDragTargetChange, disabled = 
             }),
             dropTargetForElements({
                 element: el,
-                canDrop: ({ source }) => source.data.id !== columnId,
-                getData: () => ({ id: columnId }),
+                canDrop: ({ source }) => isManageColumnsDragData(source.data, listId) && source.data.id !== columnId,
+                getData: () => ({ type: MANAGE_COLUMNS_DRAG_TYPE, listId, id: columnId }),
                 onDragEnter: ({ location }) => {
                     onDragTargetChangeRef.current?.(computeEdge(location.current.input.clientY));
                 },
@@ -81,7 +107,7 @@ export const useColumnListItemDnD = ({ columnId, onDragTargetChange, disabled = 
                 }
             })
         );
-    }, [columnId, disabled]);
+    }, [columnId, listId, disabled]);
 
     return {
         itemRef,

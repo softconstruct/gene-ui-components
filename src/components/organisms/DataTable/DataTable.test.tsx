@@ -18,6 +18,26 @@ import DataTable, { IDataTableProps } from "./index";
 
 type MockDataType = (typeof mockData)[0];
 
+type TMonitorArgs = Parameters<
+    typeof import("@atlaskit/pragmatic-drag-and-drop/element/adapter").monitorForElements
+>[0];
+
+const mockMonitors: TMonitorArgs[] = [];
+jest.mock("@atlaskit/pragmatic-drag-and-drop/element/adapter", () => {
+    const actual = jest.requireActual("@atlaskit/pragmatic-drag-and-drop/element/adapter");
+    return {
+        ...actual,
+        monitorForElements: (args: TMonitorArgs) => {
+            mockMonitors.push(args);
+            const cleanup = actual.monitorForElements(args);
+            return () => {
+                mockMonitors.splice(mockMonitors.indexOf(args), 1);
+                cleanup();
+            };
+        }
+    };
+});
+
 const TestIcon = () => <svg />;
 
 describe("Table Component", () => {
@@ -347,9 +367,9 @@ describe("Table Component", () => {
         expect(onRowExpandChange).not.toHaveBeenCalled();
     });
 
-    it("renders Toolbar when manage columns enabled prop is true", async () => {
+    it("renders Toolbar when manage columns visible prop is true", async () => {
         await act(async () => {
-            setup.setProps({ manageColumnsConfig: { enabled: true, available: true } });
+            setup.setProps({ manageColumnsConfig: { visible: true } });
         });
         setup.update();
 
@@ -466,8 +486,7 @@ describe("Table Component - Manage Columns Integration", () => {
                     columns={mockColumns}
                     data={mockData}
                     manageColumnsConfig={{
-                        enabled: true,
-                        available: true
+                        visible: true
                     }}
                 />
             );
@@ -484,8 +503,7 @@ describe("Table Component - Manage Columns Integration", () => {
             setup.setProps({
                 manageColumnsConfig: {
                     open: true,
-                    enabled: true,
-                    available: true,
+                    visible: true,
                     texts: { label: "Custom Manage Label" }
                 }
             });
@@ -512,7 +530,7 @@ describe("Table Component - Manage Columns Integration", () => {
 
         const firstColId = mockColumns[0].accessorKey as string;
 
-        const checkbox = setup.find(Checkbox).filterWhere((c) => c.prop("id") === firstColId);
+        const checkbox = setup.find(Checkbox).filterWhere((c) => `${c.prop("id")}`.endsWith(`-${firstColId}`));
         await act(async () => {
             checkbox.prop("onChange")();
         });
@@ -574,7 +592,7 @@ describe("Table Component - Manage Columns Integration", () => {
         });
         setup.update();
 
-        const selectAll = setup.find(Checkbox).filterWhere((c) => c.prop("id") === "manageColumns-selectAll");
+        const selectAll = setup.find(Checkbox).filterWhere((c) => `${c.prop("id")}`.endsWith("-selectAll"));
         const onSelectAllChange = selectAll.prop("onChange") as (e: { target: { checked: boolean } }) => void;
         await act(async () => {
             onSelectAllChange({ target: { checked: false } });
@@ -597,7 +615,7 @@ describe("Table Component - Manage Columns Integration", () => {
 
         await act(async () => {
             setup.setProps({
-                manageColumnsConfig: { enabled: true, available: true, disabledColumns: [firstColId] }
+                manageColumnsConfig: { visible: true, disabledColumns: [firstColId] }
             });
         });
         setup.update();
@@ -775,6 +793,267 @@ describe("Table Component - column defaults, row identity and structure", () => 
         const bodyCellCount = wrapper!.find("tbody tr.tableRow").first().find("td").length;
         expect(headerCellCount).toBe(bodyCellCount);
         expect(wrapper!.find("th.tableHeaderCell_actions").length).toBe(1);
+
+        wrapper!.unmount();
+    });
+});
+
+describe("Table Component - Manage Columns review fixes", () => {
+    type SimpleRow = { Id: number; Email: string; Name: string };
+
+    const simpleData: SimpleRow[] = [
+        { Id: 1, Email: "first@mail.com", Name: "First" },
+        { Id: 2, Email: "second@mail.com", Name: "Second" }
+    ];
+
+    const simpleColumns: DataTableColumn<SimpleRow>[] = [
+        { accessorKey: "Id", header: "Id" },
+        { accessorKey: "Email", header: "Email" },
+        { accessorKey: "Name", header: "Name" }
+    ];
+
+    const openManageColumns = async <P,>(wrapper: ReactWrapper<P>) => {
+        await act(async () => {
+            wrapper
+                .find(Button)
+                .filterWhere((b) => b.text().includes("Manage columns"))
+                .simulate("click");
+        });
+        wrapper.update();
+    };
+
+    const getSaveButton = <P,>(wrapper: ReactWrapper<P>) =>
+        wrapper.find(Button).filterWhere((b) => b.text() === "Save");
+
+    const getListItemDragTargetHandler = <P,>(wrapper: ReactWrapper<P>, columnId: string) =>
+        wrapper
+            .find("ManageColumnListItem")
+            .filterWhere((item) => (item.prop("column") as { id: string }).id === columnId)
+            .prop("onDragTargetChange") as (edge: string | null) => void;
+
+    const simulateDrop = async (sourceId: string, listId: string, dropTargets: Record<string, unknown>[]) => {
+        const source = { data: { type: "manageColumnsItem", listId, id: sourceId } };
+        await act(async () => {
+            mockMonitors
+                .filter((monitor) => !monitor.canMonitor || monitor.canMonitor({ source } as never))
+                .forEach((monitor) =>
+                    monitor.onDrop?.({
+                        source,
+                        location: {
+                            current: { dropTargets: dropTargets.map((data) => ({ data })) }
+                        }
+                    } as never)
+                );
+        });
+    };
+
+    const getListId = <P,>(wrapper: ReactWrapper<P>) =>
+        wrapper.find("ManageColumnListItem").first().prop("listId") as string;
+
+    it("does not reorder columns when a drag is cancelled or dropped outside the list", async () => {
+        let wrapper: ReactWrapper<IDataTableProps<SimpleRow>>;
+        await act(async () => {
+            wrapper = mount(
+                <DataTable columns={simpleColumns} data={simpleData} manageColumnsConfig={{ visible: true }} />
+            );
+        });
+        wrapper!.update();
+        await openManageColumns(wrapper!);
+
+        await act(async () => {
+            getListItemDragTargetHandler(wrapper!, "Name")("top");
+        });
+        await simulateDrop("Id", getListId(wrapper!), []);
+        wrapper!.update();
+
+        expect(getSaveButton(wrapper!).prop("disabled")).toBe(true);
+
+        wrapper!.unmount();
+    });
+
+    it("reorders columns when an item is dropped on another item of the same list", async () => {
+        let wrapper: ReactWrapper<IDataTableProps<SimpleRow>>;
+        await act(async () => {
+            wrapper = mount(
+                <DataTable columns={simpleColumns} data={simpleData} manageColumnsConfig={{ visible: true }} />
+            );
+        });
+        wrapper!.update();
+        await openManageColumns(wrapper!);
+
+        await act(async () => {
+            getListItemDragTargetHandler(wrapper!, "Name")("bottom");
+        });
+        await simulateDrop("Id", getListId(wrapper!), [
+            { type: "manageColumnsItem", listId: getListId(wrapper!), id: "Name" },
+            { type: "manageColumnsList", listId: getListId(wrapper!) }
+        ]);
+        wrapper!.update();
+
+        await act(async () => {
+            getSaveButton(wrapper!).simulate("click");
+        });
+        wrapper!.update();
+
+        expect(wrapper!.find("thead th").map((th) => th.text())).toEqual(["Email", "Name", "Id"]);
+
+        wrapper!.unmount();
+    });
+
+    it("reorders columns when an item is dropped into the drop gap (over the list, not an item)", async () => {
+        let wrapper: ReactWrapper<IDataTableProps<SimpleRow>>;
+        await act(async () => {
+            wrapper = mount(
+                <DataTable columns={simpleColumns} data={simpleData} manageColumnsConfig={{ visible: true }} />
+            );
+        });
+        wrapper!.update();
+        await openManageColumns(wrapper!);
+
+        await act(async () => {
+            getListItemDragTargetHandler(wrapper!, "Name")("bottom");
+        });
+        await simulateDrop("Id", getListId(wrapper!), [{ type: "manageColumnsList", listId: getListId(wrapper!) }]);
+        wrapper!.update();
+
+        await act(async () => {
+            getSaveButton(wrapper!).simulate("click");
+        });
+        wrapper!.update();
+
+        expect(wrapper!.find("thead th").map((th) => th.text())).toEqual(["Email", "Name", "Id"]);
+
+        wrapper!.unmount();
+    });
+
+    it("ignores drags that come from another list", async () => {
+        let wrapper: ReactWrapper<IDataTableProps<SimpleRow>>;
+        await act(async () => {
+            wrapper = mount(
+                <DataTable columns={simpleColumns} data={simpleData} manageColumnsConfig={{ visible: true }} />
+            );
+        });
+        wrapper!.update();
+        await openManageColumns(wrapper!);
+
+        await act(async () => {
+            getListItemDragTargetHandler(wrapper!, "Name")("bottom");
+        });
+        await simulateDrop("Id", "another-list", [{ type: "manageColumnsList", listId: "another-list" }]);
+        wrapper!.update();
+
+        expect(getSaveButton(wrapper!).prop("disabled")).toBe(true);
+
+        wrapper!.unmount();
+    });
+
+    it("renders unique checkbox ids for two tables with the same columns", async () => {
+        let wrapper: ReactWrapper;
+        await act(async () => {
+            wrapper = mount(
+                <div>
+                    <DataTable
+                        columns={simpleColumns}
+                        data={simpleData}
+                        manageColumnsConfig={{ visible: true, open: true }}
+                    />
+                    <DataTable
+                        columns={simpleColumns}
+                        data={simpleData}
+                        manageColumnsConfig={{ visible: true, open: true }}
+                    />
+                </div>
+            );
+        });
+        wrapper!.update();
+
+        const ids = wrapper!.find(Checkbox).map((checkbox) => checkbox.prop("id"));
+        expect(ids.length).toBe((simpleColumns.length + 1) * 2);
+        expect(new Set(ids).size).toBe(ids.length);
+
+        wrapper!.unmount();
+    });
+
+    it("calls onOpenChange so a controlled popover can be closed", async () => {
+        const onOpenChange = jest.fn();
+        let wrapper: ReactWrapper<IDataTableProps<SimpleRow>>;
+        await act(async () => {
+            wrapper = mount(
+                <DataTable
+                    columns={simpleColumns}
+                    data={simpleData}
+                    manageColumnsConfig={{ visible: true, open: true, onOpenChange }}
+                />
+            );
+        });
+        wrapper!.update();
+
+        await act(async () => {
+            wrapper!
+                .find(Button)
+                .filterWhere((b) => b.text() === "Cancel")
+                .simulate("click");
+        });
+        wrapper!.update();
+
+        expect(onOpenChange).toHaveBeenCalledWith(false);
+        // Controlled: stays open until the consumer updates `open`
+        expect(wrapper!.find(Popover).prop("open")).toBe(true);
+
+        wrapper!.unmount();
+    });
+
+    it("applies defaultVisible and defaultPinned to columns that arrive after mount", async () => {
+        const asyncColumns: DataTableColumn<SimpleRow>[] = [
+            { accessorKey: "Id", header: "Id", defaultPinned: true },
+            { accessorKey: "Email", header: "Email", defaultVisible: false },
+            { accessorKey: "Name", header: "Name" }
+        ];
+
+        let wrapper: ReactWrapper<IDataTableProps<SimpleRow>>;
+        await act(async () => {
+            wrapper = mount(<DataTable columns={[]} data={simpleData} manageColumnsConfig={{ visible: true }} />);
+        });
+
+        await act(async () => {
+            wrapper!.setProps({ columns: asyncColumns });
+        });
+        wrapper!.update();
+
+        const headers = wrapper!.find("thead th");
+        expect(headers.map((th) => th.text())).toEqual(["Id", "Name"]);
+        expect(headers.first().hasClass("tableHeaderCell_pinned")).toBeTruthy();
+
+        wrapper!.unmount();
+    });
+
+    it("can reorder columns that arrive after mount", async () => {
+        let wrapper: ReactWrapper<IDataTableProps<SimpleRow>>;
+        await act(async () => {
+            wrapper = mount(<DataTable columns={[]} data={simpleData} manageColumnsConfig={{ visible: true }} />);
+        });
+
+        await act(async () => {
+            wrapper!.setProps({ columns: simpleColumns });
+        });
+        wrapper!.update();
+        await openManageColumns(wrapper!);
+
+        await act(async () => {
+            getListItemDragTargetHandler(wrapper!, "Name")("bottom");
+        });
+        await simulateDrop("Id", getListId(wrapper!), [
+            { type: "manageColumnsItem", listId: getListId(wrapper!), id: "Name" },
+            { type: "manageColumnsList", listId: getListId(wrapper!) }
+        ]);
+        wrapper!.update();
+
+        await act(async () => {
+            getSaveButton(wrapper!).simulate("click");
+        });
+        wrapper!.update();
+
+        expect(wrapper!.find("thead th").map((th) => th.text())).toEqual(["Email", "Name", "Id"]);
 
         wrapper!.unmount();
     });

@@ -90,6 +90,25 @@ export type DataTableColumn<TData> = {
 
 export type ColumnVisibilityState = Record<string, boolean>;
 
+export interface IManageColumnsTexts {
+    /** Text for the save button * */
+    saveButton?: string;
+    /** Text for the cancel button * */
+    cancelButton?: string;
+    /** Text for the restore-to-defaults button * */
+    restoreDefaultsButton?: string;
+    /** Placeholder text for the search field input * */
+    searchPlaceholder?: string;
+    /** Text for the manage columns button * */
+    label?: string;
+    /** Text for the select/deselect all columns button * */
+    selectAllColumns?: string;
+    /** Title text to display when there are no results after search * */
+    noResultsFound?: string;
+    /** Description text to display when there are no results to display after search * */
+    noResultsFoundDescription?: string;
+}
+
 export type ManageColumnsConfig = {
     /**
      * Whether the manage columns are in loading state.
@@ -97,20 +116,27 @@ export type ManageColumnsConfig = {
      */
     loading?: boolean;
     /**
-     * Whether the manage columns modal is open.
+     * Controls whether the manage columns popover is open.
+     * When provided, the popover is controlled: update it from `onOpenChange`.
      */
     open?: boolean;
     /**
-     * Whether the manage columns button is interactive.
-     * When `false` the button is rendered in a disabled state.
-     * @default true
+     * Callback fired when the popover requests to open or close
+     * (button click, Save, Cancel, click outside).
+     * Required to close the popover when `open` is controlled.
      */
-    enabled?: boolean;
+    onOpenChange?: (open: boolean) => void;
+    /**
+     * Whether the manage columns button is interactive.
+     * When `true` the button is rendered in a disabled state.
+     * @default false
+     */
+    disabled?: boolean;
     /**
      * Whether the manage columns button is rendered at all.
      * @default false
      */
-    available?: boolean;
+    visible?: boolean;
     /**
      * Callback function which triggers when the save button is clicked.
      */
@@ -118,24 +144,7 @@ export type ManageColumnsConfig = {
     /**
      * Texts to be displayed in the manage columns modal.
      */
-    texts?: {
-        /** Text for the save button * */
-        saveButton?: string;
-        /** Text for the cancel button * */
-        cancelButton?: string;
-        /** Text for the restore-to-defaults button * */
-        restoreDefaultsButton?: string;
-        /** Placeholder text for the search field input * */
-        searchPlaceholder?: string;
-        /** Text for the manage columns button * */
-        label?: string;
-        /** Text for the select/deselect all columns button * */
-        selectAllColumns?: string;
-        /** Title text to display when there are no results after search * */
-        noResultsFound?: string;
-        /** Description text to display when there are no results to display after search * */
-        noResultsFoundDescription?: string;
-    };
+    texts?: IManageColumnsTexts;
     /**
      * Callback function which triggers when the column is getting pinned.
      */
@@ -165,6 +174,16 @@ export type ManageColumnsConfig = {
      */
     disabledColumns?: string[];
 };
+
+/**
+ * `ManageColumnsConfig` after the DataTable merged it with its defaults.
+ * Flags and texts that have a default are guaranteed to be defined.
+ */
+export type ResolvedManageColumnsConfig = Omit<ManageColumnsConfig, "disabled" | "visible" | "texts"> &
+    Required<Pick<ManageColumnsConfig, "disabled" | "visible">> & {
+        texts: Required<Omit<IManageColumnsTexts, "noResultsFoundDescription">> &
+            Pick<IManageColumnsTexts, "noResultsFoundDescription">;
+    };
 
 declare module "@tanstack/react-table" {
     // eslint-disable-next-line

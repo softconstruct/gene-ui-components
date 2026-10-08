@@ -20,6 +20,11 @@ interface IManageColumnListItemProps<TData> {
      */
     column: Column<TData>;
     /**
+     * Id of the list the item belongs to.
+     * Used to scope drag and drop to one list and to build a unique checkbox id.
+     */
+    listId: string;
+    /**
      * Indicates whether the column is currently selected (visible in the table).
      */
     checked: boolean;
@@ -60,6 +65,7 @@ interface IManageColumnListItemProps<TData> {
 
 const ManageColumnListItem = <TData,>({
     column,
+    listId,
     checked,
     disabled,
     onChange,
@@ -75,6 +81,7 @@ const ManageColumnListItem = <TData,>({
 
     const { itemRef, dragHandleRef, isDragging } = useColumnListItemDnD({
         columnId: column.id,
+        listId,
         onDragTargetChange,
         disabled
     });
@@ -103,7 +110,7 @@ const ManageColumnListItem = <TData,>({
         >
             <div className="manageColumnListItem__content">
                 <Checkbox
-                    id={column.id}
+                    id={`${listId}-${column.id}`}
                     checked={checked}
                     disabled={disabled}
                     onChange={() => onChange(column)}

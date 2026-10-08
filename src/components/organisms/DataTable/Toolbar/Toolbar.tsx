@@ -10,9 +10,9 @@ import ManageColumns from "./ManageColumns/ManageColumns";
 
 const Toolbar = <TData,>() => {
     const { manageColumnsConfig } = useDataTableContext<TData>();
-    const { available: isManageColumnsAvailable } = manageColumnsConfig;
+    const { visible: isManageColumnsVisible } = manageColumnsConfig;
 
-    if (!isManageColumnsAvailable) return null;
+    if (!isManageColumnsVisible) return null;
 
     return (
         <div className="tableToolbar">

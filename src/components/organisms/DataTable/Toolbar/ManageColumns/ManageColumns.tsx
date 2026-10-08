@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { dropTargetForElements, monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { Column } from "@tanstack/react-table";
 import classNames from "classnames";
+import { nanoid } from "nanoid/non-secure";
 
 import { Gear, Magnifier } from "@geneui/icons";
 
@@ -14,27 +15,39 @@ import Checkbox from "@components/molecules/Checkbox";
 import Empty from "@components/molecules/Empty";
 import TextField from "@components/molecules/TextField";
 
+import DnDDragLayer from "@internal/components/DnDDragLayer/DnDDragLayer";
+
+// Hooks
 import useClickOutside from "@hooks/useClickOutside";
 
 // Styles
 import "./ManageColumns.scss";
 
-import DnDDragLayer from "../../../../../_internal/components/DnDDragLayer/DnDDragLayer";
 // Context
 import { useDataTableContext } from "../../context";
+// Sub-components
 import ManageColumnListItem from "./ListItem/ManageColumnListItem";
+import { isManageColumnsDragData, MANAGE_COLUMNS_LIST_DROP_TYPE } from "./ListItem/useListItemDnD";
 // Hooks
 import { useManageColumns } from "./useManageColumns";
 
 const ManageColumns = <TData,>() => {
     const { table, manageColumnsConfig, initialColumnVisibility, initialColumnPinning } = useDataTableContext<TData>();
 
+    // Unique per instance: scopes drag and drop to this list and keeps checkbox ids unique on the page
+    const [listId] = useState(() => `manageColumns-${nanoid()}`);
+
     const popoverRef = useRef<IPopoverRef>({
         floatingElement: { current: null },
         referenceElement: { current: null }
     });
 
-    const { texts: manageColumnsTexts, enabled: isManageColumnsEnabled, loading } = manageColumnsConfig;
+    const {
+        texts: manageColumnsTexts,
+        disabled: isManageColumnsDisabled,
+        loading,
+        disabledColumns
+    } = manageColumnsConfig;
 
     const manageColumnsData = useManageColumns<TData>({
         table,
@@ -98,23 +111,43 @@ const ManageColumns = <TData,>() => {
         onColumnReorderRef.current = onColumnReorder;
     });
 
+    const [listElement, setListElement] = useState<HTMLDivElement | null>(null);
+
+    // The whole list is a drop target: the gap stays while the pointer is anywhere inside the list
+    // (including the gap itself) and is cleared only when the pointer leaves the list
+    useEffect(() => {
+        if (!listElement) return () => undefined;
+
+        return dropTargetForElements({
+            element: listElement,
+            canDrop: ({ source }) => isManageColumnsDragData(source.data, listId),
+            getData: () => ({ type: MANAGE_COLUMNS_LIST_DROP_TYPE, listId }),
+            onDragLeave: () => setDropGap(null)
+        });
+    }, [listElement, listId]);
+
     useEffect(() => {
         return monitorForElements({
-            onDrop({ source }) {
+            canMonitor: ({ source }) => isManageColumnsDragData(source.data, listId),
+            onDrop({ source, location }) {
                 const gap = dropGapRef.current;
                 setDropGap(null);
 
-                if (gap) {
-                    const sourceId = source.data.id as string;
-                    const destId = gap.targetId;
+                // Not over this list means the drag was cancelled (Escape) or released outside the list
+                const isOverList = location.current.dropTargets.some((target) => target.data.listId === listId);
+                if (!gap || !isOverList) return;
 
-                    if (sourceId && destId && sourceId !== destId) {
-                        onColumnReorderRef.current(sourceId, destId, gap.edge);
-                    }
+                const sourceId = source.data.id as string;
+                const destId = gap.targetId;
+
+                if (sourceId && destId && sourceId !== destId) {
+                    onColumnReorderRef.current(sourceId, destId, gap.edge);
                 }
             }
         });
-    }, []);
+    }, [listId]);
+
+    const bodyMinHeight = isSearchActive && cachedBodyHeight ? `${cachedBodyHeight}px` : undefined;
 
     useClickOutside(() => {
         if (open) {
@@ -125,7 +158,7 @@ const ManageColumns = <TData,>() => {
     return (
         <>
             <Button
-                disabled={isManageColumnsEnabled === false}
+                disabled={isManageColumnsDisabled}
                 onClick={openPopover}
                 Icon={Gear}
                 appearance="secondary"
@@ -133,7 +166,7 @@ const ManageColumns = <TData,>() => {
                 size="medium"
                 {...propsForPopover}
             >
-                {manageColumnsTexts?.label ?? "Manage columns"}
+                {manageColumnsTexts.label}
             </Button>
 
             <Popover
@@ -150,7 +183,7 @@ const ManageColumns = <TData,>() => {
                     <DnDDragLayer />
                     <TextField
                         autoComplete="off"
-                        placeholder={manageColumnsTexts?.searchPlaceholder ?? "Search"}
+                        placeholder={manageColumnsTexts.searchPlaceholder}
                         value={searchValue}
                         onChange={onSearch}
                         className="manageColumnsPopover__header"
@@ -159,39 +192,36 @@ const ManageColumns = <TData,>() => {
                         clearable
                         onClear={handleSearchClear}
                     />
-                    <div
-                        className="manageColumnsPopover__body"
-                        ref={bodyRef}
-                        style={{ minHeight: isSearchActive && cachedBodyHeight ? `${cachedBodyHeight}px` : undefined }}
-                    >
+                    <div className="manageColumnsPopover__body" ref={bodyRef} style={{ minHeight: bodyMinHeight }}>
                         {hasColumns && (
                             <div className="manageColumnsPopover__selectAll">
                                 <Checkbox
-                                    id="manageColumns-selectAll"
+                                    id={`${listId}-selectAll`}
                                     checked={allColumnsChecked}
                                     disabled={loading}
                                     indeterminate={allColumnsIndeterminate}
                                     onChange={(e) => onToggleAllColumns(e.target.checked)}
                                     className="manageColumnsPopover__selectAllCheckbox"
-                                    label={manageColumnsTexts?.selectAllColumns ?? "All Columns"}
+                                    label={manageColumnsTexts.selectAllColumns}
                                 />
                             </div>
                         )}
                         {hasColumns ? (
                             <Scrollbar className="manageColumnsPopover__scrollbar">
                                 <div
+                                    ref={setListElement}
                                     className={classNames("manageColumnsPopover__list", {
                                         manageColumnsPopover__list_empty: !hasColumns
                                     })}
                                 >
                                     {columns.map((column: Column<TData>) => {
                                         const isPinnedDraft = (draftPinning.left || []).includes(column.id);
-                                        const isDisabled =
-                                            manageColumnsConfig?.disabledColumns?.includes(column.id) || loading;
+                                        const isDisabled = disabledColumns?.includes(column.id) || loading;
                                         return (
                                             <ManageColumnListItem
                                                 key={column.id}
                                                 column={column}
+                                                listId={listId}
                                                 checked={draftVisibility[column.id] ?? true}
                                                 disabled={isDisabled}
                                                 isPinnedDraft={isPinnedDraft}
@@ -210,8 +240,8 @@ const ManageColumns = <TData,>() => {
                                 appearance="noResult"
                                 className="manageColumnsPopover__empty"
                                 size="small"
-                                title={manageColumnsTexts?.noResultsFound ?? "No results found"}
-                                description={manageColumnsTexts?.noResultsFoundDescription}
+                                title={manageColumnsTexts.noResultsFound}
+                                description={manageColumnsTexts.noResultsFoundDescription}
                             />
                         )}
                     </div>
@@ -223,12 +253,12 @@ const ManageColumns = <TData,>() => {
                             onClick={onRestoreDefaults}
                             appearance="secondary"
                         >
-                            {manageColumnsTexts?.restoreDefaultsButton ?? "Restore defaults"}
+                            {manageColumnsTexts.restoreDefaultsButton}
                         </Button>
 
                         <ButtonGroup size="medium" className="manageColumnsPopover__actions">
                             <Button disabled={loading} onClick={onCancel} size="medium" appearance="secondary">
-                                {manageColumnsTexts?.cancelButton ?? "Cancel"}
+                                {manageColumnsTexts.cancelButton}
                             </Button>
                             <Button
                                 disabled={!hasChanges}
@@ -237,7 +267,7 @@ const ManageColumns = <TData,>() => {
                                 size="medium"
                                 appearance="primary"
                             >
-                                {manageColumnsTexts?.saveButton ?? "Save"}
+                                {manageColumnsTexts.saveButton}
                             </Button>
                         </ButtonGroup>
                     </div>

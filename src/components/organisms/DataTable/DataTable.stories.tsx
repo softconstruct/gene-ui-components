@@ -175,8 +175,7 @@ export const WithManageColumns: Story = {
         columns: mockColumns,
         renderExpandedRow: (row) => renderMockExpandedRow(row),
         manageColumnsConfig: {
-            enabled: true,
-            available: true,
+            visible: true,
             loading: false,
             disabledColumns: ["DayOffs"],
             texts: {

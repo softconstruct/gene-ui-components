@@ -19,12 +19,13 @@ import Pagination, { IPaginationProps } from "@components/molecules/Pagination";
 // Styles
 import "./DataTable.scss";
 
+// Constants, context & helpers
 import { EXPANDER_COLUMN_ID, INITIAL_PAGE_SIZE } from "./constants";
-// Context
-import { DataTableProvider } from "./context";
+import { DataTableProvider, IDataTableContext } from "./context";
 import { adaptColumns, DefaultCellComponent, withExpanderColumn } from "./helper";
 // Hooks
 import { useTablePagination } from "./hooks/useTablePagination";
+// Sub-components
 import TableBody from "./TableBody/TableBody";
 import TableHeader from "./TableHeader/TableHeader";
 import Toolbar from "./Toolbar/Toolbar";
@@ -37,7 +38,8 @@ import {
     DataTableRowExpandChangeHandler,
     IDataTableRowAction,
     ITableNoDataTexts,
-    ManageColumnsConfig
+    ManageColumnsConfig,
+    ResolvedManageColumnsConfig
 } from "./types";
 
 const defaultColumn = {
@@ -200,12 +202,24 @@ interface IDataTableProps<TData> {
 }
 
 const EMPTY_DATA: never[] = [];
-const EMPTY_MANAGE_COLUMNS_CONFIG: ManageColumnsConfig = {};
+const DEFAULT_MANAGE_COLUMNS_CONFIG = {
+    disabled: false,
+    visible: false,
+    texts: {
+        label: "Manage columns",
+        searchPlaceholder: "Search",
+        selectAllColumns: "All Columns",
+        noResultsFound: "No results found",
+        restoreDefaultsButton: "Restore defaults",
+        cancelButton: "Cancel",
+        saveButton: "Save"
+    }
+} satisfies ResolvedManageColumnsConfig;
 
 const DataTable = <TData,>({
     className,
     data = EMPTY_DATA,
-    columns = [],
+    columns = EMPTY_DATA,
     pagination = false,
     loading: isTableLoading = false,
     sticky = true,
@@ -217,7 +231,7 @@ const DataTable = <TData,>({
     onRowExpandChange,
     rowActions,
     getRowStatus,
-    manageColumnsConfig = EMPTY_MANAGE_COLUMNS_CONFIG,
+    manageColumnsConfig = DEFAULT_MANAGE_COLUMNS_CONFIG,
     getRowId
 }: IDataTableProps<TData>): ReactElement => {
     const [expanded, setExpanded] = useState<ExpandedState>({});
@@ -264,35 +278,55 @@ const DataTable = <TData,>({
         [tableColumns]
     );
 
-    const [columnVisibility, setColumnVisibility] = useState<ColumnVisibilityState>(initialColumnVisibility);
-    const [columnPinning, setColumnPinning] = useState<ColumnPinningState>(() => ({
-        left: [...(isExpandable ? [EXPANDER_COLUMN_ID] : []), ...(initialColumnPinning.left ?? [])],
-        right: [...(initialColumnPinning.right ?? [])]
-    }));
+    const [columnVisibilityOverrides, setColumnVisibilityOverrides] = useState<ColumnVisibilityState>({});
+    const [userColumnPinning, setUserColumnPinning] = useState<ColumnPinningState | null>(null);
+
+    const columnVisibility = useMemo<ColumnVisibilityState>(
+        () => ({ ...initialColumnVisibility, ...columnVisibilityOverrides }),
+        [initialColumnVisibility, columnVisibilityOverrides]
+    );
+
+    const resolveColumnPinning = useCallback(
+        (pinning: ColumnPinningState | null): ColumnPinningState => {
+            const { left = [], right = [] } = pinning ?? initialColumnPinning;
+            const leftWithoutExpander = left.filter((id) => id !== EXPANDER_COLUMN_ID);
+            return {
+                // The expander is always the first pinned column
+                left: isExpandable ? [EXPANDER_COLUMN_ID, ...leftWithoutExpander] : leftWithoutExpander,
+                right
+            };
+        },
+        [initialColumnPinning, isExpandable]
+    );
+
+    const columnPinning = useMemo(
+        () => resolveColumnPinning(userColumnPinning),
+        [resolveColumnPinning, userColumnPinning]
+    );
+
+    const handleColumnVisibilityChange = useCallback(
+        (updaterOrValue: ColumnVisibilityState | ((old: ColumnVisibilityState) => ColumnVisibilityState)) => {
+            setColumnVisibilityOverrides((prevOverrides) =>
+                typeof updaterOrValue === "function"
+                    ? updaterOrValue({ ...initialColumnVisibility, ...prevOverrides })
+                    : updaterOrValue
+            );
+        },
+        [initialColumnVisibility]
+    );
 
     const handleColumnPinningChange = useCallback(
         (updaterOrValue: ColumnPinningState | ((old: ColumnPinningState) => ColumnPinningState)) => {
-            setColumnPinning((prevState) => {
-                const newState = typeof updaterOrValue === "function" ? updaterOrValue(prevState) : updaterOrValue;
-                const left = (newState.left ?? []).filter((id) => id !== EXPANDER_COLUMN_ID);
-                return { ...newState, left: isExpandable ? [EXPANDER_COLUMN_ID, ...left] : left };
+            setUserColumnPinning((prevPinning) => {
+                const { left = [], right = [] } =
+                    typeof updaterOrValue === "function"
+                        ? updaterOrValue(resolveColumnPinning(prevPinning))
+                        : updaterOrValue;
+                return { left: left.filter((id) => id !== EXPANDER_COLUMN_ID), right };
             });
         },
-        [isExpandable]
+        [resolveColumnPinning]
     );
-
-    useEffect(() => {
-        setColumnPinning((prevState) => {
-            const prevLeft = prevState.left ?? [];
-            const isAlreadyConsistent = isExpandable
-                ? prevLeft[0] === EXPANDER_COLUMN_ID && prevLeft.lastIndexOf(EXPANDER_COLUMN_ID) === 0
-                : !prevLeft.includes(EXPANDER_COLUMN_ID);
-            if (isAlreadyConsistent) return prevState;
-
-            const left = prevLeft.filter((id) => id !== EXPANDER_COLUMN_ID);
-            return { ...prevState, left: isExpandable ? [EXPANDER_COLUMN_ID, ...left] : left };
-        });
-    }, [isExpandable]);
 
     const table = useReactTable({
         data: data ?? EMPTY_DATA,
@@ -304,7 +338,7 @@ const DataTable = <TData,>({
         ...(getRowId ? { getRowId } : {}),
         getExpandedRowModel: getExpandedRowModel(),
         onExpandedChange: setExpanded,
-        onColumnVisibilityChange: setColumnVisibility,
+        onColumnVisibilityChange: handleColumnVisibilityChange,
         onColumnPinningChange: handleColumnPinningChange,
         onColumnOrderChange: setColumnOrder,
         initialState: {
@@ -349,10 +383,14 @@ const DataTable = <TData,>({
         return () => observer.disconnect();
     }, []);
 
-    const contextValue = useMemo(
+    const contextValue = useMemo<IDataTableContext<TData>>(
         () => ({
             table,
-            manageColumnsConfig,
+            manageColumnsConfig: {
+                ...DEFAULT_MANAGE_COLUMNS_CONFIG,
+                ...manageColumnsConfig,
+                texts: { ...DEFAULT_MANAGE_COLUMNS_CONFIG.texts, ...manageColumnsConfig.texts }
+            },
             initialColumnVisibility,
             initialColumnPinning,
             dirMode
