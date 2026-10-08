@@ -1,0 +1,61 @@
+@use "../../../../assets/styles/mixins";
+
+.toolbarButton {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--guit-ref-spacing-4xsmall);
+    box-sizing: border-box;
+    height: 3.2rem;
+    max-width: 12.6rem;
+    padding-block: var(--guit-ref-spacing-2xsmall);
+    padding-inline: var(--guit-ref-spacing-medium);
+    border-radius: var(--guit-ref-radius-3xsmall);
+    background-color: var(--guit-sem-color-background-transparent-1);
+    color: var(--guit-sem-color-foreground-neutral-1);
+    font: inherit;
+    cursor: pointer;
+
+    &:disabled {
+        background-color: var(--guit-sem-color-background-transparent-1);
+        color: var(--guit-sem-color-foreground-disabled);
+        cursor: not-allowed;
+    }
+
+    @include mixins.media-hover {
+        &:hover:not(:disabled) {
+            background-color: var(--guit-sem-color-background-transparent-1-hover);
+        }
+    }
+
+    &:active:not(:disabled) {
+        background-color: var(--guit-sem-color-background-transparent-1-pressed);
+    }
+
+    &_selected:not(:disabled) {
+        background-color: var(--guit-sem-color-background-transparent-1-pressed);
+    }
+
+    &_iconStart {
+        padding-inline-start: var(--guit-ref-spacing-xsmall);
+    }
+
+    &_iconEnd {
+        padding-inline-end: var(--guit-ref-spacing-xsmall);
+    }
+
+    &_square {
+        justify-content: center;
+        width: 3.2rem;
+        padding-inline: var(--guit-ref-spacing-2xsmall);
+    }
+
+    &__icon {
+        flex: none;
+    }
+
+    &__text {
+        flex: 1 1 auto;
+        min-width: 0;
+        text-align: start;
+    }
+}

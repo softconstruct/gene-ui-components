@@ -1,0 +1,59 @@
+.editor {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-neutral-2);
+    border-radius: var(--guit-ref-radius-2xsmall);
+    background-color: var(--guit-sem-color-background-neutral-1);
+
+    &:focus-within {
+        outline-offset: var(--guit-ref-border-width-thin);
+        outline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-focus);
+    }
+
+    &__header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--guit-ref-spacing-3xsmall);
+        padding-block: var(--guit-ref-spacing-xsmall);
+        padding-inline: var(--guit-ref-spacing-large);
+        border-block-end: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+            var(--guit-sem-color-border-neutral-2);
+
+        .editor__divider {
+            align-self: stretch;
+            height: auto;
+            flex: none;
+        }
+    }
+
+    &__textStyleTrigger {
+        width: 11rem;
+    }
+
+    &__body {
+        flex: 1 1 auto;
+        min-height: 0;
+    }
+
+    &__content {
+        min-height: 10.4rem;
+        padding-block: var(--guit-ref-spacing-medium);
+        padding-inline: var(--guit-ref-spacing-large);
+        color: var(--guit-sem-color-foreground-neutral-1);
+        font-family: inherit;
+        font-size: var(--guit-sem-font-body-medium-default-regular-font-size);
+
+        .editor__content_empty:first-child::before {
+            content: attr(data-editor-placeholder);
+            float: inline-start;
+            height: 0;
+            pointer-events: none;
+            color: var(--guit-sem-color-foreground-neutral-2);
+            font-size: var(--guit-sem-font-body-medium-default-regular-font-size);
+            font-weight: var(--guit-sem-font-body-medium-default-regular-font-weight);
+            line-height: var(--guit-sem-font-body-medium-default-regular-line-height);
+        }
+    }
+}
