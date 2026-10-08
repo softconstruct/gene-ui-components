@@ -180,6 +180,7 @@
         "@floating-ui/utils": "^0.2.8",
         "@geneui/icons": "^1.4.9",
         "@geneui/tokens": "^1.0.2",
+        "@react-input/mask": "^2.0.4",
         "@tanstack/react-table": "^8.21.3",
         "@tanstack/react-virtual": "^3.13.12",
         "@tanstack/table-core": "^8.21.3",

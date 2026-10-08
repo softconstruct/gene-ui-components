@@ -1,0 +1,52 @@
+@use "../../../../../assets/styles/mixins";
+
+.pickerButton {
+    $this: &;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &_size {
+        &_large,
+        &_medium {
+            font-family: var(--guit-sem-font-body-medium-default-medium-font-family);
+            font-size: var(--guit-sem-font-body-medium-default-medium-font-size);
+            font-weight: var(--guit-sem-font-body-medium-default-medium-font-weight);
+            line-height: var(--guit-sem-font-body-medium-default-medium-line-height);
+        }
+
+        &_small {
+            font-family: var(--guit-sem-font-caption-large-medium-font-family);
+            font-size: var(--guit-sem-font-caption-large-medium-font-size);
+            font-weight: var(--guit-sem-font-caption-large-medium-font-weight);
+            line-height: var(--guit-sem-font-caption-large-medium-line-height);
+        }
+    }
+
+    &_state {
+        &_selected {
+            background-color: var(--guit-sem-color-background-selected-2);
+            color: var(--guit-sem-color-foreground-inverse);
+            cursor: default;
+        }
+
+        &_disabled {
+            pointer-events: none;
+            user-select: none;
+            color: var(--guit-sem-color-foreground-disabled);
+        }
+    }
+
+    &:not(#{$this}_state_selected) {
+        @include mixins.media-hover {
+            &:hover {
+                background-color: var(--guit-sem-color-background-neutral-1-hover);
+            }
+        }
+
+        &:active {
+            background-color: var(--guit-sem-color-background-neutral-1-pressed);
+        }
+    }
+}
