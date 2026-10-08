@@ -1,6 +1,8 @@
 import React, { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
     CellContext,
+    ColumnOrderState,
+    ColumnPinningState,
     ExpandedState,
     getCoreRowModel,
     getExpandedRowModel,
@@ -13,29 +15,39 @@ import classNames from "classnames";
 import { IButtonProps } from "@components/atoms/Button";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Pagination, { IPaginationProps } from "@components/molecules/Pagination";
-import { INITIAL_PAGE_SIZE } from "@components/organisms/DataTable/constants";
-import { adaptColumns, DefaultCellComponent, withExpanderColumn } from "@components/organisms/DataTable/helper";
+
+// Styles
+import "./DataTable.scss";
+
+// Constants, context & helpers
+import { EXPANDER_COLUMN_ID, INITIAL_PAGE_SIZE } from "./constants";
+import { DataTableProvider, IDataTableContext } from "./context";
+import { adaptColumns, DefaultCellComponent, withExpanderColumn } from "./helper";
 // Hooks
-import { useTablePagination } from "@components/organisms/DataTable/hooks/useTablePagination";
-import TableBody from "@components/organisms/DataTable/TableBody/TableBody";
-import TableHeader from "@components/organisms/DataTable/TableHeader/TableHeader";
+import { useTablePagination } from "./hooks/useTablePagination";
+// Sub-components
+import TableBody from "./TableBody/TableBody";
+import TableHeader from "./TableHeader/TableHeader";
+import Toolbar from "./Toolbar/Toolbar";
 // Types
 import {
+    ColumnVisibilityState,
     DataTableColumn,
     DataTableGetRowStatus,
     DataTableRenderExpandedRow,
     DataTableRowExpandChangeHandler,
     IDataTableRowAction,
-    ITableNoDataTexts
-} from "@components/organisms/DataTable/types";
+    ITableNoDataTexts,
+    ManageColumnsConfig,
+    ResolvedManageColumnsConfig
+} from "./types";
 
-// Styles
-import "./DataTable.scss";
+const defaultColumn = {
+    cell: <TData, TValue>({ getValue }: CellContext<TData, TValue>) => (
+        <DefaultCellComponent value={String(getValue() ?? "")} />
+    )
+};
 
-/**
- * Props for the {@link DataTable} component.
- * @template TData - The shape of the overall row data object.
- */
 interface IDataTableProps<TData> {
     /**
      * Additional class for the parent element.
@@ -43,15 +55,15 @@ interface IDataTableProps<TData> {
      */
     className?: string;
     /**
-     * Set sticky header.
+     * Set a sticky header.
      */
     sticky?: boolean;
     /**
      * Defines the pagination of the Table component.
      * Whether set `true` will display the raw pagination.
-     * Can accept also config object with custom handlers and data.
+     * Can accept also a config object with custom handlers and data.
      *
-     * @default true
+     * @default false
      */
     pagination?: boolean | IPaginationProps;
     /**
@@ -171,29 +183,45 @@ interface IDataTableProps<TData> {
      * ```
      */
     getRowStatus?: DataTableGetRowStatus<TData>;
+    /**
+     * Configuration object for managing columns.
+     * This object allows fine-grained control over the visibility, order, and position of columns.
+     */
+    manageColumnsConfig?: ManageColumnsConfig;
+    /**
+     * Resolves a stable, unique id for a row from its data.
+     * Without it rows are identified by their index, so row-bound state (e.g. expanded rows)
+     * sticks to positions instead of records when data is re-sorted or paginated on the server.
+     *
+     * @example
+     * ```tsx
+     * <DataTable getRowId={(row) => String(row.id)} />
+     * ```
+     */
+    getRowId?: (originalRow: TData, index: number) => string;
 }
 
-const defaultColumn = {
-    cell: <TData, TValue>({ getValue }: CellContext<TData, TValue>) => (
-        <DefaultCellComponent value={String(getValue() ?? "")} />
-    )
-};
+const EMPTY_DATA: never[] = [];
+const DEFAULT_MANAGE_COLUMNS_CONFIG = {
+    disabled: false,
+    visible: false,
+    texts: {
+        label: "Manage columns",
+        searchPlaceholder: "Search",
+        selectAllColumns: "All Columns",
+        noResultsFound: "No results found",
+        restoreDefaultsButton: "Restore defaults",
+        cancelButton: "Cancel",
+        saveButton: "Save"
+    }
+} satisfies ResolvedManageColumnsConfig;
 
-/**
- * Data Table used to display structured information in a grid format, making it easy to organize, view, and interact with large datasets.
- * Data tables are essential for presenting information such as reports, inventories, or user data in a clear,
- * sortable, and filterable manner, allowing users to quickly find, analyze, and manipulate data.
- *
- * @template TData - The shape of the overall row data object.
- * @param props - The properties for the component.
- * @returns The fully assembled DataTable component including headers, body, and optional pagination.
- */
 const DataTable = <TData,>({
     className,
-    data = [],
-    columns = [],
+    data = EMPTY_DATA,
+    columns = EMPTY_DATA,
     pagination = false,
-    loading: externalLoading = false,
+    loading: isTableLoading = false,
     sticky = true,
     loadingText,
     noDataTexts,
@@ -202,25 +230,15 @@ const DataTable = <TData,>({
     renderExpandedRow,
     onRowExpandChange,
     rowActions,
-    getRowStatus
+    getRowStatus,
+    manageColumnsConfig = DEFAULT_MANAGE_COLUMNS_CONFIG,
+    getRowId
 }: IDataTableProps<TData>): ReactElement => {
-    const [internalLoading] = useState(false);
     const [expanded, setExpanded] = useState<ExpandedState>({});
-
-    const handleExpandedChange = useCallback(
-        (updaterOrValue: ExpandedState | ((old: ExpandedState) => ExpandedState)) => {
-            setExpanded((prevState) => {
-                const newState = typeof updaterOrValue === "function" ? updaterOrValue(prevState) : updaterOrValue;
-                return newState;
-            });
-        },
-        []
-    );
+    const [columnOrder, setColumnOrder] = useState<ColumnOrderState>([]);
 
     const isExpandable = Boolean(renderExpandedRow);
 
-    // Keep the latest `onRowExpandChange` in a ref so the column model isn't
-    // rebuilt every render when consumers pass an inline (un-memoized) handler.
     const onRowExpandChangeRef = useRef(onRowExpandChange);
     useEffect(() => {
         onRowExpandChangeRef.current = onRowExpandChange;
@@ -241,26 +259,108 @@ const DataTable = <TData,>({
             ? pagination.pageSize || pagination?.rowsPerPageOptions?.[0]
             : INITIAL_PAGE_SIZE;
 
+    const initialColumnVisibility = useMemo<ColumnVisibilityState>(() => {
+        return tableColumns.reduce<ColumnVisibilityState>((acc, column) => {
+            if (!column.id) return acc;
+
+            acc[column.id] = column.meta?.defaultVisible ?? true;
+            return acc;
+        }, {});
+    }, [tableColumns]);
+
+    const initialColumnPinning = useMemo<ColumnPinningState>(
+        () => ({
+            left: tableColumns
+                .filter((column) => column.meta?.defaultPinned && column.id)
+                .map((column) => column.id as string),
+            right: []
+        }),
+        [tableColumns]
+    );
+
+    const [columnVisibilityOverrides, setColumnVisibilityOverrides] = useState<ColumnVisibilityState>({});
+    const [userColumnPinning, setUserColumnPinning] = useState<ColumnPinningState | null>(null);
+
+    const columnVisibility = useMemo<ColumnVisibilityState>(
+        () => ({ ...initialColumnVisibility, ...columnVisibilityOverrides }),
+        [initialColumnVisibility, columnVisibilityOverrides]
+    );
+
+    const resolveColumnPinning = useCallback(
+        (pinning: ColumnPinningState | null): ColumnPinningState => {
+            const { left = [], right = [] } = pinning ?? initialColumnPinning;
+            const leftWithoutExpander = left.filter((id) => id !== EXPANDER_COLUMN_ID);
+            return {
+                // The expander is always the first pinned column
+                left: isExpandable ? [EXPANDER_COLUMN_ID, ...leftWithoutExpander] : leftWithoutExpander,
+                right
+            };
+        },
+        [initialColumnPinning, isExpandable]
+    );
+
+    const columnPinning = useMemo(
+        () => resolveColumnPinning(userColumnPinning),
+        [resolveColumnPinning, userColumnPinning]
+    );
+
+    const handleColumnVisibilityChange = useCallback(
+        (updaterOrValue: ColumnVisibilityState | ((old: ColumnVisibilityState) => ColumnVisibilityState)) => {
+            setColumnVisibilityOverrides((prevOverrides) =>
+                typeof updaterOrValue === "function"
+                    ? updaterOrValue({ ...initialColumnVisibility, ...prevOverrides })
+                    : updaterOrValue
+            );
+        },
+        [initialColumnVisibility]
+    );
+
+    const handleColumnPinningChange = useCallback(
+        (updaterOrValue: ColumnPinningState | ((old: ColumnPinningState) => ColumnPinningState)) => {
+            setUserColumnPinning((prevPinning) => {
+                const { left = [], right = [] } =
+                    typeof updaterOrValue === "function"
+                        ? updaterOrValue(resolveColumnPinning(prevPinning))
+                        : updaterOrValue;
+                return { left: left.filter((id) => id !== EXPANDER_COLUMN_ID), right };
+            });
+        },
+        [resolveColumnPinning]
+    );
+
     const table = useReactTable({
-        data: data ?? [],
+        data: data ?? EMPTY_DATA,
         columns: tableColumns,
         defaultColumn,
         getCoreRowModel: getCoreRowModel(),
         ...(manualPagination ? {} : { getPaginationRowModel: getPaginationRowModel() }),
         manualPagination,
+        ...(getRowId ? { getRowId } : {}),
         getExpandedRowModel: getExpandedRowModel(),
-        onExpandedChange: handleExpandedChange,
+        onExpandedChange: setExpanded,
+        onColumnVisibilityChange: handleColumnVisibilityChange,
+        onColumnPinningChange: handleColumnPinningChange,
+        onColumnOrderChange: setColumnOrder,
         initialState: {
             ...(pagination && {
                 pagination: { pageSize: initialPageSize }
             })
         },
         state: {
-            expanded
+            expanded,
+            columnVisibility,
+            columnPinning,
+            columnOrder
         }
     });
 
-    const isTableLoading = externalLoading || internalLoading;
+    const pageCount = table.getPageCount();
+    const { pageIndex } = table.getState().pagination;
+    useEffect(() => {
+        if (!manualPagination && pageCount > 0 && pageIndex >= pageCount) {
+            table.setPageIndex(pageCount - 1);
+        }
+    }, [manualPagination, pageCount, pageIndex, table]);
 
     const { paginationProps } = useTablePagination(pagination, table);
 
@@ -268,31 +368,68 @@ const DataTable = <TData,>({
 
     const isTableDataEmpty = isTableLoading || !data?.length;
 
+    const [dirMode, setDirMode] = useState(() => (typeof document === "undefined" ? "ltr" : document.dir || "ltr"));
+
+    useEffect(() => {
+        const observer = new MutationObserver(() => {
+            setDirMode(document.dir || "ltr");
+        });
+
+        observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ["dir"]
+        });
+
+        return () => observer.disconnect();
+    }, []);
+
+    const contextValue = useMemo<IDataTableContext<TData>>(
+        () => ({
+            table,
+            manageColumnsConfig: {
+                ...DEFAULT_MANAGE_COLUMNS_CONFIG,
+                ...manageColumnsConfig,
+                texts: { ...DEFAULT_MANAGE_COLUMNS_CONFIG.texts, ...manageColumnsConfig.texts }
+            },
+            initialColumnVisibility,
+            initialColumnPinning,
+            dirMode
+        }),
+        [table, manageColumnsConfig, initialColumnVisibility, initialColumnPinning, dirMode]
+    );
+
     return (
-        <div className={classNames("dataTable", className)}>
-            <Scrollbar>
-                <table
-                    className={classNames("dataTable__table", {
-                        dataTable__noDataToDisplay: isTableDataEmpty
-                    })}
-                >
-                    <TableHeader sticky={sticky} headerGroups={table.getHeaderGroups()} />
-                    <TableBody
-                        loading={isTableLoading}
-                        loadingText={loadingText}
-                        rows={table.getRowModel().rows}
-                        noDataTexts={noDataTexts}
-                        noDataAvailableActions={noDataAvailableActions}
-                        rowActions={rowActions}
-                        getRowStatus={getRowStatus}
-                        renderExpandedRow={renderExpandedRow}
-                    />
-                </table>
-            </Scrollbar>
-            {shouldShowPagination && (
-                <Pagination className="dataTable__pagination" {...paginationProps} disabled={isTableLoading} />
-            )}
-        </div>
+        <DataTableProvider value={contextValue}>
+            <div className={classNames("dataTable", className)}>
+                <Toolbar />
+                <Scrollbar>
+                    <table
+                        className={classNames("dataTable__table", {
+                            dataTable__noDataToDisplay: isTableDataEmpty
+                        })}
+                    >
+                        <TableHeader
+                            sticky={sticky}
+                            headerGroups={table.getHeaderGroups()}
+                            hasRowActions={Boolean(rowActions?.length)}
+                        />
+                        <TableBody
+                            loading={isTableLoading}
+                            loadingText={loadingText}
+                            rows={table.getRowModel().rows}
+                            noDataTexts={noDataTexts}
+                            noDataAvailableActions={noDataAvailableActions}
+                            rowActions={rowActions}
+                            getRowStatus={getRowStatus}
+                            renderExpandedRow={renderExpandedRow}
+                        />
+                    </table>
+                </Scrollbar>
+                {shouldShowPagination && (
+                    <Pagination className="dataTable__pagination" {...paginationProps} disabled={isTableLoading} />
+                )}
+            </div>
+        </DataTableProvider>
     );
 };
 

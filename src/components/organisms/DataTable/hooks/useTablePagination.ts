@@ -14,6 +14,10 @@ export const useTablePagination = <TData>(paginationProp: boolean | IPaginationP
         paginationProp.pageSize !== undefined &&
         !!paginationProp.onPageSizeChange;
 
+    const { pageIndex: currentPageIndex, pageSize: currentPageSize } = table.getState().pagination;
+    const totalPages = config.totalPages ?? table.getPageCount();
+    const totalItems = config.totalItems ?? table.getRowCount();
+
     useEffect(() => {
         if (isControlledPage && config.current !== undefined) {
             const pageIndex = config.current - 1;
@@ -33,11 +37,6 @@ export const useTablePagination = <TData>(paginationProp: boolean | IPaginationP
 
     const paginationProps = useMemo(() => {
         if (!paginationProp) return null;
-
-        const currentPageIndex = table.getState().pagination.pageIndex;
-        const currentPageSize = table.getState().pagination.pageSize;
-        const totalPages = config.totalPages ?? table.getPageCount();
-        const totalItems = config.totalItems ?? table.getRowCount();
 
         return {
             ...config,
@@ -66,10 +65,11 @@ export const useTablePagination = <TData>(paginationProp: boolean | IPaginationP
         config,
         isControlledPage,
         isControlledPageSize,
-        table.getState().pagination.pageIndex,
-        table.getState().pagination.pageSize,
-        table.getPageCount(),
-        table.getRowCount()
+        currentPageIndex,
+        currentPageSize,
+        totalPages,
+        totalItems,
+        table
     ]);
 
     return { paginationProps };
