@@ -1,6 +1,7 @@
 .editor {
     display: flex;
     flex-direction: column;
+    height: 100%;
     overflow: hidden;
     border: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-neutral-2);
     border-radius: var(--guit-ref-radius-2xsmall);
@@ -13,6 +14,7 @@
 
     &__header {
         display: flex;
+        flex: none;
         flex-wrap: wrap;
         align-items: center;
         gap: var(--guit-ref-spacing-3xsmall);
@@ -35,16 +37,36 @@
     &__body {
         flex: 1 1 auto;
         min-height: 0;
+        overflow: hidden;
+    }
+
+    &__footer {
+        display: flex;
+        flex: none;
+        align-items: center;
+        gap: var(--guit-ref-spacing-3xsmall);
+        padding-block: var(--guit-ref-spacing-xsmall);
+        padding-inline: var(--guit-ref-spacing-large);
+        border-block-start: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+            var(--guit-sem-color-border-neutral-2);
+    }
+
+    &__editable {
+        height: 100%;
     }
 
     &__content {
-        min-height: 10.4rem;
+        min-height: 100%;
         padding-block: var(--guit-ref-spacing-medium);
         padding-inline: var(--guit-ref-spacing-large);
         color: var(--guit-sem-color-foreground-neutral-1);
         font-family: inherit;
         font-size: var(--guit-sem-font-body-medium-default-regular-font-size);
         line-height: 1.43;
+
+        &:focus-visible {
+            outline: none;
+        }
 
         .editor__content_empty:first-child::before {
             content: attr(data-editor-placeholder);

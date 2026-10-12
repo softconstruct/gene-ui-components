@@ -1,1 +1,1 @@
-export { IEditorProps, default } from "./Editor";
+export { IEditorProps, IEditorFooterAction, default } from "./Editor";

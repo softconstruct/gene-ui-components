@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef, useState } from "react";
+import React, { FC, useEffect, useMemo, useRef, useState } from "react";
 import { Editor as TiptapEditor } from "@tiptap/core";
 import Subscript from "@tiptap/extension-subscript";
 import Superscript from "@tiptap/extension-superscript";
@@ -7,8 +7,14 @@ import { TextStyleKit } from "@tiptap/extension-text-style";
 import { Placeholder } from "@tiptap/extensions";
 import StarterKit from "@tiptap/starter-kit";
 import classNames from "classnames";
+import { nanoid } from "nanoid/non-secure";
+
+// Icons
+import { IconProps } from "@geneui/icons";
 
 // Components
+import Button from "@components/atoms/Button";
+import Scrollbar from "@components/atoms/Scrollbar";
 import Toolbar from "@components/organisms/Editor/Toolbar/Toolbar";
 
 // Styles
@@ -23,6 +29,25 @@ const getEditingAreaAttributes = (id?: string, ariaLabel?: string): Record<strin
     ...(id === undefined ? {} : { id }),
     ...(ariaLabel === undefined ? {} : { "aria-label": ariaLabel })
 });
+
+interface IEditorFooterAction {
+    /**
+     * A unique identifier for the action. One is generated when it is left out.
+     */
+    id?: string;
+    /**
+     * A React Functional Component rendered as the action's icon.
+     */
+    Icon: FC<IconProps>;
+    /**
+     * An ARIA label for the action, which is rendered as an icon only.
+     */
+    "aria-label"?: string;
+    /**
+     * A callback function that is called when the action is clicked.
+     */
+    onClick: () => void;
+}
 
 interface IEditorProps {
     /**
@@ -58,6 +83,11 @@ interface IEditorProps {
      */
     presetColors?: string[];
     /**
+     * Actions rendered as icon buttons in the editor's footer. The footer is left out when no
+     * action is passed.
+     */
+    footerActions?: IEditorFooterAction[];
+    /**
      * Callback function which triggers when the content is changed by the user.
      */
     onChange?: (value: string) => void;
@@ -74,8 +104,13 @@ const Editor: FC<IEditorProps> = ({
     readOnly = false,
     "aria-label": ariaLabel,
     presetColors,
+    footerActions,
     onChange
 }) => {
+    const footerItems = useMemo(
+        () => footerActions?.map((action) => ({ ...action, id: action.id || nanoid() })) ?? [],
+        [footerActions]
+    );
     const bodyRef = useRef<HTMLDivElement>(null);
     const [editor, setEditor] = useState<TiptapEditor | null>(null);
 
@@ -157,9 +192,30 @@ const Editor: FC<IEditorProps> = ({
         <div className={classNames("editor", className)}>
             <Toolbar editor={editor} disabled={readOnly} presetColors={presetColors} />
 
-            <div ref={bodyRef} className="editor__body" />
+            <div className="editor__body">
+                <Scrollbar>
+                    <div ref={bodyRef} className="editor__editable" />
+                </Scrollbar>
+            </div>
+
+            {footerItems.length > 0 && (
+                <div className="editor__footer">
+                    {footerItems.map(({ id: actionId, Icon, "aria-label": actionLabel, onClick }) => (
+                        <Button
+                            key={actionId}
+                            id={actionId}
+                            Icon={Icon}
+                            appearance="secondary"
+                            layout="text"
+                            size="medium"
+                            aria-label={actionLabel}
+                            onClick={onClick}
+                        />
+                    ))}
+                </div>
+            )}
         </div>
     );
 };
 
-export { IEditorProps, Editor as default };
+export { IEditorProps, IEditorFooterAction, Editor as default };
