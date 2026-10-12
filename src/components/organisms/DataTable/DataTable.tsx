@@ -16,9 +16,6 @@ import { IButtonProps } from "@components/atoms/Button";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Pagination, { IPaginationProps } from "@components/molecules/Pagination";
 
-// Styles
-import "./DataTable.scss";
-
 // Constants, context & helpers
 import { EXPANDER_COLUMN_ID, INITIAL_PAGE_SIZE } from "./constants";
 import { DataTableProvider, IDataTableContext } from "./context";
@@ -41,6 +38,9 @@ import {
     ManageColumnsConfig,
     ResolvedManageColumnsConfig
 } from "./types";
+
+// Styles
+import "./DataTable.scss";
 
 const defaultColumn = {
     cell: <TData, TValue>({ getValue }: CellContext<TData, TValue>) => (
@@ -216,6 +216,15 @@ const DEFAULT_MANAGE_COLUMNS_CONFIG = {
     }
 } satisfies ResolvedManageColumnsConfig;
 
+/**
+ * Data Table used to display structured information in a grid format, making it easy to organize, view, and interact with large datasets.
+ * Data tables are essential for presenting information such as reports, inventories, or user data in a clear,
+ * sortable, and filterable manner, allowing users to quickly find, analyze, and manipulate data.
+ *
+ * @template TData - The shape of the overall row data object.
+ * @param props - The properties for the component.
+ * @returns The fully assembled DataTable component including headers, body, and optional pagination.
+ */
 const DataTable = <TData,>({
     className,
     data = EMPTY_DATA,

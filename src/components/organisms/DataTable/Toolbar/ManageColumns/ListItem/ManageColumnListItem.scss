@@ -108,4 +108,17 @@
             cursor: grabbing;
         }
     }
+
+    &_disabled {
+        .manageColumnListItem__pinAction,
+        .manageColumnListItem__dragHandle,
+        .manageColumnListItem__dragIcon {
+            cursor: not-allowed;
+            color: var(--guit-sem-color-foreground-disabled);
+
+            &:active {
+                cursor: not-allowed;
+            }
+        }
+    }
 }

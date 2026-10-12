@@ -32,6 +32,11 @@ const completeOrder = (order: string[], columnIds: string[]) => {
     return [...knownIds, ...columnIds.filter((id) => !knownIdSet.has(id))];
 };
 
+const pinnedFirst = (order: string[], pinning: ColumnPinningState) => {
+    const pinnedIds = new Set([...(pinning.left || []), ...(pinning.right || [])]);
+    return [...order.filter((id) => pinnedIds.has(id)), ...order.filter((id) => !pinnedIds.has(id))];
+};
+
 export interface IManageColumnsDiffPayload {
     visibilityChanges: Record<string, boolean>;
     pinningChanges: ColumnPinningState | null;
@@ -72,10 +77,14 @@ export const useManageColumns = <TData>({
     const { columnVisibility, columnPinning: tableColumnPinning, columnOrder } = table.getState();
     const columnPinning = useMemo(() => stripExpanderPinning(tableColumnPinning), [tableColumnPinning]);
 
-    const defaultColumnOrder = useMemo(() => columns.map((c) => c.id), [columns]);
+    const definitionOrder = useMemo(() => columns.map((c) => c.id), [columns]);
+    const defaultColumnOrder = useMemo(
+        () => pinnedFirst(definitionOrder, initialColumnPinning),
+        [definitionOrder, initialColumnPinning]
+    );
     const activeOrder = useMemo(
-        () => completeOrder(columnOrder, defaultColumnOrder),
-        [columnOrder, defaultColumnOrder]
+        () => pinnedFirst(completeOrder(columnOrder, definitionOrder), columnPinning),
+        [columnOrder, definitionOrder, columnPinning]
     );
 
     const isControlled = manageColumnsConfig && manageColumnsConfig.open !== undefined;

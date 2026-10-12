@@ -7,11 +7,11 @@ import { GripDots, Pin, PinFilled } from "@geneui/icons";
 // Components
 import Checkbox from "@components/molecules/Checkbox";
 
-// Styles
-import "./ManageColumnListItem.scss";
-
 // Hooks
 import { useColumnListItemDnD } from "./useListItemDnD";
+
+// Styles
+import "./ManageColumnListItem.scss";
 
 interface IManageColumnListItemProps<TData> {
     /**
@@ -105,7 +105,8 @@ const ManageColumnListItem = <TData,>({
             className={classNames("manageColumnListItem", {
                 [`manageColumnListItem__drop-gap-${dropGapEdge}`]: dropGapEdge,
                 manageColumnListItem_dragging: isDragging,
-                manageColumnListItem_collapsed: isDragging && hasDropGap
+                manageColumnListItem_collapsed: isDragging && hasDropGap,
+                manageColumnListItem_disabled: disabled
             })}
         >
             <div className="manageColumnListItem__content">
@@ -133,7 +134,13 @@ const ManageColumnListItem = <TData,>({
                 >
                     <PinIconElement />
                 </div>
-                <div ref={dragHandleRef} className="manageColumnListItem__dragHandle" tabIndex={0} role="button">
+                <div
+                    ref={dragHandleRef}
+                    className="manageColumnListItem__dragHandle"
+                    tabIndex={disabled ? -1 : 0}
+                    role="button"
+                    aria-disabled={disabled}
+                >
                     <GripDots
                         className={classNames("manageColumnListItem__dragIcon", {
                             manageColumnListItem__dragIcon_dragging: isDragging

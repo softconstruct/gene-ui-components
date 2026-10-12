@@ -20,9 +20,6 @@ import DnDDragLayer from "@internal/components/DnDDragLayer/DnDDragLayer";
 // Hooks
 import useClickOutside from "@hooks/useClickOutside";
 
-// Styles
-import "./ManageColumns.scss";
-
 // Context
 import { useDataTableContext } from "../../context";
 // Sub-components
@@ -30,6 +27,9 @@ import ManageColumnListItem from "./ListItem/ManageColumnListItem";
 import { isManageColumnsDragData, MANAGE_COLUMNS_LIST_DROP_TYPE } from "./ListItem/useListItemDnD";
 // Hooks
 import { useManageColumns } from "./useManageColumns";
+
+// Styles
+import "./ManageColumns.scss";
 
 const ManageColumns = <TData,>() => {
     const { table, manageColumnsConfig, initialColumnVisibility, initialColumnPinning } = useDataTableContext<TData>();
