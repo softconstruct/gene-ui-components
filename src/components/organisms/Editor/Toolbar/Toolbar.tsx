@@ -27,9 +27,13 @@ import {
 import Divider from "@components/atoms/Divider";
 import ToolbarButton from "@components/organisms/Editor/ToolbarButton/ToolbarButton";
 import ToolbarColorButton from "@components/organisms/Editor/ToolbarColorButton/ToolbarColorButton";
+import ToolbarFontSize from "@components/organisms/Editor/ToolbarFontSize/ToolbarFontSize";
 import ToolbarMenuButton, {
     IToolbarMenuButtonItem
 } from "@components/organisms/Editor/ToolbarMenuButton/ToolbarMenuButton";
+
+const parseFontSize = (fontSize?: string): number | undefined =>
+    fontSize?.endsWith("px") ? Math.round(Number.parseFloat(fontSize)) : undefined;
 
 const getToolbarState = (editor: TiptapEditor) => {
     const paragraphAlign = editor.getAttributes("paragraph").textAlign as string | undefined;
@@ -50,7 +54,8 @@ const getToolbarState = (editor: TiptapEditor) => {
         bulletList: editor.isActive("bulletList"),
         orderedList: editor.isActive("orderedList"),
         color: (textStyle.color as string) ?? "",
-        backgroundColor: (textStyle.backgroundColor as string) ?? ""
+        backgroundColor: (textStyle.backgroundColor as string) ?? "",
+        fontSize: parseFontSize(textStyle.fontSize as string | undefined)
     };
 };
 
@@ -271,6 +276,16 @@ const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false, presetColors }) 
     const applyTextColor = (color: string): void =>
         applyWithoutFocus((chain) => (color ? chain.setColor(color) : chain.unsetColor()));
 
+    const applyFontSize = (size: number, returnFocus: boolean): void => {
+        const buildFontSizeChain = (chain: ToolbarChain): ToolbarChain => chain.setFontSize(`${size}px`);
+
+        if (returnFocus) {
+            applyWithFocus(buildFontSizeChain);
+        } else {
+            applyWithoutFocus(buildFontSizeChain);
+        }
+    };
+
     const activeBlock = toolbarState ? BLOCK_MENU_ACTIONS.find(({ isActive }) => isActive(toolbarState)) : undefined;
     const activeAlign = toolbarState ? ALIGN_MENU_ACTIONS.find(({ isActive }) => isActive(toolbarState)) : undefined;
     const AlignIcon = activeAlign?.Icon ?? TextAlignLeft;
@@ -298,6 +313,8 @@ const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false, presetColors }) 
                 items={toMenuItems(BLOCK_MENU_ACTIONS, toolbarState)}
                 onChange={handleMenuChange(BLOCK_MENU_ACTIONS)}
             />
+            <Divider direction="vertical" className="editor__divider" />
+            <ToolbarFontSize value={toolbarState?.fontSize} disabled={isOff} onChange={applyFontSize} />
             <Divider direction="vertical" className="editor__divider" />
 
             <ToolbarButton

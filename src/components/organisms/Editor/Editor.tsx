@@ -110,7 +110,6 @@ const Editor: FC<IEditorProps> = ({
                 TextAlign.configure({ types: ["heading", "paragraph"] }),
                 TextStyleKit.configure({
                     fontFamily: false,
-                    fontSize: false,
                     lineHeight: false
                 }),
                 Placeholder.configure({

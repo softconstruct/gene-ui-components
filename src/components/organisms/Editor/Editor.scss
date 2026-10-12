@@ -44,6 +44,7 @@
         color: var(--guit-sem-color-foreground-neutral-1);
         font-family: inherit;
         font-size: var(--guit-sem-font-body-medium-default-regular-font-size);
+        line-height: 1.43;
 
         .editor__content_empty:first-child::before {
             content: attr(data-editor-placeholder);
