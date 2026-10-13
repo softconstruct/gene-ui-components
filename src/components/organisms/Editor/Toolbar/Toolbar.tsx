@@ -53,6 +53,7 @@ const getToolbarState = (editor: TiptapEditor) => {
         superscript: editor.isActive("superscript"),
         bulletList: editor.isActive("bulletList"),
         orderedList: editor.isActive("orderedList"),
+        code: editor.isActive("code"),
         color: (textStyle.color as string) ?? "",
         backgroundColor: (textStyle.backgroundColor as string) ?? "",
         fontSize: parseFontSize(textStyle.fontSize as string | undefined)
@@ -387,6 +388,14 @@ const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false, presetColors }) 
                 onClick={() => applyWithFocus((chain) => chain.toggleOrderedList())}
             />
             <Divider direction="vertical" className="editor__divider" />
+
+            <ToolbarButton
+                IconBefore={Globe}
+                aria-label="Code"
+                selected={toolbarState?.code}
+                disabled={isOff}
+                onClick={() => applyWithFocus((chain) => chain.toggleCode())}
+            />
         </div>
     );
 };
