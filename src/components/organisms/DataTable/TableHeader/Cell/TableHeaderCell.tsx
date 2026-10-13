@@ -5,13 +5,17 @@ import classNames from "classnames";
 
 // Components
 import Text from "@components/atoms/Text";
+import Tooltip from "@components/molecules/Tooltip";
+
+// Hooks
+import useEllipsisDetection from "@hooks/useEllipsisDetection";
+
+import { EXPANDER_COLUMN_ID } from "../../constants";
+import { useDataTableContext } from "../../context";
+import { getCellContentStyle, getCellStyle } from "../../helper";
 
 // Styles
 import "./TableHeaderCell.scss";
-
-import { CUSTOM_CELL_MAX_SIZE, EXPANDER_COLUMN_ID } from "../../constants";
-import { useDataTableContext } from "../../context";
-import { getCellStyle } from "../../helper";
 
 /**
  * Props for the {@link TableHeaderCell} component.
@@ -32,7 +36,8 @@ interface ITableHeaderCellProps<TData, TValue> {
  * Renders an individual table header cell (`<th>`).
  * * This component checks if the header is a structural placeholder (used in complex,
  * multi-row header groups). If it is a placeholder, it renders empty content.
- * Otherwise, it uses TanStack Table's `flexRender` utility to display the defined header UI.
+ * Otherwise, it uses TanStack Table's `flexRender` utility to display the defined header UI
+ * on a single line, truncated with a tooltip when it exceeds the maximum cell width.
  *
  * @template TData - The shape of the overall row data object.
  * @template TValue - The type of the specific value held within this column.
@@ -41,40 +46,35 @@ interface ITableHeaderCellProps<TData, TValue> {
  */
 const TableHeaderCell = <TData, TValue>({ header, offset }: ITableHeaderCellProps<TData, TValue>) => {
     const { dirMode } = useDataTableContext();
-    const isExpanderHeader = header.column.id === EXPANDER_COLUMN_ID;
-    const isPinned = header.column.getIsPinned();
+    const { column } = header;
+    const isExpanderHeader = column.id === EXPANDER_COLUMN_ID;
+    const isPinned = column.getIsPinned();
     const isRTL = dirMode === "rtl";
-
-    const explicitSize = header.column.columnDef.meta?.explicitSize;
-    const isCustomCell = Boolean(header.column.columnDef.meta?.isCustomCell);
+    const explicitSize = column.columnDef.meta?.explicitSize;
+    const label = flexRender(column.columnDef.header, header.getContext()) as string;
 
     const { table } = header.getContext();
     const thRef = useRef<HTMLTableCellElement>(null);
+    const labelRef = useRef<HTMLSpanElement | null>(null);
 
-    // eslint-disable-next-line consistent-return
+    const isTruncated = useEllipsisDetection(labelRef, [column.getSize()]);
+
     useEffect(() => {
-        if (thRef.current && explicitSize === undefined) {
-            const observer = new ResizeObserver((entries) => {
-                const entry = entries[0];
-                const rect = entry.target.getBoundingClientRect();
-                const newWidth = Math.round(rect.width);
+        const th = thRef.current;
+        if (!th || explicitSize !== undefined) return () => undefined;
 
-                table.setColumnSizing((old) => {
-                    const currentSize = old[header.column.id] ?? header.column.columnDef.size ?? CUSTOM_CELL_MAX_SIZE;
-                    if (Math.abs(currentSize - newWidth) > 1) {
-                        return {
-                            ...old,
-                            [header.column.id]: newWidth
-                        };
-                    }
-                    return old;
-                });
-            });
+        const observer = new ResizeObserver(([entry]) => {
+            const newWidth = Math.round(entry.target.getBoundingClientRect().width);
+            const currentSize = table.getState().columnSizing[column.id] ?? column.columnDef.size ?? 0;
 
-            observer.observe(thRef.current);
-            return () => observer.disconnect();
-        }
-    }, [explicitSize, header.column.id, table]);
+            if (Math.abs(currentSize - newWidth) > 1) {
+                table.setColumnSizing((old) => ({ ...old, [column.id]: newWidth }));
+            }
+        });
+
+        observer.observe(th);
+        return () => observer.disconnect();
+    }, [column.id, explicitSize, table]);
 
     return (
         <th
@@ -83,21 +83,15 @@ const TableHeaderCell = <TData, TValue>({ header, offset }: ITableHeaderCellProp
                 tableHeaderCell_expander: isExpanderHeader,
                 tableHeaderCell_pinned: isPinned
             })}
-            style={getCellStyle(
-                isExpanderHeader,
-                header.column.columnDef.size ?? CUSTOM_CELL_MAX_SIZE,
-                explicitSize,
-                offset,
-                isPinned,
-                isRTL,
-                isCustomCell
-            )}
+            style={getCellStyle(explicitSize, offset, isPinned, isRTL)}
         >
             {!isExpanderHeader ? (
-                <div className="tableHeaderCell__content">
-                    <Text className="tableHeaderCell__text" as="span" variant="labelMediumSemibold">
-                        {flexRender(header.column.columnDef.header, header.getContext()) as string}
-                    </Text>
+                <div className="tableHeaderCell__content" style={getCellContentStyle(explicitSize)}>
+                    <Tooltip text={label} isVisible={isTruncated}>
+                        <Text ref={labelRef} className="tableHeaderCell__text" as="span" variant="labelMediumSemibold">
+                            {label}
+                        </Text>
+                    </Tooltip>
                 </div>
             ) : null}
         </th>

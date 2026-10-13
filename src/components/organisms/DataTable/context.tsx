@@ -33,3 +33,13 @@ export const useDataTableContext = <TData,>() => {
 
     return context;
 };
+
+/**
+ * Rendered width (px) of the column a body cell belongs to.
+ * Provided by every body cell so that the default cell renderer can re-check its
+ * truncation when the column changes width — it is rendered through TanStack's
+ * `flexRender`, so it cannot receive the width as a prop.
+ */
+export const CellWidthContext = createContext<number | undefined>(undefined);
+
+export const useCellWidth = () => useContext(CellWidthContext);

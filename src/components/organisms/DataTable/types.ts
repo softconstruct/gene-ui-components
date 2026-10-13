@@ -188,7 +188,6 @@ export type ResolvedManageColumnsConfig = Omit<ManageColumnsConfig, "disabled" |
 declare module "@tanstack/react-table" {
     // eslint-disable-next-line
     interface ColumnMeta<TData extends RowData, TValue> {
-        isCustomCell?: boolean;
         explicitSize?: number;
         defaultVisible?: boolean;
         defaultPinned?: boolean;

@@ -6,13 +6,13 @@ import classNames from "classnames";
 import Button from "@components/atoms/Button";
 import Tooltip from "@components/molecules/Tooltip";
 
-// Styles
-import "./TableRow.scss";
-
 import { useDataTableContext } from "../../context";
 import TableBodyCell from "../../TableBody/Cell/TableBodyCell";
 import { DataTableGetRowStatus, DataTableRenderExpandedRow, IDataTableRowAction } from "../../types";
 import TableExpandedRow from "../Row/TableExpandedRow";
+
+// Styles
+import "./TableRow.scss";
 
 /**
  * Props for the {@link TableRow} component.
@@ -82,6 +82,7 @@ const TableRow = <TData,>({ row, rowActions, getRowStatus, renderExpandedRow }: 
                             renderer={cell.column.columnDef.cell}
                             isPinned={isPinned}
                             offset={offset}
+                            width={cell.column.getSize()}
                             dirMode={dirMode}
                             value={cell.getValue()}
                             rowData={row.original}

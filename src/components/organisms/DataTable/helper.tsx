@@ -1,4 +1,4 @@
-import React, { ReactNode, useRef } from "react";
+import React, { CSSProperties, ReactNode, useRef } from "react";
 import { Cell, CellContext, ColumnDef } from "@tanstack/react-table";
 
 // Components
@@ -8,14 +8,8 @@ import Tooltip from "@components/molecules/Tooltip";
 // hooks
 import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
-import {
-    CELL_MAX_WIDTH,
-    CUSTOM_CELL_MAX_SIZE,
-    CUSTOM_CELL_MIN_SIZE,
-    EXPANDABLE_CELL_SIZE_REM,
-    EXPANDER_COLUMN_ID,
-    EXPANDER_COLUMN_SIZE
-} from "./constants";
+import { EXPANDER_COLUMN_ID, EXPANDER_COLUMN_SIZE } from "./constants";
+import { useCellWidth } from "./context";
 import ExpanderCell from "./TableBody/ExpanderCell/ExpanderCell";
 import { DataTableColumn, DataTableRowExpandChangeHandler } from "./types";
 
@@ -28,6 +22,10 @@ export interface ICellProps<TData, TValue> {
     renderer: ColumnDef<TData, TValue>["cell"];
     isPinned?: boolean;
     offset: number;
+    /**
+     * Rendered width (px) of the cell's column, as measured by its header cell.
+     */
+    width: number;
     dirMode: string;
     /**
      * Snapshot of `cell.getValue()` captured by the parent at render time.
@@ -42,58 +40,32 @@ export interface ICellProps<TData, TValue> {
     rowData: TData;
 }
 
+/**
+ * Inline style of a header or body cell: the explicit column `size` (a fixed column for the table
+ * layout, it takes no share of the free horizontal space) and the sticky inset of pinned columns.
+ */
 export const getCellStyle = (
-    isExpander: boolean,
-    columnSize: number,
     explicitSize: number | undefined,
     offset: number,
     isPinned: boolean | string | undefined,
-    isRTL: boolean,
-    isCustomCell: boolean = false
-) => {
-    const roundedOffset = Math.round(offset);
+    isRTL: boolean
+): CSSProperties | undefined => {
+    const roundedOffset = `${Math.round(offset)}px`;
 
-    const baseStyle = {
-        ...(isPinned && {
-            left: !isRTL ? `${roundedOffset}px` : undefined,
-            right: isRTL ? `${roundedOffset}px` : undefined
-        })
+    const style: CSSProperties = {
+        ...(explicitSize !== undefined && { width: `${explicitSize}px` }),
+        ...(isPinned && (isRTL ? { right: roundedOffset } : { left: roundedOffset }))
     };
 
-    if (isExpander) {
-        return {
-            ...baseStyle,
-            width: EXPANDABLE_CELL_SIZE_REM,
-            minWidth: EXPANDABLE_CELL_SIZE_REM,
-            maxWidth: EXPANDABLE_CELL_SIZE_REM
-        };
-    }
-
-    if (explicitSize !== undefined) {
-        return {
-            ...baseStyle,
-            width: `${explicitSize}px`,
-            minWidth: `${explicitSize}px`,
-            maxWidth: isCustomCell ? "max-content" : CELL_MAX_WIDTH
-        };
-    }
-
-    if (isCustomCell) {
-        return {
-            ...baseStyle,
-            width: `${columnSize}px`,
-            minWidth: "max-content",
-            maxWidth: "max-content"
-        };
-    }
-
-    return {
-        ...baseStyle,
-        width: `${columnSize}px`,
-        minWidth: `${columnSize}px`,
-        maxWidth: CELL_MAX_WIDTH
-    };
+    return Object.keys(style).length ? style : undefined;
 };
+
+/**
+ * Inline style of the content wrapper of a cell: an explicit column `size` must also be the intrinsic
+ * width of the content, a `width` on the cell alone is ignored by the table layout once the table overflows.
+ */
+export const getCellContentStyle = (explicitSize: number | undefined): CSSProperties | undefined =>
+    explicitSize !== undefined ? { width: `${explicitSize}px`, maxWidth: "none" } : undefined;
 
 export const areCellsEqual = <TData, TValue>(prev: ICellProps<TData, TValue>, next: ICellProps<TData, TValue>) =>
     prev.cell.id === next.cell.id &&
@@ -101,13 +73,15 @@ export const areCellsEqual = <TData, TValue>(prev: ICellProps<TData, TValue>, ne
     prev.renderer === next.renderer &&
     prev.isPinned === next.isPinned &&
     prev.offset === next.offset &&
+    prev.width === next.width &&
     prev.dirMode === next.dirMode &&
     prev.value === next.value &&
     prev.rowData === next.rowData;
 
 export const DefaultCellComponent = ({ value }: { value: string }) => {
     const textRef = useRef<HTMLSpanElement | null>(null);
-    const isTruncated = useEllipsisDetection(textRef);
+    const columnWidth = useCellWidth();
+    const isTruncated = useEllipsisDetection(textRef, [columnWidth]);
 
     return (
         <Tooltip text={value} isVisible={isTruncated}>
@@ -126,14 +100,12 @@ export const adaptColumns = <TData,>(columns: DataTableColumn<TData>[]): ColumnD
     columns.map((col, index) => {
         const { accessorKey, id, header, size, renderCell, defaultVisible, defaultPinned } = col;
         const isAccessorColumn = Boolean(accessorKey);
-        const isCustomCell = Boolean(renderCell);
 
         const base: ColumnDef<TData> = {
             id: id ?? accessorKey ?? `display_${index}`,
             header: header ?? accessorKey ?? "",
-            size: size ?? (isCustomCell ? CUSTOM_CELL_MIN_SIZE : CUSTOM_CELL_MAX_SIZE),
+            ...(size !== undefined && { size }),
             meta: {
-                isCustomCell,
                 explicitSize: size,
                 defaultVisible,
                 defaultPinned

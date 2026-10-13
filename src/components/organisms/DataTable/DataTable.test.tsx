@@ -1058,3 +1058,99 @@ describe("Table Component - Manage Columns review fixes", () => {
         wrapper!.unmount();
     });
 });
+
+describe("Table Component - column sizing", () => {
+    type SizingRow = { Id: number; Email: string; Name: string };
+
+    const sizingData: SizingRow[] = [
+        { Id: 1, Email: "first@mail.com", Name: "First" },
+        { Id: 2, Email: "second@mail.com", Name: "Second" }
+    ];
+
+    const mountTable = async (props: Partial<IDataTableProps<SizingRow>>) => {
+        let wrapper: ReactWrapper<IDataTableProps<SizingRow>>;
+        await act(async () => {
+            wrapper = mount(<DataTable columns={[]} data={sizingData} {...props} />);
+        });
+        wrapper!.update();
+        return wrapper!;
+    };
+
+    it("lets the table layout size the columns by their content, unless the column has an explicit size", async () => {
+        const wrapper = await mountTable({
+            columns: [
+                { accessorKey: "Id", header: "Id" },
+                { accessorKey: "Email", header: "Email", size: 120 }
+            ],
+            renderExpandedRow: (row) => <div>{row.Email}</div>
+        });
+
+        const headers = wrapper.find("thead th");
+        const cells = wrapper.find("tbody tr.tableRow").first().find("td");
+
+        const expectedCellStyles = [{ width: "44px", left: "0px" }, undefined, { width: "120px" }];
+        expect(headers.map((th) => th.prop("style"))).toEqual(expectedCellStyles);
+        expect(cells.map((td) => td.prop("style"))).toEqual(expectedCellStyles);
+        const expectedContentStyles = [undefined, { width: "120px", maxWidth: "none" }];
+        expect(headers.find(".tableHeaderCell__content").map((div) => div.prop("style"))).toEqual(
+            expectedContentStyles
+        );
+        expect(cells.find(".tableBodyCell__content").map((div) => div.prop("style"))).toEqual([
+            { width: "44px", maxWidth: "none" },
+            ...expectedContentStyles
+        ]);
+
+        wrapper.unmount();
+    });
+
+    it("renders no trailing cell when there are no row actions", async () => {
+        const wrapper = await mountTable({ columns: [{ accessorKey: "Id", header: "Id" }] });
+
+        expect(wrapper.find("th.tableHeaderCell_actions").exists()).toBeFalsy();
+        expect(wrapper.find("td.tableRow__actionsWrapper").exists()).toBeFalsy();
+
+        wrapper.unmount();
+    });
+
+    it("mirrors the rendered width of auto-sized columns into TanStack so pinned columns are offset by it", async () => {
+        type ObserverCallback = (entries: ResizeObserverEntry[], observer: ResizeObserver) => void;
+        const observed: { target: Element; callback: ObserverCallback }[] = [];
+        const OriginalResizeObserver = global.ResizeObserver;
+        global.ResizeObserver = class ResizeObserver {
+            constructor(callback: ObserverCallback) {
+                this.observe = (target: Element) => observed.push({ target, callback });
+            }
+
+            observe: (target: Element) => void;
+
+            unobserve = jest.fn();
+
+            disconnect = jest.fn();
+        };
+
+        try {
+            const wrapper = await mountTable({
+                columns: [
+                    { accessorKey: "Id", header: "Id", defaultPinned: true },
+                    { accessorKey: "Email", header: "Email", defaultPinned: true },
+                    { accessorKey: "Name", header: "Name", size: 100 }
+                ]
+            });
+
+            expect(observed.map(({ target }) => target.textContent)).toEqual(["Id", "Email"]);
+            await act(async () => {
+                const { callback } = observed[0];
+                const target = { getBoundingClientRect: () => ({ width: 120 }) } as unknown as Element;
+                callback([{ target } as ResizeObserverEntry], {} as ResizeObserver);
+            });
+            wrapper.update();
+
+            expect(wrapper.find("thead th").at(1).prop("style")).toEqual({ left: "120px" });
+            expect(wrapper.find("tbody tr.tableRow").first().find("td").at(1).prop("style")).toEqual({ left: "120px" });
+
+            wrapper.unmount();
+        } finally {
+            global.ResizeObserver = OriginalResizeObserver;
+        }
+    });
+});

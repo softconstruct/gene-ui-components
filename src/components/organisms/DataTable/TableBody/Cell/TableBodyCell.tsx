@@ -2,12 +2,13 @@ import React, { memo } from "react";
 import { Cell, ColumnDef, flexRender } from "@tanstack/react-table";
 import classNames from "classnames";
 
-import { areCellsEqual, getCellStyle } from "@components/organisms/DataTable/helper";
+import { areCellsEqual, getCellContentStyle, getCellStyle } from "@components/organisms/DataTable/helper";
+
+import { EXPANDER_COLUMN_ID } from "../../constants";
+import { CellWidthContext } from "../../context";
 
 // Styles
 import "./TableBodyCell.scss";
-
-import { CUSTOM_CELL_MAX_SIZE, EXPANDER_COLUMN_ID } from "../../constants";
 
 /**
  * Props for the {@link TableBodyCell} component.
@@ -44,9 +45,13 @@ export interface ITableBodyCellProps<TData, TValue> {
      */
     isPinned?: boolean;
     /**
-     * Snapshot of `column.columnDef.size` captured by the parent at render time.
+     * Sticky inset (px) of the cell when its column is pinned.
      */
     offset: number;
+    /**
+     * Rendered width (px) of the cell's column, so that the content re-checks its truncation when it changes.
+     */
+    width: number;
     /**
      * Actual rtl/ltr mode.
      */
@@ -84,13 +89,12 @@ const TableBodyCell = <TData, TValue>({
     isExpanded,
     isPinned,
     offset,
+    width,
     dirMode
 }: ITableBodyCellProps<TData, TValue>) => {
     const isExpanderCell = cell.column.id === EXPANDER_COLUMN_ID;
     const isRTL = dirMode === "rtl";
-
     const explicitSize = cell.column.columnDef.meta?.explicitSize;
-    const isCustomCell = Boolean(cell.column.columnDef.meta?.isCustomCell);
 
     return (
         <td
@@ -99,17 +103,13 @@ const TableBodyCell = <TData, TValue>({
                 tableBodyCell_expander_expanded: isExpanded,
                 tableBodyCell_pinned: isPinned
             })}
-            style={getCellStyle(
-                isExpanderCell,
-                cell.column.columnDef.size ?? CUSTOM_CELL_MAX_SIZE,
-                explicitSize,
-                offset,
-                isPinned,
-                isRTL,
-                isCustomCell
-            )}
+            style={getCellStyle(explicitSize, offset, isPinned, isRTL)}
         >
-            <div className="tableBodyCell__content">{flexRender(renderer, cell.getContext())}</div>
+            <CellWidthContext.Provider value={width}>
+                <div className="tableBodyCell__content" style={getCellContentStyle(explicitSize)}>
+                    {flexRender(renderer, cell.getContext())}
+                </div>
+            </CellWidthContext.Provider>
         </td>
     );
 };

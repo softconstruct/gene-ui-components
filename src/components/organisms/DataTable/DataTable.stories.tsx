@@ -3,12 +3,13 @@ import { Meta, StoryObj } from "@storybook/react";
 
 import { Pencil, RecycleBin } from "@geneui/icons";
 
+// Components
+import NumberField from "@components/molecules/NumberField";
 import Pagination from "@components/molecules/Pagination";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 import { mockColumns, mockData, renderMockExpandedRow } from "../../../../stories/data/__dataTable";
-// Components
 import DataTable, { DataTableRowStatus, IDataTableProps, IDataTableRowAction } from "./index";
 
 type MockRowType = (typeof mockData)[0];
@@ -165,6 +166,29 @@ export const AsyncDataFetchingWithPagination: Story = {
             rowsPerPageOptions: [5, 10, 20],
             showInputPageField: true
         }
+    }
+};
+
+const sizingColumns: IDataTableProps<MockRowType>["columns"] = [
+    { accessorKey: "Id", header: "Id" },
+    { accessorKey: "FirstName", header: "First name of the client as registered in the system" },
+    { accessorKey: "LastName", header: "Last name" },
+    { accessorKey: "Email", header: "Email" },
+    {
+        accessorKey: "DayOffs",
+        header: "Day offs",
+        renderCell: ({ value }) => <NumberField size="small" defaultValue={Number(value)} />
+    },
+    { accessorKey: "Created", header: "Created" }
+];
+
+export const ColumnSizing: Story = {
+    render: (props) => <DataTable {...props} />,
+    args: {
+        columns: sizingColumns,
+        data: mockData,
+        rowActions: defaultRowActions,
+        pagination: { pageSize: 10, rowsPerPageOptions: [2, 10, 20, 50, 100], showInputPageField: true }
     }
 };
 
