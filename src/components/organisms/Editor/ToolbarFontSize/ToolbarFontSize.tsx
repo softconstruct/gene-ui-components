@@ -4,8 +4,8 @@ import React, { ChangeEvent, FC, KeyboardEvent, useEffect, useState } from "reac
 import { Minus, Plus } from "@geneui/icons";
 
 // Components
+import Button from "@components/atoms/Button";
 import TextField from "@components/molecules/TextField";
-import ToolbarButton from "@components/organisms/Editor/ToolbarButton/ToolbarButton";
 
 // Styles
 import "./ToolbarFontSize.scss";
@@ -78,14 +78,18 @@ const ToolbarFontSize: FC<IToolbarFontSizeProps> = ({ value = DEFAULT_FONT_SIZE,
 
     return (
         <div className="toolbarFontSize" role="group" aria-label="Font size">
-            <ToolbarButton
-                IconBefore={Minus}
+            <Button
+                Icon={Minus}
+                appearance="secondary"
+                layout="text"
+                size="medium"
                 aria-label="Decrease font size"
                 disabled={disabled || value - FONT_SIZE_STEP < MIN_FONT_SIZE}
                 onClick={() => step(-FONT_SIZE_STEP)}
             />
             <TextField
                 className="toolbarFontSize__input"
+                name="editor-font-size"
                 type="number"
                 size="medium"
                 inputMode="numeric"
@@ -96,8 +100,11 @@ const ToolbarFontSize: FC<IToolbarFontSizeProps> = ({ value = DEFAULT_FONT_SIZE,
                 onKeyDown={handleKeyDown}
                 onBlur={() => commit(false)}
             />
-            <ToolbarButton
-                IconBefore={Plus}
+            <Button
+                Icon={Plus}
+                appearance="secondary"
+                layout="text"
+                size="medium"
                 aria-label="Increase font size"
                 disabled={disabled || value + FONT_SIZE_STEP > MAX_FONT_SIZE}
                 onClick={() => step(FONT_SIZE_STEP)}
