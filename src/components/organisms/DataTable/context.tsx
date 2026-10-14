@@ -8,7 +8,6 @@ export interface IDataTableContext<TData> {
     manageColumnsConfig: ResolvedManageColumnsConfig;
     initialColumnVisibility: ColumnVisibilityState;
     initialColumnPinning: ColumnPinningState;
-    dirMode: string;
 }
 
 const DataTableContext = createContext<IDataTableContext<unknown> | null>(null);
@@ -33,6 +32,15 @@ export const useDataTableContext = <TData,>() => {
 
     return context;
 };
+
+/**
+ * Actual rtl/ltr mode of the document.
+ * Kept apart from {@link DataTableContext}: that value changes whenever consumers pass a new
+ * `manageColumnsConfig` object, while this one is read by every (memoized) cell and must stay stable.
+ */
+export const DirModeContext = createContext<string>("ltr");
+
+export const useDirMode = () => useContext(DirModeContext);
 
 /**
  * Rendered width (px) of the column a body cell belongs to.

@@ -1,5 +1,7 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { fn } from "@storybook/test";
 
 import { Pencil, RecycleBin } from "@geneui/icons";
 
@@ -202,6 +204,16 @@ export const WithManageColumns: Story = {
             visible: true,
             loading: false,
             disabledColumns: ["DayOffs"],
+            // Nested in the config object, so the global `^on.*` actions regex doesn't reach them: named spies
+            // make every manage-columns event show up in the Actions tab
+            onOpenChange: fn().mockName("manageColumnsConfig.onOpenChange"),
+            onSave: fn().mockName("manageColumnsConfig.onSave"),
+            onColumnVisibilityChange: fn().mockName("manageColumnsConfig.onColumnVisibilityChange"),
+            onColumnPin: fn().mockName("manageColumnsConfig.onColumnPin"),
+            onColumnOrderChange: fn().mockName("manageColumnsConfig.onColumnOrderChange"),
+            onSelectAllColumnsVisibility: fn().mockName("manageColumnsConfig.onSelectAllColumnsVisibility"),
+            onRestoreDefaults: fn().mockName("manageColumnsConfig.onRestoreDefaults"),
+            onSearch: fn().mockName("manageColumnsConfig.onSearch"),
             texts: {
                 searchPlaceholder: "Search...",
                 cancelButton: "Cancel",

@@ -3,11 +3,20 @@ import { Column, ColumnOrderState, ColumnPinningState, Table } from "@tanstack/r
 
 import { EXPANDER_COLUMN_ID } from "../../constants";
 // Types
-import { ColumnVisibilityState, ManageColumnsConfig } from "../../types";
+import { ColumnVisibilityState, IManageColumnsDiffPayload, ManageColumnsConfig } from "../../types";
 
 const arraysEqual = (a: string[], b: string[]) => {
     if (a.length !== b.length) return false;
     return a.every((val, index) => val === b[index]);
+};
+
+/**
+ * Order-insensitive comparison: which columns are pinned matters, not the order they were pinned in.
+ */
+const sameMembers = (a: string[], b: string[]) => {
+    if (a.length !== b.length) return false;
+    const bSet = new Set(b);
+    return a.every((val) => bSet.has(val));
 };
 
 /**
@@ -36,12 +45,6 @@ const pinnedFirst = (order: string[], pinning: ColumnPinningState) => {
     const pinnedIds = new Set([...(pinning.left || []), ...(pinning.right || [])]);
     return [...order.filter((id) => pinnedIds.has(id)), ...order.filter((id) => !pinnedIds.has(id))];
 };
-
-export interface IManageColumnsDiffPayload {
-    visibilityChanges: Record<string, boolean>;
-    pinningChanges: ColumnPinningState | null;
-    orderChanges: ColumnOrderState | null;
-}
 
 interface IUseManageColumnsParams<TData> {
     table: Table<TData>;
@@ -119,8 +122,8 @@ export const useManageColumns = <TData>({
             (col) => (draftVisibility[col.id] ?? true) === (initialColumnVisibility[col.id] ?? true)
         );
         const pinEqual =
-            arraysEqual(draftPinning.left || [], initialColumnPinning.left || []) &&
-            arraysEqual(draftPinning.right || [], initialColumnPinning.right || []);
+            sameMembers(draftPinning.left || [], initialColumnPinning.left || []) &&
+            sameMembers(draftPinning.right || [], initialColumnPinning.right || []);
         const orderEqual = arraysEqual(draftColumnOrder, defaultColumnOrder);
         return visEqual && pinEqual && orderEqual;
     }, [
@@ -181,12 +184,15 @@ export const useManageColumns = <TData>({
         const newRightPinned = finalOrder.filter((id) => rightPinned.includes(id));
         const finalPinning = { ...draftPinning, left: newLeftPinned, right: newRightPinned };
 
-        const pinningChanged = !arraysEqual(leftPinned, newLeftPinned) || !arraysEqual(rightPinned, newRightPinned);
+        // Compared against the applied table state, so a draft that ends up where it started reports no change
+        const pinningChanged =
+            !arraysEqual(newLeftPinned, columnPinning.left || []) ||
+            !arraysEqual(newRightPinned, columnPinning.right || []);
 
         const diffPayload: IManageColumnsDiffPayload = {
             visibilityChanges,
-            pinningChanges: diffTracker.pinning.size > 0 || pinningChanged ? finalPinning : null,
-            orderChanges: diffTracker.orderChanged || !arraysEqual(finalOrder, activeOrder) ? finalOrder : null
+            pinningChanges: pinningChanged ? finalPinning : null,
+            orderChanges: !arraysEqual(finalOrder, activeOrder) ? finalOrder : null
         };
 
         table.setColumnVisibility(draftVisibility);
@@ -196,9 +202,7 @@ export const useManageColumns = <TData>({
         setPopoverOpen(false);
         resetDiffTracker();
 
-        if (manageColumnsConfig?.onSave) {
-            manageColumnsConfig.onSave(diffPayload);
-        }
+        manageColumnsConfig?.onSave?.(diffPayload);
     };
 
     const handleRestoreDefaults = () => {
@@ -222,9 +226,7 @@ export const useManageColumns = <TData>({
             return { visibility: newVis, pinning: newPin, orderChanged: !arraysEqual(defaultColumnOrder, activeOrder) };
         });
 
-        if (manageColumnsConfig?.onRestoreDefaults) {
-            manageColumnsConfig.onRestoreDefaults();
-        }
+        manageColumnsConfig?.onRestoreDefaults?.();
     };
 
     const filterColumnsBySearch = (searchQuery: string) => {
@@ -249,9 +251,7 @@ export const useManageColumns = <TData>({
         const val = e.target.value;
         setSearchValue(val);
 
-        if (manageColumnsConfig?.onSearch) {
-            manageColumnsConfig.onSearch(val);
-        }
+        manageColumnsConfig?.onSearch?.(val);
 
         filterColumnsBySearch(val);
     };
@@ -259,6 +259,7 @@ export const useManageColumns = <TData>({
     const handleSearchClear = () => {
         setSearchValue("");
         setColumnsToRender(sortColumns(columns, draftColumnOrder));
+        manageColumnsConfig?.onSearch?.("");
     };
 
     const handleToggleColumnVisibility = (column: Column<TData>) => {
@@ -275,32 +276,32 @@ export const useManageColumns = <TData>({
             return { ...prevDiffs, visibility: newVis };
         });
 
-        if (manageColumnsConfig?.onColumnVisibilityChange) {
-            manageColumnsConfig?.onColumnVisibilityChange();
-        }
+        manageColumnsConfig?.onColumnVisibilityChange?.(column.id, nextVal);
     };
 
     const handleToggleColumnPinning = (column: Column<TData>) => {
-        if (manageColumnsConfig?.disabledColumns?.includes(column.id)) return;
-
         const leftPinned = draftPinning.left || [];
         const isPinnedNext = !leftPinned.includes(column.id);
         const originalPinned = (columnPinning.left || []).includes(column.id);
 
-        setDraftPinning((prev) => ({
-            ...prev,
-            left: isPinnedNext ? [...(prev.left || []), column.id] : (prev.left || []).filter((id) => id !== column.id)
-        }));
+        const nextPinning: ColumnPinningState = {
+            ...draftPinning,
+            left: isPinnedNext ? [...leftPinned, column.id] : leftPinned.filter((id) => id !== column.id)
+        };
+        // Pinned columns always lead the table, so the draft list moves the column across the pinned boundary right away
+        // (a newly pinned column ends the pinned group, an unpinned one starts the unpinned group)
+        const nextOrder = pinnedFirst(completeOrder(draftColumnOrder, defaultColumnOrder), nextPinning);
+
+        setDraftPinning(nextPinning);
+        setDraftColumnOrder(nextOrder);
         setDiffTracker((prevDiffs) => {
             const newPin = new Set(prevDiffs.pinning);
             if (isPinnedNext !== originalPinned) newPin.add(column.id);
             else newPin.delete(column.id);
-            return { ...prevDiffs, pinning: newPin };
+            return { ...prevDiffs, pinning: newPin, orderChanged: !arraysEqual(nextOrder, activeOrder) };
         });
 
-        if (manageColumnsConfig?.onColumnPin) {
-            manageColumnsConfig?.onColumnPin();
-        }
+        manageColumnsConfig?.onColumnPin?.(column.id, isPinnedNext);
     };
 
     const isSearchActive = searchValue.trim().length > 0;
@@ -309,10 +310,12 @@ export const useManageColumns = <TData>({
         const columnsToToggle = isSearchActive ? columnsToRender : columns;
         const nextVisibility = { ...draftVisibility };
         const newVis = new Set(diffTracker.visibility);
+        const toggledColumnIds: string[] = [];
 
         columnsToToggle.forEach((col) => {
             if (manageColumnsConfig?.disabledColumns?.includes(col.id)) return;
 
+            toggledColumnIds.push(col.id);
             const originalVal = columnVisibility[col.id] ?? true;
             nextVisibility[col.id] = checked;
 
@@ -326,9 +329,7 @@ export const useManageColumns = <TData>({
         setDraftVisibility(nextVisibility);
         setDiffTracker((prevDiffs) => ({ ...prevDiffs, visibility: newVis }));
 
-        if (manageColumnsConfig?.onSelectAllColumnsVisibility) {
-            manageColumnsConfig?.onSelectAllColumnsVisibility();
-        }
+        manageColumnsConfig?.onSelectAllColumnsVisibility?.(checked, toggledColumnIds);
     };
 
     const handleColumnReorder = (sourceId: string, destinationId: string, edge: string | null) => {
@@ -350,15 +351,17 @@ export const useManageColumns = <TData>({
 
         newOrder.splice(finalIndex, 0, sourceId);
 
-        setDraftColumnOrder(newOrder);
+        // A drop across the pinned boundary snaps back to the column's own group, matching what Save applies
+        const nextOrder = pinnedFirst(newOrder, draftPinning);
+        if (arraysEqual(nextOrder, currentOrder)) return;
+
+        setDraftColumnOrder(nextOrder);
         setDiffTracker((prevDiffs) => ({
             ...prevDiffs,
-            orderChanged: !arraysEqual(newOrder, activeOrder)
+            orderChanged: !arraysEqual(nextOrder, activeOrder)
         }));
 
-        if (manageColumnsConfig?.onColumnOrderChange) {
-            manageColumnsConfig?.onColumnOrderChange();
-        }
+        manageColumnsConfig?.onColumnOrderChange?.(nextOrder);
     };
 
     useEffect(() => {
@@ -380,11 +383,16 @@ export const useManageColumns = <TData>({
         }
     }, [draftColumnOrder, popoverOpen, defaultColumnOrder]);
 
-    const columnsInScope = isSearchActive ? columnsToRender : columns;
+    // Disabled columns are skipped by select-all, so they must not keep it from being fully checked
+    const columnsInScope = (isSearchActive ? columnsToRender : columns).filter(
+        (col) => !manageColumnsConfig?.disabledColumns?.includes(col.id)
+    );
     const visibleColumnsInScopeCount = columnsInScope.filter((col) => draftVisibility[col.id] ?? true).length;
     const allColumnsChecked = columnsInScope.length > 0 && visibleColumnsInScopeCount === columnsInScope.length;
     const allColumnsIndeterminate =
         visibleColumnsInScopeCount > 0 && visibleColumnsInScopeCount < columnsInScope.length;
+    // Every listed column is locked: select-all would have nothing to toggle
+    const canToggleAllColumns = columnsInScope.length > 0;
 
     return {
         popoverOpen,
@@ -395,6 +403,7 @@ export const useManageColumns = <TData>({
         draftPinning,
         allColumnsChecked,
         allColumnsIndeterminate,
+        canToggleAllColumns,
         hasChanges,
         isDefaultState,
         searchValue,

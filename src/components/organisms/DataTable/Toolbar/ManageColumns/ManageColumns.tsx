@@ -71,6 +71,7 @@ const ManageColumns = <TData,>() => {
         handleSearchClear,
         allColumnsChecked,
         allColumnsIndeterminate,
+        canToggleAllColumns,
         handleToggleAllColumnsVisibility: onToggleAllColumns,
         searchValue,
         isSearchActive,
@@ -180,7 +181,7 @@ const ManageColumns = <TData,>() => {
                 mobileHeightMode="fit"
             >
                 <PopoverBody withScrollbar={false} withPadding={false} className="manageColumnsPopover__main">
-                    <DnDDragLayer />
+                    <DnDDragLayer canMonitor={({ source }) => isManageColumnsDragData(source.data, listId)} />
                     <TextField
                         autoComplete="off"
                         placeholder={manageColumnsTexts.searchPlaceholder}
@@ -198,7 +199,7 @@ const ManageColumns = <TData,>() => {
                                 <Checkbox
                                     id={`${listId}-selectAll`}
                                     checked={allColumnsChecked}
-                                    disabled={loading}
+                                    disabled={loading || !canToggleAllColumns}
                                     indeterminate={allColumnsIndeterminate}
                                     onChange={(e) => onToggleAllColumns(e.target.checked)}
                                     className="manageColumnsPopover__selectAllCheckbox"
@@ -216,14 +217,14 @@ const ManageColumns = <TData,>() => {
                                 >
                                     {columns.map((column: Column<TData>) => {
                                         const isPinnedDraft = (draftPinning.left || []).includes(column.id);
-                                        const isDisabled = disabledColumns?.includes(column.id) || loading;
                                         return (
                                             <ManageColumnListItem
                                                 key={column.id}
                                                 column={column}
                                                 listId={listId}
                                                 checked={draftVisibility[column.id] ?? true}
-                                                disabled={isDisabled}
+                                                disabled={loading}
+                                                visibilityDisabled={disabledColumns?.includes(column.id)}
                                                 isPinnedDraft={isPinnedDraft}
                                                 onPinToggle={onColumnPinningChange}
                                                 onChange={onColumnVisibilityChange}

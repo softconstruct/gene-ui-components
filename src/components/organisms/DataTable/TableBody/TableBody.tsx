@@ -6,11 +6,11 @@ import { IButtonProps } from "@components/atoms/Button";
 import Loader from "@components/atoms/Loader";
 import Empty from "@components/molecules/Empty";
 
-// Styles
-import "./TableBody.scss";
-
 import { DataTableGetRowStatus, DataTableRenderExpandedRow, IDataTableRowAction, ITableNoDataTexts } from "../types";
 import TableRow from "./Row/TableRow";
+
+// Styles
+import "./TableBody.scss";
 
 /**
  * Props for the {@link TableBody} component.

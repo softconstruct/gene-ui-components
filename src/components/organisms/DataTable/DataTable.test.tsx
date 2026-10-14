@@ -8,6 +8,7 @@ import { Popover } from "@components/atoms/Popover";
 import Checkbox from "@components/molecules/Checkbox";
 import Empty from "@components/molecules/Empty";
 import Pagination from "@components/molecules/Pagination";
+import TextField from "@components/molecules/TextField";
 import { INITIAL_PAGE_SIZE } from "@components/organisms/DataTable/constants";
 import Toolbar from "@components/organisms/DataTable/Toolbar/Toolbar";
 import { DataTableColumn, DataTableRenderCellArgs } from "@components/organisms/DataTable/types";
@@ -610,7 +611,7 @@ describe("Table Component - Manage Columns Integration", () => {
         expect(headerCells.first().hasClass("tableHeaderCell_expander")).toBeTruthy();
     });
 
-    it("does not enable Save when pinning is attempted on a disabled column", async () => {
+    it("locks only the visibility of a disabled column, it can still be pinned", async () => {
         const firstColId = mockColumns[0].accessorKey as string;
 
         await act(async () => {
@@ -628,6 +629,10 @@ describe("Table Component - Manage Columns Integration", () => {
         });
         setup.update();
 
+        const firstItem = setup.find(".manageColumnListItem").first();
+        expect(firstItem.find("input[type='checkbox']").prop("disabled")).toBe(true);
+        expect(firstItem.hasClass("manageColumnListItem_disabled")).toBe(false);
+
         const firstPinAction = setup.find(".manageColumnListItem__pinAction").first();
         await act(async () => {
             firstPinAction.simulate("click");
@@ -635,7 +640,137 @@ describe("Table Component - Manage Columns Integration", () => {
         setup.update();
 
         const saveButton = setup.find(Button).filterWhere((b) => b.text().includes("Save"));
-        expect(saveButton.prop("disabled")).toBe(true);
+        expect(saveButton.prop("disabled")).toBe(false);
+    });
+
+    it("keeps select-all fully checked when a disabled column is hidden", async () => {
+        const firstColId = mockColumns[0].accessorKey as string;
+
+        await act(async () => {
+            setup.setProps({
+                columns: mockColumns.map((column, index) =>
+                    index === 0 ? { ...column, defaultVisible: false } : column
+                ),
+                manageColumnsConfig: { visible: true, disabledColumns: [firstColId] }
+            });
+        });
+        setup.update();
+
+        await act(async () => {
+            setup
+                .find(Button)
+                .filterWhere((b) => b.text().includes("Manage columns"))
+                .simulate("click");
+        });
+        setup.update();
+
+        const selectAll = setup.find(".manageColumnsPopover__selectAll").find(Checkbox);
+        expect(selectAll.prop("checked")).toBe(true);
+        expect(selectAll.prop("indeterminate")).toBe(false);
+        expect(selectAll.prop("disabled")).toBe(false);
+    });
+
+    it("disables select-all when every listed column is disabled", async () => {
+        await act(async () => {
+            setup.setProps({
+                manageColumnsConfig: {
+                    visible: true,
+                    disabledColumns: mockColumns.map((column) => (column.id ?? column.accessorKey) as string)
+                }
+            });
+        });
+        setup.update();
+
+        await act(async () => {
+            setup
+                .find(Button)
+                .filterWhere((b) => b.text().includes("Manage columns"))
+                .simulate("click");
+        });
+        setup.update();
+
+        const selectAll = setup.find(".manageColumnsPopover__selectAll").find(Checkbox);
+        expect(selectAll.prop("disabled")).toBe(true);
+    });
+
+    it("passes the changed column and its new state to the manage-columns callbacks", async () => {
+        const callbacks = {
+            onColumnVisibilityChange: jest.fn(),
+            onColumnPin: jest.fn(),
+            onSelectAllColumnsVisibility: jest.fn(),
+            onRestoreDefaults: jest.fn(),
+            onSearch: jest.fn()
+        };
+        const columnIds = mockColumns.map((column) => (column.id ?? column.accessorKey) as string);
+
+        await act(async () => {
+            setup.setProps({ manageColumnsConfig: { visible: true, ...callbacks } });
+        });
+        setup.update();
+
+        await act(async () => {
+            setup
+                .find(Button)
+                .filterWhere((b) => b.text().includes("Manage columns"))
+                .simulate("click");
+        });
+        setup.update();
+
+        await act(async () => {
+            setup.find(".manageColumnListItem").first().find("input[type='checkbox']").simulate("change");
+        });
+        setup.update();
+        expect(callbacks.onColumnVisibilityChange).toHaveBeenCalledWith(columnIds[0], false);
+
+        await act(async () => {
+            setup.find(".manageColumnListItem__pinAction").at(1).simulate("click");
+        });
+        setup.update();
+        expect(callbacks.onColumnPin).toHaveBeenCalledWith(columnIds[1], true);
+
+        await act(async () => {
+            setup
+                .find(".manageColumnsPopover__selectAll")
+                .find("input[type='checkbox']")
+                .simulate("change", { target: { checked: true } });
+        });
+        setup.update();
+        expect(callbacks.onSelectAllColumnsVisibility).toHaveBeenCalledWith(true, columnIds);
+
+        await act(async () => {
+            setup.find(TextField).prop("onClear")?.();
+        });
+        setup.update();
+        expect(callbacks.onSearch).toHaveBeenCalledWith("");
+
+        await act(async () => {
+            setup
+                .find(Button)
+                .filterWhere((b) => b.text().includes("Restore defaults"))
+                .simulate("click");
+        });
+        expect(callbacks.onRestoreDefaults).toHaveBeenCalledTimes(1);
+    });
+
+    it("moves a column into the pinned group of the draft list as soon as it is pinned", async () => {
+        await act(async () => {
+            setup
+                .find(Button)
+                .filterWhere((b) => b.text().includes("Manage columns"))
+                .simulate("click");
+        });
+        setup.update();
+
+        const getListLabels = () =>
+            setup.find(".manageColumnListItem").map((item) => item.find("input[type='checkbox']").prop("id"));
+        const thirdItemId = getListLabels()[2];
+
+        await act(async () => {
+            setup.find(".manageColumnListItem__pinAction").at(2).simulate("click");
+        });
+        setup.update();
+
+        expect(getListLabels()[0]).toBe(thirdItemId);
     });
 
     it("applies pinning classes to body and header cells when a column is pinned and saved", async () => {
@@ -1067,6 +1202,42 @@ describe("Table Component - column sizing", () => {
         { Id: 2, Email: "second@mail.com", Name: "Second" }
     ];
 
+    type ObserverCallback = (entries: ResizeObserverEntry[], observer: ResizeObserver) => void;
+
+    /**
+     * Replaces the global ResizeObserver with one that records every observed element with its callback,
+     * so a test can fire a resize for a specific header cell.
+     */
+    const mockResizeObserver = () => {
+        const observed: { target: Element; callback: ObserverCallback }[] = [];
+        const OriginalResizeObserver = global.ResizeObserver;
+        global.ResizeObserver = class ResizeObserver {
+            constructor(callback: ObserverCallback) {
+                this.observe = (target: Element) => observed.push({ target, callback });
+            }
+
+            observe: (target: Element) => void;
+
+            unobserve = jest.fn();
+
+            disconnect = jest.fn();
+        };
+
+        return {
+            observed,
+            restore: () => {
+                global.ResizeObserver = OriginalResizeObserver;
+            }
+        };
+    };
+
+    const resizeObservedHeader = async (entry: { target: Element; callback: ObserverCallback }, width: number) => {
+        await act(async () => {
+            jest.spyOn(entry.target, "getBoundingClientRect").mockReturnValue({ width } as DOMRect);
+            entry.callback([{ target: entry.target } as ResizeObserverEntry], {} as ResizeObserver);
+        });
+    };
+
     const mountTable = async (props: Partial<IDataTableProps<SizingRow>>) => {
         let wrapper: ReactWrapper<IDataTableProps<SizingRow>>;
         await act(async () => {
@@ -1113,20 +1284,7 @@ describe("Table Component - column sizing", () => {
     });
 
     it("mirrors the rendered width of auto-sized columns into TanStack so pinned columns are offset by it", async () => {
-        type ObserverCallback = (entries: ResizeObserverEntry[], observer: ResizeObserver) => void;
-        const observed: { target: Element; callback: ObserverCallback }[] = [];
-        const OriginalResizeObserver = global.ResizeObserver;
-        global.ResizeObserver = class ResizeObserver {
-            constructor(callback: ObserverCallback) {
-                this.observe = (target: Element) => observed.push({ target, callback });
-            }
-
-            observe: (target: Element) => void;
-
-            unobserve = jest.fn();
-
-            disconnect = jest.fn();
-        };
+        const { observed, restore } = mockResizeObserver();
 
         try {
             const wrapper = await mountTable({
@@ -1138,11 +1296,7 @@ describe("Table Component - column sizing", () => {
             });
 
             expect(observed.map(({ target }) => target.textContent)).toEqual(["Id", "Email"]);
-            await act(async () => {
-                const { callback } = observed[0];
-                const target = { getBoundingClientRect: () => ({ width: 120 }) } as unknown as Element;
-                callback([{ target } as ResizeObserverEntry], {} as ResizeObserver);
-            });
+            await resizeObservedHeader(observed[0], 120);
             wrapper.update();
 
             expect(wrapper.find("thead th").at(1).prop("style")).toEqual({ left: "120px" });
@@ -1150,7 +1304,46 @@ describe("Table Component - column sizing", () => {
 
             wrapper.unmount();
         } finally {
-            global.ResizeObserver = OriginalResizeObserver;
+            restore();
+        }
+    });
+
+    it("re-observes columns that switch between auto and explicit size without changing their id", async () => {
+        const { observed, restore } = mockResizeObserver();
+
+        try {
+            const wrapper = await mountTable({
+                columns: [
+                    { accessorKey: "Id", header: "Id", defaultPinned: true },
+                    { accessorKey: "Email", header: "Email", defaultPinned: true },
+                    { accessorKey: "Name", header: "Name", size: 100 }
+                ]
+            });
+
+            await resizeObservedHeader(observed[0], 120);
+            wrapper.update();
+            expect(wrapper.find("thead th").at(1).prop("style")).toEqual({ left: "120px" });
+
+            // "Id" gets an explicit size: it is no longer observed and its measured width stops overriding the size
+            observed.length = 0;
+            await act(async () => {
+                wrapper.setProps({
+                    columns: [
+                        { accessorKey: "Id", header: "Id", defaultPinned: true, size: 80 },
+                        { accessorKey: "Email", header: "Email", defaultPinned: true },
+                        { accessorKey: "Name", header: "Name" }
+                    ]
+                });
+            });
+            wrapper.update();
+
+            expect(wrapper.find("thead th").at(1).prop("style")).toEqual({ left: "80px" });
+            // "Name" lost its explicit size, so it is observed now
+            expect(observed.map(({ target }) => target.textContent)).toEqual(["Email", "Name"]);
+
+            wrapper.unmount();
+        } finally {
+            restore();
         }
     });
 });

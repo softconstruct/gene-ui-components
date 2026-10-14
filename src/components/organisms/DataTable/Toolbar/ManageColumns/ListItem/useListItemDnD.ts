@@ -57,8 +57,9 @@ export const useColumnListItemDnD = ({
         const dragHandle = dragHandleRef.current;
         if (!el || !dragHandle) return;
 
-        // eslint-disable-next-line consistent-return
-        return combine(
+        let isDragActive = false;
+
+        const cleanup = combine(
             draggable({
                 element: el,
                 dragHandle,
@@ -87,10 +88,12 @@ export const useColumnListItemDnD = ({
                     disableNativeDragPreview({ nativeSetDragImage });
                 },
                 onDragStart: () => {
+                    isDragActive = true;
                     setIsDragging(true);
                     preventUnhandled.start();
                 },
                 onDrop: () => {
+                    isDragActive = false;
                     setIsDragging(false);
                     preventUnhandled.stop();
                 }
@@ -107,6 +110,17 @@ export const useColumnListItemDnD = ({
                 }
             })
         );
+
+        // eslint-disable-next-line consistent-return
+        return () => {
+            cleanup();
+            // The item can unmount (or re-register, e.g. when `disabled` flips) mid-drag, in which case
+            // its `onDrop` never fires: the new registration doesn't know about the drag in progress
+            if (isDragActive) {
+                preventUnhandled.stop();
+                setIsDragging(false);
+            }
+        };
     }, [columnId, listId, disabled]);
 
     return {

@@ -14,14 +14,15 @@ import Text from "@components/atoms/Text";
 import Checkbox from "@components/molecules/Checkbox";
 import Tooltip from "@components/molecules/Tooltip";
 
+import DnDDragLayer from "@internal/components/DnDDragLayer/DnDDragLayer";
+
 // Hooks
 import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
+import type { TActionableListLevel } from "../ActionableListNodeWrapper/ActionableListNodeWrapper";
+
 // Styles
 import "./ActionableListItem.scss";
-
-import DnDDragLayer from "../../../../_internal/components/DnDDragLayer/DnDDragLayer";
-import type { TActionableListLevel } from "../ActionableListNodeWrapper/ActionableListNodeWrapper";
 
 type TDropGapEdge = "top" | "bottom";
 
@@ -257,7 +258,7 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
                 actionableListItem_dropGapBottom: dropGapEdge === "bottom"
             })}
         >
-            <DnDDragLayer />
+            <DnDDragLayer canMonitor={({ source }) => source.element === rowRef.current} />
             {isExpandable && (
                 <Button
                     size="smallNudge"

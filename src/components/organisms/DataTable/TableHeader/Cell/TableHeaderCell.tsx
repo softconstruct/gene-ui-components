@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import { flexRender } from "@tanstack/react-table";
 import { Header } from "@tanstack/table-core";
 import classNames from "classnames";
@@ -11,7 +11,7 @@ import Tooltip from "@components/molecules/Tooltip";
 import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
 import { EXPANDER_COLUMN_ID } from "../../constants";
-import { useDataTableContext } from "../../context";
+import { useDirMode } from "../../context";
 import { getCellContentStyle, getCellStyle } from "../../helper";
 
 // Styles
@@ -45,7 +45,7 @@ interface ITableHeaderCellProps<TData, TValue> {
  * @returns A table header cell element containing the rendered column header, or an empty cell if it's a placeholder.
  */
 const TableHeaderCell = <TData, TValue>({ header, offset }: ITableHeaderCellProps<TData, TValue>) => {
-    const { dirMode } = useDataTableContext();
+    const dirMode = useDirMode();
     const { column } = header;
     const isExpanderHeader = column.id === EXPANDER_COLUMN_ID;
     const isPinned = column.getIsPinned();
@@ -53,32 +53,14 @@ const TableHeaderCell = <TData, TValue>({ header, offset }: ITableHeaderCellProp
     const explicitSize = column.columnDef.meta?.explicitSize;
     const label = flexRender(column.columnDef.header, header.getContext()) as string;
 
-    const { table } = header.getContext();
-    const thRef = useRef<HTMLTableCellElement>(null);
     const labelRef = useRef<HTMLSpanElement | null>(null);
 
     const isTruncated = useEllipsisDetection(labelRef, [column.getSize()]);
 
-    useEffect(() => {
-        const th = thRef.current;
-        if (!th || explicitSize !== undefined) return () => undefined;
-
-        const observer = new ResizeObserver(([entry]) => {
-            const newWidth = Math.round(entry.target.getBoundingClientRect().width);
-            const currentSize = table.getState().columnSizing[column.id] ?? column.columnDef.size ?? 0;
-
-            if (Math.abs(currentSize - newWidth) > 1) {
-                table.setColumnSizing((old) => ({ ...old, [column.id]: newWidth }));
-            }
-        });
-
-        observer.observe(th);
-        return () => observer.disconnect();
-    }, [column.id, explicitSize, table]);
-
     return (
         <th
-            ref={thRef}
+            // Auto-sized columns are measured by the TableHeader, which mirrors their rendered width into TanStack
+            data-column-id={explicitSize === undefined ? column.id : undefined}
             className={classNames("tableHeaderCell", {
                 tableHeaderCell_expander: isExpanderHeader,
                 tableHeaderCell_pinned: isPinned

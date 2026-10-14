@@ -1,9 +1,7 @@
 import { FC, MouseEvent, ReactNode } from "react";
-import { RowData } from "@tanstack/react-table";
+import { ColumnOrderState, ColumnPinningState, RowData } from "@tanstack/react-table";
 
 import { IconProps } from "@geneui/icons";
-
-import { IManageColumnsDiffPayload } from "./Toolbar/ManageColumns/useManageColumns";
 
 export interface ITableNoDataTexts {
     noDataAvailableTitle?: string;
@@ -90,6 +88,16 @@ export type DataTableColumn<TData> = {
 
 export type ColumnVisibilityState = Record<string, boolean>;
 
+/**
+ * Changes applied by the manage-columns Save action, passed to `ManageColumnsConfig.onSave`.
+ * `pinningChanges` and `orderChanges` are `null` when the pinning or the order did not change.
+ */
+export interface IManageColumnsDiffPayload {
+    visibilityChanges: Record<string, boolean>;
+    pinningChanges: ColumnPinningState | null;
+    orderChanges: ColumnOrderState | null;
+}
+
 export interface IManageColumnsTexts {
     /** Text for the save button * */
     saveButton?: string;
@@ -146,29 +154,43 @@ export type ManageColumnsConfig = {
      */
     texts?: IManageColumnsTexts;
     /**
-     * Callback function which triggers when the column is getting pinned.
+     * Callback function which triggers when a column's pin is toggled in the popover.
+     * The change is a draft: it is applied to the table (and reported by `onSave`) only on Save.
+     * @param columnId - Id of the toggled column.
+     * @param isPinned - Whether the column is pinned after the toggle.
      */
-    onColumnPin?: () => void;
+    onColumnPin?: (columnId: string, isPinned: boolean) => void;
     /**
-     * Callback function which triggers when the column is getting reordered.
+     * Callback function which triggers when a column is dropped at a new position in the popover.
+     * The change is a draft: it is applied to the table (and reported by `onSave`) only on Save.
+     * @param columnOrder - Ids of all managed columns in their new draft order (pinned columns first).
      */
-    onColumnOrderChange?: () => void;
+    onColumnOrderChange?: (columnOrder: ColumnOrderState) => void;
     /**
-     * Callback function which triggers when the column visibility is getting changed.
+     * Callback function which triggers when a column's checkbox is toggled in the popover.
+     * The change is a draft: it is applied to the table (and reported by `onSave`) only on Save.
+     * @param columnId - Id of the toggled column.
+     * @param isVisible - Whether the column is visible after the toggle.
      */
-    onColumnVisibilityChange?: () => void;
+    onColumnVisibilityChange?: (columnId: string, isVisible: boolean) => void;
     /**
      * Callback function which triggers when the restore button is clicked.
+     * The defaults are a draft: they are applied to the table (and reported by `onSave`) only on Save.
      */
     onRestoreDefaults?: () => void;
     /**
      * Callback function which triggers when the search input is changed.
+     * @param searchValue - The current value of the search input.
      */
-    onSearch?: (searchValue?: string) => void;
+    onSearch?: (searchValue: string) => void;
     /**
-     * Callback function which triggers when the select all columns visibility is getting changed.
+     * Callback function which triggers when the select all columns checkbox is toggled.
+     * The change is a draft: it is applied to the table (and reported by `onSave`) only on Save.
+     * @param isVisible - Whether the columns are visible after the toggle.
+     * @param columnIds - Ids of the columns the toggle applied to: the listed (search-matched) columns,
+     * without the `disabledColumns`.
      */
-    onSelectAllColumnsVisibility?: () => void;
+    onSelectAllColumnsVisibility?: (isVisible: boolean, columnIds: string[]) => void;
     /**
      * List of column ids that should be disabled for hiding.
      */

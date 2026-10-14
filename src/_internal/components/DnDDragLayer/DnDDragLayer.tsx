@@ -33,21 +33,31 @@ type TDragState = {
     initialTransform: string;
 } | null;
 
+type TCanMonitor = NonNullable<Parameters<typeof monitorForElements>[0]["canMonitor"]>;
+
 interface IDnDDragLayer {
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
+    /**
+     * Decides which drags this layer renders a preview for.
+     * Every layer monitors all element drags on the page, so each owner must scope it to its own drags
+     * (e.g. by the source element or a drag type in the source data), otherwise several layers render the same preview.
+     */
+    canMonitor: TCanMonitor;
 }
 
-const DnDDragLayer: FC<IDnDDragLayer> = ({ className }) => {
+const DnDDragLayer: FC<IDnDDragLayer> = ({ className, canMonitor }) => {
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
     const [dragState, setDragState] = useState<TDragState>(null);
 
     const layerRef = useRef<HTMLDivElement>(null);
     const initialOffsetRef = useRef({ x: 0, y: 0 });
     const dragFrameRef = useRef<number | null>(null);
+    const canMonitorRef = useRef(canMonitor);
+    canMonitorRef.current = canMonitor;
 
     useEffect(() => {
         const getTransform = (clientX: number, clientY: number) => {
@@ -69,6 +79,7 @@ const DnDDragLayer: FC<IDnDDragLayer> = ({ className }) => {
         };
 
         const stopMonitoring = monitorForElements({
+            canMonitor: (args) => canMonitorRef.current(args),
             onDragStart: ({ location, source }) => {
                 const { previewNode, initialRect } = source.data;
 

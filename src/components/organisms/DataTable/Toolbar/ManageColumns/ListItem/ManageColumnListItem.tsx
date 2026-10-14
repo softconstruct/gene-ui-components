@@ -33,6 +33,10 @@ interface IManageColumnListItemProps<TData> {
      */
     disabled?: boolean;
     /**
+     * Locks only the visibility checkbox; the column can still be pinned and reordered.
+     */
+    visibilityDisabled?: boolean;
+    /**
      * Callback function triggered when the checkbox state is toggled.
      * @param column - The column instance whose visibility state is being changed.
      */
@@ -68,6 +72,7 @@ const ManageColumnListItem = <TData,>({
     listId,
     checked,
     disabled,
+    visibilityDisabled,
     onChange,
     isPinnedDraft,
     onPinToggle,
@@ -113,7 +118,7 @@ const ManageColumnListItem = <TData,>({
                 <Checkbox
                     id={`${listId}-${column.id}`}
                     checked={checked}
-                    disabled={disabled}
+                    disabled={disabled || visibilityDisabled}
                     onChange={() => onChange(column)}
                     className="manageColumnListItem__checkbox"
                     label={headerText}

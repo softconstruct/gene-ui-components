@@ -18,7 +18,7 @@ import Pagination, { IPaginationProps } from "@components/molecules/Pagination";
 
 // Constants, context & helpers
 import { EXPANDER_COLUMN_ID, INITIAL_PAGE_SIZE } from "./constants";
-import { DataTableProvider, IDataTableContext } from "./context";
+import { DataTableProvider, DirModeContext, IDataTableContext } from "./context";
 import { adaptColumns, DefaultCellComponent, withExpanderColumn } from "./helper";
 // Hooks
 import { useTablePagination } from "./hooks/useTablePagination";
@@ -401,43 +401,44 @@ const DataTable = <TData,>({
                 texts: { ...DEFAULT_MANAGE_COLUMNS_CONFIG.texts, ...manageColumnsConfig.texts }
             },
             initialColumnVisibility,
-            initialColumnPinning,
-            dirMode
+            initialColumnPinning
         }),
-        [table, manageColumnsConfig, initialColumnVisibility, initialColumnPinning, dirMode]
+        [table, manageColumnsConfig, initialColumnVisibility, initialColumnPinning]
     );
 
     return (
         <DataTableProvider value={contextValue}>
-            <div className={classNames("dataTable", className)}>
-                <Toolbar />
-                <Scrollbar>
-                    <table
-                        className={classNames("dataTable__table", {
-                            dataTable__noDataToDisplay: isTableDataEmpty
-                        })}
-                    >
-                        <TableHeader
-                            sticky={sticky}
-                            headerGroups={table.getHeaderGroups()}
-                            hasRowActions={Boolean(rowActions?.length)}
-                        />
-                        <TableBody
-                            loading={isTableLoading}
-                            loadingText={loadingText}
-                            rows={table.getRowModel().rows}
-                            noDataTexts={noDataTexts}
-                            noDataAvailableActions={noDataAvailableActions}
-                            rowActions={rowActions}
-                            getRowStatus={getRowStatus}
-                            renderExpandedRow={renderExpandedRow}
-                        />
-                    </table>
-                </Scrollbar>
-                {shouldShowPagination && (
-                    <Pagination className="dataTable__pagination" {...paginationProps} disabled={isTableLoading} />
-                )}
-            </div>
+            <DirModeContext.Provider value={dirMode}>
+                <div className={classNames("dataTable", className)}>
+                    <Toolbar />
+                    <Scrollbar>
+                        <table
+                            className={classNames("dataTable__table", {
+                                dataTable__noDataToDisplay: isTableDataEmpty
+                            })}
+                        >
+                            <TableHeader
+                                sticky={sticky}
+                                headerGroups={table.getHeaderGroups()}
+                                hasRowActions={Boolean(rowActions?.length)}
+                            />
+                            <TableBody
+                                loading={isTableLoading}
+                                loadingText={loadingText}
+                                rows={table.getRowModel().rows}
+                                noDataTexts={noDataTexts}
+                                noDataAvailableActions={noDataAvailableActions}
+                                rowActions={rowActions}
+                                getRowStatus={getRowStatus}
+                                renderExpandedRow={renderExpandedRow}
+                            />
+                        </table>
+                    </Scrollbar>
+                    {shouldShowPagination && (
+                        <Pagination className="dataTable__pagination" {...paginationProps} disabled={isTableLoading} />
+                    )}
+                </div>
+            </DirModeContext.Provider>
         </DataTableProvider>
     );
 };

@@ -6,7 +6,7 @@ import { ChevronDown, ChevronLeft, ChevronRight } from "@geneui/icons";
 // Components
 import Button from "@components/atoms/Button";
 
-import { useDataTableContext } from "../../context";
+import { useDirMode } from "../../context";
 import { DataTableRowExpandChangeHandler } from "../../types";
 
 interface IExpanderCellProps<TData, TValue> extends CellContext<TData, TValue> {
@@ -23,7 +23,7 @@ interface IExpanderCellProps<TData, TValue> extends CellContext<TData, TValue> {
  * @returns A button that toggles the expanded state of the parent row.
  */
 const ExpanderCell = <TData, TValue>({ row, onRowExpandChange }: IExpanderCellProps<TData, TValue>) => {
-    const { dirMode } = useDataTableContext();
+    const dirMode = useDirMode();
     const isExpanded = row.getIsExpanded();
     const CollapsedChevronIcon = dirMode === "rtl" ? ChevronLeft : ChevronRight;
 

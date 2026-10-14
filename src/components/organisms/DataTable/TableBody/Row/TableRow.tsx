@@ -6,7 +6,7 @@ import classNames from "classnames";
 import Button from "@components/atoms/Button";
 import Tooltip from "@components/molecules/Tooltip";
 
-import { useDataTableContext } from "../../context";
+import { useDirMode } from "../../context";
 import TableBodyCell from "../../TableBody/Cell/TableBodyCell";
 import { DataTableGetRowStatus, DataTableRenderExpandedRow, IDataTableRowAction } from "../../types";
 import TableExpandedRow from "../Row/TableExpandedRow";
@@ -58,7 +58,7 @@ const RowActionsWrapper: FC<IRowActionsWrapperProps> = ({ title, children }) => 
  * @returns A table row element containing its respective rendered cells.
  */
 const TableRow = <TData,>({ row, rowActions, getRowStatus, renderExpandedRow }: ITableRowProps<TData>) => {
-    const { dirMode } = useDataTableContext();
+    const dirMode = useDirMode();
     const rowStatus = getRowStatus?.(row.original);
     const isRowExpanded = row.getIsExpanded();
     const expandedRow = isRowExpanded ? renderExpandedRow?.(row.original) : null;
