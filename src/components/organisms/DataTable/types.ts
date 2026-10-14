@@ -163,7 +163,8 @@ export type ManageColumnsConfig = {
     /**
      * Callback function which triggers when a column is dropped at a new position in the popover.
      * The change is a draft: it is applied to the table (and reported by `onSave`) only on Save.
-     * @param columnOrder - Ids of all managed columns in their new draft order (pinned columns first).
+     * @param columnOrder - Ids of all managed columns in their new draft order, as listed in the popover.
+     * Pinned columns are moved to the top only on Save.
      */
     onColumnOrderChange?: (columnOrder: ColumnOrderState) => void;
     /**

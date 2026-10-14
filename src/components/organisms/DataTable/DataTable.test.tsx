@@ -752,7 +752,51 @@ describe("Table Component - Manage Columns Integration", () => {
         expect(callbacks.onRestoreDefaults).toHaveBeenCalledTimes(1);
     });
 
-    it("moves a column into the pinned group of the draft list as soon as it is pinned", async () => {
+    it("keeps a pinned column in place in the list until Save, which moves it to the top", async () => {
+        const openPopover = async () => {
+            await act(async () => {
+                setup
+                    .find(Button)
+                    .filterWhere((b) => b.text().includes("Manage columns"))
+                    .simulate("click");
+            });
+            setup.update();
+        };
+        const getListLabels = () =>
+            setup.find(".manageColumnListItem").map((item) => item.find("input[type='checkbox']").prop("id"));
+        const getHeaderLabels = () =>
+            setup
+                .find("thead th")
+                .map((th) => th.text())
+                .filter(Boolean);
+
+        await openPopover();
+        const listBeforePin = getListLabels();
+        const thirdHeaderLabel = getHeaderLabels()[2];
+
+        await act(async () => {
+            setup.find(".manageColumnListItem__pinAction").at(2).simulate("click");
+        });
+        setup.update();
+
+        // The draft list keeps the user's arrangement while editing
+        expect(getListLabels()).toEqual(listBeforePin);
+
+        await act(async () => {
+            setup
+                .find(Button)
+                .filterWhere((b) => b.text().includes("Save"))
+                .simulate("click");
+        });
+        setup.update();
+
+        expect(getHeaderLabels()[0]).toBe(thirdHeaderLabel);
+
+        await openPopover();
+        expect(getListLabels()[0]).toBe(listBeforePin[2]);
+    });
+
+    it("leaves Save disabled after pinning and unpinning the same column", async () => {
         await act(async () => {
             setup
                 .find(Button)
@@ -761,16 +805,17 @@ describe("Table Component - Manage Columns Integration", () => {
         });
         setup.update();
 
-        const getListLabels = () =>
-            setup.find(".manageColumnListItem").map((item) => item.find("input[type='checkbox']").prop("id"));
-        const thirdItemId = getListLabels()[2];
-
+        await act(async () => {
+            setup.find(".manageColumnListItem__pinAction").at(2).simulate("click");
+        });
+        setup.update();
         await act(async () => {
             setup.find(".manageColumnListItem__pinAction").at(2).simulate("click");
         });
         setup.update();
 
-        expect(getListLabels()[0]).toBe(thirdItemId);
+        const saveButton = setup.find(Button).filterWhere((b) => b.text().includes("Save"));
+        expect(saveButton.prop("disabled")).toBe(true);
     });
 
     it("applies pinning classes to body and header cells when a column is pinned and saved", async () => {

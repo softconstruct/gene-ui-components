@@ -90,6 +90,13 @@ export const useManageColumns = <TData>({
         [columnOrder, definitionOrder, columnPinning]
     );
 
+    /**
+     * The draft list keeps the user's arrangement while pinned columns are moved to the top only on Save,
+     * so an order change is judged by the order Save would apply, not by the list as displayed.
+     */
+    const isOrderChanged = (order: string[], pinning: ColumnPinningState) =>
+        !arraysEqual(pinnedFirst(order, pinning), activeOrder);
+
     const isControlled = manageColumnsConfig && manageColumnsConfig.open !== undefined;
 
     const [internalOpen, setInternalOpen] = useState(false);
@@ -184,7 +191,6 @@ export const useManageColumns = <TData>({
         const newRightPinned = finalOrder.filter((id) => rightPinned.includes(id));
         const finalPinning = { ...draftPinning, left: newLeftPinned, right: newRightPinned };
 
-        // Compared against the applied table state, so a draft that ends up where it started reports no change
         const pinningChanged =
             !arraysEqual(newLeftPinned, columnPinning.left || []) ||
             !arraysEqual(newRightPinned, columnPinning.right || []);
@@ -288,17 +294,14 @@ export const useManageColumns = <TData>({
             ...draftPinning,
             left: isPinnedNext ? [...leftPinned, column.id] : leftPinned.filter((id) => id !== column.id)
         };
-        // Pinned columns always lead the table, so the draft list moves the column across the pinned boundary right away
-        // (a newly pinned column ends the pinned group, an unpinned one starts the unpinned group)
-        const nextOrder = pinnedFirst(completeOrder(draftColumnOrder, defaultColumnOrder), nextPinning);
+        const draftOrder = completeOrder(draftColumnOrder, defaultColumnOrder);
 
         setDraftPinning(nextPinning);
-        setDraftColumnOrder(nextOrder);
         setDiffTracker((prevDiffs) => {
             const newPin = new Set(prevDiffs.pinning);
             if (isPinnedNext !== originalPinned) newPin.add(column.id);
             else newPin.delete(column.id);
-            return { ...prevDiffs, pinning: newPin, orderChanged: !arraysEqual(nextOrder, activeOrder) };
+            return { ...prevDiffs, pinning: newPin, orderChanged: isOrderChanged(draftOrder, nextPinning) };
         });
 
         manageColumnsConfig?.onColumnPin?.(column.id, isPinnedNext);
@@ -351,17 +354,13 @@ export const useManageColumns = <TData>({
 
         newOrder.splice(finalIndex, 0, sourceId);
 
-        // A drop across the pinned boundary snaps back to the column's own group, matching what Save applies
-        const nextOrder = pinnedFirst(newOrder, draftPinning);
-        if (arraysEqual(nextOrder, currentOrder)) return;
-
-        setDraftColumnOrder(nextOrder);
+        setDraftColumnOrder(newOrder);
         setDiffTracker((prevDiffs) => ({
             ...prevDiffs,
-            orderChanged: !arraysEqual(nextOrder, activeOrder)
+            orderChanged: isOrderChanged(newOrder, draftPinning)
         }));
 
-        manageColumnsConfig?.onColumnOrderChange?.(nextOrder);
+        manageColumnsConfig?.onColumnOrderChange?.(newOrder);
     };
 
     useEffect(() => {
@@ -383,7 +382,6 @@ export const useManageColumns = <TData>({
         }
     }, [draftColumnOrder, popoverOpen, defaultColumnOrder]);
 
-    // Disabled columns are skipped by select-all, so they must not keep it from being fully checked
     const columnsInScope = (isSearchActive ? columnsToRender : columns).filter(
         (col) => !manageColumnsConfig?.disabledColumns?.includes(col.id)
     );
@@ -391,7 +389,7 @@ export const useManageColumns = <TData>({
     const allColumnsChecked = columnsInScope.length > 0 && visibleColumnsInScopeCount === columnsInScope.length;
     const allColumnsIndeterminate =
         visibleColumnsInScopeCount > 0 && visibleColumnsInScopeCount < columnsInScope.length;
-    // Every listed column is locked: select-all would have nothing to toggle
+
     const canToggleAllColumns = columnsInScope.length > 0;
 
     return {

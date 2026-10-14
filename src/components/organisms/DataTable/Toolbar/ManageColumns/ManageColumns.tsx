@@ -34,7 +34,6 @@ import "./ManageColumns.scss";
 const ManageColumns = <TData,>() => {
     const { table, manageColumnsConfig, initialColumnVisibility, initialColumnPinning } = useDataTableContext<TData>();
 
-    // Unique per instance: scopes drag and drop to this list and keeps checkbox ids unique on the page
     const [listId] = useState(() => `manageColumns-${nanoid()}`);
 
     const popoverRef = useRef<IPopoverRef>({
@@ -114,8 +113,6 @@ const ManageColumns = <TData,>() => {
 
     const [listElement, setListElement] = useState<HTMLDivElement | null>(null);
 
-    // The whole list is a drop target: the gap stays while the pointer is anywhere inside the list
-    // (including the gap itself) and is cleared only when the pointer leaves the list
     useEffect(() => {
         if (!listElement) return () => undefined;
 
@@ -134,7 +131,6 @@ const ManageColumns = <TData,>() => {
                 const gap = dropGapRef.current;
                 setDropGap(null);
 
-                // Not over this list means the drag was cancelled (Escape) or released outside the list
                 const isOverList = location.current.dropTargets.some((target) => target.data.listId === listId);
                 if (!gap || !isOverList) return;
 
