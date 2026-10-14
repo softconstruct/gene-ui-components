@@ -144,7 +144,6 @@ const Editor: FC<IEditorProps> = ({
                 Superscript,
                 TextAlign.configure({ types: ["heading", "paragraph"] }),
                 TextStyleKit.configure({
-                    fontFamily: false,
                     lineHeight: false
                 }),
                 Placeholder.configure({

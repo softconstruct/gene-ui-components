@@ -35,6 +35,9 @@ import ToolbarMenuButton, {
 const parseFontSize = (fontSize?: string): number | undefined =>
     fontSize?.endsWith("px") ? Math.round(Number.parseFloat(fontSize)) : undefined;
 
+const parseFontFamily = (fontFamily: string): string =>
+    fontFamily.split(",")[0].replace(/["']/g, "").trim().toLowerCase();
+
 const getToolbarState = (editor: TiptapEditor) => {
     const paragraphAlign = editor.getAttributes("paragraph").textAlign as string | undefined;
     const headingAlign = editor.getAttributes("heading").textAlign as string | undefined;
@@ -56,6 +59,7 @@ const getToolbarState = (editor: TiptapEditor) => {
         code: editor.isActive("code"),
         color: (textStyle.color as string) ?? "",
         backgroundColor: (textStyle.backgroundColor as string) ?? "",
+        fontFamily: parseFontFamily((textStyle.fontFamily as string) ?? ""),
         fontSize: parseFontSize(textStyle.fontSize as string | undefined)
     };
 };
@@ -108,6 +112,17 @@ const EDITOR_COLORS = [
 
 const PRESET_COLOR_COUNT = 20;
 
+const FONT_FAMILIES_BY_NAME: Record<string, { label: string; value: string }> = {
+    arial: { label: "Arial", value: "Arial, Helvetica, sans-serif" },
+    "book antiqua": { label: "Book Antiqua", value: "'Book Antiqua', Palatino, 'Palatino Linotype', serif" },
+    "courier new": { label: "Courier New", value: "'Courier New', Courier, monospace" },
+    georgia: { label: "Georgia", value: "Georgia, 'Times New Roman', serif" },
+    tahoma: { label: "Tahoma", value: "Tahoma, Verdana, sans-serif" },
+    "times new roman": { label: "Times New Roman", value: "'Times New Roman', Times, serif" },
+    "trebuchet ms": { label: "Trebuchet MS", value: "'Trebuchet MS', sans-serif" },
+    verdana: { label: "Verdana", value: "Verdana, sans-serif" }
+};
+
 const toPresetColors = (customColors: string[] = []): string[] =>
     [NO_COLOR, ...customColors, ...EDITOR_COLORS].slice(0, PRESET_COLOR_COUNT);
 
@@ -140,6 +155,23 @@ const BLOCK_MENU_ACTIONS: ToolbarAction[] = [
         isActive: (state) => state.headingLevel === 3,
         buildChain: (chain) => chain.setHeading({ level: 3 })
     }
+];
+
+const DEFAULT_FONT_FAMILY_LABEL = "Default";
+
+const FONT_FAMILY_MENU_ACTIONS: ToolbarAction[] = [
+    {
+        id: "default",
+        label: DEFAULT_FONT_FAMILY_LABEL,
+        isActive: (state) => !FONT_FAMILIES_BY_NAME[state.fontFamily],
+        buildChain: (chain) => chain.unsetFontFamily()
+    },
+    ...Object.entries(FONT_FAMILIES_BY_NAME).map(([name, { label, value }]) => ({
+        id: name,
+        label,
+        isActive: (state: ToolbarState) => state.fontFamily === name,
+        buildChain: (chain: ToolbarChain) => chain.setFontFamily(value)
+    }))
 ];
 
 const ALIGN_MENU_ACTIONS: ToolbarAction[] = [
@@ -289,6 +321,7 @@ const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false, presetColors }) 
 
     const activeBlock = toolbarState ? BLOCK_MENU_ACTIONS.find(({ isActive }) => isActive(toolbarState)) : undefined;
     const activeAlign = toolbarState ? ALIGN_MENU_ACTIONS.find(({ isActive }) => isActive(toolbarState)) : undefined;
+    const activeFontFamily = toolbarState ? FONT_FAMILIES_BY_NAME[toolbarState.fontFamily] : undefined;
     const AlignIcon = activeAlign?.Icon ?? TextAlignLeft;
 
     return (
@@ -313,6 +346,15 @@ const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false, presetColors }) 
                 disabled={isOff}
                 items={toMenuItems(BLOCK_MENU_ACTIONS, toolbarState)}
                 onChange={handleMenuChange(BLOCK_MENU_ACTIONS)}
+            />
+            <Divider direction="vertical" className="editor__divider" />
+            <ToolbarMenuButton
+                className="editor__fontFamilyTrigger"
+                label={activeFontFamily?.label ?? DEFAULT_FONT_FAMILY_LABEL}
+                aria-label="Font"
+                disabled={isOff}
+                items={toMenuItems(FONT_FAMILY_MENU_ACTIONS, toolbarState)}
+                onChange={handleMenuChange(FONT_FAMILY_MENU_ACTIONS)}
             />
             <Divider direction="vertical" className="editor__divider" />
             <ToolbarFontSize value={toolbarState?.fontSize} disabled={isOff} onChange={applyFontSize} />
