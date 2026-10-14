@@ -1,14 +1,17 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { fn } from "@storybook/test";
 
 import { Pencil, RecycleBin } from "@geneui/icons";
 
+// Components
+import NumberField from "@components/molecules/NumberField";
 import Pagination from "@components/molecules/Pagination";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 import { mockColumns, mockData, renderMockExpandedRow } from "../../../../stories/data/__dataTable";
-// Components
 import DataTable, { DataTableRowStatus, IDataTableProps, IDataTableRowAction } from "./index";
 
 type MockRowType = (typeof mockData)[0];
@@ -20,7 +23,6 @@ const defaultRowActions: IDataTableRowAction<MockRowType>[] = [
     {
         Icon: Pencil,
         title: "Edit",
-        // Third row (index 2), seventh (6), ... - first action disabled
         disabled: (row) => {
             const i = rowIndexInMockData(row);
             return i >= 0 && i % 4 === 2;
@@ -30,7 +32,6 @@ const defaultRowActions: IDataTableRowAction<MockRowType>[] = [
     {
         Icon: RecycleBin,
         title: "delete",
-        // First row (index 0), fifth (4), ... - second action disabled
         disabled: (row) => {
             const i = rowIndexInMockData(row);
             return i >= 0 && i % 4 === 0;
@@ -57,7 +58,8 @@ const meta: Meta<IDataTableProps<MockRowType>> = {
         renderExpandedRow: args({ control: "false", ...propCategory.content }),
         onRowExpandChange: args({ control: "false", ...propCategory.functionality }),
         rowActions: args({ control: "object", ...propCategory.functionality }),
-        getRowStatus: args({ control: "false", ...propCategory.appearance })
+        getRowStatus: args({ control: "false", ...propCategory.appearance }),
+        manageColumnsConfig: args({ control: "object", ...propCategory.functionality })
     },
     args: {}
 };
@@ -165,6 +167,62 @@ export const AsyncDataFetchingWithPagination: Story = {
             pageSize: 10,
             rowsPerPageOptions: [5, 10, 20],
             showInputPageField: true
+        }
+    }
+};
+
+const sizingColumns: IDataTableProps<MockRowType>["columns"] = [
+    { accessorKey: "Id", header: "Id" },
+    { accessorKey: "FirstName", header: "First name of the client as registered in the system" },
+    { accessorKey: "LastName", header: "Last name" },
+    { accessorKey: "Email", header: "Email" },
+    {
+        accessorKey: "DayOffs",
+        header: "Day offs",
+        renderCell: ({ value }) => <NumberField size="small" defaultValue={Number(value)} />
+    },
+    { accessorKey: "Created", header: "Created" }
+];
+
+export const ColumnSizing: Story = {
+    render: (props) => <DataTable {...props} />,
+    args: {
+        columns: sizingColumns,
+        data: mockData,
+        rowActions: defaultRowActions,
+        pagination: { pageSize: 10, rowsPerPageOptions: [2, 10, 20, 50, 100], showInputPageField: true }
+    }
+};
+
+export const WithManageColumns: Story = {
+    render: (props) => <DataTable {...props} />,
+    args: {
+        data: mockData,
+        columns: mockColumns,
+        renderExpandedRow: (row) => renderMockExpandedRow(row),
+        manageColumnsConfig: {
+            visible: true,
+            loading: false,
+            disabledColumns: ["DayOffs"],
+            // Nested in the config object, so the global `^on.*` actions regex doesn't reach them: named spies
+            // make every manage-columns event show up in the Actions tab
+            onOpenChange: fn().mockName("manageColumnsConfig.onOpenChange"),
+            onSave: fn().mockName("manageColumnsConfig.onSave"),
+            onColumnVisibilityChange: fn().mockName("manageColumnsConfig.onColumnVisibilityChange"),
+            onColumnPin: fn().mockName("manageColumnsConfig.onColumnPin"),
+            onColumnOrderChange: fn().mockName("manageColumnsConfig.onColumnOrderChange"),
+            onSelectAllColumnsVisibility: fn().mockName("manageColumnsConfig.onSelectAllColumnsVisibility"),
+            onRestoreDefaults: fn().mockName("manageColumnsConfig.onRestoreDefaults"),
+            onSearch: fn().mockName("manageColumnsConfig.onSearch"),
+            texts: {
+                searchPlaceholder: "Search...",
+                cancelButton: "Cancel",
+                saveButton: "Save changes",
+                restoreDefaultsButton: "Restore defaults",
+                label: "Manage columns",
+                noResultsFound: "No results found",
+                noResultsFoundDescription: undefined
+            }
         }
     }
 };

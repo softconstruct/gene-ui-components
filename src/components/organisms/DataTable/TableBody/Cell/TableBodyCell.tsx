@@ -2,7 +2,10 @@ import React, { memo } from "react";
 import { Cell, ColumnDef, flexRender } from "@tanstack/react-table";
 import classNames from "classnames";
 
-import { EXPANDABLE_CELL_SIZE_REM } from "@components/organisms/DataTable/constants";
+import { areCellsEqual, getCellContentStyle, getCellStyle } from "@components/organisms/DataTable/helper";
+
+import { EXPANDER_COLUMN_ID } from "../../constants";
+import { CellWidthContext } from "../../context";
 
 // Styles
 import "./TableBodyCell.scss";
@@ -14,13 +17,13 @@ import "./TableBodyCell.scss";
  * the rendering context) plus a set of primitive snapshots captured by the
  * parent at render time. Memoization compares only the snapshots, never the
  * live `cell` reference — TanStack recreates cell instances on every render,
- * and its live getters always return current state, which makes them unsafe
+ * and its live getters always return the current state, which makes them unsafe
  * for prev/next comparison inside `React.memo`.
  *
  * @template TData - The shape of the overall row data object.
  * @template TValue - The type of the specific value held within this cell.
  */
-interface ITableBodyCellProps<TData, TValue> {
+export interface ITableBodyCellProps<TData, TValue> {
     /**
      * TanStack Table cell instance — used only at render time to obtain the
      * `flexRender` context. Not part of the memo equality.
@@ -37,6 +40,36 @@ interface ITableBodyCellProps<TData, TValue> {
      * consumers updating the `columns` prop with a new renderer closure.
      */
     renderer: ColumnDef<TData, TValue>["cell"];
+    /**
+     * Snapshot of `column.getIsPinned()` captured by the parent at render time.
+     */
+    isPinned?: boolean;
+    /**
+     * Sticky inset (px) of the cell when its column is pinned.
+     */
+    offset: number;
+    /**
+     * Rendered width (px) of the cell's column, so that the content re-checks its truncation when it changes.
+     */
+    width: number;
+    /**
+     * Actual rtl/ltr mode.
+     */
+    dirMode: string;
+    /**
+     * Snapshot of `cell.getValue()` captured by the parent at render time.
+     * Not read during render (the live `cell` context is used instead) — it exists
+     * so the memo invalidates when a data value changes in place.
+     */
+    // eslint-disable-next-line react/no-unused-prop-types -- consumed by the areCellsEqual memo comparator
+    value: unknown;
+    /**
+     * Snapshot of `row.original` captured by the parent at render time.
+     * Invalidates the memo for custom `renderCell` renderers, which can read
+     * any field of the row — not only this column's value.
+     */
+    // eslint-disable-next-line react/no-unused-prop-types -- consumed by the areCellsEqual memo comparator
+    rowData: TData;
 }
 
 /**
@@ -50,45 +83,45 @@ interface ITableBodyCellProps<TData, TValue> {
  * @param props - The properties for the component.
  * @returns A table cell element with the rendered content.
  */
-const TableBodyCell = <TData, TValue>({ cell, renderer, isExpanded }: ITableBodyCellProps<TData, TValue>) => {
-    const isExpanderCell = cell.column.id === "expander";
+const TableBodyCell = <TData, TValue>({
+    cell,
+    renderer,
+    isExpanded,
+    isPinned,
+    offset,
+    width,
+    dirMode
+}: ITableBodyCellProps<TData, TValue>) => {
+    const isExpanderCell = cell.column.id === EXPANDER_COLUMN_ID;
+    const isRTL = dirMode === "rtl";
+    const explicitSize = cell.column.columnDef.meta?.explicitSize;
+
     return (
         <td
             className={classNames("tableBodyCell", {
                 tableBodyCell_expander: isExpanderCell,
-                tableBodyCell_expander_expanded: isExpanded
+                tableBodyCell_expander_expanded: isExpanded,
+                tableBodyCell_pinned: isPinned
             })}
-            style={{
-                width: isExpanderCell ? EXPANDABLE_CELL_SIZE_REM : undefined,
-                minWidth: isExpanderCell ? EXPANDABLE_CELL_SIZE_REM : undefined,
-                maxWidth: 250 // temp
-            }}
+            style={getCellStyle(explicitSize, offset, isPinned, isRTL)}
         >
-            <div className="tableBodyCell__content">{flexRender(renderer, cell.getContext())}</div>
+            <CellWidthContext.Provider value={width}>
+                <div className="tableBodyCell__content" style={getCellContentStyle(explicitSize)}>
+                    {flexRender(renderer, cell.getContext())}
+                </div>
+            </CellWidthContext.Provider>
         </td>
     );
 };
 
 /**
- * Custom equality for {@link TableBodyCell}'s memo. Compares only the
- * primitive snapshot props — the `cell` instance itself is intentionally
- * ignored because TanStack creates a new one on every render.
+ * By defining a strict interface with a generic call signature,
+ * we force TypeScript to treat the Memoized component as a generic function!
  */
-const areCellsEqual = <TData, TValue>(
-    prev: ITableBodyCellProps<TData, TValue>,
-    next: ITableBodyCellProps<TData, TValue>
-) => prev.cell.id === next.cell.id && prev.isExpanded === next.isExpanded && prev.renderer === next.renderer;
+interface IMemoizedTableBodyCell {
+    <TData, TValue>(props: ITableBodyCellProps<TData, TValue>): React.ReactElement | null;
+}
 
-/**
- * `React.memo` erases the generic signature; this helper restores it without
- * an unsafe `as typeof TableBodyCell` cast on the consumer side.
- */
-const memoGeneric = <TProps,>(
-    component: (props: TProps) => React.ReactElement | null,
-    isEqual: (prev: TProps, next: TProps) => boolean
-): typeof component => memo(component, isEqual) as unknown as typeof component;
+const MemoizedTableBodyCell = memo(TableBodyCell, areCellsEqual) as IMemoizedTableBodyCell;
 
-const MemoizedTableBodyCell = memoGeneric(TableBodyCell, areCellsEqual);
-
-export { areCellsEqual };
 export default MemoizedTableBodyCell;
