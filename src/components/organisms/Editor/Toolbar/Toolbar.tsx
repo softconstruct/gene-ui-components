@@ -1,6 +1,5 @@
-import React, { FC, memo, useEffect, useState } from "react";
+import React, { FC, memo } from "react";
 import type { Editor as TiptapEditor } from "@tiptap/core";
-import { redoDepth, undoDepth } from "@tiptap/pm/history";
 
 import {
     ArrowRedo,
@@ -8,7 +7,6 @@ import {
     ColorFill,
     EqualOff,
     Globe,
-    IconProps,
     Link,
     RecycleBin,
     TextAlignCenter,
@@ -26,111 +24,22 @@ import {
 
 // Components
 import Divider from "@components/atoms/Divider";
-import ToolbarButton from "@components/organisms/Editor/ToolbarButton/ToolbarButton";
-import ToolbarColorButton from "@components/organisms/Editor/ToolbarColorButton/ToolbarColorButton";
-import ToolbarFontSize from "@components/organisms/Editor/ToolbarFontSize/ToolbarFontSize";
-import ToolbarLinkButton from "@components/organisms/Editor/ToolbarLinkButton/ToolbarLinkButton";
-import ToolbarMenuButton, {
-    IToolbarMenuButtonItem
-} from "@components/organisms/Editor/ToolbarMenuButton/ToolbarMenuButton";
+import ColorTrigger from "@components/organisms/Editor/Toolbar/ColorTrigger/ColorTrigger";
+import FontSizeStepper from "@components/organisms/Editor/Toolbar/FontSizeStepper/FontSizeStepper";
+import LinkTrigger from "@components/organisms/Editor/Toolbar/LinkTrigger/LinkTrigger";
+import MenuTrigger from "@components/organisms/Editor/Toolbar/MenuTrigger/MenuTrigger";
+import ToolbarButton from "@components/organisms/Editor/Toolbar/ToolbarButton/ToolbarButton";
 
-const parseFontSize = (fontSize?: string): number | undefined =>
-    fontSize?.endsWith("px") ? Math.round(Number.parseFloat(fontSize)) : undefined;
+// Constants
+import { DEFAULT_FONT_FAMILY_LABEL, FONT_FAMILIES_BY_NAME } from "./constants";
+// Helpers
+import { toMenuItems, toPresetColors } from "./helper";
+// Types
+import { IToolbarAction, IToolbarState, ToolbarChain } from "./types";
+// Hooks
+import useToolbarState from "./useToolbarState";
 
-const parseFontFamily = (fontFamily: string): string =>
-    fontFamily.split(",")[0].replace(/["']/g, "").trim().toLowerCase();
-
-const getToolbarState = (editor: TiptapEditor) => {
-    const paragraphAlign = editor.getAttributes("paragraph").textAlign as string | undefined;
-    const headingAlign = editor.getAttributes("heading").textAlign as string | undefined;
-    const textStyle = editor.getAttributes("textStyle");
-
-    return {
-        canUndo: undoDepth(editor.state) > 0,
-        canRedo: redoDepth(editor.state) > 0,
-        bold: editor.isActive("bold"),
-        italic: editor.isActive("italic"),
-        headingLevel: ([1, 2, 3] as const).find((level) => editor.isActive("heading", { level })) ?? 0,
-        strike: editor.isActive("strike"),
-        textAlign: paragraphAlign ?? headingAlign ?? "",
-        underline: editor.isActive("underline"),
-        subscript: editor.isActive("subscript"),
-        superscript: editor.isActive("superscript"),
-        bulletList: editor.isActive("bulletList"),
-        orderedList: editor.isActive("orderedList"),
-        code: editor.isActive("code"),
-        link: editor.isActive("link"),
-        linkHref: (editor.getAttributes("link").href as string) ?? "",
-        color: (textStyle.color as string) ?? "",
-        backgroundColor: (textStyle.backgroundColor as string) ?? "",
-        fontFamily: parseFontFamily((textStyle.fontFamily as string) ?? ""),
-        fontSize: parseFontSize(textStyle.fontSize as string | undefined)
-    };
-};
-
-type ToolbarState = ReturnType<typeof getToolbarState>;
-
-type ToolbarChain = ReturnType<TiptapEditor["chain"]>;
-
-type ToolbarAction = {
-    id: string;
-    label: string;
-    Icon?: FC<IconProps>;
-    divider?: boolean;
-    isActive: (state: ToolbarState) => boolean;
-    buildChain: (chain: ToolbarChain) => ToolbarChain;
-};
-
-const toMenuItems = (actions: ToolbarAction[], state: ToolbarState | null): IToolbarMenuButtonItem[] =>
-    actions.map(({ id, label, Icon, divider, isActive }) => ({
-        id,
-        label,
-        Icon,
-        divider,
-        selected: state ? isActive(state) : false
-    }));
-
-const NO_COLOR = "";
-
-const EDITOR_COLORS = [
-    "#000000",
-    "#434343",
-    "#666666",
-    "#999999",
-    "#B7B7B7",
-    "#CCCCCC",
-    "#D9D9D9",
-    "#EFEFEF",
-    "#FFFFFF",
-    "#980000",
-    "#FF0000",
-    "#FF9900",
-    "#FFFF00",
-    "#00FF00",
-    "#00FFFF",
-    "#4A86E8",
-    "#0000FF",
-    "#9900FF",
-    "#FF00FF"
-];
-
-const PRESET_COLOR_COUNT = 20;
-
-const FONT_FAMILIES_BY_NAME: Record<string, { label: string; value: string }> = {
-    arial: { label: "Arial", value: "Arial, Helvetica, sans-serif" },
-    "book antiqua": { label: "Book Antiqua", value: "'Book Antiqua', Palatino, 'Palatino Linotype', serif" },
-    "courier new": { label: "Courier New", value: "'Courier New', Courier, monospace" },
-    georgia: { label: "Georgia", value: "Georgia, 'Times New Roman', serif" },
-    tahoma: { label: "Tahoma", value: "Tahoma, Verdana, sans-serif" },
-    "times new roman": { label: "Times New Roman", value: "'Times New Roman', Times, serif" },
-    "trebuchet ms": { label: "Trebuchet MS", value: "'Trebuchet MS', sans-serif" },
-    verdana: { label: "Verdana", value: "Verdana, sans-serif" }
-};
-
-const toPresetColors = (customColors: string[] = []): string[] =>
-    [NO_COLOR, ...customColors, ...EDITOR_COLORS].slice(0, PRESET_COLOR_COUNT);
-
-const BLOCK_MENU_ACTIONS: ToolbarAction[] = [
+const BLOCK_MENU_ACTIONS: IToolbarAction[] = [
     {
         id: "paragraph",
         label: "Normal",
@@ -161,9 +70,7 @@ const BLOCK_MENU_ACTIONS: ToolbarAction[] = [
     }
 ];
 
-const DEFAULT_FONT_FAMILY_LABEL = "Default";
-
-const FONT_FAMILY_MENU_ACTIONS: ToolbarAction[] = [
+const FONT_FAMILY_MENU_ACTIONS: IToolbarAction[] = [
     {
         id: "default",
         label: DEFAULT_FONT_FAMILY_LABEL,
@@ -173,12 +80,12 @@ const FONT_FAMILY_MENU_ACTIONS: ToolbarAction[] = [
     ...Object.entries(FONT_FAMILIES_BY_NAME).map(([name, { label, value }]) => ({
         id: name,
         label,
-        isActive: (state: ToolbarState) => state.fontFamily === name,
+        isActive: (state: IToolbarState) => state.fontFamily === name,
         buildChain: (chain: ToolbarChain) => chain.setFontFamily(value)
     }))
 ];
 
-const ALIGN_MENU_ACTIONS: ToolbarAction[] = [
+const ALIGN_MENU_ACTIONS: IToolbarAction[] = [
     {
         id: "alignLeft",
         label: "Left Align",
@@ -209,7 +116,7 @@ const ALIGN_MENU_ACTIONS: ToolbarAction[] = [
     }
 ];
 
-const FORMAT_MENU_ACTIONS: ToolbarAction[] = [
+const FORMAT_MENU_ACTIONS: IToolbarAction[] = [
     {
         id: "strike",
         label: "Strikethrough",
@@ -241,39 +148,6 @@ const FORMAT_MENU_ACTIONS: ToolbarAction[] = [
     }
 ];
 
-const isToolbarStateEqual = (previous: ToolbarState, next: ToolbarState): boolean =>
-    (Object.keys(previous) as (keyof ToolbarState)[]).every((key) => previous[key] === next[key]);
-
-/**
- * Bridges the editor's state into React.
- * `@tiptap/react` provides this as `useEditorState`
- */
-const useToolbarState = (editor: TiptapEditor | null): ToolbarState | null => {
-    const [toolbarState, setToolbarState] = useState<ToolbarState | null>(null);
-
-    useEffect(() => {
-        if (!editor) {
-            setToolbarState(null);
-            return undefined;
-        }
-
-        const update = (): void => {
-            const next = getToolbarState(editor);
-
-            setToolbarState((previous) => (previous && isToolbarStateEqual(previous, next) ? previous : next));
-        };
-
-        update();
-        editor.on("transaction", update);
-
-        return () => {
-            editor.off("transaction", update);
-        };
-    }, [editor]);
-
-    return toolbarState;
-};
-
 interface IToolbarProps {
     editor: TiptapEditor | null;
     disabled?: boolean;
@@ -298,7 +172,7 @@ const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false, presetColors }) 
     };
 
     const handleMenuChange =
-        (actions: ToolbarAction[]) =>
+        (actions: IToolbarAction[]) =>
         (id: string): void => {
             const action = actions.find((item) => item.id === id);
 
@@ -348,7 +222,7 @@ const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false, presetColors }) 
                 onClick={() => applyWithFocus((chain) => chain.redo())}
             />
             <Divider direction="vertical" className="editor__divider" />
-            <ToolbarMenuButton
+            <MenuTrigger
                 className="editor__textStyleTrigger"
                 label={activeBlock?.label ?? ""}
                 aria-label="Text style"
@@ -357,7 +231,7 @@ const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false, presetColors }) 
                 onChange={handleMenuChange(BLOCK_MENU_ACTIONS)}
             />
             <Divider direction="vertical" className="editor__divider" />
-            <ToolbarMenuButton
+            <MenuTrigger
                 className="editor__fontFamilyTrigger"
                 label={activeFontFamily?.label ?? DEFAULT_FONT_FAMILY_LABEL}
                 aria-label="Font"
@@ -366,7 +240,7 @@ const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false, presetColors }) 
                 onChange={handleMenuChange(FONT_FAMILY_MENU_ACTIONS)}
             />
             <Divider direction="vertical" className="editor__divider" />
-            <ToolbarFontSize value={toolbarState?.fontSize} disabled={isOff} onChange={applyFontSize} />
+            <FontSizeStepper value={toolbarState?.fontSize} disabled={isOff} onChange={applyFontSize} />
             <Divider direction="vertical" className="editor__divider" />
 
             <ToolbarButton
@@ -390,14 +264,14 @@ const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false, presetColors }) 
                 disabled={isOff}
                 onClick={() => applyWithFocus((chain) => chain.toggleUnderline())}
             />
-            <ToolbarMenuButton
+            <MenuTrigger
                 Icon={TextCase}
                 aria-label="Formatting"
                 disabled={isOff}
                 items={toMenuItems(FORMAT_MENU_ACTIONS, toolbarState)}
                 onChange={handleMenuChange(FORMAT_MENU_ACTIONS)}
             />
-            <ToolbarColorButton
+            <ColorTrigger
                 Icon={ColorFill}
                 aria-label="Fill color"
                 disabled={isOff}
@@ -406,7 +280,7 @@ const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false, presetColors }) 
                 color={toolbarState?.backgroundColor}
                 recentColors={colors}
             />
-            <ToolbarColorButton
+            <ColorTrigger
                 Icon={TextColor}
                 aria-label="Text color"
                 disabled={isOff}
@@ -416,7 +290,7 @@ const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false, presetColors }) 
                 recentColors={colors}
             />
             <Divider direction="vertical" className="editor__divider" />
-            <ToolbarMenuButton
+            <MenuTrigger
                 Icon={AlignIcon}
                 aria-label="Alignment"
                 disabled={isOff}
@@ -440,7 +314,7 @@ const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false, presetColors }) 
             />
             <Divider direction="vertical" className="editor__divider" />
 
-            <ToolbarLinkButton
+            <LinkTrigger
                 Icon={Link}
                 aria-label="Link"
                 value={toolbarState?.linkHref}

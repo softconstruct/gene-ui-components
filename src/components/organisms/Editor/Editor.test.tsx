@@ -8,6 +8,10 @@ import { Globe } from "@geneui/icons";
 import GeneUIProvider from "@components/providers/GeneUIProvider";
 
 import Editor, { IEditorProps } from "./index";
+// Constants
+import { EDITOR_COLORS, NO_COLOR, PRESET_COLOR_COUNT } from "./Toolbar/constants";
+// Helpers
+import { parseFontFamily, parseFontSize, toHref, toPresetColors } from "./Toolbar/helper";
 
 describe("Editor ", () => {
     let setup: ReactWrapper<IEditorProps>;
@@ -109,5 +113,67 @@ describe("Editor ", () => {
         const action = wrapper.getDOMNode().querySelector(".editor__footer button");
 
         expect(action?.getAttribute("aria-label")).toBe("test action");
+    });
+});
+
+describe("Editor helpers", () => {
+    it("parses a font family stored with single quotes", () => {
+        expect(parseFontFamily("'Courier New', Courier, monospace")).toBe("courier new");
+    });
+
+    it("parses a font family stored with double quotes", () => {
+        expect(parseFontFamily('"Courier New", Courier, monospace')).toBe("courier new");
+    });
+
+    it("parses a font family stored without quotes", () => {
+        expect(parseFontFamily("Arial, Helvetica, sans-serif")).toBe("arial");
+    });
+
+    it("parses an empty font family", () => {
+        expect(parseFontFamily("")).toBe("");
+    });
+
+    it("parses a font size in pixels", () => {
+        expect(parseFontSize("16px")).toBe(16);
+        expect(parseFontSize("15.6px")).toBe(16);
+    });
+
+    it("ignores a font size in other units", () => {
+        expect(parseFontSize("1.5em")).toBeUndefined();
+        expect(parseFontSize(undefined)).toBeUndefined();
+    });
+
+    it("prefixes a bare domain with a protocol", () => {
+        expect(toHref("example.com")).toBe("https://example.com");
+        expect(toHref("example.com/path?query=1")).toBe("https://example.com/path?query=1");
+    });
+
+    it("keeps a value that already has a scheme", () => {
+        expect(toHref("https://example.com")).toBe("https://example.com");
+        expect(toHref("http://example.com")).toBe("http://example.com");
+        expect(toHref("mailto:test@example.com")).toBe("mailto:test@example.com");
+        expect(toHref("tel:+37411000000")).toBe("tel:+37411000000");
+    });
+
+    it("keeps a relative value", () => {
+        expect(toHref("/path")).toBe("/path");
+        expect(toHref("#hash")).toBe("#hash");
+        expect(toHref("?query=1")).toBe("?query=1");
+    });
+
+    it("builds the preset colors from the editor colors", () => {
+        const presetColors = toPresetColors();
+
+        expect(presetColors[0]).toBe(NO_COLOR);
+        expect(presetColors).toHaveLength(EDITOR_COLORS.length + 1);
+    });
+
+    it("builds the preset colors with custom colors first", () => {
+        const presetColors = toPresetColors(["#123456", "#654321"]);
+
+        expect(presetColors[0]).toBe(NO_COLOR);
+        expect(presetColors[1]).toBe("#123456");
+        expect(presetColors[2]).toBe("#654321");
+        expect(presetColors).toHaveLength(PRESET_COLOR_COUNT);
     });
 });

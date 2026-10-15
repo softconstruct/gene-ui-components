@@ -4,9 +4,9 @@ import { CaretDownFilled, IconProps } from "@geneui/icons";
 
 // Components
 import { Menu, MenuItem } from "@components/molecules/Menu";
-import ToolbarButton from "@components/organisms/Editor/ToolbarButton/ToolbarButton";
+import ToolbarButton from "@components/organisms/Editor/Toolbar/ToolbarButton/ToolbarButton";
 
-interface IToolbarMenuButtonItem {
+interface IMenuTriggerItem {
     /**
      * Identifies the row. Returned by `onChange`.
      */
@@ -29,7 +29,7 @@ interface IToolbarMenuButtonItem {
     divider?: boolean;
 }
 
-interface IToolbarMenuButtonProps {
+interface IMenuTriggerProps {
     /**
      * The trigger's text - normally the currently selected option.
      */
@@ -41,7 +41,7 @@ interface IToolbarMenuButtonProps {
     /**
      * The rows of the menu.
      */
-    items: IToolbarMenuButtonItem[];
+    items: IMenuTriggerItem[];
     /**
      * A callback function that is called with the selected row's `id`.
      */
@@ -64,7 +64,7 @@ interface IToolbarMenuButtonProps {
 /**
  * A `ToolbarButton` that opens a `Menu`. Internal to the Editor.
  */
-const ToolbarMenuButton: FC<IToolbarMenuButtonProps> = ({
+const MenuTrigger: FC<IMenuTriggerProps> = ({
     label,
     Icon,
     items,
@@ -100,4 +100,4 @@ const ToolbarMenuButton: FC<IToolbarMenuButtonProps> = ({
     );
 };
 
-export { IToolbarMenuButtonItem, IToolbarMenuButtonProps, ToolbarMenuButton as default };
+export { IMenuTriggerItem, IMenuTriggerProps, MenuTrigger as default };

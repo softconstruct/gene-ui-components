@@ -4,11 +4,11 @@ import React, { FC, useState } from "react";
 import { CaretDownFilled, IconProps } from "@geneui/icons";
 
 // Components
-import ToolbarButton from "@components/organisms/Editor/ToolbarButton/ToolbarButton";
+import ToolbarButton from "@components/organisms/Editor/Toolbar/ToolbarButton/ToolbarButton";
 
 import ColorPickerPopover, { useColorPicker } from "@internal/components/ColorPickerPopover";
 
-interface IToolbarColorButtonProps {
+interface IColorTriggerProps {
     /**
      * A React Functional Component rendered as the trigger's icon, before the caret.
      */
@@ -48,7 +48,7 @@ interface IToolbarColorButtonProps {
 /**
  * A `ToolbarButton` that opens a color palette. Internal to the Editor.
  */
-const ToolbarColorButton: FC<IToolbarColorButtonProps> = ({
+const ColorTrigger: FC<IColorTriggerProps> = ({
     Icon,
     "aria-label": ariaLabel,
     disabled,
@@ -123,4 +123,4 @@ const ToolbarColorButton: FC<IToolbarColorButtonProps> = ({
     );
 };
 
-export { IToolbarColorButtonProps, ToolbarColorButton as default };
+export { IColorTriggerProps, ColorTrigger as default };

@@ -6,16 +6,15 @@ import { CheckMark, IconProps, LinkX, OpenInNew } from "@geneui/icons";
 import Button from "@components/atoms/Button";
 import { Popover, PopoverBody } from "@components/atoms/Popover";
 import TextField from "@components/molecules/TextField";
-import ToolbarButton from "@components/organisms/Editor/ToolbarButton/ToolbarButton";
+import ToolbarButton from "@components/organisms/Editor/Toolbar/ToolbarButton/ToolbarButton";
+
+// Helpers
+import { toHref } from "../helper";
 
 // Styles
-import "./ToolbarLinkButton.scss";
+import "./LinkTrigger.scss";
 
-const HREF_PATTERN = /^([a-z][a-z\d+.-]*:|[/#?])/i;
-
-const toHref = (value: string): string => (HREF_PATTERN.test(value) ? value : `https://${value}`);
-
-interface IToolbarLinkButtonProps {
+interface ILinkTriggerProps {
     /**
      * A React Functional Component rendered as the trigger's icon.
      */
@@ -53,7 +52,7 @@ interface IToolbarLinkButtonProps {
 /**
  * A `ToolbarButton` that opens a URL field. Internal to the Editor.
  */
-const ToolbarLinkButton: FC<IToolbarLinkButtonProps> = ({
+const LinkTrigger: FC<ILinkTriggerProps> = ({
     Icon,
     "aria-label": ariaLabel,
     value,
@@ -129,9 +128,9 @@ const ToolbarLinkButton: FC<IToolbarLinkButtonProps> = ({
                 mobileHeightMode="fit"
             >
                 <PopoverBody withPadding={false} withScrollbar={false}>
-                    <div className="toolbarLinkButton">
+                    <div className="linkTrigger">
                         <TextField
-                            className="toolbarLinkButton__input"
+                            className="linkTrigger__input"
                             name="editor-link"
                             size="medium"
                             placeholder="https://"
@@ -174,4 +173,4 @@ const ToolbarLinkButton: FC<IToolbarLinkButtonProps> = ({
     );
 };
 
-export { IToolbarLinkButtonProps, ToolbarLinkButton as default };
+export { ILinkTriggerProps, LinkTrigger as default };

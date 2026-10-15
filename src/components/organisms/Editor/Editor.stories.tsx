@@ -34,19 +34,12 @@ export default meta;
 type Story = StoryObj<IEditorProps>;
 
 const StoryWrapper = (props: IEditorProps) => (
-    <div style={{ height: "300px" }}>
+    <div style={{ height: "240px" }}>
         <Editor {...props} />
     </div>
 );
 
 export const Default: Story = {
-    render: (props) => <StoryWrapper {...props} />
-};
-
-export const WithPresetColors: Story = {
-    args: {
-        presetColors: ["#FF6B00", "#00A3FF", "#AE3D80"]
-    },
     render: (props) => <StoryWrapper {...props} />
 };
 

@@ -8,7 +8,7 @@ import Button from "@components/atoms/Button";
 import TextField from "@components/molecules/TextField";
 
 // Styles
-import "./ToolbarFontSize.scss";
+import "./FontSizeStepper.scss";
 
 const FONT_SIZE_STEP = 2;
 const MIN_FONT_SIZE = 8;
@@ -17,7 +17,7 @@ const DEFAULT_FONT_SIZE = 14;
 
 const clampFontSize = (size: number): number => Math.min(Math.max(size, MIN_FONT_SIZE), MAX_FONT_SIZE);
 
-interface IToolbarFontSizeProps {
+interface IFontSizeStepperProps {
     /**
      * The font size set on the editor's selection, in pixels. Left out when the selection carries no
      * size of its own, in which case the stepper starts from the editor's default.
@@ -38,7 +38,7 @@ interface IToolbarFontSizeProps {
 /**
  * A font size stepper for the Editor's toolbar. Internal to the Editor.
  */
-const ToolbarFontSize: FC<IToolbarFontSizeProps> = ({ value = DEFAULT_FONT_SIZE, disabled, onChange }) => {
+const FontSizeStepper: FC<IFontSizeStepperProps> = ({ value = DEFAULT_FONT_SIZE, disabled, onChange }) => {
     const [draft, setDraft] = useState<string>(String(value));
 
     useEffect(() => {
@@ -77,7 +77,7 @@ const ToolbarFontSize: FC<IToolbarFontSizeProps> = ({ value = DEFAULT_FONT_SIZE,
     };
 
     return (
-        <div className="toolbarFontSize" role="group" aria-label="Font size">
+        <div className="fontSizeStepper" role="group" aria-label="Font size">
             <Button
                 Icon={Minus}
                 appearance="secondary"
@@ -88,7 +88,7 @@ const ToolbarFontSize: FC<IToolbarFontSizeProps> = ({ value = DEFAULT_FONT_SIZE,
                 onClick={() => step(-FONT_SIZE_STEP)}
             />
             <TextField
-                className="toolbarFontSize__input"
+                className="fontSizeStepper__input"
                 name="editor-font-size"
                 type="number"
                 size="medium"
@@ -113,4 +113,4 @@ const ToolbarFontSize: FC<IToolbarFontSizeProps> = ({ value = DEFAULT_FONT_SIZE,
     );
 };
 
-export { IToolbarFontSizeProps, ToolbarFontSize as default };
+export { IFontSizeStepperProps, FontSizeStepper as default };
