@@ -139,7 +139,11 @@ const Editor: FC<IEditorProps> = ({
         const instance = new TiptapEditor({
             element: bodyRef.current,
             extensions: [
-                StarterKit,
+                StarterKit.configure({
+                    link: {
+                        openOnClick: false
+                    }
+                }),
                 Subscript,
                 Superscript,
                 TextAlign.configure({ types: ["heading", "paragraph"] }),

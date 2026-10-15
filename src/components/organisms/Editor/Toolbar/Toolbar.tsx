@@ -9,6 +9,7 @@ import {
     EqualOff,
     Globe,
     IconProps,
+    Link,
     RecycleBin,
     TextAlignCenter,
     TextAlignJustify,
@@ -28,6 +29,7 @@ import Divider from "@components/atoms/Divider";
 import ToolbarButton from "@components/organisms/Editor/ToolbarButton/ToolbarButton";
 import ToolbarColorButton from "@components/organisms/Editor/ToolbarColorButton/ToolbarColorButton";
 import ToolbarFontSize from "@components/organisms/Editor/ToolbarFontSize/ToolbarFontSize";
+import ToolbarLinkButton from "@components/organisms/Editor/ToolbarLinkButton/ToolbarLinkButton";
 import ToolbarMenuButton, {
     IToolbarMenuButtonItem
 } from "@components/organisms/Editor/ToolbarMenuButton/ToolbarMenuButton";
@@ -57,6 +59,8 @@ const getToolbarState = (editor: TiptapEditor) => {
         bulletList: editor.isActive("bulletList"),
         orderedList: editor.isActive("orderedList"),
         code: editor.isActive("code"),
+        link: editor.isActive("link"),
+        linkHref: (editor.getAttributes("link").href as string) ?? "",
         color: (textStyle.color as string) ?? "",
         backgroundColor: (textStyle.backgroundColor as string) ?? "",
         fontFamily: parseFontFamily((textStyle.fontFamily as string) ?? ""),
@@ -319,6 +323,11 @@ const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false, presetColors }) 
         }
     };
 
+    const applyLink = (href: string): void =>
+        applyWithFocus((chain) => chain.extendMarkRange("link").setLink({ href }));
+
+    const removeLink = (): void => applyWithFocus((chain) => chain.extendMarkRange("link").unsetLink());
+
     const activeBlock = toolbarState ? BLOCK_MENU_ACTIONS.find(({ isActive }) => isActive(toolbarState)) : undefined;
     const activeAlign = toolbarState ? ALIGN_MENU_ACTIONS.find(({ isActive }) => isActive(toolbarState)) : undefined;
     const activeFontFamily = toolbarState ? FONT_FAMILIES_BY_NAME[toolbarState.fontFamily] : undefined;
@@ -431,6 +440,15 @@ const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false, presetColors }) 
             />
             <Divider direction="vertical" className="editor__divider" />
 
+            <ToolbarLinkButton
+                Icon={Link}
+                aria-label="Link"
+                value={toolbarState?.linkHref}
+                selected={toolbarState?.link}
+                disabled={isOff}
+                onChange={applyLink}
+                onRemove={removeLink}
+            />
             <ToolbarButton
                 IconBefore={Globe}
                 aria-label="Code"
