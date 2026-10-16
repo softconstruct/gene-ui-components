@@ -1,0 +1,83 @@
+.manageColumnsPopover {
+    &__main {
+        display: flex;
+        flex-direction: column;
+        min-width: 36rem;
+        padding-block: var(--guit-ref-spacing-3xsmall);
+        border-radius: var(--guit-ref-radius-2xsmall);
+    }
+
+    &__header {
+        flex: 0 0 auto;
+        padding-inline: var(--guit-ref-spacing-medium);
+        padding-block-start: var(--guit-ref-spacing-xsmall);
+        padding-block-end: var(--guit-ref-spacing-medium);
+        border-block-end: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+            var(--guit-sem-color-border-neutral-2);
+    }
+
+    &__body {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        max-height: 40rem;
+        min-height: 0;
+        padding: var(--guit-ref-spacing-3xsmall);
+    }
+
+    &__selectAll {
+        display: flex;
+        align-items: center;
+        flex: 0 0 auto;
+        gap: var(--guit-ref-spacing-xsmall);
+        padding-block: var(--guit-ref-spacing-3xsmall);
+        padding-inline: var(--guit-ref-spacing-xsmall);
+        height: var(--guit-sem-dimension-height-medium);
+        margin-bottom: var(--guit-ref-spacing-3xsmall);
+    }
+
+    &__selectAllCheckbox {
+        flex: 0 0 auto;
+        padding: var(--guit-ref-spacing-3xsmall);
+    }
+
+    &__scrollbar {
+        flex: 1;
+        min-height: 0;
+    }
+
+    &__list {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        min-height: 100%;
+
+        &_empty {
+            justify-content: center;
+        }
+    }
+
+    &__footer {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        padding-inline: var(--guit-ref-spacing-medium);
+        padding-block-start: var(--guit-ref-spacing-medium);
+        padding-block-end: var(--guit-ref-spacing-xsmall);
+        border-block-start: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+            var(--guit-sem-color-border-neutral-2);
+        gap: var(--guit-ref-spacing-xsmall);
+    }
+
+    &__actions {
+        margin-inline-start: auto;
+    }
+
+    &__empty {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+    }
+}

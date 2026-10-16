@@ -137,13 +137,4 @@
             cursor: grabbing;
         }
     }
-
-    &__dragLayer {
-        position: fixed;
-        top: 0;
-        left: 0;
-        transform-origin: top left;
-        pointer-events: none;
-        transform: var(--drag-layer-transform);
-    }
 }
