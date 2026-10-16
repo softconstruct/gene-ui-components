@@ -30,14 +30,15 @@ import LinkTrigger from "@components/organisms/Editor/Toolbar/LinkTrigger/LinkTr
 import MenuTrigger from "@components/organisms/Editor/Toolbar/MenuTrigger/MenuTrigger";
 import ToolbarButton from "@components/organisms/Editor/Toolbar/ToolbarButton/ToolbarButton";
 
+// Hooks
+import useRovingFocus from "../hooks/useRovingFocus";
+import useToolbarState from "../hooks/useToolbarState";
 // Constants
 import { DEFAULT_FONT_FAMILY_LABEL, FONT_FAMILIES_BY_NAME } from "./constants";
 // Helpers
 import { toMenuItems, toPresetColors } from "./helper";
 // Types
 import { IToolbarAction, IToolbarState, ToolbarChain } from "./types";
-// Hooks
-import useToolbarState from "./useToolbarState";
 
 const BLOCK_MENU_ACTIONS: IToolbarAction[] = [
     {
@@ -156,6 +157,7 @@ interface IToolbarProps {
 
 const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false, presetColors }) => {
     const toolbarState = useToolbarState(editor);
+    const { toolbarRef, handleKeyDown } = useRovingFocus(editor);
     const colors = toPresetColors(presetColors);
     const isOff = disabled || !editor || !toolbarState;
 
@@ -208,7 +210,13 @@ const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false, presetColors }) 
     const AlignIcon = activeAlign?.Icon ?? TextAlignLeft;
 
     return (
-        <div className="editor__header">
+        <div
+            ref={toolbarRef}
+            className="editor__header"
+            role="toolbar"
+            aria-label="Text formatting"
+            onKeyDown={handleKeyDown}
+        >
             <ToolbarButton
                 IconBefore={ArrowUndo}
                 aria-label="Undo"

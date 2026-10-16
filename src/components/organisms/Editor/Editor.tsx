@@ -22,12 +22,15 @@ import "./Editor.scss";
 
 const PLACEHOLDER_ATTRIBUTE = "editor-placeholder";
 
-const getEditingAreaAttributes = (id?: string, ariaLabel?: string): Record<string, string> => ({
+const DEFAULT_ARIA_LABEL = "Rich text editor";
+
+const getEditingAreaAttributes = (id?: string, ariaLabel?: string, readOnly?: boolean): Record<string, string> => ({
     class: "editor__content",
     role: "textbox",
     "aria-multiline": "true",
+    "aria-label": ariaLabel ?? DEFAULT_ARIA_LABEL,
     ...(id === undefined ? {} : { id }),
-    ...(ariaLabel === undefined ? {} : { "aria-label": ariaLabel })
+    ...(readOnly ? { "aria-readonly": "true" } : {})
 });
 
 interface IEditorFooterAction {
@@ -75,6 +78,7 @@ interface IEditorProps {
     readOnly?: boolean;
     /**
      * An ARIA label for the editing area.
+     * @default "Rich text editor"
      */
     "aria-label"?: string;
     /**
@@ -159,7 +163,7 @@ const Editor: FC<IEditorProps> = ({
             content: defaultValueRef.current,
             editable: !readOnlyRef.current,
             editorProps: {
-                attributes: getEditingAreaAttributes(idRef.current, ariaLabelRef.current)
+                attributes: getEditingAreaAttributes(idRef.current, ariaLabelRef.current, readOnlyRef.current)
             }
         });
 
@@ -175,8 +179,8 @@ const Editor: FC<IEditorProps> = ({
     }, [editor, readOnly]);
 
     useEffect(() => {
-        editor?.setOptions({ editorProps: { attributes: getEditingAreaAttributes(id, ariaLabel) } });
-    }, [editor, id, ariaLabel]);
+        editor?.setOptions({ editorProps: { attributes: getEditingAreaAttributes(id, ariaLabel, readOnly) } });
+    }, [editor, id, ariaLabel, readOnly]);
 
     useEffect(() => {
         if (!editor) {

@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import type { Editor as TiptapEditor } from "@tiptap/core";
 import { redoDepth, undoDepth } from "@tiptap/pm/history";
 
-import { parseFontFamily, parseFontSize } from "./helper";
-import { IToolbarState } from "./types";
+import { parseFontFamily, parseFontSize } from "../Toolbar/helper";
+import { IToolbarState } from "../Toolbar/types";
 
 const getToolbarState = (editor: TiptapEditor): IToolbarState => {
     const paragraphAlign = editor.getAttributes("paragraph").textAlign as string | undefined;
