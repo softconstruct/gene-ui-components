@@ -1,0 +1,10 @@
+.linkTrigger {
+    display: flex;
+    align-items: center;
+    gap: var(--guit-ref-spacing-3xsmall);
+    padding: var(--guit-ref-spacing-xsmall);
+
+    &__input {
+        width: 24rem;
+    }
+}
