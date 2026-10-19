@@ -4,6 +4,8 @@ const PRESET_COLOR_COUNT = 20;
 
 const DEFAULT_FONT_FAMILY_LABEL = "Default";
 
+const POPOVER_GAP_FROM_TARGET = 4;
+
 const EDITOR_COLORS = [
     "#000000",
     "#434343",
@@ -37,4 +39,11 @@ const FONT_FAMILIES_BY_NAME: Record<string, { label: string; value: string }> = 
     verdana: { label: "Verdana", value: "Verdana, sans-serif" }
 };
 
-export { NO_COLOR, PRESET_COLOR_COUNT, DEFAULT_FONT_FAMILY_LABEL, EDITOR_COLORS, FONT_FAMILIES_BY_NAME };
+export {
+    NO_COLOR,
+    PRESET_COLOR_COUNT,
+    DEFAULT_FONT_FAMILY_LABEL,
+    POPOVER_GAP_FROM_TARGET,
+    EDITOR_COLORS,
+    FONT_FAMILIES_BY_NAME
+};

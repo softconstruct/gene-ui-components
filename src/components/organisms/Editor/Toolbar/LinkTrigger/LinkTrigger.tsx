@@ -8,6 +8,8 @@ import { Popover, PopoverBody } from "@components/atoms/Popover";
 import TextField from "@components/molecules/TextField";
 import ToolbarButton from "@components/organisms/Editor/Toolbar/ToolbarButton/ToolbarButton";
 
+// Constants
+import { POPOVER_GAP_FROM_TARGET } from "../constants";
 // Helpers
 import { toHref } from "../helper";
 
@@ -124,6 +126,7 @@ const LinkTrigger: FC<ILinkTriggerProps> = ({
                 setProps={setTriggerProps}
                 onClose={handleClose}
                 position="bottom-left"
+                margin={POPOVER_GAP_FROM_TARGET}
                 withArrow={false}
                 mobileHeightMode="fit"
             >
