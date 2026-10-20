@@ -18,14 +18,15 @@ const meta: Meta<IEditorProps> = {
         className: args({ control: "false", ...propCategory.appearance }),
         readOnly: args({ control: "boolean", ...propCategory.states }),
         onChange: args({ control: "false", ...propCategory.action }),
-        presetColors: args({ control: "object", ...propCategory.content }),
+        presetColors: args({ control: "array", ...propCategory.content }),
         footerActions: args({ control: "false", ...propCategory.content }),
         id: args({ control: "text", ...propCategory.others }),
         "aria-label": args({ control: "text", ...propCategory.others })
     },
     args: {
         placeholder: "Start writing...",
-        readOnly: false
+        readOnly: false,
+        presetColors: []
     }
 };
 
