@@ -136,7 +136,6 @@ const FORMAT_MENU_ACTIONS: IToolbarAction[] = [
         id: "superscript",
         label: "Superscript",
         Icon: EqualOff,
-        divider: true,
         isActive: (state) => state.superscript,
         buildChain: (chain) => chain.toggleSuperscript()
     },
