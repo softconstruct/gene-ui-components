@@ -203,11 +203,8 @@ describe("Editor toolbar navigation", () => {
 
     let setup: ReactWrapper<IEditorProps>;
 
-    beforeEach(async () => {
-        await act(async () => {
-            setup = mount(<Editor />, { wrappingComponent: GeneUIProvider });
-        });
-        setup.update();
+    beforeEach(() => {
+        setup = mount(<Editor />, { wrappingComponent: GeneUIProvider });
     });
 
     afterEach(() => {

@@ -146,9 +146,6 @@ const Editor: FC<IEditorProps> = ({
                 StarterKit.configure({
                     heading: {
                         levels: [1, 2, 3]
-                    },
-                    link: {
-                        openOnClick: false
                     }
                 }),
                 Subscript,
