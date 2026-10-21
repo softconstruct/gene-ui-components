@@ -137,7 +137,7 @@ export {
     IUploaderProps,
     IUploaderUploadPayload
 } from "./components/organisms/Uploader";
-export { default as Editor } from "./components/organisms/Editor";
+export { default as Editor, IEditorProps, IEditorFooterAction } from "./components/organisms/Editor";
 
 // Charts
 export { default as BarChart, IBarChartProps, IBarChartSeries } from "./components/charts/BarChart";
