@@ -4,6 +4,7 @@ import type { Editor as TiptapEditor } from "@tiptap/core";
 import {
     ArrowRedo,
     ArrowUndo,
+    ChevronRightLeft,
     ColorFill,
     EqualOff,
     Globe,
@@ -331,7 +332,7 @@ const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false, presetColors }) 
                 onRemove={removeLink}
             />
             <ToolbarButton
-                IconBefore={Globe}
+                IconBefore={ChevronRightLeft}
                 aria-label="Code"
                 selected={toolbarState?.code}
                 disabled={isOff}

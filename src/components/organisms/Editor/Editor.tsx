@@ -4,7 +4,7 @@ import Subscript from "@tiptap/extension-subscript";
 import Superscript from "@tiptap/extension-superscript";
 import TextAlign from "@tiptap/extension-text-align";
 import { TextStyleKit } from "@tiptap/extension-text-style";
-import { Placeholder } from "@tiptap/extensions";
+import { Placeholder, Selection } from "@tiptap/extensions";
 import StarterKit from "@tiptap/starter-kit";
 import classNames from "classnames";
 import { nanoid } from "nanoid/non-secure";
@@ -158,6 +158,9 @@ const Editor: FC<IEditorProps> = ({
                     placeholder: () => placeholderRef.current,
                     emptyEditorClass: "editor__placeholder",
                     dataAttribute: PLACEHOLDER_ATTRIBUTE
+                }),
+                Selection.configure({
+                    className: "editor__selection"
                 })
             ],
             content: defaultValueRef.current,

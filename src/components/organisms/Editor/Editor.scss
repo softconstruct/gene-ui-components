@@ -59,6 +59,10 @@
         height: 100%;
     }
 
+    &__selection {
+        background-color: var(--guit-sem-color-background-selected-1);
+    }
+
     &__content {
         min-height: 100%;
         padding-block: var(--guit-ref-spacing-medium);
