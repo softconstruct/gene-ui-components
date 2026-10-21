@@ -72,7 +72,7 @@
             outline: none;
         }
 
-        .editor__content_empty:first-child::before {
+        .editor__placeholder:first-child::before {
             content: attr(data-editor-placeholder);
             float: inline-start;
             height: 0;

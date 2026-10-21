@@ -10,6 +10,7 @@ import GeneUIProvider from "@components/providers/GeneUIProvider";
 import Editor, { IEditorProps } from "./index";
 // Constants
 import { EDITOR_COLORS, NO_COLOR, PRESET_COLOR_COUNT } from "./Toolbar/constants";
+import FontSizeStepper, { IFontSizeStepperProps } from "./Toolbar/FontSizeStepper/FontSizeStepper";
 // Helpers
 import { parseFontFamily, parseFontSize, toHref, toPresetColors } from "./Toolbar/helper";
 
@@ -114,6 +115,25 @@ describe("Editor ", () => {
 
         expect(action?.getAttribute("aria-label")).toBe("test action");
     });
+
+    it("renders placeholder prop correctly", () => {
+        const wrapper = mount(<Editor placeholder="test placeholder" />, { wrappingComponent: GeneUIProvider });
+        const placeholder = wrapper.getDOMNode().querySelector(".editor__placeholder");
+
+        expect(placeholder?.getAttribute("data-editor-placeholder")).toBe("test placeholder");
+
+        wrapper.unmount();
+    });
+
+    it("does not call onChange on mount", () => {
+        const wrapper = mount(<Editor defaultValue="<p>test content</p>" onChange={mockFn} />, {
+            wrappingComponent: GeneUIProvider
+        });
+
+        expect(mockFn).not.toHaveBeenCalled();
+
+        wrapper.unmount();
+    });
 });
 
 describe("Editor helpers", () => {
@@ -175,5 +195,150 @@ describe("Editor helpers", () => {
         expect(presetColors[1]).toBe("#123456");
         expect(presetColors[2]).toBe("#654321");
         expect(presetColors).toHaveLength(PRESET_COLOR_COUNT);
+    });
+});
+
+describe("Editor toolbar navigation", () => {
+    const CONTROL_SELECTOR = ".editor__header button, .editor__header input";
+
+    let setup: ReactWrapper<IEditorProps>;
+
+    beforeEach(async () => {
+        await act(async () => {
+            setup = mount(<Editor />, { wrappingComponent: GeneUIProvider });
+        });
+        setup.update();
+    });
+
+    afterEach(() => {
+        setup.unmount();
+    });
+
+    it("renders the toolbar with the correct role and label", () => {
+        const toolbar = setup.getDOMNode().querySelector(".editor__header");
+
+        expect(toolbar?.getAttribute("role")).toBe("toolbar");
+        expect(toolbar?.getAttribute("aria-label")).toBe("Text formatting");
+    });
+
+    it("renders a single tab stop in the toolbar", () => {
+        const controls = Array.from(setup.getDOMNode().querySelectorAll<HTMLElement>(CONTROL_SELECTOR));
+        const tabStops = controls.filter((control) => control.getAttribute("tabindex") === "0");
+
+        expect(tabStops).toHaveLength(1);
+    });
+});
+
+describe("Editor font size stepper", () => {
+    let setup: ReactWrapper<IFontSizeStepperProps>;
+    const mockFn = jest.fn();
+
+    const getInput = (wrapper: ReactWrapper<IFontSizeStepperProps>) => wrapper.find("input");
+
+    const getDecreaseButton = (wrapper: ReactWrapper<IFontSizeStepperProps>) =>
+        wrapper.find('button[aria-label="Decrease font size"]');
+
+    const getIncreaseButton = (wrapper: ReactWrapper<IFontSizeStepperProps>) =>
+        wrapper.find('button[aria-label="Increase font size"]');
+
+    beforeEach(() => {
+        setup = mount(<FontSizeStepper onChange={mockFn} />, { wrappingComponent: GeneUIProvider });
+    });
+
+    afterEach(() => {
+        jest.clearAllMocks();
+        setup.unmount();
+    });
+
+    it("renders the default size correctly", () => {
+        expect(getInput(setup).prop("value")).toBe("14");
+    });
+
+    it("renders value prop correctly", () => {
+        const wrapper = mount(<FontSizeStepper value={20} onChange={mockFn} />, {
+            wrappingComponent: GeneUIProvider
+        });
+
+        expect(getInput(wrapper).prop("value")).toBe("20");
+
+        wrapper.unmount();
+    });
+
+    it("renders disabled prop correctly", () => {
+        const wrapper = setup.setProps({ disabled: true });
+
+        expect(getDecreaseButton(wrapper).prop("disabled")).toBeTruthy();
+        expect(getIncreaseButton(wrapper).prop("disabled")).toBeTruthy();
+        expect(getInput(wrapper).prop("disabled")).toBeTruthy();
+    });
+
+    it("handles onChange from the increase button", () => {
+        getIncreaseButton(setup).simulate("click");
+
+        expect(mockFn).toHaveBeenCalledWith(16, true);
+    });
+
+    it("handles onChange from the decrease button", () => {
+        getDecreaseButton(setup).simulate("click");
+
+        expect(mockFn).toHaveBeenCalledWith(12, true);
+    });
+
+    it("disables the decrease button at the minimum size", () => {
+        const wrapper = setup.setProps({ value: 8 });
+
+        expect(getDecreaseButton(wrapper).prop("disabled")).toBeTruthy();
+        expect(getIncreaseButton(wrapper).prop("disabled")).toBeFalsy();
+    });
+
+    it("disables the increase button at the maximum size", () => {
+        const wrapper = setup.setProps({ value: 72 });
+
+        expect(getIncreaseButton(wrapper).prop("disabled")).toBeTruthy();
+        expect(getDecreaseButton(wrapper).prop("disabled")).toBeFalsy();
+    });
+
+    it("commits a typed size with Enter", () => {
+        getInput(setup).simulate("change", { target: { value: "40" } });
+        getInput(setup).simulate("keydown", { key: "Enter" });
+
+        expect(mockFn).toHaveBeenCalledWith(40, true);
+    });
+
+    it("commits a typed size when the field loses focus", () => {
+        getInput(setup).simulate("change", { target: { value: "40" } });
+        getInput(setup).simulate("blur");
+
+        expect(mockFn).toHaveBeenCalledWith(40, false);
+    });
+
+    it("clamps a typed size above the maximum", () => {
+        getInput(setup).simulate("change", { target: { value: "500" } });
+        getInput(setup).simulate("keydown", { key: "Enter" });
+
+        expect(mockFn).toHaveBeenCalledWith(72, true);
+    });
+
+    it("clamps a typed size below the minimum", () => {
+        getInput(setup).simulate("change", { target: { value: "2" } });
+        getInput(setup).simulate("keydown", { key: "Enter" });
+
+        expect(mockFn).toHaveBeenCalledWith(8, true);
+    });
+
+    it("reverts an invalid typed size", () => {
+        getInput(setup).simulate("change", { target: { value: "abc" } });
+        getInput(setup).simulate("blur");
+        setup.update();
+
+        expect(mockFn).not.toHaveBeenCalled();
+        expect(getInput(setup).prop("value")).toBe("14");
+    });
+
+    it("does not call onChange when the committed size is unchanged", () => {
+        getInput(setup).simulate("change", { target: { value: "14" } });
+        getInput(setup).simulate("keydown", { key: "Enter" });
+
+        expect(mockFn).not.toHaveBeenCalled();
     });
 });

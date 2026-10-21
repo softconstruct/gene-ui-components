@@ -159,7 +159,7 @@ const Editor: FC<IEditorProps> = ({
                 }),
                 Placeholder.configure({
                     placeholder: () => placeholderRef.current,
-                    emptyEditorClass: "editor__content_empty",
+                    emptyEditorClass: "editor__placeholder",
                     dataAttribute: PLACEHOLDER_ATTRIBUTE
                 })
             ],
