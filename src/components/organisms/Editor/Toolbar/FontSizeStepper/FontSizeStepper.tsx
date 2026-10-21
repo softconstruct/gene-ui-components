@@ -90,7 +90,7 @@ const FontSizeStepper: FC<IFontSizeStepperProps> = ({ value = DEFAULT_FONT_SIZE,
             <TextField
                 className="fontSizeStepper__input"
                 name="editor-font-size"
-                type="number"
+                type="text"
                 size="medium"
                 inputMode="numeric"
                 autoComplete="off"

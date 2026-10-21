@@ -144,6 +144,9 @@ const Editor: FC<IEditorProps> = ({
             element: bodyRef.current,
             extensions: [
                 StarterKit.configure({
+                    heading: {
+                        levels: [1, 2, 3]
+                    },
                     link: {
                         openOnClick: false
                     }
