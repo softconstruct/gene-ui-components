@@ -1,13 +1,15 @@
-import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 // Icons
 import { Globe } from "@geneui/icons";
 
-// Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
+// Helpers
+import { editorContent } from "../../../../stories/data/__editor";
 // Components
 import Editor, { IEditorProps } from "./index";
+
+const PRESET_COLORS = ["#1F6F4A", "#C2185B", "#F4B400", "#512DA8"];
 
 const meta: Meta<IEditorProps> = {
     title: "Organisms/Editor",
@@ -24,6 +26,7 @@ const meta: Meta<IEditorProps> = {
         "aria-label": args({ control: "text", ...propCategory.others })
     },
     args: {
+        defaultValue: editorContent,
         placeholder: "Start writing...",
         readOnly: false,
         presetColors: []
@@ -34,14 +37,12 @@ export default meta;
 
 type Story = StoryObj<IEditorProps>;
 
-const StoryWrapper = (props: IEditorProps) => (
-    <div style={{ height: "240px" }}>
-        <Editor {...props} />
-    </div>
-);
+export const Default: Story = {};
 
-export const Default: Story = {
-    render: (props) => <StoryWrapper {...props} />
+export const WithPresetColors: Story = {
+    args: {
+        presetColors: PRESET_COLORS
+    }
 };
 
 export const WithFooterActions: Story = {
@@ -52,6 +53,5 @@ export const WithFooterActions: Story = {
             "aria-label": `Footer action ${index + 1}`,
             onClick: () => undefined
         }))
-    },
-    render: (props) => <StoryWrapper {...props} />
+    }
 };
