@@ -1,27 +1,53 @@
 .tableHeaderCell {
+    position: relative;
     height: 4rem;
     padding-block: var(--guit-ref-spacing-xsmall);
-    padding-inline: var(--guit-ref-spacing-large);
-    border-bottom: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
-        var(--guit-sem-color-border-neutral-1);
     vertical-align: middle;
+    box-shadow: inset 0 -0.1rem 0 0 var(--guit-sem-color-background-neutral-4);
 
-    &:not(:last-child) {
-        border-inline-end: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
-            var(--guit-sem-color-border-neutral-2);
-    }
-
-    &__content {
-        display: flex;
-        align-items: center;
-        gap: var(--guit-ref-spacing-xsmall);
+    &::after {
+        content: "";
+        display: block;
+        position: absolute;
+        inset-inline-end: 0;
+        top: 0;
+        bottom: 0;
+        width: 0.1rem;
+        background-color: var(--guit-sem-color-border-neutral-2);
+        pointer-events: none;
     }
 
     &_expander {
         padding: 0;
     }
 
+    &__content {
+        display: flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-xsmall);
+        box-sizing: border-box;
+        width: max-content;
+        min-width: 100%;
+        max-width: 18rem;
+        padding-inline: var(--guit-ref-spacing-large);
+    }
+
     &__text {
+        min-width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
         color: var(--guit-sem-color-foreground-neutral-2);
+    }
+
+    &_pinned {
+        position: sticky;
+        z-index: 1;
+        background-color: inherit;
+        inset-inline-start: 0;
+
+        &::after {
+            background: var(--guit-sem-color-border-neutral-3);
+        }
     }
 }

@@ -1,0 +1,9 @@
+.dndDragLayer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    transform-origin: top left;
+    pointer-events: none;
+    transform: var(--drag-layer-transform);
+    z-index: 12;
+}

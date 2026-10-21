@@ -1,38 +1,67 @@
 .tableBodyCell {
+    position: relative;
     height: 4.4rem;
     padding-block: var(--guit-ref-spacing-medium);
-    padding-inline: var(--guit-ref-spacing-large);
-    border-bottom: var(--guit-ref-border-width-thin) solid var(--guit-sem-color-border-neutral-1);
     vertical-align: middle;
-
-    &:has(~ &) {
-        border-inline-end: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
-            var(--guit-sem-color-border-neutral-2);
-    }
-
-    &__content {
-        display: flex;
-        align-items: center;
-        gap: var(--guit-ref-spacing-3xsmall);
-    }
-
-    &__text {
-        display: -webkit-box;
-        -webkit-line-clamp: 4;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        color: var(--guit-sem-color-foreground-neutral-2);
-    }
-
-    &_expander {
-        padding: 0;
-        padding-inline: var(--guit-ref-spacing-small);
-    }
+    box-shadow: inset 0 -0.1rem 0 0 var(--guit-sem-color-border-neutral-1);
 
     &_active,
     &:hover {
         .tableRow__actionsWrapper {
             opacity: 1;
+        }
+    }
+
+    &::after {
+        content: "";
+        display: block;
+        position: absolute;
+        inset-inline-end: 0;
+        top: 0;
+        bottom: 0;
+        width: 0.1rem;
+        background-color: var(--guit-sem-color-border-neutral-2);
+        pointer-events: none;
+    }
+
+    &_expander {
+        padding: 0;
+    }
+
+    // Sizes the column (fit-content, paddings included) up to the maximum cell width; longer content
+    // is truncated, wider custom content is clipped horizontally only. Keep in sync with TableHeaderCell.
+    &__content {
+        display: flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-3xsmall);
+        box-sizing: border-box;
+        width: max-content;
+        min-width: 100%;
+        max-width: 18rem;
+        padding-inline: var(--guit-ref-spacing-large);
+        overflow-x: clip;
+    }
+
+    &_expander &__content {
+        padding-inline: var(--guit-ref-spacing-small);
+    }
+
+    &__text {
+        min-width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        color: var(--guit-sem-color-foreground-neutral-2);
+    }
+
+    &_pinned {
+        position: sticky;
+        z-index: 1;
+        background-color: inherit;
+        inset-inline-start: 0;
+
+        &::after {
+            background-color: var(--guit-sem-color-border-neutral-3);
         }
     }
 }

@@ -1,4 +1,3 @@
-import { IHsvColor } from "../../../types";
 import {
     HUE_BLUE_SECTOR_OFFSET,
     HUE_DEGREES_PER_SECTOR,
@@ -7,6 +6,7 @@ import {
     HUE_SECTORS_TOTAL,
     RGB_MAX_CHANNEL_VALUE
 } from "../constants";
+import { IHsvColor } from "../types";
 
 /**
  * Converts standard RGB channel values (0-255) into the HSV color space.

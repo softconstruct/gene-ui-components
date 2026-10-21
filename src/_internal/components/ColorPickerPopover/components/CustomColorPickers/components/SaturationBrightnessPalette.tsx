@@ -1,9 +1,9 @@
 import React, { FC, KeyboardEvent, useRef } from "react";
 
-import { IHsvColor } from "../../../types";
 import { SATURATION_POINTER_RADIUS_PX } from "../constants";
 import { useElementDimensions } from "../hooks/useElementDimensions";
 import { usePointerDrag } from "../hooks/usePointerDrag";
+import { IHsvColor } from "../types";
 
 interface ISaturationBrightnessPaletteProps {
     hsv: IHsvColor;
