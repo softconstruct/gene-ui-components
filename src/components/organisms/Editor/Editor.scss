@@ -1,11 +1,12 @@
 .editor {
     display: flex;
     flex-direction: column;
+    width: 100%;
     height: 100%;
-    overflow: hidden;
     border: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-neutral-2);
     border-radius: var(--guit-ref-radius-2xsmall);
     background-color: var(--guit-sem-color-background-neutral-1);
+    overflow: hidden;
 
     &:focus-within {
         outline-offset: var(--guit-ref-border-width-thin);
@@ -14,20 +15,19 @@
 
     &__header {
         display: flex;
-        flex: none;
+        flex-shrink: 0;
         flex-wrap: wrap;
         align-items: center;
         gap: var(--guit-ref-spacing-3xsmall);
-        padding-block: var(--guit-ref-spacing-xsmall);
-        padding-inline: var(--guit-ref-spacing-large);
+        padding: var(--guit-ref-spacing-xsmall) var(--guit-ref-spacing-large);
         border-block-end: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
             var(--guit-sem-color-border-neutral-2);
+    }
 
-        .editor__divider {
-            align-self: stretch;
-            height: auto;
-            flex: none;
-        }
+    &__divider {
+        align-self: stretch;
+        height: auto;
+        flex: none;
     }
 
     &__textStyleTrigger {
@@ -39,23 +39,23 @@
     }
 
     &__body {
-        flex: 1 1 auto;
+        flex: 1;
         min-height: 0;
         overflow: hidden;
     }
 
     &__footer {
         display: flex;
-        flex: none;
         align-items: center;
+        flex-shrink: 0;
         gap: var(--guit-ref-spacing-3xsmall);
-        padding-block: var(--guit-ref-spacing-xsmall);
-        padding-inline: var(--guit-ref-spacing-large);
+        padding: var(--guit-ref-spacing-xsmall) var(--guit-ref-spacing-large);
         border-block-start: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
             var(--guit-sem-color-border-neutral-2);
     }
 
     &__editable {
+        width: 100%;
         height: 100%;
     }
 
@@ -65,12 +65,12 @@
 
     &__content {
         min-height: 100%;
-        padding-block: var(--guit-ref-spacing-medium);
-        padding-inline: var(--guit-ref-spacing-large);
-        color: var(--guit-sem-color-foreground-neutral-2);
-        font-family: inherit;
-        font-size: var(--guit-sem-font-body-medium-default-regular-font-size);
-        line-height: 1.43;
+        padding: var(--guit-ref-spacing-medium) var(--guit-ref-spacing-large);
+
+        // color: var(--guit-sem-color-foreground-neutral-2);
+        // font-family: inherit;
+        // font-size: var(--guit-sem-font-body-medium-default-regular-font-size);
+        // line-height: 1.43;
 
         &:focus-visible {
             outline: none;
