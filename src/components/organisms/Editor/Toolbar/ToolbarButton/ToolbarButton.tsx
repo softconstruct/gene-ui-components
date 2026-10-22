@@ -69,29 +69,33 @@ const ToolbarButton: FC<IToolbarButtonProps> = ({
     title,
     "aria-label": ariaLabel,
     triggerProps
-}) => (
-    <button
-        type="button"
-        className={classNames("toolbarButton", className, {
-            toolbarButton_selected: selected,
-            toolbarButton_iconStart: !!IconBefore,
-            toolbarButton_iconEnd: !!IconAfter,
-            toolbarButton_square: !children && !(IconBefore && IconAfter)
-        })}
-        disabled={disabled}
-        title={title}
-        aria-label={ariaLabel}
-        aria-pressed={selected}
-        onClick={onClick}
-        {...triggerProps}
-        onMouseDown={preventSelectionLoss}
-    >
-        {IconBefore && <IconBefore size={ICON_SIZE} className="toolbarButton__icon" />}
+}) => {
+    const isIconOnly = !children && !(IconBefore && IconAfter);
 
-        {children && <span className="toolbarButton__text ellipsis-text">{children}</span>}
+    return (
+        <button
+            type="button"
+            className={classNames("toolbarButton", className, {
+                toolbarButton_selected: selected,
+                toolbarButton_icon_before: IconBefore && !isIconOnly,
+                toolbarButton_icon_after: IconAfter && !isIconOnly,
+                toolbarButton_icon_center: isIconOnly
+            })}
+            disabled={disabled}
+            title={title}
+            aria-label={ariaLabel}
+            aria-pressed={selected}
+            onClick={onClick}
+            {...triggerProps}
+            onMouseDown={preventSelectionLoss}
+        >
+            {IconBefore && <IconBefore size={ICON_SIZE} className="toolbarButton__icon" />}
 
-        {IconAfter && <IconAfter size={ICON_SIZE} className="toolbarButton__icon" />}
-    </button>
-);
+            {children && <span className="toolbarButton__text ellipsis-text">{children}</span>}
+
+            {IconAfter && <IconAfter size={ICON_SIZE} className="toolbarButton__icon" />}
+        </button>
+    );
+};
 
 export { IToolbarButtonProps, ToolbarButton as default };

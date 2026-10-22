@@ -32,19 +32,21 @@
         background-color: var(--guit-sem-color-background-transparent-1-pressed);
     }
 
-    &_iconStart {
-        padding-inline-start: var(--guit-ref-spacing-xsmall);
-    }
+    &_icon {
+        &_before {
+            padding-inline-start: var(--guit-ref-spacing-xsmall);
+        }
 
-    &_iconEnd {
-        padding-inline-end: var(--guit-ref-spacing-xsmall);
-    }
+        &_after {
+            padding-inline-end: var(--guit-ref-spacing-xsmall);
+        }
 
-    &_square {
-        justify-content: center;
-        width: var(--guit-sem-dimension-width-medium);
+        &_center {
+            justify-content: center;
+            width: var(--guit-sem-dimension-width-medium);
 
-        // padding-inline: var(--guit-ref-spacing-2xsmall);
+            // padding-inline: var(--guit-ref-spacing-2xsmall);
+        }
     }
 
     &__icon {
