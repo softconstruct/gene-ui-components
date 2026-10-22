@@ -6,8 +6,6 @@ import {
     ArrowUndo,
     ChevronRightLeft,
     ColorFill,
-    EqualOff,
-    Globe,
     Link,
     RecycleBin,
     TextAlignCenter,
@@ -18,8 +16,14 @@ import {
     TextBulletList,
     TextCase,
     TextColor,
+    TextHeader1,
+    TextHeader2,
+    TextHeader3,
     TextItalic,
     TextNumberList,
+    TextStrikethrough,
+    TextSubscript,
+    TextSuperscript,
     TextUnderline
 } from "@geneui/icons";
 
@@ -52,21 +56,21 @@ const BLOCK_MENU_ACTIONS: IToolbarAction[] = [
     {
         id: "heading1",
         label: "Heading 1",
-        Icon: Globe,
+        Icon: TextHeader1,
         isActive: (state) => state.headingLevel === 1,
         buildChain: (chain) => chain.setHeading({ level: 1 })
     },
     {
         id: "heading2",
         label: "Heading 2",
-        Icon: Globe,
+        Icon: TextHeader2,
         isActive: (state) => state.headingLevel === 2,
         buildChain: (chain) => chain.setHeading({ level: 2 })
     },
     {
         id: "heading3",
         label: "Heading 3",
-        Icon: Globe,
+        Icon: TextHeader3,
         isActive: (state) => state.headingLevel === 3,
         buildChain: (chain) => chain.setHeading({ level: 3 })
     }
@@ -122,21 +126,21 @@ const FORMAT_MENU_ACTIONS: IToolbarAction[] = [
     {
         id: "strike",
         label: "Strikethrough",
-        Icon: EqualOff,
+        Icon: TextStrikethrough,
         isActive: (state) => state.strike,
         buildChain: (chain) => chain.toggleStrike()
     },
     {
         id: "subscript",
         label: "Subscript",
-        Icon: EqualOff,
+        Icon: TextSubscript,
         isActive: (state) => state.subscript,
         buildChain: (chain) => chain.toggleSubscript()
     },
     {
         id: "superscript",
         label: "Superscript",
-        Icon: EqualOff,
+        Icon: TextSuperscript,
         isActive: (state) => state.superscript,
         buildChain: (chain) => chain.toggleSuperscript()
     },
