@@ -44,8 +44,6 @@
         &_center {
             justify-content: center;
             width: var(--guit-sem-dimension-width-medium);
-
-            // padding-inline: var(--guit-ref-spacing-2xsmall);
         }
     }
 
@@ -54,7 +52,7 @@
     }
 
     &__text {
-        flex: 1 1 auto;
+        flex: 1;
         min-width: 0;
         text-align: start;
     }
