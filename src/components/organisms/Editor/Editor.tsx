@@ -68,7 +68,6 @@ interface IEditorProps {
     defaultValue?: string;
     /**
      * Text shown inside the editing area while it holds no content.
-     * @default "Start writing..."
      */
     placeholder?: string;
     /**
@@ -104,7 +103,7 @@ const Editor: FC<IEditorProps> = ({
     className,
     id,
     defaultValue,
-    placeholder = "Start writing...",
+    placeholder,
     readOnly = false,
     "aria-label": ariaLabel,
     presetColors,
@@ -155,7 +154,7 @@ const Editor: FC<IEditorProps> = ({
                     lineHeight: false
                 }),
                 Placeholder.configure({
-                    placeholder: () => placeholderRef.current,
+                    placeholder: () => placeholderRef.current ?? "",
                     emptyEditorClass: "editor__placeholder",
                     dataAttribute: PLACEHOLDER_ATTRIBUTE
                 })
