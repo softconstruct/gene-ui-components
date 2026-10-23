@@ -1,0 +1,99 @@
+.editor {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    border: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-neutral-2);
+    border-radius: var(--guit-ref-radius-2xsmall);
+    background-color: var(--guit-sem-color-background-neutral-1);
+    overflow: hidden;
+
+    &__header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        flex-shrink: 0;
+        gap: var(--guit-ref-spacing-3xsmall);
+        width: 100%;
+        padding: var(--guit-ref-spacing-xsmall) var(--guit-ref-spacing-large);
+        border-block-end: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+            var(--guit-sem-color-border-neutral-2);
+    }
+
+    &__divider {
+        align-self: stretch;
+        height: auto;
+        flex: none;
+    }
+
+    &__textStyleTrigger {
+        width: 11rem;
+    }
+
+    &__fontFamilyTrigger {
+        width: 7.4rem;
+    }
+
+    &__body {
+        flex: 1;
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    &__editable {
+        width: 100%;
+        height: 100%;
+    }
+
+    &__content {
+        min-height: 100%;
+        padding: var(--guit-ref-spacing-medium) var(--guit-ref-spacing-large);
+
+        h1,
+        h2,
+        h3,
+        p,
+        ul,
+        ol,
+        li,
+        blockquote,
+        pre,
+        code,
+        hr,
+        sub,
+        sup,
+        span {
+            all: revert;
+            line-height: initial;
+        }
+
+        a {
+            color: revert;
+            cursor: pointer;
+        }
+    }
+
+    &__empty:first-child {
+        &::before {
+            content: attr(data-editor-placeholder);
+            float: inline-start;
+            height: 0;
+            font-size: var(--guit-sem-font-body-medium-default-medium-font-size);
+            font-weight: var(--guit-sem-font-body-medium-default-medium-font-weight);
+            line-height: var(--guit-sem-font-body-medium-default-medium-line-height);
+            color: var(--guit-sem-color-foreground-neutral-1);
+            pointer-events: none;
+        }
+    }
+
+    &__footer {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        gap: var(--guit-ref-spacing-3xsmall);
+        width: 100%;
+        padding: var(--guit-ref-spacing-xsmall) var(--guit-ref-spacing-large);
+        border-block-start: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+            var(--guit-sem-color-border-neutral-2);
+    }
+}

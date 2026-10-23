@@ -1,0 +1,9 @@
+.fontSizeStepper {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--guit-ref-spacing-3xsmall);
+
+    &__input {
+        width: 4.1rem;
+    }
+}
