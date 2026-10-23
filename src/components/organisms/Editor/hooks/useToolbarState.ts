@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Editor as TiptapEditor } from "@tiptap/core";
 import { redoDepth, undoDepth } from "@tiptap/pm/history";
+import type { Transaction } from "@tiptap/pm/state";
 
 import { parseFontFamily, parseFontSize } from "../Toolbar/helper";
 import { IToolbarState } from "../Toolbar/types";
@@ -55,11 +56,19 @@ const useToolbarState = (editor: TiptapEditor | null): IToolbarState | null => {
             setToolbarState((previous) => (previous && isToolbarStateEqual(previous, next) ? previous : next));
         };
 
+        const handleTransaction = ({ transaction }: { transaction: Transaction }): void => {
+            if (!transaction.docChanged && !transaction.selectionSet && !transaction.storedMarksSet) {
+                return;
+            }
+
+            update();
+        };
+
         update();
-        editor.on("transaction", update);
+        editor.on("transaction", handleTransaction);
 
         return () => {
-            editor.off("transaction", update);
+            editor.off("transaction", handleTransaction);
         };
     }, [editor]);
 
