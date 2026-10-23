@@ -118,7 +118,7 @@ describe("Editor ", () => {
 
     it("renders placeholder prop correctly", () => {
         const wrapper = mount(<Editor placeholder="test placeholder" />, { wrappingComponent: GeneUIProvider });
-        const placeholder = wrapper.getDOMNode().querySelector(".editor__placeholder");
+        const placeholder = wrapper.getDOMNode().querySelector(".editor__empty");
 
         expect(placeholder?.getAttribute("data-editor-placeholder")).toBe("test placeholder");
 

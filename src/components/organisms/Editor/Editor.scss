@@ -73,7 +73,7 @@
         }
     }
 
-    &__placeholder:first-child {
+    &__empty:first-child {
         &::before {
             content: attr(data-editor-placeholder);
             float: inline-start;
