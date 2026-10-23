@@ -27,7 +27,7 @@ const meta: Meta<IEditorProps> = {
     },
     args: {
         defaultValue: editorContent,
-        placeholder: "Start writing...",
+        placeholder: "placeholder",
         readOnly: false,
         presetColors: []
     }
