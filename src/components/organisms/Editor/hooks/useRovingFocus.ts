@@ -32,16 +32,6 @@ const isCaretAtEdge = (target: HTMLElement, key: string): boolean => {
     return key === "ArrowLeft" ? selectionStart === 0 : selectionStart === value.length;
 };
 
-const setTabStop = (controls: HTMLElement[], activeControl?: HTMLElement): void => {
-    controls.forEach((control) => {
-        const tabIndex = control === activeControl ? "0" : "-1";
-
-        if (control.getAttribute("tabindex") !== tabIndex) {
-            control.setAttribute("tabindex", tabIndex);
-        }
-    });
-};
-
 interface IRovingFocus {
     toolbarRef: RefObject<HTMLDivElement>;
     handleKeyDown: (event: ReactKeyboardEvent<HTMLDivElement>) => void;
@@ -54,6 +44,7 @@ interface IRovingFocus {
  */
 const useRovingFocus = (editor: TiptapEditor | null): IRovingFocus => {
     const toolbarRef = useRef<HTMLDivElement>(null);
+    const activeControlRef = useRef<HTMLElement | null>(null);
 
     useEffect(() => {
         const toolbar = toolbarRef.current;
@@ -62,24 +53,61 @@ const useRovingFocus = (editor: TiptapEditor | null): IRovingFocus => {
             return undefined;
         }
 
-        const placeTabStop = (): void => {
-            const controls = getControls(toolbar);
+        const switchActiveControl = (nextActive: HTMLElement | undefined): void => {
+            const currentActive = activeControlRef.current;
 
-            setTabStop(controls, getActiveControl(controls));
+            if (currentActive === nextActive) {
+                return;
+            }
+
+            if (currentActive && currentActive.getAttribute("tabindex") !== "-1") {
+                currentActive.setAttribute("tabindex", "-1");
+            }
+
+            if (nextActive && nextActive.getAttribute("tabindex") !== "0") {
+                nextActive.setAttribute("tabindex", "0");
+            }
+
+            activeControlRef.current = nextActive ?? null;
+        };
+
+        const syncAllTabStops = (): void => {
+            const controls = getControls(toolbar);
+            const active = getActiveControl(controls);
+
+            controls.forEach((control) => {
+                const tabIndex = control === active ? "0" : "-1";
+
+                if (control.getAttribute("tabindex") !== tabIndex) {
+                    control.setAttribute("tabindex", tabIndex);
+                }
+            });
+
+            activeControlRef.current = active ?? null;
         };
 
         const handleFocusIn = (event: FocusEvent): void => {
-            const controls = getControls(toolbar);
-            const focusedControl = controls.find((control) => control === event.target);
+            const target = (event.target as HTMLElement)?.closest<HTMLElement>(CONTROL_SELECTOR);
 
-            if (focusedControl) {
-                setTabStop(controls, focusedControl);
+            if (target && toolbar.contains(target)) {
+                switchActiveControl(target);
             }
         };
 
-        placeTabStop();
+        syncAllTabStops();
 
-        const observer = new MutationObserver(placeTabStop);
+        const observer = new MutationObserver((mutations) => {
+            const hasRelevantChange = mutations.some(
+                (mutation) =>
+                    mutation.type === "childList" ||
+                    (mutation.target === activeControlRef.current &&
+                        (mutation.target as HTMLElement).hasAttribute("disabled"))
+            );
+
+            if (hasRelevantChange || !activeControlRef.current) {
+                syncAllTabStops();
+            }
+        });
 
         observer.observe(toolbar, OBSERVED_MUTATIONS);
         toolbar.addEventListener("focusin", handleFocusIn);
@@ -102,7 +130,8 @@ const useRovingFocus = (editor: TiptapEditor | null): IRovingFocus => {
 
             if (hasOnlyAltKey && event.key === TOOLBAR_SHORTCUT_KEY) {
                 event.preventDefault();
-                getActiveControl(getControls(toolbarRef.current))?.focus();
+                const target = activeControlRef.current ?? getActiveControl(getControls(toolbarRef.current));
+                target?.focus();
             }
         };
 
@@ -118,13 +147,17 @@ const useRovingFocus = (editor: TiptapEditor | null): IRovingFocus => {
             return;
         }
 
-        const target = event.target as HTMLElement;
-
         if (event.key === "Escape") {
-            if (target.getAttribute("aria-expanded") !== "true") {
+            if ((event.target as HTMLElement).getAttribute("aria-expanded") !== "true") {
                 editor?.commands.focus();
             }
 
+            return;
+        }
+
+        const target = (event.target as HTMLElement)?.closest<HTMLElement>(CONTROL_SELECTOR);
+
+        if (!target) {
             return;
         }
 
@@ -162,7 +195,6 @@ const useRovingFocus = (editor: TiptapEditor | null): IRovingFocus => {
         }
 
         event.preventDefault();
-        setTabStop(controls, nextControl);
         nextControl.focus();
     };
 
