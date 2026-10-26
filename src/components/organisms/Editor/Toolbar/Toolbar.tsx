@@ -1,4 +1,4 @@
-import React, { FC, memo } from "react";
+import React, { FC, memo, useEffect, useState } from "react";
 import type { Editor as TiptapEditor } from "@tiptap/core";
 
 import {
@@ -160,10 +160,31 @@ interface IToolbarProps {
 }
 
 const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false, presetColors }) => {
+    const [isLinkOpen, setIsLinkOpen] = useState(false);
     const toolbarState = useToolbarState(editor);
     const { toolbarRef, handleKeyDown } = useRovingFocus(editor);
     const colors = toPresetColors(presetColors);
     const isOff = disabled || !editor || !toolbarState;
+
+    useEffect(() => {
+        const editingArea = editor?.view.dom;
+
+        if (!editingArea) {
+            return undefined;
+        }
+
+        const handleContentClick = (event: MouseEvent): void => {
+            if ((event.target as HTMLElement).closest("a")) {
+                setIsLinkOpen(true);
+            }
+        };
+
+        editingArea.addEventListener("click", handleContentClick);
+
+        return () => {
+            editingArea.removeEventListener("click", handleContentClick);
+        };
+    }, [editor]);
 
     const applyWithFocus = (buildChain: (chain: ToolbarChain) => ToolbarChain): void => {
         if (editor) {
@@ -337,6 +358,8 @@ const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false, presetColors }) 
                 Icon={Link}
                 aria-label="Link"
                 value={toolbarState?.linkHref}
+                open={isLinkOpen}
+                onOpenChange={setIsLinkOpen}
                 selected={toolbarState?.link}
                 disabled={isOff}
                 onChange={applyLink}

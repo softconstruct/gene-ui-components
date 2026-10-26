@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC, KeyboardEvent, useState } from "react";
+import React, { ChangeEvent, FC, KeyboardEvent, useEffect, useState } from "react";
 
 import { CheckMark, IconProps, LinkX, OpenInNew } from "@geneui/icons";
 
@@ -30,6 +30,15 @@ interface ILinkTriggerProps {
      */
     value?: string;
     /**
+     * The open state of the URL field. The Editor controls it, so the field also opens when a
+     * link in the content is clicked.
+     */
+    open: boolean;
+    /**
+     * A callback function that is called when the URL field asks to be opened or closed.
+     */
+    onOpenChange: (open: boolean) => void;
+    /**
      * Marks the trigger as the currently applied option.
      */
     selected?: boolean;
@@ -57,7 +66,9 @@ interface ILinkTriggerProps {
 const LinkTrigger: FC<ILinkTriggerProps> = ({
     Icon,
     "aria-label": ariaLabel,
-    value,
+    value = "",
+    open,
+    onOpenChange,
     selected,
     disabled,
     onChange,
@@ -65,21 +76,23 @@ const LinkTrigger: FC<ILinkTriggerProps> = ({
     className
 }) => {
     const [triggerProps, setTriggerProps] = useState({});
-    const [isOpen, setIsOpen] = useState(false);
     const [draft, setDraft] = useState("");
 
     const href = draft.trim();
+    const hasChanges = href !== value;
+
+    useEffect(() => {
+        if (open) {
+            setDraft(value);
+        }
+    }, [open, value]);
 
     const handleTriggerClick = (): void => {
-        if (!isOpen) {
-            setDraft(value ?? "");
-        }
-
-        setIsOpen((previous) => !previous);
+        onOpenChange(!open);
     };
 
     const handleClose = (): void => {
-        setIsOpen(false);
+        onOpenChange(false);
     };
 
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -89,7 +102,7 @@ const LinkTrigger: FC<ILinkTriggerProps> = ({
     const handleApply = (): void => {
         if (isSafeHref(href)) {
             onChange(toHref(href));
-            setIsOpen(false);
+            onOpenChange(false);
         }
     };
 
@@ -101,7 +114,7 @@ const LinkTrigger: FC<ILinkTriggerProps> = ({
 
     const handleRemove = (): void => {
         onRemove();
-        setIsOpen(false);
+        onOpenChange(false);
     };
 
     const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
@@ -110,6 +123,18 @@ const LinkTrigger: FC<ILinkTriggerProps> = ({
             handleApply();
         }
     };
+
+    const actions = [
+        {
+            id: "apply",
+            Icon: CheckMark,
+            "aria-label": "Apply link",
+            disabled: !href || !hasChanges,
+            onClick: handleApply
+        },
+        { id: "open", Icon: OpenInNew, "aria-label": "Open link", disabled: !href, onClick: handleOpen },
+        { id: "remove", Icon: LinkX, "aria-label": "Remove link", disabled: !selected, onClick: handleRemove }
+    ];
 
     return (
         <>
@@ -124,7 +149,7 @@ const LinkTrigger: FC<ILinkTriggerProps> = ({
             />
 
             <Popover
-                open={isOpen}
+                open={open}
                 setProps={setTriggerProps}
                 onClose={handleClose}
                 position="bottom-left"
@@ -132,46 +157,20 @@ const LinkTrigger: FC<ILinkTriggerProps> = ({
                 withArrow={false}
                 mobileHeightMode="fit"
             >
-                <PopoverBody withPadding={false} withScrollbar={false}>
-                    <div className="linkTrigger">
-                        <TextField
-                            className="linkTrigger__input"
-                            name="editor-link"
-                            size="medium"
-                            placeholder="https://"
-                            value={draft}
-                            autoFocus
-                            onChange={handleInputChange}
-                            onKeyDown={handleKeyDown}
-                        />
-                        <Button
-                            Icon={CheckMark}
-                            appearance="secondary"
-                            layout="text"
-                            size="medium"
-                            aria-label="Apply link"
-                            disabled={!href}
-                            onClick={handleApply}
-                        />
-                        <Button
-                            Icon={OpenInNew}
-                            appearance="secondary"
-                            layout="text"
-                            size="medium"
-                            aria-label="Open link"
-                            disabled={!href}
-                            onClick={handleOpen}
-                        />
-                        <Button
-                            Icon={LinkX}
-                            appearance="secondary"
-                            layout="text"
-                            size="medium"
-                            aria-label="Remove link"
-                            disabled={!selected}
-                            onClick={handleRemove}
-                        />
-                    </div>
+                <PopoverBody withPadding={false} withScrollbar={false} className="linkTrigger">
+                    <TextField
+                        className="linkTrigger__input"
+                        name="editor-link"
+                        size="medium"
+                        placeholder="https://"
+                        value={draft}
+                        autoFocus
+                        onChange={handleInputChange}
+                        onKeyDown={handleKeyDown}
+                    />
+                    {actions.map(({ id, ...action }) => (
+                        <Button key={id} appearance="secondary" layout="text" size="medium" {...action} />
+                    ))}
                 </PopoverBody>
             </Popover>
         </>
