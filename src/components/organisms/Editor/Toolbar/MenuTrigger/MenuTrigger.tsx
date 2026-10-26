@@ -90,8 +90,8 @@ const MenuTrigger: FC<IMenuTriggerProps> = ({
             </ToolbarButton>
 
             <Menu size="medium" setPropsForPopover={setTriggerProps} onChange={(item) => onChange(String(item.id))}>
-                {items.map(({ id, label: itemLabel, Icon: ItemIcon, selected, divider }) => (
-                    <MenuItem key={id} id={id} IconBefore={ItemIcon} selected={selected} divider={divider}>
+                {items.map(({ id, label: itemLabel, Icon: ItemIcon, selected }) => (
+                    <MenuItem key={id} id={id} IconBefore={ItemIcon} selected={selected}>
                         {itemLabel}
                     </MenuItem>
                 ))}

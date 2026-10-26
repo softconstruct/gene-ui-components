@@ -100,11 +100,11 @@ describe("Editor ", () => {
         expect(mockFn).toHaveBeenCalled();
     });
 
-    it("generates an id for a footer action without one", () => {
-        const wrapper = setup.setProps({ footerActions: [{ Icon: Globe, onClick: mockFn }] });
+    it("renders the id of a footer action correctly", () => {
+        const wrapper = setup.setProps({ footerActions: [{ id: "first", Icon: Globe, onClick: mockFn }] });
         const action = wrapper.getDOMNode().querySelector(".editor__footer button");
 
-        expect(action?.getAttribute("id")).toBeTruthy();
+        expect(action?.getAttribute("id")).toBe("first");
     });
 
     it("renders aria-label of a footer action correctly", () => {

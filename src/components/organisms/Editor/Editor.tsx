@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo, useRef, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import { Editor as TiptapEditor } from "@tiptap/core";
 import Subscript from "@tiptap/extension-subscript";
 import Superscript from "@tiptap/extension-superscript";
@@ -7,7 +7,6 @@ import { TextStyleKit } from "@tiptap/extension-text-style";
 import { Placeholder } from "@tiptap/extensions";
 import StarterKit from "@tiptap/starter-kit";
 import classNames from "classnames";
-import { nanoid } from "nanoid/non-secure";
 
 // Icons
 import { IconProps } from "@geneui/icons";
@@ -29,15 +28,15 @@ const getEditingAreaAttributes = (id?: string, ariaLabel?: string, readOnly?: bo
     role: "textbox",
     "aria-multiline": "true",
     "aria-label": ariaLabel ?? DEFAULT_ARIA_LABEL,
-    ...(id === undefined ? {} : { id }),
-    ...(readOnly ? { "aria-readonly": "true" } : {})
+    ...(id !== undefined && { id }),
+    ...(readOnly && { "aria-readonly": "true" })
 });
 
 interface IEditorFooterAction {
     /**
-     * A unique identifier for the action. One is generated when it is left out.
+     * A unique identifier for the action.
      */
-    id?: string;
+    id: string;
     /**
      * A React Functional Component rendered as the action's icon.
      */
@@ -110,10 +109,6 @@ const Editor: FC<IEditorProps> = ({
     footerActions,
     onChange
 }) => {
-    const footerItems = useMemo(
-        () => footerActions?.map((action) => ({ ...action, id: action.id || nanoid() })) ?? [],
-        [footerActions]
-    );
     const bodyRef = useRef<HTMLDivElement>(null);
     const [editor, setEditor] = useState<TiptapEditor | null>(null);
 
@@ -204,9 +199,9 @@ const Editor: FC<IEditorProps> = ({
                 </Scrollbar>
             </div>
 
-            {footerItems.length > 0 && (
+            {footerActions && footerActions.length > 0 && (
                 <div className="editor__footer">
-                    {footerItems.map(({ id: actionId, Icon, "aria-label": actionLabel, onClick }) => (
+                    {footerActions.map(({ id: actionId, Icon, "aria-label": actionLabel, onClick }) => (
                         <Button
                             key={actionId}
                             id={actionId}

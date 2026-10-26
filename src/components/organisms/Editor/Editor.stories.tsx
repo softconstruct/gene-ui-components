@@ -15,13 +15,13 @@ const meta: Meta<IEditorProps> = {
     title: "Organisms/Editor",
     component: Editor,
     argTypes: {
-        defaultValue: args({ control: "false", ...propCategory.content }),
+        defaultValue: args({ control: "text", ...propCategory.content }),
         placeholder: args({ control: "text", ...propCategory.content }),
         className: args({ control: "false", ...propCategory.appearance }),
         readOnly: args({ control: "boolean", ...propCategory.states }),
         onChange: args({ control: "false", ...propCategory.action }),
         presetColors: args({ control: "array", ...propCategory.content }),
-        footerActions: args({ control: "false", ...propCategory.content }),
+        footerActions: args({ control: "array", ...propCategory.content }),
         id: args({ control: "text", ...propCategory.others }),
         "aria-label": args({ control: "text", ...propCategory.others })
     },

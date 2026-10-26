@@ -31,7 +31,6 @@ interface IToolbarAction {
     id: string;
     label: string;
     Icon?: FC<IconProps>;
-    divider?: boolean;
     isActive: (state: IToolbarState) => boolean;
     buildChain: (chain: ToolbarChain) => ToolbarChain;
 }
