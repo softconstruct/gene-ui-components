@@ -50,29 +50,29 @@ const BLOCK_MENU_ACTIONS: IToolbarAction[] = [
         id: "paragraph",
         label: "Normal",
         Icon: TextAlignLeft,
-        isActive: (state) => state.headingLevel === 0,
-        buildChain: (chain) => chain.setParagraph()
+        isActive: ({ headingLevel }) => headingLevel === 0,
+        buildChain: ({ setParagraph }) => setParagraph()
     },
     {
         id: "heading1",
         label: "Heading 1",
         Icon: TextHeader1,
-        isActive: (state) => state.headingLevel === 1,
-        buildChain: (chain) => chain.setHeading({ level: 1 })
+        isActive: ({ headingLevel }) => headingLevel === 1,
+        buildChain: ({ setHeading }) => setHeading({ level: 1 })
     },
     {
         id: "heading2",
         label: "Heading 2",
         Icon: TextHeader2,
-        isActive: (state) => state.headingLevel === 2,
-        buildChain: (chain) => chain.setHeading({ level: 2 })
+        isActive: ({ headingLevel }) => headingLevel === 2,
+        buildChain: ({ setHeading }) => setHeading({ level: 2 })
     },
     {
         id: "heading3",
         label: "Heading 3",
         Icon: TextHeader3,
-        isActive: (state) => state.headingLevel === 3,
-        buildChain: (chain) => chain.setHeading({ level: 3 })
+        isActive: ({ headingLevel }) => headingLevel === 3,
+        buildChain: ({ setHeading }) => setHeading({ level: 3 })
     }
 ];
 
@@ -80,14 +80,14 @@ const FONT_FAMILY_MENU_ACTIONS: IToolbarAction[] = [
     {
         id: "default",
         label: DEFAULT_FONT_FAMILY_LABEL,
-        isActive: (state) => !FONT_FAMILIES_BY_NAME[state.fontFamily],
-        buildChain: (chain) => chain.unsetFontFamily()
+        isActive: ({ fontFamily }) => !FONT_FAMILIES_BY_NAME[fontFamily],
+        buildChain: ({ unsetFontFamily }) => unsetFontFamily()
     },
     ...Object.entries(FONT_FAMILIES_BY_NAME).map(([name, { label, value }]) => ({
         id: name,
         label,
-        isActive: (state: IToolbarState) => state.fontFamily === name,
-        buildChain: (chain: ToolbarChain) => chain.setFontFamily(value)
+        isActive: ({ fontFamily }: IToolbarState) => fontFamily === name,
+        buildChain: ({ setFontFamily }: ToolbarChain) => setFontFamily(value)
     }))
 ];
 
@@ -96,29 +96,29 @@ const ALIGN_MENU_ACTIONS: IToolbarAction[] = [
         id: "alignLeft",
         label: "Left Align",
         Icon: TextAlignLeft,
-        isActive: (state) => state.textAlign === "left",
-        buildChain: (chain) => chain.toggleTextAlign("left")
+        isActive: ({ textAlign }) => textAlign === "left",
+        buildChain: ({ toggleTextAlign }) => toggleTextAlign("left")
     },
     {
         id: "alignCenter",
         label: "Centre Align",
         Icon: TextAlignCenter,
-        isActive: (state) => state.textAlign === "center",
-        buildChain: (chain) => chain.toggleTextAlign("center")
+        isActive: ({ textAlign }) => textAlign === "center",
+        buildChain: ({ toggleTextAlign }) => toggleTextAlign("center")
     },
     {
         id: "alignRight",
         label: "Right Align",
         Icon: TextAlignRight,
-        isActive: (state) => state.textAlign === "right",
-        buildChain: (chain) => chain.toggleTextAlign("right")
+        isActive: ({ textAlign }) => textAlign === "right",
+        buildChain: ({ toggleTextAlign }) => toggleTextAlign("right")
     },
     {
         id: "alignJustify",
         label: "Justify Align",
         Icon: TextAlignJustify,
-        isActive: (state) => state.textAlign === "justify",
-        buildChain: (chain) => chain.toggleTextAlign("justify")
+        isActive: ({ textAlign }) => textAlign === "justify",
+        buildChain: ({ toggleTextAlign }) => toggleTextAlign("justify")
     }
 ];
 
@@ -127,29 +127,29 @@ const FORMAT_MENU_ACTIONS: IToolbarAction[] = [
         id: "strike",
         label: "Strikethrough",
         Icon: TextStrikethrough,
-        isActive: (state) => state.strike,
-        buildChain: (chain) => chain.toggleStrike()
+        isActive: ({ strike }) => strike,
+        buildChain: ({ toggleStrike }) => toggleStrike()
     },
     {
         id: "subscript",
         label: "Subscript",
         Icon: TextSubscript,
-        isActive: (state) => state.subscript,
-        buildChain: (chain) => chain.toggleSubscript()
+        isActive: ({ subscript }) => subscript,
+        buildChain: ({ toggleSubscript }) => toggleSubscript()
     },
     {
         id: "superscript",
         label: "Superscript",
         Icon: TextSuperscript,
-        isActive: (state) => state.superscript,
-        buildChain: (chain) => chain.toggleSuperscript()
+        isActive: ({ superscript }) => superscript,
+        buildChain: ({ toggleSuperscript }) => toggleSuperscript()
     },
     {
         id: "clearFormat",
         label: "Clear Formatting",
         Icon: RecycleBin,
         isActive: () => false,
-        buildChain: (chain) => chain.unsetStrike().unsetSubscript().unsetSuperscript()
+        buildChain: ({ unsetStrike }) => unsetStrike().unsetSubscript().unsetSuperscript()
     }
 ];
 
@@ -203,8 +203,15 @@ const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false, presetColors }) 
         }
     };
 
-    const applyLink = (href: string): void =>
-        applyWithFocus((chain) => chain.extendMarkRange("link").setLink({ href }));
+    const applyLink = (href: string): void => {
+        const hasNoTextToLink = !!editor && editor.state.selection.empty && !editor.isActive("link");
+
+        applyWithFocus((chain) =>
+            hasNoTextToLink
+                ? chain.insertContent({ type: "text", text: href, marks: [{ type: "link", attrs: { href } }] })
+                : chain.extendMarkRange("link").setLink({ href })
+        );
+    };
 
     const removeLink = (): void => applyWithFocus((chain) => chain.extendMarkRange("link").unsetLink());
 
