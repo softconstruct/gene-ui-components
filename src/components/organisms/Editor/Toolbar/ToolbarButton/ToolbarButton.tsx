@@ -6,8 +6,6 @@ import { IconProps } from "@geneui/icons";
 // Styles
 import "./ToolbarButton.scss";
 
-const ICON_SIZE: IconProps["size"] = 20;
-
 const preventSelectionLoss = (event: MouseEvent<HTMLButtonElement>): void => event.preventDefault();
 
 interface IToolbarButtonProps {
@@ -89,11 +87,11 @@ const ToolbarButton: FC<IToolbarButtonProps> = ({
             {...triggerProps}
             onMouseDown={preventSelectionLoss}
         >
-            {IconBefore && <IconBefore size={ICON_SIZE} className="toolbarButton__icon" />}
+            {IconBefore && <IconBefore size={20} className="toolbarButton__icon" />}
 
             {children && <span className="toolbarButton__text ellipsis-text">{children}</span>}
 
-            {IconAfter && <IconAfter size={ICON_SIZE} className="toolbarButton__icon" />}
+            {IconAfter && <IconAfter size={20} className="toolbarButton__icon" />}
         </button>
     );
 };

@@ -51,8 +51,7 @@ interface IMenuTriggerProps {
      */
     disabled?: boolean;
     /**
-     * An ARIA label for the trigger. Ignored when `label` is set, so the accessible name always
-     * matches the visible text.
+     * An ARIA label for the trigger.
      */
     "aria-label"?: string;
     /**
@@ -84,7 +83,7 @@ const MenuTrigger: FC<IMenuTriggerProps> = ({
                 disabled={disabled}
                 className={className}
                 title={label}
-                aria-label={label ? undefined : ariaLabel}
+                aria-label={ariaLabel}
             >
                 {label}
             </ToolbarButton>

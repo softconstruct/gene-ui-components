@@ -29,7 +29,7 @@ interface IColorTriggerProps {
     /**
      * A callback function that is called once the palette is dismissed.
      */
-    onClose?: () => void;
+    onClose: () => void;
     /**
      * The color currently applied to the editor's selection, as a HEX string. The palette opens on
      * it, and an empty string opens the palette cleared.
@@ -89,7 +89,7 @@ const ColorTrigger: FC<IColorTriggerProps> = ({
 
     const handleClose = (): void => {
         setIsOpen(false);
-        onClose?.();
+        onClose();
     };
 
     return (

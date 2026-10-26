@@ -265,7 +265,6 @@ const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false, presetColors }) 
             <MenuTrigger
                 className="editor__textStyleTrigger"
                 label={activeBlock?.label ?? ""}
-                aria-label="Text style"
                 disabled={isOff}
                 items={toMenuItems(BLOCK_MENU_ACTIONS, toolbarState)}
                 onChange={handleMenuChange(BLOCK_MENU_ACTIONS)}
@@ -274,7 +273,6 @@ const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false, presetColors }) 
             <MenuTrigger
                 className="editor__fontFamilyTrigger"
                 label={activeFontFamily?.label ?? DEFAULT_FONT_FAMILY_LABEL}
-                aria-label="Font"
                 disabled={isOff}
                 items={toMenuItems(FONT_FAMILY_MENU_ACTIONS, toolbarState)}
                 onChange={handleMenuChange(FONT_FAMILY_MENU_ACTIONS)}
