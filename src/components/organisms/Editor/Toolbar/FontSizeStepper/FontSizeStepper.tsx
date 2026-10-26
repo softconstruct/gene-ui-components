@@ -84,7 +84,7 @@ const FontSizeStepper: FC<IFontSizeStepperProps> = ({ value = DEFAULT_FONT_SIZE,
                 layout="text"
                 size="medium"
                 aria-label="Decrease font size"
-                disabled={disabled || value - FONT_SIZE_STEP < MIN_FONT_SIZE}
+                disabled={disabled || value <= MIN_FONT_SIZE}
                 onClick={() => step(-FONT_SIZE_STEP)}
             />
             <TextField
@@ -106,7 +106,7 @@ const FontSizeStepper: FC<IFontSizeStepperProps> = ({ value = DEFAULT_FONT_SIZE,
                 layout="text"
                 size="medium"
                 aria-label="Increase font size"
-                disabled={disabled || value + FONT_SIZE_STEP > MAX_FONT_SIZE}
+                disabled={disabled || value >= MAX_FONT_SIZE}
                 onClick={() => step(FONT_SIZE_STEP)}
             />
         </div>

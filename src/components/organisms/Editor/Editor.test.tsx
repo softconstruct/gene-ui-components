@@ -310,6 +310,26 @@ describe("Editor font size stepper", () => {
         expect(getDecreaseButton(wrapper).prop("disabled")).toBeFalsy();
     });
 
+    it("steps down to the minimum size", () => {
+        const wrapper = setup.setProps({ value: 9 });
+
+        expect(getDecreaseButton(wrapper).prop("disabled")).toBeFalsy();
+
+        getDecreaseButton(wrapper).simulate("click");
+
+        expect(mockFn).toHaveBeenCalledWith(8, true);
+    });
+
+    it("steps up to the maximum size", () => {
+        const wrapper = setup.setProps({ value: 71 });
+
+        expect(getIncreaseButton(wrapper).prop("disabled")).toBeFalsy();
+
+        getIncreaseButton(wrapper).simulate("click");
+
+        expect(mockFn).toHaveBeenCalledWith(72, true);
+    });
+
     it("commits a typed size with Enter", () => {
         getInput(setup).simulate("change", { target: { value: "40" } });
         getInput(setup).simulate("keydown", { key: "Enter" });
