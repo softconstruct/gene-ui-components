@@ -34,14 +34,13 @@
         width: 7.4rem;
     }
 
-    &__body {
+    &__viewport {
         flex: 1;
         min-height: 0;
         overflow: hidden;
     }
 
-    &__editable {
-        width: 100%;
+    &__body {
         height: 100%;
     }
 
@@ -52,6 +51,9 @@
         h1,
         h2,
         h3,
+        h4,
+        h5,
+        h6,
         p,
         ul,
         ol,
@@ -68,7 +70,7 @@
         }
 
         a {
-            color: revert;
+            all: revert;
             cursor: pointer;
         }
     }

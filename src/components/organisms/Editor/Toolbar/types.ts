@@ -22,7 +22,7 @@ interface IToolbarState {
     color: string;
     backgroundColor: string;
     fontFamily: string;
-    fontSize: number | undefined;
+    fontSize?: number;
 }
 
 type ToolbarChain = ReturnType<TiptapEditor["chain"]>;

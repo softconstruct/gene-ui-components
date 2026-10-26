@@ -198,9 +198,9 @@ const Editor: FC<IEditorProps> = ({
         <div className={classNames("editor", className)}>
             <Toolbar editor={editor} disabled={readOnly} presetColors={presetColors} />
 
-            <div className="editor__body">
+            <div className="editor__viewport">
                 <Scrollbar>
-                    <div ref={bodyRef} className="editor__editable" />
+                    <div ref={bodyRef} className="editor__body" />
                 </Scrollbar>
             </div>
 
