@@ -11,7 +11,7 @@ import ToolbarButton from "@components/organisms/Editor/Toolbar/ToolbarButton/To
 // Constants
 import { POPOVER_GAP_FROM_TARGET } from "../constants";
 // Helpers
-import { toHref } from "../helper";
+import { isSafeHref, toHref } from "../helper";
 
 // Styles
 import "./LinkTrigger.scss";
@@ -87,14 +87,16 @@ const LinkTrigger: FC<ILinkTriggerProps> = ({
     };
 
     const handleApply = (): void => {
-        if (href) {
+        if (isSafeHref(href)) {
             onChange(toHref(href));
             setIsOpen(false);
         }
     };
 
     const handleOpen = (): void => {
-        window.open(toHref(href), "_blank", "noopener,noreferrer");
+        if (isSafeHref(href)) {
+            window.open(toHref(href), "_blank", "noopener,noreferrer");
+        }
     };
 
     const handleRemove = (): void => {

@@ -4,6 +4,10 @@ import { IToolbarAction, IToolbarState } from "./types";
 
 const HREF_PATTERN = /^([a-z][a-z\d+.-]*:|[/#?])/i;
 
+const RELATIVE_HREF_PATTERN = /^[/#?]/;
+
+const SAFE_PROTOCOLS = ["http:", "https:", "mailto:", "tel:"];
+
 const parseFontSize = (fontSize?: string): number | undefined =>
     fontSize?.endsWith("px") ? Math.round(Number.parseFloat(fontSize)) : undefined;
 
@@ -12,16 +16,29 @@ const parseFontFamily = (fontFamily: string): string =>
 
 const toHref = (value: string): string => (HREF_PATTERN.test(value) ? value : `https://${value}`);
 
+const isSafeHref = (value: string): boolean => {
+    const href = toHref(value);
+
+    if (RELATIVE_HREF_PATTERN.test(href)) {
+        return true;
+    }
+
+    try {
+        return SAFE_PROTOCOLS.includes(new URL(href).protocol);
+    } catch {
+        return false;
+    }
+};
+
 const toPresetColors = (customColors: string[] = []): string[] =>
     [NO_COLOR, ...customColors, ...EDITOR_COLORS].slice(0, PRESET_COLOR_COUNT);
 
 const toMenuItems = (actions: IToolbarAction[], state: IToolbarState | null): IMenuTriggerItem[] =>
-    actions.map(({ id, label, Icon, divider, isActive }) => ({
+    actions.map(({ id, label, Icon, isActive }) => ({
         id,
         label,
         Icon,
-        divider,
         selected: state ? isActive(state) : false
     }));
 
-export { parseFontSize, parseFontFamily, toHref, toPresetColors, toMenuItems };
+export { parseFontSize, parseFontFamily, toHref, isSafeHref, toPresetColors, toMenuItems };

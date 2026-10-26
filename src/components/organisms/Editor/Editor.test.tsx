@@ -12,7 +12,7 @@ import Editor, { IEditorProps } from "./index";
 import { EDITOR_COLORS, NO_COLOR, PRESET_COLOR_COUNT } from "./Toolbar/constants";
 import FontSizeStepper, { IFontSizeStepperProps } from "./Toolbar/FontSizeStepper/FontSizeStepper";
 // Helpers
-import { parseFontFamily, parseFontSize, toHref, toPresetColors } from "./Toolbar/helper";
+import { isSafeHref, parseFontFamily, parseFontSize, toHref, toPresetColors } from "./Toolbar/helper";
 
 describe("Editor ", () => {
     let setup: ReactWrapper<IEditorProps>;
@@ -179,6 +179,21 @@ describe("Editor helpers", () => {
         expect(toHref("/path")).toBe("/path");
         expect(toHref("#hash")).toBe("#hash");
         expect(toHref("?query=1")).toBe("?query=1");
+    });
+
+    it("accepts a safe href", () => {
+        expect(isSafeHref("example.com")).toBeTruthy();
+        expect(isSafeHref("https://example.com")).toBeTruthy();
+        expect(isSafeHref("http://example.com")).toBeTruthy();
+        expect(isSafeHref("mailto:test@example.com")).toBeTruthy();
+        expect(isSafeHref("tel:+37411000000")).toBeTruthy();
+        expect(isSafeHref("/path")).toBeTruthy();
+    });
+
+    it("rejects an unsafe href", () => {
+        expect(isSafeHref("js:")).toBeFalsy();
+        expect(isSafeHref("data:text/html,<script></script>")).toBeFalsy();
+        expect(isSafeHref("")).toBeFalsy();
     });
 
     it("builds the preset colors from the editor colors", () => {
