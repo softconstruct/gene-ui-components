@@ -12,24 +12,24 @@
     color: var(--guit-sem-color-foreground-neutral-2);
     cursor: pointer;
 
-    &:disabled {
-        background-color: var(--guit-sem-color-background-transparent-1);
-        color: var(--guit-sem-color-foreground-disabled);
-        cursor: default;
-    }
-
     @include mixins.media-hover {
-        &:hover:not(:disabled) {
+        &:hover {
             background-color: var(--guit-sem-color-background-transparent-1-hover);
         }
     }
 
-    &:active:not(:disabled) {
+    &:active {
         background-color: var(--guit-sem-color-background-transparent-1-pressed);
     }
 
-    &_selected:not(:disabled) {
+    &_selected {
         background-color: var(--guit-sem-color-background-transparent-1-pressed);
+    }
+
+    &:disabled {
+        background-color: var(--guit-sem-color-background-transparent-1);
+        color: var(--guit-sem-color-foreground-disabled);
+        cursor: default;
     }
 
     &_icon {
