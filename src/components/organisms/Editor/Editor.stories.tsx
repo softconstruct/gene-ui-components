@@ -5,7 +5,7 @@ import { Globe } from "@geneui/icons";
 
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 // Helpers
-import { editorContent } from "../../../../stories/data/__editor";
+import { editorContent, editorPresetColorsContent } from "../../../../stories/data/__editor";
 // Components
 import Editor, { IEditorProps } from "./index";
 
@@ -26,7 +26,6 @@ const meta: Meta<IEditorProps> = {
         "aria-label": args({ control: "text", ...propCategory.others })
     },
     args: {
-        defaultValue: editorContent,
         placeholder: "placeholder",
         readOnly: false,
         presetColors: []
@@ -41,12 +40,15 @@ export const Default: Story = {};
 
 export const WithPresetColors: Story = {
     args: {
+        defaultValue: editorPresetColorsContent,
         presetColors: PRESET_COLORS
     }
 };
 
 export const WithFooterActions: Story = {
     args: {
+        defaultValue: editorContent,
+        readOnly: true,
         footerActions: Array.from({ length: 5 }, (_, index) => ({
             id: `action-${index + 1}`,
             Icon: Globe,

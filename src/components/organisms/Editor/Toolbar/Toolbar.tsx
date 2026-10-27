@@ -169,7 +169,9 @@ const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false, presetColors }) 
     useEffect(() => {
         const editingArea = editor?.view.dom;
 
-        if (!editingArea) {
+        if (!editingArea || disabled) {
+            setIsLinkOpen(false);
+
             return undefined;
         }
 
@@ -184,7 +186,7 @@ const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false, presetColors }) 
         return () => {
             editingArea.removeEventListener("click", handleContentClick);
         };
-    }, [editor]);
+    }, [editor, disabled]);
 
     const applyWithFocus = (buildChain: (chain: ToolbarChain) => ToolbarChain): void => {
         if (editor) {
