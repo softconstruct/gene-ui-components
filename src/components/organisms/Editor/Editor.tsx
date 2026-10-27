@@ -113,10 +113,6 @@ const Editor: FC<IEditorProps> = ({
     const [editor, setEditor] = useState<TiptapEditor | null>(null);
 
     const placeholderRef = useRef(placeholder);
-    const defaultValueRef = useRef(defaultValue);
-    const readOnlyRef = useRef(readOnly);
-    const idRef = useRef(id);
-    const ariaLabelRef = useRef(ariaLabel);
     const onChangeRef = useRef(onChange);
     onChangeRef.current = onChange;
 
@@ -157,10 +153,10 @@ const Editor: FC<IEditorProps> = ({
                     dataAttribute: PLACEHOLDER_ATTRIBUTE
                 })
             ],
-            content: defaultValueRef.current,
-            editable: !readOnlyRef.current,
+            content: defaultValue,
+            editable: !readOnly,
             editorProps: {
-                attributes: getEditingAreaAttributes(idRef.current, ariaLabelRef.current, readOnlyRef.current)
+                attributes: getEditingAreaAttributes(id, ariaLabel, readOnly)
             }
         });
 
@@ -208,6 +204,7 @@ const Editor: FC<IEditorProps> = ({
                         <Button
                             key={actionId}
                             id={actionId}
+                            className="editor__footerAction"
                             Icon={Icon}
                             appearance="secondary"
                             layout="text"

@@ -91,11 +91,16 @@
     &__footer {
         display: flex;
         align-items: center;
+        flex-wrap: wrap;
         flex-shrink: 0;
         gap: var(--guit-ref-spacing-3xsmall);
         width: 100%;
         padding: var(--guit-ref-spacing-xsmall) var(--guit-ref-spacing-large);
         border-block-start: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
             var(--guit-sem-color-border-neutral-2);
+    }
+
+    &__footerAction {
+        flex-shrink: 0;
     }
 }
