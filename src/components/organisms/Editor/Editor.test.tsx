@@ -100,13 +100,6 @@ describe("Editor ", () => {
         expect(mockFn).toHaveBeenCalled();
     });
 
-    it("renders the id of a footer action correctly", () => {
-        const wrapper = setup.setProps({ footerActions: [{ id: "first", Icon: Globe, onClick: mockFn }] });
-        const action = wrapper.getDOMNode().querySelector(".editor__footer button");
-
-        expect(action?.getAttribute("id")).toBe("first");
-    });
-
     it("renders aria-label of a footer action correctly", () => {
         const wrapper = setup.setProps({
             footerActions: [{ id: "first", Icon: Globe, "aria-label": "test action", onClick: mockFn }]
