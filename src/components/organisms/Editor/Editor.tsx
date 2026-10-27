@@ -180,7 +180,12 @@ const Editor: FC<IEditorProps> = ({
             return undefined;
         }
 
-        const handleUpdate = (): void => onChangeRef.current?.(editor.getHTML());
+        const handleUpdate = (): void => {
+            const value = editor.isEmpty ? "" : editor.getHTML();
+
+            onChangeRef.current?.(value);
+        };
+
         editor.on("update", handleUpdate);
 
         return () => {
@@ -203,7 +208,6 @@ const Editor: FC<IEditorProps> = ({
                     {footerActions.map(({ id: actionId, Icon, "aria-label": actionLabel, onClick }) => (
                         <Button
                             key={actionId}
-                            id={actionId}
                             className="editor__footerAction"
                             Icon={Icon}
                             appearance="secondary"

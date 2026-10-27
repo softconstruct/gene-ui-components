@@ -87,7 +87,7 @@ const useRovingFocus = (editor: TiptapEditor | null): IRovingFocus => {
         };
 
         const handleFocusIn = (event: FocusEvent): void => {
-            const target = (event.target as HTMLElement)?.closest<HTMLElement>(CONTROL_SELECTOR);
+            const target = (event.target as HTMLElement).closest<HTMLElement>(CONTROL_SELECTOR);
 
             if (target && toolbar.contains(target)) {
                 switchActiveControl(target);

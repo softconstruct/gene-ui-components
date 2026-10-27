@@ -1,10 +1,26 @@
 import { useEffect, useState } from "react";
 import type { Editor as TiptapEditor } from "@tiptap/core";
-import { redoDepth, undoDepth } from "@tiptap/pm/history";
 import type { Transaction } from "@tiptap/pm/state";
 
 import { parseFontFamily, parseFontSize } from "../Toolbar/helper";
 import { IToolbarState } from "../Toolbar/types";
+
+const getRenderedFontSize = (editor: TiptapEditor): number | undefined => {
+    try {
+        const { node } = editor.view.domAtPos(editor.state.selection.from);
+        const element = node instanceof Element ? node : node.parentElement;
+
+        if (!element) {
+            return undefined;
+        }
+
+        const rendered = Number.parseFloat(window.getComputedStyle(element).fontSize);
+
+        return Number.isNaN(rendered) ? undefined : Math.round(rendered);
+    } catch {
+        return undefined;
+    }
+};
 
 const getToolbarState = (editor: TiptapEditor): IToolbarState => {
     const paragraphAlign = editor.getAttributes("paragraph").textAlign as string | undefined;
@@ -12,8 +28,8 @@ const getToolbarState = (editor: TiptapEditor): IToolbarState => {
     const textStyle = editor.getAttributes("textStyle");
 
     return {
-        canUndo: undoDepth(editor.state) > 0,
-        canRedo: redoDepth(editor.state) > 0,
+        canUndo: editor.can().undo(),
+        canRedo: editor.can().redo(),
         bold: editor.isActive("bold"),
         italic: editor.isActive("italic"),
         headingLevel: ([1, 2, 3] as const).find((level) => editor.isActive("heading", { level })) ?? 0,
@@ -30,7 +46,7 @@ const getToolbarState = (editor: TiptapEditor): IToolbarState => {
         color: (textStyle.color as string) ?? "",
         backgroundColor: (textStyle.backgroundColor as string) ?? "",
         fontFamily: parseFontFamily((textStyle.fontFamily as string) ?? ""),
-        fontSize: parseFontSize(textStyle.fontSize as string | undefined)
+        fontSize: parseFontSize(textStyle.fontSize as string | undefined) ?? getRenderedFontSize(editor)
     };
 };
 
@@ -51,6 +67,10 @@ const useToolbarState = (editor: TiptapEditor | null): IToolbarState | null => {
         }
 
         const update = (): void => {
+            if (editor.isDestroyed) {
+                return;
+            }
+
             const next = getToolbarState(editor);
 
             setToolbarState((previous) => (previous && isToolbarStateEqual(previous, next) ? previous : next));

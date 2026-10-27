@@ -23,10 +23,6 @@ interface IMenuTriggerItem {
      * Marks the row as the currently applied option.
      */
     selected?: boolean;
-    /**
-     * Draws a divider below this row.
-     */
-    divider?: boolean;
 }
 
 interface IMenuTriggerProps {
