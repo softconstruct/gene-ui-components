@@ -7,6 +7,9 @@ import { Minus, Plus } from "@geneui/icons";
 import Button from "@components/atoms/Button";
 import TextField from "@components/molecules/TextField";
 
+// Constants
+import { DIGITS_ONLY } from "../../../../../constants";
+
 // Styles
 import "./FontSizeStepper.scss";
 
@@ -39,10 +42,10 @@ interface IFontSizeStepperProps {
  * A font size stepper for the Editor's toolbar. Internal to the Editor.
  */
 const FontSizeStepper: FC<IFontSizeStepperProps> = ({ value = DEFAULT_FONT_SIZE, disabled, onChange }) => {
-    const [draft, setDraft] = useState<string>(String(value));
+    const [draft, setDraft] = useState<number | "">(value);
 
     useEffect(() => {
-        setDraft(String(value));
+        setDraft(value);
     }, [value]);
 
     const step = (delta: number): void => {
@@ -54,19 +57,25 @@ const FontSizeStepper: FC<IFontSizeStepperProps> = ({ value = DEFAULT_FONT_SIZE,
     };
 
     const commit = (returnFocus: boolean): void => {
-        const parsed = Number.parseInt(draft, 10);
-
-        if (Number.isNaN(parsed)) {
-            setDraft(String(value));
+        if (draft === "") {
+            setDraft(value);
             return;
         }
 
-        const next = clampFontSize(parsed);
-        setDraft(String(next));
+        const next = clampFontSize(draft);
+        setDraft(next);
 
         if (next !== value) {
             onChange(next, returnFocus);
         }
+    };
+
+    const handleChange = ({ target }: ChangeEvent<HTMLInputElement>): void => {
+        if (!DIGITS_ONLY.test(target.value)) {
+            return;
+        }
+
+        setDraft(target.value === "" ? "" : Number(target.value));
     };
 
     const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
@@ -96,7 +105,7 @@ const FontSizeStepper: FC<IFontSizeStepperProps> = ({ value = DEFAULT_FONT_SIZE,
                 autoComplete="off"
                 value={draft}
                 disabled={disabled}
-                onChange={(event: ChangeEvent<HTMLInputElement>) => setDraft(event.target.value)}
+                onChange={handleChange}
                 onKeyDown={handleKeyDown}
                 onBlur={() => commit(false)}
             />
