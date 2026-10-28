@@ -11,15 +11,15 @@ import ChartLegend from "@internal/components/ChartLegend";
 import ChartSubtitle from "@internal/components/ChartSubtitle";
 import ChartTooltip, { IChartTooltipItem } from "@internal/components/ChartTooltip";
 
-// Styles
-import "./StackedBarChart.scss";
-
 // Helpers
 import {
     getDefaultGroupedChartSeriesColorToken,
     mergeChartOptions,
     resolveGroupedChartSeriesColor
 } from "../../../helpers/charts";
+
+// Styles
+import "./StackedBarChart.scss";
 
 interface IStackedBarChartSeries {
     /**
@@ -28,6 +28,7 @@ interface IStackedBarChartSeries {
     name: string;
     /**
      * Numeric values corresponding to `categories`.
+     * Negative values stack on the opposite side of zero (diverging stacked bar).
      */
     data: number[];
     /**
@@ -44,13 +45,20 @@ interface IStackedBarChartProps {
      */
     className?: string;
     /**
-     * Category labels for the X axis.
+     * Category labels for the category axis.
      */
     categories: string[];
     /**
      * Multiple column series stacked per category.
      */
     series?: IStackedBarChartSeries[];
+    /**
+     * Bar orientation. `"vertical"` renders stacked columns; `"horizontal"` renders stacked horizontal bars.
+     * Combine `"horizontal"` with negative values in `series` for a diverging stacked bar chart.
+     * Possible values: `vertical | horizontal`
+     * @default "vertical"
+     */
+    direction?: "vertical" | "horizontal";
     /**
      * Optional subtitle rendered above the chart body.
      */
@@ -64,11 +72,11 @@ interface IStackedBarChartProps {
      */
     yAxisTitle?: string;
     /**
-     * Minimum value of the Y axis.
+     * Minimum value of the value axis.
      */
     min?: number;
     /**
-     * Maximum value of the Y axis.
+     * Maximum value of the value axis.
      */
     max?: number;
     /**
@@ -93,6 +101,7 @@ interface IStackedBarChartProps {
     emptyDescription?: string;
     /**
      * Formats a point value for the tooltip (raw number in, display string out).
+     * Hover shows all series of the category; when any value is negative (diverging), only the hovered segment.
      */
     valueFormatter?: (value: number) => string;
     /**
@@ -106,14 +115,15 @@ interface IStackedBarChartProps {
 const defaultValueFormatter = (value: number) => `${value}`;
 
 /**
- * Vertical multi-series stacked bar (column) chart built on Highcharts.
- * Series stack within each category; hover shows the category's per-series values.
+ * Multi-series stacked bar chart built on Highcharts. `direction` renders vertical columns (default)
+ * or horizontal bars; negative values stack on the other side of zero (diverging stacked bar).
  * Chart animations are disabled by default.
  */
 const StackedBarChart: FC<IStackedBarChartProps> = ({
     className,
     categories,
     series,
+    direction = "vertical",
     subtitle,
     xAxisTitle,
     yAxisTitle,
@@ -133,13 +143,15 @@ const StackedBarChart: FC<IStackedBarChartProps> = ({
     const [resolvedSeries, setResolvedSeries] = useState<IStackedBarChartSeries[]>([]);
     const [isTooltipOpen, setIsTooltipOpen] = useState(false);
     const [tooltipItems, setTooltipItems] = useState<IChartTooltipItem[]>([]);
-    const [tooltipCategoryIndex, setTooltipCategoryIndex] = useState<number | null>(null);
+    const [tooltipCategoryIndex, setTooltipCategoryIndex] = useState<number | string | null>(null);
     const [anchorPosition, setAnchorPosition] = useState({ left: 0, top: 0 });
     const [hiddenSeriesIndexes, setHiddenSeriesIndexes] = useState<Record<number, boolean>>({});
     const [frozenBodyHeight, setFrozenBodyHeight] = useState<number | null>(null);
     const hasData = Boolean(series?.some(({ data }) => data?.length));
     const isRtl = typeof document !== "undefined" && document.dir === "rtl";
     const isLegendExpanded = frozenBodyHeight !== null;
+    const isHorizontal = direction === "horizontal";
+    const isDiverging = Boolean(series?.some(({ data }) => data?.some((value) => value < 0)));
 
     const handleLegendExpandedChange = (expanded: boolean) => {
         setFrozenBodyHeight(expanded ? (bodyRef.current?.offsetHeight ?? null) : null);
@@ -157,25 +169,41 @@ const StackedBarChart: FC<IStackedBarChartProps> = ({
         show: (point) => {
             const { chart } = point.series;
             const categoryIndex = point.index;
-            const categoryPoints = chart.series
-                .filter((chartSeries) => chartSeries.visible)
-                .map((chartSeries) => chartSeries.points[categoryIndex])
-                .filter((categoryPoint): categoryPoint is Highcharts.Point => Boolean(categoryPoint));
+            const categoryPoints = isDiverging
+                ? [point]
+                : chart.series
+                      .filter((chartSeries) => chartSeries.visible)
+                      .map((chartSeries) => chartSeries.points[categoryIndex])
+                      .filter((categoryPoint): categoryPoint is Highcharts.Point => Boolean(categoryPoint));
 
             if (!categoryPoints.length) {
                 return;
             }
 
-            const averagePlotX =
-                categoryPoints.reduce((sum, categoryPoint) => sum + (categoryPoint.plotX ?? 0), 0) /
-                categoryPoints.length;
-            const topPlotY = Math.min(...categoryPoints.map((categoryPoint) => categoryPoint.plotY ?? 0));
+            const barRects = categoryPoints
+                .map((categoryPoint) => categoryPoint.graphic?.element?.getBoundingClientRect())
+                .filter((barRect): barRect is DOMRect => Boolean(barRect));
 
-            setAnchorPosition({
-                left: chart.plotLeft + averagePlotX,
-                top: chart.plotTop + topPlotY
-            });
-            setTooltipCategoryIndex(categoryIndex);
+            if (barRects.length) {
+                const containerRect = chart.container.getBoundingClientRect();
+                const left = Math.min(...barRects.map((barRect) => barRect.left)) - containerRect.left;
+                const right = Math.max(...barRects.map((barRect) => barRect.right)) - containerRect.left;
+                const top = Math.min(...barRects.map((barRect) => barRect.top)) - containerRect.top;
+
+                setAnchorPosition({ left: (left + right) / 2, top });
+            } else {
+                const averagePlotX =
+                    categoryPoints.reduce((sum, categoryPoint) => sum + (categoryPoint.plotX ?? 0), 0) /
+                    categoryPoints.length;
+                const topPlotY = Math.min(...categoryPoints.map((categoryPoint) => categoryPoint.plotY ?? 0));
+
+                setAnchorPosition({
+                    left: chart.plotLeft + averagePlotX,
+                    top: chart.plotTop + topPlotY
+                });
+            }
+
+            setTooltipCategoryIndex(isDiverging ? `${point.series.index}-${categoryIndex}` : categoryIndex);
             setTooltipItems(
                 categoryPoints.map((categoryPoint) => ({
                     name: categoryPoint.series.name,
@@ -236,9 +264,22 @@ const StackedBarChart: FC<IStackedBarChartProps> = ({
             return {};
         }
 
+        let valueAxisLabelAlign: Highcharts.AlignValue = "right";
+        if (isHorizontal) {
+            valueAxisLabelAlign = "center";
+        } else if (isRtl) {
+            valueAxisLabelAlign = "left";
+        }
+
+        const categoryAxisReversed = isHorizontal ? true : isRtl;
+        const categoryAxisOpposite = isHorizontal && isRtl;
+        const valueAxisOpposite = isHorizontal ? false : isRtl;
+        const valueAxisReversed = isHorizontal && isRtl;
+
         const baseOptions: Highcharts.Options = {
             chart: {
                 type: "column",
+                inverted: isHorizontal,
                 height: null,
                 animation: false,
                 backgroundColor: "transparent",
@@ -274,12 +315,15 @@ const StackedBarChart: FC<IStackedBarChartProps> = ({
                 lineColor: "var(--guit-sem-color-border-neutral-2)",
                 tickColor: "var(--guit-sem-color-border-neutral-2)",
                 tickWidth: 1,
-                reversed: isRtl
+                reversed: categoryAxisReversed,
+                opposite: categoryAxisOpposite
             },
             yAxis: {
                 min,
                 max,
-                opposite: isRtl,
+                opposite: valueAxisOpposite,
+                reversed: valueAxisReversed,
+                reversedStacks: !isHorizontal,
                 title: {
                     text: yAxisTitle,
                     style: {
@@ -294,11 +338,14 @@ const StackedBarChart: FC<IStackedBarChartProps> = ({
                         fontSize: "1.2rem",
                         fontWeight: "600"
                     },
-                    align: isRtl ? "left" : "right"
+                    align: valueAxisLabelAlign
                 },
                 gridLineDashStyle: "Dot",
                 gridLineColor: "var(--guit-sem-color-border-neutral-2)",
-                lineWidth: 0
+                lineWidth: 0,
+                plotLines: isDiverging
+                    ? [{ value: 0, width: 1, color: "var(--guit-sem-color-border-neutral-2)", zIndex: 3 }]
+                    : undefined
             },
             plotOptions: {
                 series: {
@@ -345,7 +392,19 @@ const StackedBarChart: FC<IStackedBarChartProps> = ({
         }
 
         return mergeChartOptions(baseOptions, optionsOverride);
-    }, [categories, hiddenSeriesIndexes, isRtl, max, min, options, resolvedSeries, xAxisTitle, yAxisTitle]);
+    }, [
+        categories,
+        hiddenSeriesIndexes,
+        isDiverging,
+        isHorizontal,
+        isRtl,
+        max,
+        min,
+        options,
+        resolvedSeries,
+        xAxisTitle,
+        yAxisTitle
+    ]);
 
     const tooltipAnchorKey = tooltipCategoryIndex ?? "idle";
 
