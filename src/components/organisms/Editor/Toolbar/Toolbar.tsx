@@ -1,0 +1,381 @@
+import React, { FC, memo, useEffect, useState } from "react";
+import type { Editor as TiptapEditor } from "@tiptap/core";
+
+import {
+    ArrowRedo,
+    ArrowUndo,
+    ChevronRightLeft,
+    ColorFill,
+    Link,
+    RecycleBin,
+    TextAlignCenter,
+    TextAlignJustify,
+    TextAlignLeft,
+    TextAlignRight,
+    TextBold,
+    TextBulletList,
+    TextCase,
+    TextColor,
+    TextHeader1,
+    TextHeader2,
+    TextHeader3,
+    TextItalic,
+    TextNumberList,
+    TextStrikethrough,
+    TextSubscript,
+    TextSuperscript,
+    TextUnderline
+} from "@geneui/icons";
+
+// Components
+import Divider from "@components/atoms/Divider";
+import ColorTrigger from "@components/organisms/Editor/Toolbar/ColorTrigger/ColorTrigger";
+import FontSizeStepper from "@components/organisms/Editor/Toolbar/FontSizeStepper/FontSizeStepper";
+import LinkTrigger from "@components/organisms/Editor/Toolbar/LinkTrigger/LinkTrigger";
+import MenuTrigger from "@components/organisms/Editor/Toolbar/MenuTrigger/MenuTrigger";
+import ToolbarButton from "@components/organisms/Editor/Toolbar/ToolbarButton/ToolbarButton";
+
+// Hooks
+import useRovingFocus from "../hooks/useRovingFocus";
+import useToolbarState from "../hooks/useToolbarState";
+// Constants
+import { DEFAULT_FONT_FAMILY_LABEL, FONT_FAMILIES_BY_NAME } from "./constants";
+// Helpers
+import { toMenuItems, toPresetColors } from "./helper";
+// Types
+import { IToolbarAction, IToolbarState, ToolbarChain } from "./types";
+
+const BLOCK_MENU_ACTIONS: IToolbarAction[] = [
+    {
+        id: "paragraph",
+        label: "Normal",
+        Icon: TextAlignLeft,
+        isActive: ({ headingLevel }) => headingLevel === 0,
+        buildChain: ({ setParagraph }) => setParagraph()
+    },
+    {
+        id: "heading1",
+        label: "Heading 1",
+        Icon: TextHeader1,
+        isActive: ({ headingLevel }) => headingLevel === 1,
+        buildChain: ({ setHeading }) => setHeading({ level: 1 })
+    },
+    {
+        id: "heading2",
+        label: "Heading 2",
+        Icon: TextHeader2,
+        isActive: ({ headingLevel }) => headingLevel === 2,
+        buildChain: ({ setHeading }) => setHeading({ level: 2 })
+    },
+    {
+        id: "heading3",
+        label: "Heading 3",
+        Icon: TextHeader3,
+        isActive: ({ headingLevel }) => headingLevel === 3,
+        buildChain: ({ setHeading }) => setHeading({ level: 3 })
+    }
+];
+
+const FONT_FAMILY_MENU_ACTIONS: IToolbarAction[] = [
+    {
+        id: "default",
+        label: DEFAULT_FONT_FAMILY_LABEL,
+        isActive: ({ fontFamily }) => !FONT_FAMILIES_BY_NAME[fontFamily],
+        buildChain: ({ unsetFontFamily }) => unsetFontFamily()
+    },
+    ...Object.entries(FONT_FAMILIES_BY_NAME).map(([name, { label, value }]) => ({
+        id: name,
+        label,
+        isActive: ({ fontFamily }: IToolbarState) => fontFamily === name,
+        buildChain: ({ setFontFamily }: ToolbarChain) => setFontFamily(value)
+    }))
+];
+
+const ALIGN_MENU_ACTIONS: IToolbarAction[] = [
+    {
+        id: "alignLeft",
+        label: "Left Align",
+        Icon: TextAlignLeft,
+        isActive: ({ textAlign }) => textAlign === "left",
+        buildChain: ({ toggleTextAlign }) => toggleTextAlign("left")
+    },
+    {
+        id: "alignCenter",
+        label: "Centre Align",
+        Icon: TextAlignCenter,
+        isActive: ({ textAlign }) => textAlign === "center",
+        buildChain: ({ toggleTextAlign }) => toggleTextAlign("center")
+    },
+    {
+        id: "alignRight",
+        label: "Right Align",
+        Icon: TextAlignRight,
+        isActive: ({ textAlign }) => textAlign === "right",
+        buildChain: ({ toggleTextAlign }) => toggleTextAlign("right")
+    },
+    {
+        id: "alignJustify",
+        label: "Justify Align",
+        Icon: TextAlignJustify,
+        isActive: ({ textAlign }) => textAlign === "justify",
+        buildChain: ({ toggleTextAlign }) => toggleTextAlign("justify")
+    }
+];
+
+const FORMAT_MENU_ACTIONS: IToolbarAction[] = [
+    {
+        id: "strike",
+        label: "Strikethrough",
+        Icon: TextStrikethrough,
+        isActive: ({ strike }) => strike,
+        buildChain: ({ toggleStrike }) => toggleStrike()
+    },
+    {
+        id: "subscript",
+        label: "Subscript",
+        Icon: TextSubscript,
+        isActive: ({ subscript }) => subscript,
+        buildChain: ({ toggleSubscript }) => toggleSubscript()
+    },
+    {
+        id: "superscript",
+        label: "Superscript",
+        Icon: TextSuperscript,
+        isActive: ({ superscript }) => superscript,
+        buildChain: ({ toggleSuperscript }) => toggleSuperscript()
+    },
+    {
+        id: "clearFormat",
+        label: "Clear Formatting",
+        Icon: RecycleBin,
+        isActive: () => false,
+        buildChain: ({ unsetStrike }) => unsetStrike().unsetSubscript().unsetSuperscript()
+    }
+];
+
+interface IToolbarProps {
+    editor: TiptapEditor | null;
+    disabled?: boolean;
+    presetColors?: string[];
+}
+
+const Toolbar: FC<IToolbarProps> = ({ editor, disabled = false, presetColors }) => {
+    const [isLinkOpen, setIsLinkOpen] = useState(false);
+    const toolbarState = useToolbarState(editor);
+    const { toolbarRef, handleKeyDown } = useRovingFocus(editor);
+    const colors = toPresetColors(presetColors);
+    const isOff = disabled || !editor || !toolbarState;
+
+    useEffect(() => {
+        const editingArea = editor?.view.dom;
+
+        if (!editingArea || disabled) {
+            setIsLinkOpen(false);
+
+            return undefined;
+        }
+
+        const handleContentClick = (event: MouseEvent): void => {
+            if ((event.target as HTMLElement).closest("a")) {
+                setIsLinkOpen(true);
+            }
+        };
+
+        editingArea.addEventListener("click", handleContentClick);
+
+        return () => {
+            editingArea.removeEventListener("click", handleContentClick);
+        };
+    }, [editor, disabled]);
+
+    const applyWithFocus = (buildChain: (chain: ToolbarChain) => ToolbarChain): void => {
+        if (editor) {
+            buildChain(editor.chain().focus()).run();
+        }
+    };
+
+    const applyWithoutFocus = (buildChain: (chain: ToolbarChain) => ToolbarChain): void => {
+        if (editor) {
+            buildChain(editor.chain()).run();
+        }
+    };
+
+    const handleMenuChange =
+        (actions: IToolbarAction[]) =>
+        (id: string): void => {
+            const action = actions.find((item) => item.id === id);
+
+            if (action) {
+                applyWithFocus(action.buildChain);
+            }
+        };
+
+    const applyBackgroundColor = (color: string): void =>
+        applyWithoutFocus((chain) => (color ? chain.setBackgroundColor(color) : chain.unsetBackgroundColor()));
+
+    const applyTextColor = (color: string): void =>
+        applyWithoutFocus((chain) => (color ? chain.setColor(color) : chain.unsetColor()));
+
+    const applyFontSize = (size: number, returnFocus: boolean): void => {
+        const buildFontSizeChain = (chain: ToolbarChain): ToolbarChain => chain.setFontSize(`${size}px`);
+
+        if (returnFocus) {
+            applyWithFocus(buildFontSizeChain);
+        } else {
+            applyWithoutFocus(buildFontSizeChain);
+        }
+    };
+
+    const applyLink = (href: string): void => {
+        const hasNoTextToLink = !!editor && editor.state.selection.empty && !editor.isActive("link");
+
+        applyWithFocus((chain) =>
+            hasNoTextToLink
+                ? chain.insertContent({ type: "text", text: href, marks: [{ type: "link", attrs: { href } }] })
+                : chain.extendMarkRange("link").setLink({ href })
+        );
+    };
+
+    const removeLink = (): void => applyWithFocus((chain) => chain.extendMarkRange("link").unsetLink());
+
+    const activeBlock = toolbarState ? BLOCK_MENU_ACTIONS.find(({ isActive }) => isActive(toolbarState)) : undefined;
+    const activeAlign = toolbarState ? ALIGN_MENU_ACTIONS.find(({ isActive }) => isActive(toolbarState)) : undefined;
+    const activeFontFamily = toolbarState ? FONT_FAMILIES_BY_NAME[toolbarState.fontFamily] : undefined;
+    const AlignIcon = activeAlign?.Icon ?? TextAlignLeft;
+
+    return (
+        <div
+            ref={toolbarRef}
+            className="editor__header"
+            role="toolbar"
+            aria-label="Text formatting"
+            onKeyDown={handleKeyDown}
+        >
+            <ToolbarButton
+                IconBefore={ArrowUndo}
+                aria-label="Undo"
+                disabled={isOff || !toolbarState?.canUndo}
+                onClick={() => applyWithFocus((chain) => chain.undo())}
+            />
+            <ToolbarButton
+                IconBefore={ArrowRedo}
+                aria-label="Redo"
+                disabled={isOff || !toolbarState?.canRedo}
+                onClick={() => applyWithFocus((chain) => chain.redo())}
+            />
+            <Divider direction="vertical" className="editor__divider" />
+            <MenuTrigger
+                className="editor__textStyleTrigger"
+                label={activeBlock?.label ?? ""}
+                disabled={isOff}
+                items={toMenuItems(BLOCK_MENU_ACTIONS, toolbarState)}
+                onChange={handleMenuChange(BLOCK_MENU_ACTIONS)}
+            />
+            <Divider direction="vertical" className="editor__divider" />
+            <MenuTrigger
+                className="editor__fontFamilyTrigger"
+                label={activeFontFamily?.label ?? DEFAULT_FONT_FAMILY_LABEL}
+                disabled={isOff}
+                items={toMenuItems(FONT_FAMILY_MENU_ACTIONS, toolbarState)}
+                onChange={handleMenuChange(FONT_FAMILY_MENU_ACTIONS)}
+            />
+            <Divider direction="vertical" className="editor__divider" />
+            <FontSizeStepper value={toolbarState?.fontSize} disabled={isOff} onChange={applyFontSize} />
+            <Divider direction="vertical" className="editor__divider" />
+
+            <ToolbarButton
+                IconBefore={TextBold}
+                aria-label="Bold"
+                selected={toolbarState?.bold}
+                disabled={isOff}
+                onClick={() => applyWithFocus((chain) => chain.toggleBold())}
+            />
+            <ToolbarButton
+                IconBefore={TextItalic}
+                aria-label="Italic"
+                selected={toolbarState?.italic}
+                disabled={isOff}
+                onClick={() => applyWithFocus((chain) => chain.toggleItalic())}
+            />
+            <ToolbarButton
+                IconBefore={TextUnderline}
+                aria-label="Underline"
+                selected={toolbarState?.underline}
+                disabled={isOff}
+                onClick={() => applyWithFocus((chain) => chain.toggleUnderline())}
+            />
+            <MenuTrigger
+                Icon={TextCase}
+                aria-label="Formatting"
+                disabled={isOff}
+                items={toMenuItems(FORMAT_MENU_ACTIONS, toolbarState)}
+                onChange={handleMenuChange(FORMAT_MENU_ACTIONS)}
+            />
+            <ColorTrigger
+                Icon={ColorFill}
+                aria-label="Fill color"
+                disabled={isOff}
+                onChange={applyBackgroundColor}
+                onClose={() => editor?.commands.focus()}
+                color={toolbarState?.backgroundColor}
+                recentColors={colors}
+            />
+            <ColorTrigger
+                Icon={TextColor}
+                aria-label="Text color"
+                disabled={isOff}
+                onChange={applyTextColor}
+                onClose={() => editor?.commands.focus()}
+                color={toolbarState?.color}
+                recentColors={colors}
+            />
+            <Divider direction="vertical" className="editor__divider" />
+            <MenuTrigger
+                Icon={AlignIcon}
+                aria-label="Alignment"
+                disabled={isOff}
+                items={toMenuItems(ALIGN_MENU_ACTIONS, toolbarState)}
+                onChange={handleMenuChange(ALIGN_MENU_ACTIONS)}
+            />
+
+            <ToolbarButton
+                IconBefore={TextBulletList}
+                aria-label="Bulleted list"
+                selected={toolbarState?.bulletList}
+                disabled={isOff}
+                onClick={() => applyWithFocus((chain) => chain.toggleBulletList())}
+            />
+            <ToolbarButton
+                IconBefore={TextNumberList}
+                aria-label="Numbered list"
+                selected={toolbarState?.orderedList}
+                disabled={isOff}
+                onClick={() => applyWithFocus((chain) => chain.toggleOrderedList())}
+            />
+            <Divider direction="vertical" className="editor__divider" />
+
+            <LinkTrigger
+                Icon={Link}
+                aria-label="Link"
+                value={toolbarState?.linkHref}
+                open={isLinkOpen}
+                onOpenChange={setIsLinkOpen}
+                selected={toolbarState?.link}
+                disabled={isOff}
+                onChange={applyLink}
+                onRemove={removeLink}
+            />
+            <ToolbarButton
+                IconBefore={ChevronRightLeft}
+                aria-label="Code"
+                selected={toolbarState?.code}
+                disabled={isOff}
+                onClick={() => applyWithFocus((chain) => chain.toggleCode())}
+            />
+        </div>
+    );
+};
+
+const MemoizedToolbar = memo(Toolbar);
+
+export { IToolbarProps, MemoizedToolbar as default };

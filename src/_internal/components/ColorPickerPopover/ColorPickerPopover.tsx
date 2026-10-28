@@ -10,9 +10,6 @@ import Dropdown, { IDropdownOption } from "@components/molecules/Dropdown";
 import TextField from "@components/molecules/TextField";
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
-// Styles
-import "./ColorPickerPopover.scss";
-
 import { HexColorPicker, RgbaColorPicker } from "./components/CustomColorPickers/CustomColorPickers";
 // Constants
 import { FORMAT_OPTIONS, RGB_CHANNELS } from "./constants";
@@ -20,6 +17,11 @@ import { FORMAT_OPTIONS, RGB_CHANNELS } from "./constants";
 import { IColorPickerControl } from "./hooks/useColorPicker";
 // Types
 import { ColorFormat, RGBA } from "./types";
+
+// Styles
+import "./ColorPickerPopover.scss";
+
+const POPOVER_GAP_FROM_TARGET = 4;
 
 interface IColorPickerPopoverProps extends IColorPickerControl {
     /**
@@ -110,6 +112,7 @@ const ColorPickerPopover: FC<IColorPickerPopoverProps> = ({
             setProps={setProps}
             onClose={handleClose}
             position={position}
+            margin={POPOVER_GAP_FROM_TARGET}
             withArrow={false}
             mobileHeightMode="fit"
         >
