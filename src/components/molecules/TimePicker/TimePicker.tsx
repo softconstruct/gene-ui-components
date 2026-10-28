@@ -7,9 +7,6 @@ import { Clock } from "@geneui/icons";
 // Components
 import Label from "@components/atoms/Label";
 
-// Styles
-import "./TimePicker.scss";
-
 import PickerInput from "./components/PickerInput/PickerInput";
 import PickerPopover from "./components/PickerPopover/PickerPopover";
 // Constants
@@ -37,6 +34,9 @@ import {
     TimePickerSizes,
     TimePickerStatus
 } from "./types";
+
+// Styles
+import "./TimePicker.scss";
 
 interface ITimePickerBaseProps {
     /**
@@ -279,7 +279,7 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
                     size={textSizeMap[size]}
                     disabled={disabled}
                     readOnly={setup.isReadOnly}
-                    className="pickerInput__label"
+                    className="timePicker__label"
                     required={required}
                     infoText={infoText}
                     text={label}
@@ -361,7 +361,7 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
                     size={textSizeMap[size]}
                     disabled={disabled}
                     readOnly={setup.isReadOnly}
-                    className="pickerInput__label"
+                    className="timePicker__label"
                     required={required}
                     infoText={infoText}
                     text={label}

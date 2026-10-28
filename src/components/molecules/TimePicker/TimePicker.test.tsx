@@ -47,7 +47,7 @@ const typeInto = (setup: ReactWrapper, value: string, index = 0) => {
 };
 
 const openPopover = (setup: ReactWrapper, index = 0) => {
-    setup.find("input.pickerInput__input").at(index).simulate("click");
+    setup.find("input.pickerMaskedInput").at(index).simulate("click");
     setup.update();
 };
 
@@ -326,13 +326,13 @@ describe("TimePicker", () => {
     it("renders placeholder prop correctly", () => {
         setup.setProps({ placeholder: "HH:MM:SS" });
 
-        expect(setup.find("input.pickerInput__input").prop("placeholder")).toBe("HH:MM:SS");
+        expect(setup.find("input.pickerMaskedInput").prop("placeholder")).toBe("HH:MM:SS");
     });
 
     it.each(["small", "medium", "large"] as const)("should have %s size", (size) => {
         setup.setProps({ size });
 
-        expect(setup.find(".pickerInput").hasClass(`pickerInput_size_${size}`)).toBeTruthy();
+        expect(setup.find(".pickerShell").hasClass(`pickerShell_size_${size}`)).toBeTruthy();
     });
 
     it("ties the label to the input with a generated unique id", () => {
@@ -343,7 +343,7 @@ describe("TimePicker", () => {
             </div>
         );
 
-        const inputs = twoPickers.find("input.pickerInput__input");
+        const inputs = twoPickers.find("input.pickerMaskedInput");
         const firstId = inputs.at(0).prop("id");
         const secondId = inputs.at(1).prop("id");
 
@@ -357,13 +357,13 @@ describe("TimePicker", () => {
     it("renders id prop correctly", () => {
         setup.setProps({ id: "custom-id" });
 
-        expect(setup.find("input.pickerInput__input").prop("id")).toBe("custom-id");
+        expect(setup.find("input.pickerMaskedInput").prop("id")).toBe("custom-id");
     });
 
     it("exposes the combobox accessibility contract on the input", () => {
         setup.setProps({ required: true, status: "error", helperText: "Invalid" });
 
-        const input = setup.find("input.pickerInput__input");
+        const input = setup.find("input.pickerMaskedInput");
 
         expect(input.prop("role")).toBe("combobox");
         expect(input.prop("aria-expanded")).toBe(false);
@@ -377,7 +377,7 @@ describe("TimePicker", () => {
     it("points aria-describedby at the rendered helper text", () => {
         setup.setProps({ helperText: "Business hours only" });
 
-        const describedBy = setup.find("input.pickerInput__input").prop("aria-describedby");
+        const describedBy = setup.find("input.pickerMaskedInput").prop("aria-describedby");
 
         expect(setup.find(`#${describedBy}`).exists()).toBeTruthy();
     });
@@ -386,15 +386,15 @@ describe("TimePicker", () => {
         it("handles disabled state", () => {
             setup.setProps({ disabled: true });
 
-            expect(setup.find(".pickerInput").hasClass("pickerInput_state_disabled")).toBeTruthy();
-            expect(setup.find("input.pickerInput__input").prop("disabled")).toBe(true);
+            expect(setup.find(".pickerShell").hasClass("pickerShell_disabled")).toBeTruthy();
+            expect(setup.find("input.pickerMaskedInput").prop("disabled")).toBe(true);
         });
 
         it("handles readOnly state", () => {
             setup.setProps({ readOnly: true });
 
-            expect(setup.find(".pickerInput").hasClass("pickerInput_state_readOnly")).toBeTruthy();
-            expect(setup.find("input.pickerInput__input").prop("readOnly")).toBe(true);
+            expect(setup.find(".pickerShell").hasClass("pickerShell_readOnly")).toBeTruthy();
+            expect(setup.find("input.pickerMaskedInput").prop("readOnly")).toBe(true);
         });
 
         it("does not open the popover when disabled or readOnly", () => {
@@ -422,15 +422,15 @@ describe("TimePicker", () => {
         it("renders status and helperText correctly", () => {
             setup.setProps({ status: "error", helperText: "Invalid time format" });
 
-            expect(setup.find(".pickerInput").hasClass("pickerInput_state_error")).toBeTruthy();
+            expect(setup.find(".pickerShell").hasClass("pickerShell_status_error")).toBeTruthy();
             expect(setup.find("HelperText").prop("status")).toBe("error");
-            expect(setup.find(".pickerInput__errorMessage").first().text()).toBe("Invalid time format");
+            expect(setup.find(".pickerShell__helperText").first().text()).toBe("Invalid time format");
         });
 
         it("does not render an error state for a helperText alone", () => {
             setup.setProps({ helperText: "Business hours only" });
 
-            expect(setup.find(".pickerInput").hasClass("pickerInput_state_error")).toBeFalsy();
+            expect(setup.find(".pickerShell").hasClass("pickerShell_status_error")).toBeFalsy();
             expect(setup.find("HelperText").prop("status")).toBe("rest");
         });
     });
@@ -469,7 +469,7 @@ describe("TimePicker", () => {
             const onOpenChange = jest.fn();
             setup.setProps({ onOpenChange });
 
-            setup.find("input.pickerInput__input").simulate("focus");
+            setup.find("input.pickerMaskedInput").simulate("focus");
             setup.update();
 
             expect(setup.find(".timePicker__wrapper").exists()).toBeFalsy();
@@ -478,7 +478,7 @@ describe("TimePicker", () => {
             openPopover(setup);
             expect(onOpenChange).toHaveBeenLastCalledWith(true);
 
-            setup.find("input.pickerInput__input").simulate("blur", { relatedTarget: null });
+            setup.find("input.pickerMaskedInput").simulate("blur", { relatedTarget: null });
             setup.update();
 
             expect(setup.find(".timePicker__wrapper").exists()).toBeFalsy();
@@ -487,7 +487,7 @@ describe("TimePicker", () => {
         });
 
         it("opens the popover with Enter and keeps the focus on the input", () => {
-            setup.find("input.pickerInput__input").simulate("keydown", { key: "Enter" });
+            setup.find("input.pickerMaskedInput").simulate("keydown", { key: "Enter" });
             setup.update();
 
             expect(setup.find(".timePicker__wrapper").exists()).toBeTruthy();
@@ -507,7 +507,7 @@ describe("TimePicker", () => {
         it("hands the focus back to the input on Tab inside the popover", () => {
             openPopover(setup);
 
-            const focus = jest.spyOn(setup.find("input.pickerInput__input").getDOMNode<HTMLInputElement>(), "focus");
+            const focus = jest.spyOn(setup.find("input.pickerMaskedInput").getDOMNode<HTMLInputElement>(), "focus");
 
             setup.find(".timePicker__wrapper").simulate("keydown", { key: "Tab" });
 
@@ -518,9 +518,9 @@ describe("TimePicker", () => {
             setup.setProps({ clearable: true, value: "10:00:00" });
             openPopover(setup);
 
-            const clearButton = setup.find(".pickerInput__append button").first();
+            const clearButton = setup.find(".pickerShell__append button").first();
 
-            setup.find("input.pickerInput__input").simulate("blur", { relatedTarget: clearButton.getDOMNode() });
+            setup.find("input.pickerMaskedInput").simulate("blur", { relatedTarget: clearButton.getDOMNode() });
             setup.update();
             expect(setup.find(".timePicker__wrapper").exists()).toBeTruthy();
 
@@ -534,7 +534,7 @@ describe("TimePicker", () => {
 
             const target = columnButtons(setup, 0).at(3).getDOMNode();
 
-            setup.find("input.pickerInput__input").simulate("blur", { relatedTarget: target });
+            setup.find("input.pickerMaskedInput").simulate("blur", { relatedTarget: target });
             setup.update();
 
             expect(setup.find(".timePicker__wrapper").exists()).toBeTruthy();
@@ -550,7 +550,7 @@ describe("TimePicker", () => {
         });
 
         it("opens the popover on click on the field area", () => {
-            setup.find(".pickerInput__append").simulate("click");
+            setup.find(".pickerShell__append").simulate("click");
             setup.update();
 
             expect(setup.find(".timePicker__wrapper").exists()).toBeTruthy();
@@ -562,21 +562,21 @@ describe("TimePicker", () => {
             closePopover(setup, new KeyboardEvent("keydown"), "escape-key");
             expect(setup.find(".timePicker__wrapper").exists()).toBeFalsy();
 
-            setup.find("input.pickerInput__input").simulate("keydown", { key: "Enter" });
+            setup.find("input.pickerMaskedInput").simulate("keydown", { key: "Enter" });
             setup.update();
             expect(setup.find(".timePicker__wrapper").exists()).toBeTruthy();
         });
 
         it("moves the focus into the open popover on arrow down", () => {
-            setup.find("input.pickerInput__input").simulate("focus");
+            setup.find("input.pickerMaskedInput").simulate("focus");
             setup.update();
             expect(setup.find("PickerPopover").prop("focusOnOpen")).toBe(false);
 
-            setup.find("input.pickerInput__input").simulate("keydown", { key: "ArrowDown" });
+            setup.find("input.pickerMaskedInput").simulate("keydown", { key: "ArrowDown" });
             setup.update();
             expect(setup.find("PickerPopover").prop("focusOnOpen")).toBe(true);
 
-            setup.find("input.pickerInput__input").simulate("focus");
+            setup.find("input.pickerMaskedInput").simulate("focus");
             setup.update();
             expect(setup.find("PickerPopover").prop("focusOnOpen")).toBe(false);
         });
@@ -609,7 +609,7 @@ describe("TimePicker", () => {
         });
 
         it("opens with the keyboard", () => {
-            setup.find("input.pickerInput__input").simulate("keydown", { key: "ArrowDown" });
+            setup.find("input.pickerMaskedInput").simulate("keydown", { key: "ArrowDown" });
             setup.update();
 
             expect(setup.find(".timePicker__wrapper").exists()).toBeTruthy();
@@ -695,7 +695,7 @@ describe("TimePicker", () => {
             typeWithoutPause(setup, "10");
             typeWithoutPause(setup, "10:");
 
-            expect(setup.find("input.pickerInput__input").prop("value")).toBe("10:");
+            expect(setup.find("input.pickerMaskedInput").prop("value")).toBe("10:");
             expect(onChange).not.toHaveBeenCalled();
 
             act(() => {
@@ -713,7 +713,7 @@ describe("TimePicker", () => {
             typeWithoutPause(setup, "09:30:00");
             expect(onChange).not.toHaveBeenCalled();
 
-            setup.find("input.pickerInput__input").simulate("blur");
+            setup.find("input.pickerMaskedInput").simulate("blur");
 
             expect(onChange).toHaveBeenCalledTimes(1);
             expect(onChange).toHaveBeenCalledWith("09:30:00", {
@@ -728,7 +728,7 @@ describe("TimePicker", () => {
 
             typeWithoutPause(setup, "10:3");
 
-            expect(setup.find("input.pickerInput__input").prop("value")).toBe("10:3");
+            expect(setup.find("input.pickerMaskedInput").prop("value")).toBe("10:3");
             expect(onChange).not.toHaveBeenCalled();
         });
 
@@ -761,21 +761,21 @@ describe("TimePicker", () => {
                 source: "input",
                 parts: { hours: "09", minutes: "30", seconds: "00", meridiem: undefined }
             });
-            expect(setup.find("input.pickerInput__input").prop("value")).toBe("9:30");
+            expect(setup.find("input.pickerMaskedInput").prop("value")).toBe("9:30");
 
-            setup.find("input.pickerInput__input").simulate("blur");
+            setup.find("input.pickerMaskedInput").simulate("blur");
             setup.update();
 
             expect(onChange).toHaveBeenLastCalledWith("09:30:00", {
                 source: "input",
                 parts: { hours: "09", minutes: "30", seconds: "00", meridiem: undefined }
             });
-            expect(setup.find("input.pickerInput__input").prop("value")).toBe("09:30:00");
+            expect(setup.find("input.pickerMaskedInput").prop("value")).toBe("09:30:00");
         });
 
         it("shows the value of a disabled field as a placeholder so it cannot be selected", () => {
             const picker = mountSingle({ disabled: true, defaultValue: "12:30:00" });
-            const input = picker.find("input.pickerInput__input");
+            const input = picker.find("input.pickerMaskedInput");
 
             expect(input.prop("value")).toBe("");
             expect(input.prop("placeholder")).toBe("12:30:00");
@@ -786,10 +786,10 @@ describe("TimePicker", () => {
         it("applies the disabled state when disabled and readOnly are both set", () => {
             const picker = mountSingle({ disabled: true, readOnly: true });
 
-            expect(picker.find(".pickerInput").hasClass("pickerInput_state_disabled")).toBeTruthy();
-            expect(picker.find(".pickerInput").hasClass("pickerInput_state_readOnly")).toBeFalsy();
-            expect(picker.find("input.pickerInput__input").prop("disabled")).toBe(true);
-            expect(picker.find("input.pickerInput__input").prop("readOnly")).toBe(false);
+            expect(picker.find(".pickerShell").hasClass("pickerShell_disabled")).toBeTruthy();
+            expect(picker.find(".pickerShell").hasClass("pickerShell_readOnly")).toBeFalsy();
+            expect(picker.find("input.pickerMaskedInput").prop("disabled")).toBe(true);
+            expect(picker.find("input.pickerMaskedInput").prop("readOnly")).toBe(false);
 
             picker.unmount();
         });
@@ -797,7 +797,7 @@ describe("TimePicker", () => {
         describe("12-hour meridiem editing", () => {
             it("does not put the meridiem back while it is being deleted", () => {
                 const picker = mountSingle({ format: "12h", defaultValue: "10:30:00 AM" });
-                const inputValue = () => picker.find("input.pickerInput__input").prop("value");
+                const inputValue = () => picker.find("input.pickerMaskedInput").prop("value");
 
                 expect(inputValue()).toBe("10:30:00 AM");
 
@@ -824,10 +824,10 @@ describe("TimePicker", () => {
                     parts: { hours: "10", minutes: "30", seconds: "00", meridiem: "PM" }
                 });
 
-                picker.find("input.pickerInput__input").simulate("blur");
+                picker.find("input.pickerMaskedInput").simulate("blur");
                 picker.update();
 
-                expect(picker.find("input.pickerInput__input").prop("value")).toBe("10:30:00 PM");
+                expect(picker.find("input.pickerMaskedInput").prop("value")).toBe("10:30:00 PM");
 
                 picker.unmount();
             });
@@ -852,16 +852,16 @@ describe("TimePicker", () => {
             const uncontrolled = mountSingle({ defaultValue: "08:15:00", onChange });
 
             typeInto(uncontrolled, "10:3");
-            expect(uncontrolled.find("input.pickerInput__input").prop("value")).toBe("10:3");
+            expect(uncontrolled.find("input.pickerMaskedInput").prop("value")).toBe("10:3");
 
-            uncontrolled.find("input.pickerInput__input").simulate("blur");
+            uncontrolled.find("input.pickerMaskedInput").simulate("blur");
             uncontrolled.update();
 
             expect(onChange).toHaveBeenLastCalledWith("08:15:00", {
                 source: "input",
                 parts: { hours: "08", minutes: "15", seconds: "00", meridiem: undefined }
             });
-            expect(uncontrolled.find("input.pickerInput__input").prop("value")).toBe("08:15:00");
+            expect(uncontrolled.find("input.pickerMaskedInput").prop("value")).toBe("08:15:00");
 
             uncontrolled.unmount();
         });
@@ -871,54 +871,54 @@ describe("TimePicker", () => {
             setup.setProps({ onChange });
 
             typeInto(setup, "10:3");
-            setup.find("input.pickerInput__input").simulate("blur");
+            setup.find("input.pickerMaskedInput").simulate("blur");
             setup.update();
 
             expect(onChange).toHaveBeenLastCalledWith("", { source: "input", parts: null });
-            expect(setup.find("input.pickerInput__input").prop("value")).toBe("");
+            expect(setup.find("input.pickerMaskedInput").prop("value")).toBe("");
         });
 
         it("renders defaultValue prop correctly", () => {
             const uncontrolled = mount(<TimePicker defaultValue="08:15:00" />);
 
-            expect(uncontrolled.find("input.pickerInput__input").prop("value")).toBe("08:15:00");
+            expect(uncontrolled.find("input.pickerMaskedInput").prop("value")).toBe("08:15:00");
 
             uncontrolled.unmount();
         });
 
         it("renders controlled value prop correctly and stays controlled", () => {
             setup.setProps({ value: "10:24:30" });
-            expect(setup.find("input.pickerInput__input").prop("value")).toBe("10:24:30");
+            expect(setup.find("input.pickerMaskedInput").prop("value")).toBe("10:24:30");
 
             typeInto(setup, "11:11:11");
-            expect(setup.find("input.pickerInput__input").prop("value")).toBe("11:11:11");
+            expect(setup.find("input.pickerMaskedInput").prop("value")).toBe("11:11:11");
 
-            setup.find("input.pickerInput__input").simulate("blur");
-            expect(setup.find("input.pickerInput__input").prop("value")).toBe("10:24:30");
+            setup.find("input.pickerMaskedInput").simulate("blur");
+            expect(setup.find("input.pickerMaskedInput").prop("value")).toBe("10:24:30");
         });
 
         it("normalizes a 24-hour controlled value for the 12-hour format", () => {
             setup.setProps({ value: "18:45:00", format: "12h" });
 
-            expect(setup.find("input.pickerInput__input").prop("value")).toBe("06:45:00 PM");
+            expect(setup.find("input.pickerMaskedInput").prop("value")).toBe("06:45:00 PM");
         });
 
         it("converts the value from 12-hour to 24-hour format", () => {
             const onChange = jest.fn();
             const picker = mountSingle({ format: "12h", defaultValue: "10:30:00 PM", onChange });
 
-            expect(picker.find("input.pickerInput__input").prop("value")).toBe("10:30:00 PM");
+            expect(picker.find("input.pickerMaskedInput").prop("value")).toBe("10:30:00 PM");
 
             picker.setProps({ format: "24h" });
             picker.update();
 
-            expect(picker.find("input.pickerInput__input").prop("value")).toBe("22:30:00");
+            expect(picker.find("input.pickerMaskedInput").prop("value")).toBe("22:30:00");
 
-            picker.find("input.pickerInput__input").simulate("focus");
-            expect(picker.find("input.pickerInput__input").prop("value")).toBe("22:30:00");
+            picker.find("input.pickerMaskedInput").simulate("focus");
+            expect(picker.find("input.pickerMaskedInput").prop("value")).toBe("22:30:00");
 
-            picker.find("input.pickerInput__input").simulate("blur");
-            expect(picker.find("input.pickerInput__input").prop("value")).toBe("22:30:00");
+            picker.find("input.pickerMaskedInput").simulate("blur");
+            expect(picker.find("input.pickerMaskedInput").prop("value")).toBe("22:30:00");
             expect(onChange).not.toHaveBeenCalled();
 
             picker.unmount();
@@ -930,10 +930,10 @@ describe("TimePicker", () => {
             picker.setProps({ format: "12h" });
             picker.update();
 
-            expect(picker.find("input.pickerInput__input").prop("value")).toBe("02:06:05 PM");
+            expect(picker.find("input.pickerMaskedInput").prop("value")).toBe("02:06:05 PM");
 
-            picker.find("input.pickerInput__input").simulate("focus");
-            expect(picker.find("input.pickerInput__input").prop("value")).toBe("02:06:05 PM");
+            picker.find("input.pickerMaskedInput").simulate("focus");
+            expect(picker.find("input.pickerMaskedInput").prop("value")).toBe("02:06:05 PM");
 
             picker.unmount();
         });
@@ -941,11 +941,11 @@ describe("TimePicker", () => {
         it("keeps the normalized value on focus and shows the typed text while editing", () => {
             const picker = mountSingle({ format: "12h", defaultValue: "18:45:00" });
 
-            picker.find("input.pickerInput__input").simulate("focus");
-            expect(picker.find("input.pickerInput__input").prop("value")).toBe("06:45:00 PM");
+            picker.find("input.pickerMaskedInput").simulate("focus");
+            expect(picker.find("input.pickerMaskedInput").prop("value")).toBe("06:45:00 PM");
 
             typeInto(picker, "06:45:00 P");
-            expect(picker.find("input.pickerInput__input").prop("value")).toBe("06:45:00 P");
+            expect(picker.find("input.pickerMaskedInput").prop("value")).toBe("06:45:00 P");
 
             picker.unmount();
         });
@@ -958,7 +958,7 @@ describe("TimePicker", () => {
             setup.setProps({ value: null });
 
             expect(columnButtons(setup, 0).at(5).prop("aria-selected")).toBe(false);
-            expect(setup.find("input.pickerInput__input").prop("value")).toBe("");
+            expect(setup.find("input.pickerMaskedInput").prop("value")).toBe("");
         });
 
         it("clears the value and reports it through onClear and onChange", () => {
@@ -966,12 +966,12 @@ describe("TimePicker", () => {
             const onChange = jest.fn();
             const clearable = mountSingle({ clearable: true, defaultValue: "12:00:00", onClear, onChange });
 
-            clearable.find(".pickerInput__append button").first().simulate("click");
+            clearable.find(".pickerShell__append button").first().simulate("click");
             clearable.update();
 
             expect(onClear).toHaveBeenCalled();
             expect(onChange).toHaveBeenCalledWith("", { source: "clear", parts: null });
-            expect(clearable.find("input.pickerInput__input").prop("value")).toBe("");
+            expect(clearable.find("input.pickerMaskedInput").prop("value")).toBe("");
 
             clearable.unmount();
         });
@@ -995,11 +995,11 @@ describe("Time range picker", () => {
     });
 
     it("renders start and end inputs correctly", () => {
-        expect(setup.find("input.pickerInput__input").length).toBe(2);
+        expect(setup.find("input.pickerMaskedInput").length).toBe(2);
     });
 
     it("gives both inputs an accessible name and unique ids", () => {
-        const inputs = setup.find("input.pickerInput__input");
+        const inputs = setup.find("input.pickerMaskedInput");
 
         expect(inputs.at(0).prop("aria-label")).toBe("Start time");
         expect(inputs.at(1).prop("aria-label")).toBe("End time");
@@ -1009,7 +1009,7 @@ describe("Time range picker", () => {
     it("handles placeholder objects correctly", () => {
         setup.setProps({ placeholder: { start: "Start", end: "End" } });
 
-        const inputs = setup.find("input.pickerInput__input");
+        const inputs = setup.find("input.pickerMaskedInput");
 
         expect(inputs.at(0).prop("placeholder")).toBe("Start");
         expect(inputs.at(1).prop("placeholder")).toBe("End");
@@ -1018,7 +1018,7 @@ describe("Time range picker", () => {
     it("handles range values correctly", () => {
         setup.setProps({ value: { start: "10:00:00", end: "12:00:00" } });
 
-        const inputs = setup.find("input.pickerInput__input");
+        const inputs = setup.find("input.pickerMaskedInput");
 
         expect(inputs.at(0).prop("value")).toBe("10:00:00");
         expect(inputs.at(1).prop("value")).toBe("12:00:00");
@@ -1028,13 +1028,13 @@ describe("Time range picker", () => {
         openPopover(setup, 1);
         expect(setup.find("PickerPopover").prop("activeField")).toBe("end");
 
-        setup.find("input.pickerInput__input").at(0).simulate("focus");
+        setup.find("input.pickerMaskedInput").at(0).simulate("focus");
         setup.update();
         expect(setup.find("PickerPopover").prop("activeField")).toBe("start");
     });
 
     it("keeps the focus on the start field after Enter and moves to the end field on Tab", () => {
-        const inputs = () => setup.find("input.pickerInput__input");
+        const inputs = () => setup.find("input.pickerMaskedInput");
 
         inputs().at(0).simulate("focus");
         inputs().at(0).simulate("keydown", { key: "Enter" });
@@ -1109,7 +1109,7 @@ describe("Time range picker", () => {
 
         setup.setProps({ onFocus, onBlur, onKeyDown });
 
-        const endInput = setup.find("input.pickerInput__input").at(1);
+        const endInput = setup.find("input.pickerMaskedInput").at(1);
 
         endInput.simulate("focus");
         endInput.simulate("keydown", { key: "a" });
@@ -1126,13 +1126,13 @@ describe("Time range picker", () => {
         range.setProps({ format: "12h" });
         range.update();
 
-        const inputs = range.find("input.pickerInput__input");
+        const inputs = range.find("input.pickerMaskedInput");
 
         expect(inputs.at(0).prop("value")).toBe("02:06:05 PM");
         expect(inputs.at(1).prop("value")).toBe("11:00:00 PM");
 
         inputs.at(0).simulate("focus");
-        expect(range.find("input.pickerInput__input").at(0).prop("value")).toBe("02:06:05 PM");
+        expect(range.find("input.pickerMaskedInput").at(0).prop("value")).toBe("02:06:05 PM");
 
         range.unmount();
     });
@@ -1142,7 +1142,7 @@ describe("Time range picker", () => {
         const bounded = mountRange({ defaultValue: { start: "10:00:00", end: null }, onChange });
 
         typeInto(bounded, "05:00:00", 1);
-        bounded.find("input.pickerInput__input").at(1).simulate("blur");
+        bounded.find("input.pickerMaskedInput").at(1).simulate("blur");
 
         expect(onChange).toHaveBeenLastCalledWith("10:00:00", {
             field: "end",
@@ -1161,10 +1161,10 @@ describe("Time range picker", () => {
             onChange
         });
 
-        clearable.find(".pickerInput__append button").first().simulate("click");
+        clearable.find(".pickerShell__append button").first().simulate("click");
         clearable.update();
 
-        const inputs = clearable.find("input.pickerInput__input");
+        const inputs = clearable.find("input.pickerMaskedInput");
 
         expect(inputs.at(0).prop("value")).toBe("");
         expect(inputs.at(1).prop("value")).toBe("");

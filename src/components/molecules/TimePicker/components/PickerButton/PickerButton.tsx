@@ -1,13 +1,13 @@
-import React, { ComponentPropsWithoutRef, FC, memo } from "react";
+import React, { FC, memo, ReactNode } from "react";
 import classNames from "classnames";
-
-// Styles
-import "./PickerButton.scss";
 
 // Types
 import { TimePickerSizes } from "../../types";
 
-interface IPickerButtonProps extends ComponentPropsWithoutRef<"button"> {
+// Styles
+import "./PickerButton.scss";
+
+interface IPickerButtonProps {
     /**
      * Controls the visual size of the button.
      * @default "medium"
@@ -16,11 +16,35 @@ interface IPickerButtonProps extends ComponentPropsWithoutRef<"button"> {
 
     /**
      * Indicates whether the button is in an active (selected) state.
-     * Typically used to highlight the currently selected value.
-     *
-     * @default false
+     * Typically used to highlight the currently selected value. Also sets `aria-selected` on the button.
      */
     selected?: boolean;
+
+    /**
+     * Indicates whether the button is disabled.
+     */
+    disabled?: boolean;
+
+    /**
+     * The value the button represents. Rendered as `data-value`, which the picker column reads on click.
+     */
+    value: string;
+
+    /**
+     * Tab index of the button. The picker column keeps a single tab stop, the rest of the buttons get `-1`.
+     */
+    tabIndex?: number;
+
+    /**
+     * Additional class for the parent element.<br>
+     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
+     */
+    className?: string;
+
+    /**
+     * The content of the button.
+     */
+    children?: ReactNode;
 }
 
 /**
@@ -29,21 +53,25 @@ interface IPickerButtonProps extends ComponentPropsWithoutRef<"button"> {
  * and custom content with full keyboard accessibility.
  */
 const PickerButton: FC<IPickerButtonProps> = ({
-    className,
     size = "medium",
-    selected = false,
-    disabled = false,
-    children,
-    ...props
+    selected,
+    disabled,
+    value,
+    tabIndex,
+    className,
+    children
 }) => {
     return (
         <button
-            {...props}
             type="button"
+            role="option"
+            aria-selected={selected}
+            tabIndex={tabIndex}
+            data-value={value}
             disabled={disabled}
             className={classNames("pickerButton", `pickerButton_size_${size}`, className, {
-                pickerButton_state_selected: selected,
-                pickerButton_state_disabled: disabled
+                pickerButton_selected: selected,
+                pickerButton_disabled: disabled
             })}
         >
             {children}

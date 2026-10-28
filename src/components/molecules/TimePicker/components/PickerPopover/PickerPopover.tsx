@@ -462,10 +462,8 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
             {column.entries.map((entry, index) => (
                 <PickerButton
                     key={entry.value}
-                    role="option"
-                    aria-selected={entry.selected}
+                    value={entry.value}
                     tabIndex={index === column.tabStopIndex ? 0 : -1}
-                    data-value={entry.value}
                     selected={entry.selected}
                     disabled={entry.disabled}
                     size={size}

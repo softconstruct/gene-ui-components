@@ -24,21 +24,19 @@
         }
     }
 
-    &_state {
-        &_selected {
-            background-color: var(--guit-sem-color-background-selected-2);
-            color: var(--guit-sem-color-foreground-inverse);
-            cursor: default;
-        }
-
-        &_disabled {
-            pointer-events: none;
-            user-select: none;
-            color: var(--guit-sem-color-foreground-disabled);
-        }
+    &_selected {
+        background-color: var(--guit-sem-color-background-selected-2);
+        color: var(--guit-sem-color-foreground-inverse);
+        cursor: default;
     }
 
-    &:not(#{$this}_state_selected) {
+    &_disabled {
+        pointer-events: none;
+        user-select: none;
+        color: var(--guit-sem-color-foreground-disabled);
+    }
+
+    &:not(#{$this}_selected) {
         @include mixins.media-hover {
             &:hover {
                 background-color: var(--guit-sem-color-background-neutral-1-hover);
