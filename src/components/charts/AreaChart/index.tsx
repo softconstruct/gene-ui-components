@@ -1,1 +1,1 @@
-export { IAreaChartProps, default } from "./AreaChart";
+export { IAreaChartProps, IAreaChartSeries, default } from "./AreaChart";
