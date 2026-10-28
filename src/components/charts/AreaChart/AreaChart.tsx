@@ -1,4 +1,4 @@
-import React, { FC, useLayoutEffect, useMemo, useRef, useState } from "react";
+import React, { FC, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
@@ -103,7 +103,17 @@ interface IAreaChartProps {
     options?: Highcharts.Options;
 }
 
+interface IAreaChartTooltipState {
+    open: boolean;
+    items: IChartTooltipItem[];
+    categoryIndex: number | null;
+    left: number;
+    top: number;
+}
+
 const defaultValueFormatter = (value: number) => `${value}`;
+
+const closedTooltip: IAreaChartTooltipState = { open: false, items: [], categoryIndex: null, left: 0, top: 0 };
 
 /** Area fill opacity at the top of the gradient; it fades to fully transparent at the bottom. */
 const AREA_FILL_OPACITY = 0.3;
@@ -140,12 +150,11 @@ const AreaChart: FC<IAreaChartProps> = ({
     const colorProbeRef = useRef<HTMLSpanElement>(null);
     const bodyRef = useRef<HTMLDivElement>(null);
     const highlightRef = useRef<{ chart: Highcharts.Chart; categoryIndex: number } | null>(null);
+    const hideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const [resolvedSeries, setResolvedSeries] = useState<IAreaChartSeries[]>([]);
-    const [isTooltipOpen, setIsTooltipOpen] = useState(false);
-    const [tooltipItems, setTooltipItems] = useState<IChartTooltipItem[]>([]);
-    const [tooltipCategoryIndex, setTooltipCategoryIndex] = useState<number | null>(null);
-    const [anchorPosition, setAnchorPosition] = useState({ left: 0, top: 0 });
+    // One state object so a hover is a single render (Highcharts events are not batched by React 16).
+    const [tooltip, setTooltip] = useState<IAreaChartTooltipState>(closedTooltip);
     const [hiddenSeriesIndexes, setHiddenSeriesIndexes] = useState<Record<number, boolean>>({});
     const [frozenBodyHeight, setFrozenBodyHeight] = useState<number | null>(null);
     const hasData = Boolean(series?.some(({ data }) => data?.length));
@@ -158,8 +167,6 @@ const AreaChart: FC<IAreaChartProps> = ({
 
     // Highcharts only highlights the hovered series' point; the design shows a marker on
     // every visible series at the hovered category, so those states are managed here.
-    // Points are re-read from the chart each time: `HighchartsReact` calls `chart.update()`
-    // on re-render, which resets point states and may replace point instances.
     const setCategoryPointsState = (state: "" | "hover") => {
         const highlight = highlightRef.current;
 
@@ -173,9 +180,7 @@ const AreaChart: FC<IAreaChartProps> = ({
             const categoryPoint = chartSeries.points?.[categoryIndex];
 
             if (categoryPoint && categoryPoint !== chart.hoverPoint && (chartSeries.visible || state === "")) {
-                // `move` skips Highcharts' "already in this state" guard: after `chart.update()`
-                // a point can keep `state === "hover"` while its marker graphic was rebuilt.
-                categoryPoint.setState(state, true);
+                categoryPoint.setState(state);
             }
         });
     };
@@ -183,15 +188,34 @@ const AreaChart: FC<IAreaChartProps> = ({
     const tooltipHandlersRef = useRef<{
         show: (point: Highcharts.Point) => void;
         hide: () => void;
+        scheduleHide: () => void;
     }>({
         show: () => undefined,
-        hide: () => undefined
+        hide: () => undefined,
+        scheduleHide: () => undefined
     });
+
+    const cancelScheduledHide = () => {
+        if (hideTimeoutRef.current) {
+            clearTimeout(hideTimeoutRef.current);
+            hideTimeoutRef.current = null;
+        }
+    };
 
     tooltipHandlersRef.current = {
         show: (point) => {
+            cancelScheduledHide();
+
             const { chart } = point.series;
             const categoryIndex = point.index;
+
+            // Moving between series at the same category: only the markers need re-applying
+            // (Highcharts resets the previously hovered point), the tooltip stays as is.
+            if (highlightRef.current?.chart === chart && highlightRef.current.categoryIndex === categoryIndex) {
+                setCategoryPointsState("hover");
+                return;
+            }
+
             const categoryPoints = chart.series
                 .filter((chartSeries) => chartSeries.visible)
                 .map((chartSeries) => chartSeries.points[categoryIndex])
@@ -207,32 +231,33 @@ const AreaChart: FC<IAreaChartProps> = ({
 
             const topPlotY = Math.min(...categoryPoints.map((categoryPoint) => categoryPoint.plotY ?? 0));
 
-            setAnchorPosition({
+            setTooltip({
+                open: true,
+                categoryIndex,
                 left: chart.plotLeft + (point.plotX ?? 0),
-                top: chart.plotTop + topPlotY
-            });
-            setTooltipCategoryIndex(categoryIndex);
-            setTooltipItems(
-                categoryPoints.map((categoryPoint) => ({
+                top: chart.plotTop + topPlotY,
+                items: categoryPoints.map((categoryPoint) => ({
                     name: categoryPoint.series.name,
                     value: valueFormatter(categoryPoint.y as number),
                     color: String(categoryPoint.series.color)
                 }))
-            );
-            setIsTooltipOpen(true);
+            });
         },
         hide: () => {
+            cancelScheduledHide();
             setCategoryPointsState("");
             highlightRef.current = null;
-            setIsTooltipOpen(false);
-            setTooltipItems([]);
+            setTooltip(closedTooltip);
+        },
+        // Highcharts fires `mouseOut` right before the next point's `mouseOver`; deferring the hide
+        // lets that `mouseOver` cancel it, so the tooltip doesn't blink between points.
+        scheduleHide: () => {
+            cancelScheduledHide();
+            hideTimeoutRef.current = setTimeout(() => tooltipHandlersRef.current.hide());
         }
     };
 
-    // Runs after `HighchartsReact` (a child) has applied `chart.update()` for this render.
-    useLayoutEffect(() => {
-        setCategoryPointsState("hover");
-    });
+    useEffect(() => cancelScheduledHide, []);
 
     useLayoutEffect(() => {
         if (!series?.length || !series.some(({ data }) => data?.length)) {
@@ -319,7 +344,8 @@ const AreaChart: FC<IAreaChartProps> = ({
                 tickWidth: 1,
                 crosshair: {
                     width: 1,
-                    color: "var(--guit-sem-color-border-neutral-2)"
+                    dashStyle: "Dash",
+                    color: "var(--guit-sem-color-border-neutral-4)"
                 },
                 reversed: isRtl
             },
@@ -353,7 +379,7 @@ const AreaChart: FC<IAreaChartProps> = ({
                 },
                 areaspline: {
                     animation: false,
-                    lineWidth: 1,
+                    lineWidth: 2,
                     marker: {
                         enabled: false,
                         symbol: "circle",
@@ -368,7 +394,8 @@ const AreaChart: FC<IAreaChartProps> = ({
                     },
                     states: {
                         hover: {
-                            lineWidthPlus: 0
+                            lineWidthPlus: 0,
+                            halo: { size: 0 }
                         },
                         inactive: {
                             enabled: false
@@ -380,7 +407,7 @@ const AreaChart: FC<IAreaChartProps> = ({
                                 tooltipHandlersRef.current.show(this);
                             },
                             mouseOut() {
-                                tooltipHandlersRef.current.hide();
+                                tooltipHandlersRef.current.scheduleHide();
                             }
                         }
                     }
@@ -409,7 +436,18 @@ const AreaChart: FC<IAreaChartProps> = ({
         return mergeChartOptions(baseOptions, optionsOverride);
     }, [categories, hiddenSeriesIndexes, isRtl, max, min, options, resolvedSeries, xAxisTitle, yAxisTitle]);
 
-    const tooltipAnchorKey = tooltipCategoryIndex ?? "idle";
+    // `HighchartsReact` is memoized; a new `containerProps` object per render would call
+    // `chart.update()` on every hover and reset the hovered points' state.
+    const plotContainerProps = useMemo(
+        () => ({
+            className: "areaChart__plot",
+            role: "img",
+            "aria-label": subtitle ? `Area chart: ${subtitle}` : "Area chart"
+        }),
+        [subtitle]
+    );
+
+    const tooltipAnchorKey = tooltip.categoryIndex ?? "idle";
 
     return (
         <div
@@ -444,21 +482,17 @@ const AreaChart: FC<IAreaChartProps> = ({
                 {!loading && hasData && resolvedSeries.length > 0 && (
                     <>
                         <ChartTooltip
-                            open={isTooltipOpen}
-                            items={tooltipItems}
-                            left={anchorPosition.left}
-                            top={anchorPosition.top}
+                            open={tooltip.open}
+                            items={tooltip.items}
+                            left={tooltip.left}
+                            top={tooltip.top}
                             pointKey={tooltipAnchorKey}
-                            onClose={() => setIsTooltipOpen(false)}
+                            onClose={() => tooltipHandlersRef.current.hide()}
                         />
                         <HighchartsReact
                             highcharts={Highcharts}
                             options={chartOptions}
-                            containerProps={{
-                                className: "areaChart__plot",
-                                role: "img",
-                                "aria-label": subtitle ? `Area chart: ${subtitle}` : "Area chart"
-                            }}
+                            containerProps={plotContainerProps}
                         />
                     </>
                 )}
