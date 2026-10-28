@@ -42,7 +42,7 @@ interface IFontSizeStepperProps {
  * A font size stepper for the Editor's toolbar. Internal to the Editor.
  */
 const FontSizeStepper: FC<IFontSizeStepperProps> = ({ value = DEFAULT_FONT_SIZE, disabled, onChange }) => {
-    const [draft, setDraft] = useState<number | "">(value);
+    const [draft, setDraft] = useState<number | null>(value);
 
     useEffect(() => {
         setDraft(value);
@@ -57,7 +57,7 @@ const FontSizeStepper: FC<IFontSizeStepperProps> = ({ value = DEFAULT_FONT_SIZE,
     };
 
     const commit = (returnFocus: boolean): void => {
-        if (draft === "") {
+        if (draft === null) {
             setDraft(value);
             return;
         }
@@ -75,7 +75,7 @@ const FontSizeStepper: FC<IFontSizeStepperProps> = ({ value = DEFAULT_FONT_SIZE,
             return;
         }
 
-        setDraft(target.value === "" ? "" : Number(target.value));
+        setDraft(!target.value ? null : Number(target.value));
     };
 
     const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
