@@ -44,9 +44,15 @@ npm run create-component        # interactive: scaffold component + story + test
 npx jest src/components/atoms/Button          # run tests for one component
 npx eslint --config ./.eslintrc.json <files>  # lint only what you changed (batch files in one call)
 npx stylelint --config ./.stylelintrc.json <files.scss>
-npx tsc --noEmit -p ./tsconfig.json           # type check
+npx tsc --noEmit -p ./tsconfig.json | grep "<Component>/"  # type check (filter: the repo has existing errors)
 npm run build -- --pure         # build dist/ without lint/semantic-release
 ```
+
+- `tsc` already fails on existing errors in story files (Button, Grid, Accordion…), so filter its output by the path you
+  changed instead of reading the exit code.
+- Storybook usually already runs on `:6006`. Open one story directly with
+  `http://localhost:6006/iframe.html?id=<level>-<name>--<story>` (e.g. `charts-areachart--rest`) and check hover,
+  focus and popover behavior there — the Jest tests mock those away.
 
 ## Layout
 
@@ -91,6 +97,9 @@ Canonical examples to copy: `atoms/Button` (simple, `forwardRef`), `atoms/Popove
   documentation consumers (and their AI tools) get. For unions write `Possible values: \`a | b\``; add `@default`
   when a default exists.
 - String-literal unions, not enums. Defaults go in the destructuring, not `defaultProps`.
+- **No default user-facing text.** Text props (`loadingText`, `emptyTitle`, `emptyDescription`, labels…) get no hardcoded
+  default in the component: the consumer may want none, and English defaults break localisation. Sample text goes in
+  the story `args`.
 - A one-line JSDoc above the component itself describing when to use it.
 - Follow the prop vocabulary from `CONTRIBUTING.md` (content / states / validation / actions / functionality /
   appearance): `size`, `appearance`, `disabled`, `readOnly`, `loading`, `onChange`, `onClose`, `className`…
@@ -156,6 +165,8 @@ existing files.
   `appearance`, `others`.
 - `export const Default: Story = {}` plus one story per meaningful variant. Use realistic data from `stories/data` /
   `@faker-js/faker`.
+- **Story data must be deterministic** — no `Math.random`, `Date.now` or unseeded `faker`; Chromatic snapshots every
+  story, and random data shows up as a false diff on every build. With faker, call `faker.seed(<n>)` first.
 
 ## Tests
 
@@ -178,3 +189,4 @@ existing files.
 - Conventional commits, scope = PascalCase component: `feat(DataTable): add row statuses`,
   `fix(Scrollbar): track-hiding timer start upon unmounting`. Breaking changes go in a `BREAKING CHANGE:` footer.
 - PR title uses the same format.
+- End every change with a ready-to-paste commit message in a fenced block (you never run `git commit` yourself).
