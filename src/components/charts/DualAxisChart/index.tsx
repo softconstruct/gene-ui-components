@@ -1,1 +1,1 @@
-export { IDualAxisChartProps, default } from "./DualAxisChart";
+export { IDualAxisChartProps, IDualAxisChartSeries, default } from "./DualAxisChart";
