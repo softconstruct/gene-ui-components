@@ -167,6 +167,10 @@ const AreaChart: FC<IAreaChartProps> = ({
 
     // Highcharts only highlights the hovered series' point; the design shows a marker on
     // every visible series at the hovered category, so those states are managed here.
+    // A series has ONE shared hover-marker graphic: resetting the previous category's point hides
+    // the marker Highcharts already moved to the new hovered point. So "hover" is re-applied to every
+    // point (the hovered one included) with `move = true`, which skips the "already in this state"
+    // guard and redraws the marker.
     const setCategoryPointsState = (state: "" | "hover") => {
         const highlight = highlightRef.current;
 
@@ -179,7 +183,15 @@ const AreaChart: FC<IAreaChartProps> = ({
         chart.series.forEach((chartSeries) => {
             const categoryPoint = chartSeries.points?.[categoryIndex];
 
-            if (categoryPoint && categoryPoint !== chart.hoverPoint && (chartSeries.visible || state === "")) {
+            if (!categoryPoint) {
+                return;
+            }
+
+            if (state === "hover") {
+                if (chartSeries.visible) {
+                    categoryPoint.setState(state, true);
+                }
+            } else if (categoryPoint !== chart.hoverPoint) {
                 categoryPoint.setState(state);
             }
         });
@@ -380,6 +392,8 @@ const AreaChart: FC<IAreaChartProps> = ({
                 areaspline: {
                     animation: false,
                     lineWidth: 2,
+                    // Category axes pad half a category on each side; `on` lets the areas reach the plot edges.
+                    pointPlacement: "on",
                     marker: {
                         enabled: false,
                         symbol: "circle",
