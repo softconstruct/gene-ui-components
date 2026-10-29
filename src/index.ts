@@ -151,6 +151,7 @@ export {
     IStackedBarChartProps,
     IStackedBarChartSeries
 } from "./components/charts/StackedBarChart";
+export { default as AreaChart, IAreaChartProps, IAreaChartSeries } from "./components/charts/AreaChart";
 
 // Providers
 export {

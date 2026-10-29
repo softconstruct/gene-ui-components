@@ -131,9 +131,9 @@ const StackedBarChart: FC<IStackedBarChartProps> = ({
     max,
     showLegend = true,
     loading = false,
-    loadingText = "Loading Info",
-    emptyTitle = "No Data Available",
-    emptyDescription = "No data is available for display at this moment.",
+    loadingText,
+    emptyTitle,
+    emptyDescription,
     valueFormatter = defaultValueFormatter,
     options
 }) => {

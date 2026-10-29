@@ -11,11 +11,11 @@ import ChartLegend from "@internal/components/ChartLegend";
 import ChartSubtitle from "@internal/components/ChartSubtitle";
 import ChartTooltip, { IChartTooltipItem } from "@internal/components/ChartTooltip";
 
-// Styles
-import "./BarChart.scss";
-
 // Helpers
 import { DEFAULT_CHART_SERIES_COLOR_TOKEN, mergeChartOptions, resolveChartSeriesColor } from "../../../helpers/charts";
+
+// Styles
+import "./BarChart.scss";
 
 interface IBarChartSeries {
     /**
@@ -122,9 +122,9 @@ const BarChart: FC<IBarChartProps> = ({
     max,
     showLegend = true,
     loading = false,
-    loadingText = "Loading Info",
-    emptyTitle = "No Data Available",
-    emptyDescription = "No data is available for display at this moment.",
+    loadingText,
+    emptyTitle,
+    emptyDescription,
     valueFormatter = defaultValueFormatter,
     options
 }) => {
