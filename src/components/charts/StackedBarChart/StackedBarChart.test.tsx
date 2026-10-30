@@ -11,12 +11,18 @@ jest.mock("highcharts-react-official", () => {
     const MockHighchartsReact = ({
         options
     }: {
-        options: { chart?: { animation?: boolean }; plotOptions?: { series?: { animation?: boolean } } };
+        options: {
+            chart?: { animation?: boolean; inverted?: boolean };
+            plotOptions?: { series?: { animation?: boolean } };
+            yAxis?: { plotLines?: unknown[] };
+        };
     }) => (
         <div
             className="highcharts-react-mock"
             data-animation={String(options?.chart?.animation)}
             data-series-animation={String(options?.plotOptions?.series?.animation)}
+            data-inverted={String(options?.chart?.inverted)}
+            data-zero-line={String(Boolean(options?.yAxis?.plotLines?.length))}
         />
     );
 
@@ -73,5 +79,29 @@ describe("StackedBarChart", () => {
         const mock = wrapper.find(".highcharts-react-mock");
         expect(mock.prop("data-animation")).toBe("false");
         expect(mock.prop("data-series-animation")).toBe("false");
+    });
+
+    it("renders vertical (not inverted) by default", () => {
+        const wrapper = mountStackedBarChart();
+        expect(wrapper.find(".highcharts-react-mock").prop("data-inverted")).toBe("false");
+    });
+
+    it("inverts the chart when direction is horizontal", () => {
+        const wrapper = mountStackedBarChart({ direction: "horizontal" });
+        expect(wrapper.find(".highcharts-react-mock").prop("data-inverted")).toBe("true");
+    });
+
+    it("draws a zero line only when series contain negative values", () => {
+        const wrapper = mountStackedBarChart();
+        expect(wrapper.find(".highcharts-react-mock").prop("data-zero-line")).toBe("false");
+
+        const divergingWrapper = mountStackedBarChart({
+            direction: "horizontal",
+            series: [
+                { name: "Channel 1", data: [-10, -20, -30, -40] },
+                { name: "Channel 2", data: [15, 25, 35, 45] }
+            ]
+        });
+        expect(divergingWrapper.find(".highcharts-react-mock").prop("data-zero-line")).toBe("true");
     });
 });

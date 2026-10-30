@@ -26,9 +26,10 @@ const segmentedControlData: ISegmentedControlButtonProps[] = [
 
 const segmentedControlLabels = ["Daily", "Weekly", "Monthly", "Yearly", "Hourly", "Quarterly"];
 
-const getRandomSegmentedControlData = (): ISegmentedControlButtonProps[] => {
+// Deterministic (no `Math.random`) so Chromatic snapshots stay stable between builds.
+const getSegmentedControlData = (variant: number): ISegmentedControlButtonProps[] => {
     return Array.from({ length: 2 }, (_, index) => {
-        const label = segmentedControlLabels[Math.floor(Math.random() * segmentedControlLabels.length)];
+        const label = segmentedControlLabels[(variant * 2 + index) % segmentedControlLabels.length];
 
         return {
             name: `option-${index + 1}`,
@@ -119,25 +120,25 @@ const widgetStories: Array<Partial<IWidgetProps> & { id: string }> = [
         infoText: "Monthly revenue overview",
         Icon: Globe,
         swappableElement: <div>Chart placeholder</div>,
-        segmentedControl: getRandomSegmentedControlData()
+        segmentedControl: getSegmentedControlData(0)
     },
     {
         id: "with-icon-only",
         title: "Active Users",
         infoText: "Users active in the last 30 days",
         Icon: Globe,
-        segmentedControl: getRandomSegmentedControlData()
+        segmentedControl: getSegmentedControlData(1)
     },
     {
         id: "with-swap-only",
         title: "Conversion Rate",
         swappableElement: <div>Trend placeholder</div>,
-        segmentedControl: getRandomSegmentedControlData()
+        segmentedControl: getSegmentedControlData(2)
     },
     {
         id: "title-only",
         title: "Widget Title",
-        segmentedControl: getRandomSegmentedControlData()
+        segmentedControl: getSegmentedControlData(3)
     },
     {
         id: "without-header",
@@ -158,7 +159,7 @@ const widgetStories: Array<Partial<IWidgetProps> & { id: string }> = [
         value: "$ 789",
         trend: "down",
         trendValue: "-5%",
-        segmentedControl: getRandomSegmentedControlData()
+        segmentedControl: getSegmentedControlData(4)
     }
 ];
 

@@ -11,15 +11,15 @@ import ChartLegend from "@internal/components/ChartLegend";
 import ChartSubtitle from "@internal/components/ChartSubtitle";
 import ChartTooltip, { IChartTooltipItem } from "@internal/components/ChartTooltip";
 
-// Styles
-import "./GroupedBarChart.scss";
-
 // Helpers
 import {
     getDefaultGroupedChartSeriesColorToken,
     mergeChartOptions,
     resolveGroupedChartSeriesColor
 } from "../../../helpers/charts";
+
+// Styles
+import "./GroupedBarChart.scss";
 
 interface IGroupedBarChartSeries {
     /**
@@ -120,9 +120,9 @@ const GroupedBarChart: FC<IGroupedBarChartProps> = ({
     max,
     showLegend = true,
     loading = false,
-    loadingText = "Loading Info",
-    emptyTitle = "No Data Available",
-    emptyDescription = "No data is available for display at this moment.",
+    loadingText,
+    emptyTitle,
+    emptyDescription,
     valueFormatter = defaultValueFormatter,
     options
 }) => {

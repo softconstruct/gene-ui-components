@@ -49,6 +49,9 @@ const meta: Meta<IBarChartProps> = {
         min: 0,
         showLegend: true,
         loading: false,
+        loadingText: "Loading Info",
+        emptyTitle: "No Data Available",
+        emptyDescription: "No data is available for display at this moment.",
         valueFormatter: (value) => `${value}`
     },
     parameters: {
