@@ -6,6 +6,7 @@ import React, {
     MutableRefObject,
     ReactNode,
     Ref,
+    SyntheticEvent,
     useCallback
 } from "react";
 import classNames from "classnames";
@@ -68,10 +69,14 @@ interface IPickerShellProps {
      */
     shellRef?: Ref<HTMLDivElement>;
     /**
-     * Callback for clicks on the field around the inputs (icons, padding), which behave like a click
-     * on the input.
+     * Callback for clicks on the field around the inputs (padding, separator), which behave like a
+     * click on the input.
      */
     onAreaClick?: () => void;
+    /**
+     * Callback for clicks on the end icon, which toggles the popover instead of only opening it.
+     */
+    onIconClick?: () => void;
     /**
      * Callback for focus leaving the field, including its clear button.
      */
@@ -105,8 +110,19 @@ interface IPickerShellProps {
     showClearButton: boolean;
 }
 
-const isControlTarget = (target: EventTarget): boolean =>
-    target instanceof Element && !!target.closest("input, button");
+/**
+ * Whether an event was raised on the element that handles it, and not on one of its children. The
+ * field reacts to presses on its own surface only, so the inputs and the clear button keep their
+ * behaviour without any event being stopped.
+ */
+const isOwnTarget = (event: SyntheticEvent): boolean => event.target === event.currentTarget;
+
+/**
+ * Presses on the field around the inputs keep the focus where it is.
+ */
+const keepFocus = (event: MouseEvent<HTMLElement | SVGElement>) => {
+    event.preventDefault();
+};
 
 const PickerShell: FC<IPickerShellProps> = ({
     className,
@@ -126,6 +142,7 @@ const PickerShell: FC<IPickerShellProps> = ({
     anchorRef,
     shellRef,
     onAreaClick,
+    onIconClick,
     onFocusOut
 }) => {
     const setShellRef = useCallback(
@@ -142,12 +159,12 @@ const PickerShell: FC<IPickerShellProps> = ({
         [shellRef, anchorRef]
     );
 
-    const handleMouseDown = (event: MouseEvent<HTMLDivElement>) => {
-        if (!isControlTarget(event.target)) event.preventDefault();
+    const handleAreaMouseDown = (event: MouseEvent<HTMLDivElement>) => {
+        if (isOwnTarget(event)) keepFocus(event);
     };
 
-    const handleClick = (event: MouseEvent<HTMLDivElement>) => {
-        if (!isControlTarget(event.target)) onAreaClick?.();
+    const handleAreaClick = (event: MouseEvent<HTMLDivElement>) => {
+        if (isOwnTarget(event)) onAreaClick?.();
     };
 
     return (
@@ -167,13 +184,18 @@ const PickerShell: FC<IPickerShellProps> = ({
                         pickerShell_readOnly: readOnly
                     }
                 )}
-                onMouseDown={handleMouseDown}
-                onClick={handleClick}
+                onMouseDown={handleAreaMouseDown}
+                onClick={handleAreaClick}
                 onBlur={onFocusOut}
             >
                 {children}
                 {(showClearButton || EndIcon) && (
-                    <div className="pickerShell__append">
+                    <div
+                        role="presentation"
+                        className="pickerShell__append"
+                        onMouseDown={handleAreaMouseDown}
+                        onClick={handleAreaClick}
+                    >
                         {showClearButton && (
                             <Button
                                 onClick={onClear}
@@ -184,7 +206,15 @@ const PickerShell: FC<IPickerShellProps> = ({
                                 layout="text"
                             />
                         )}
-                        {EndIcon && <EndIcon size={20} className="pickerShell__icon" aria-hidden="true" />}
+                        {EndIcon && (
+                            <EndIcon
+                                size={20}
+                                className="pickerShell__icon"
+                                aria-hidden="true"
+                                onMouseDown={keepFocus}
+                                onClick={onIconClick}
+                            />
+                        )}
                     </div>
                 )}
             </div>

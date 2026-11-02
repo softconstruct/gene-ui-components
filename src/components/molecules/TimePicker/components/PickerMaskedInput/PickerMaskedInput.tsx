@@ -40,6 +40,10 @@ interface IPickerMaskedInputProps {
      */
     maskTrack: Track;
     /**
+     * Virtual keyboard hint of the input: `numeric` when the value can only hold digits.
+     */
+    inputMode?: "numeric" | "text";
+    /**
      * Placeholder value of the input.
      */
     placeholder?: string;
@@ -127,6 +131,7 @@ const PickerMaskedInput: FC<IPickerMaskedInputProps> = ({
     mask,
     maskReplacement,
     maskTrack,
+    inputMode,
     inputRef,
     onClick,
     onChange,
@@ -141,6 +146,7 @@ const PickerMaskedInput: FC<IPickerMaskedInputProps> = ({
         mask={mask}
         replacement={maskReplacement}
         track={maskTrack}
+        inputMode={inputMode}
         size={INPUT_SIZE}
         className={classNames("pickerMaskedInput", `pickerMaskedInput_size_${size}`, {
             pickerMaskedInput_disabled: disabled,

@@ -122,10 +122,13 @@ interface ITimePickerBaseProps {
      */
     onFocus?: (event: FocusEvent<HTMLInputElement>) => void;
     /**
-     * Callback function which triggers when an input of the component loses focus.
-     * Partially typed values are restored to the last complete one at this point.
+     * Callback function which triggers when the focus leaves the component — the input, its clear
+     * button or the popover; moving the focus between them does not trigger it. The typed value is
+     * committed first (completed, clamped, or restored to the last complete one when it is
+     * incomplete) and reported through `onChange`, so the value is final when this runs.
+     * `event.target` is the element the focus left.
      */
-    onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
+    onBlur?: (event: FocusEvent<HTMLElement>) => void;
     /**
      * Callback function which triggers on `keydown` of an input of the component.
      */
@@ -194,12 +197,13 @@ interface IRangeTimePickerProps extends Omit<ITimePickerBaseProps, "onFocus" | "
      */
     onFocus?: (event: FocusEvent<HTMLInputElement>, field: TimePickerRangeFields) => void;
     /**
-     * Callback function which triggers when one of the inputs loses focus.
-     * Partially typed values are restored to the last complete one at this point.
-     * @param event
-     * @param field the input the event came from
+     * Callback function which triggers when one of the fields is left: the focus moves to the other
+     * field, or leaves the component (the inputs, the clear button and the popover). The typed value
+     * is committed first and reported through `onChange`, so the value is final when this runs.
+     * @param event `event.target` is the element the focus left
+     * @param field the field that was left
      */
-    onBlur?: (event: FocusEvent<HTMLInputElement>, field: TimePickerRangeFields) => void;
+    onBlur?: (event: FocusEvent<HTMLElement>, field: TimePickerRangeFields) => void;
     /**
      * Callback function which triggers on `keydown` of one of the inputs.
      * @param event
@@ -232,7 +236,12 @@ const usePickerSetup = ({ id, format = "24h", localization, disabled, readOnly }
         texts,
         mask,
         maskReplacement: is12Hour ? MASK_REPLACEMENT_12H : MASK_REPLACEMENT_24H,
-        maskTrack
+        maskTrack,
+        /**
+         * Digits only in the 24-hour format, so touch devices open the numeric keyboard; the 12-hour
+         * format needs letters for the meridiem.
+         */
+        inputMode: is12Hour ? undefined : ("numeric" as const)
     };
 };
 
@@ -303,6 +312,7 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
                     mask={setup.mask}
                     maskReplacement={setup.maskReplacement}
                     maskTrack={setup.maskTrack}
+                    inputMode={setup.inputMode}
                 />
                 <PickerPopover
                     {...popoverProps}
@@ -386,6 +396,7 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
                     mask={setup.mask}
                     maskReplacement={setup.maskReplacement}
                     maskTrack={setup.maskTrack}
+                    inputMode={setup.inputMode}
                 />
                 <PickerPopover
                     {...popoverProps}

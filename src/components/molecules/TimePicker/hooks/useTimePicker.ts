@@ -236,7 +236,7 @@ interface ITimePickerCoreOptions<F extends string> {
     onClear?: () => void;
     onOpenChange?: (open: boolean) => void;
     onFocus?: (event: FocusEvent<HTMLInputElement>, field: F) => void;
-    onBlur?: (event: FocusEvent<HTMLInputElement>, field: F) => void;
+    onBlur?: (event: FocusEvent<HTMLElement>, field: F) => void;
     onKeyDown?: (event: KeyboardEvent<HTMLInputElement>, field: F) => void;
 }
 
@@ -245,6 +245,10 @@ interface ITimePickerCoreOptions<F extends string> {
  * Popover and field interaction shared by the single and the range picker. The popover opens on a
  * click on the field or on `Enter`, `Space` and `ArrowDown`, never on focus alone, and closes once
  * the focus leaves both the field (clear button included) and the popover.
+ *
+ * Leaving a field (the moment its typed text is committed and `onBlur` is reported) happens when
+ * the focus goes outside the picker or to the other field of a range — not when it moves to the
+ * clear button or into the popover, which are part of editing the same field.
  *
  * No outside click listener is registered here on purpose: `atoms/Popover` already closes itself
  * on outside press and on `Escape` and reports it through `onClose`.
@@ -305,6 +309,9 @@ const useTimePickerCore = <F extends string>({
         return !!shellRef.current?.contains(target) || (floating instanceof Node && floating.contains(target));
     };
 
+    const isFieldInput = (target: EventTarget | null): boolean =>
+        Object.values<InputRef>(inputRefs).some((ref) => ref.current === target);
+
     /**
      * @param nextOpen target state
      * @param focusOnOpen move focus into the popover, used for `ArrowDown`; `Enter` and `Space` open
@@ -325,12 +332,50 @@ const useTimePickerCore = <F extends string>({
         onOpenChange?.(nextOpen);
     };
 
-    const handleFocusOut = (event: FocusEvent<Element>) => {
-        if (!isWithinPicker(event.relatedTarget)) togglePopover(false);
-    };
-
     const focusInput = (input: HTMLInputElement | null) => {
         if (input && document.activeElement !== input) input.focus();
+    };
+
+    /**
+     * Ends the editing of a field: the pending typed report goes out, the typed text is committed
+     * (normalized, completed from the last valid value or clamped) and then `onBlur` is reported,
+     * so the consumer sees the final value when it runs.
+     */
+    const leaveField = (field: F, event: FocusEvent<HTMLElement>) => {
+        const current = fields[field];
+
+        current.setIsEditing(false);
+
+        if (isInteractive) {
+            typedChange.flush();
+
+            const resolved = resolveBlurValue(
+                current.rawValue,
+                current.lastValidValueRef.current,
+                is12Hour,
+                getBounds(field)
+            );
+
+            if (resolved) {
+                current.setValue(resolved.value);
+                onChange?.(field, resolved.value ?? "", { source: "input", parts: resolved.parts });
+            }
+        }
+
+        onBlur?.(event, field);
+    };
+
+    /**
+     * Focus leaving the shell or the popover. A field's own blur handler takes care of the focus
+     * leaving from its input; from the clear button or from inside the popover this is the moment
+     * the active field is left.
+     */
+    const handleFocusOut = (event: FocusEvent<HTMLElement>) => {
+        if (isWithinPicker(event.relatedTarget)) return;
+
+        togglePopover(false);
+
+        if (!isFieldInput(event.target)) leaveField(activeField, event);
     };
 
     const getFieldHandlers = (field: F) => {
@@ -359,24 +404,14 @@ const useTimePickerCore = <F extends string>({
                 typedChange.report(field, nextValue, { source: "input", parts: parseTime(nextValue, is12Hour) });
             },
             onBlur: (event: FocusEvent<HTMLInputElement>) => {
-                current.setIsEditing(false);
-                onBlur?.(event, field);
+                /**
+                 * Moving the focus to the clear button or into the popover (`ArrowDown`) continues
+                 * the editing of this field: the typed text stays, so a value picked next is built
+                 * on top of it. Moving to the other field of a range does leave this one.
+                 */
+                if (isWithinPicker(event.relatedTarget) && !isFieldInput(event.relatedTarget)) return;
 
-                if (!isInteractive) return;
-
-                typedChange.flush();
-
-                const resolved = resolveBlurValue(
-                    current.rawValue,
-                    current.lastValidValueRef.current,
-                    is12Hour,
-                    getBounds(field)
-                );
-
-                if (!resolved) return;
-
-                current.setValue(resolved.value);
-                onChange?.(field, resolved.value ?? "", { source: "input", parts: resolved.parts });
+                leaveField(field, event);
             },
             onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => {
                 onKeyDown?.(event, field);
@@ -416,28 +451,39 @@ const useTimePickerCore = <F extends string>({
 
         if (!clearable) return;
 
-        const allFields = Object.values<TimeField>(fields);
-        const hadValue = allFields.some((field) => !!field.rawValue);
+        const allFields = Object.entries(fields) as [F, TimeField][];
+        const clearedFields = allFields.filter(([, field]) => !!field.rawValue).map(([name]) => name);
 
         typedChange.flush();
-        allFields.forEach((field) => {
+        allFields.forEach(([, field]) => {
             field.setIsEditing(false);
             field.setValue(null);
         });
         setActiveField(initialField);
         togglePopover(false);
 
-        if (hadValue) {
-            onChange?.(initialField, "", { source: "clear", parts: null });
-        }
+        /**
+         * One report per field that held a value, so a controlled range updated field by field ends
+         * up with both fields empty.
+         */
+        clearedFields.forEach((field) => onChange?.(field, "", { source: "clear", parts: null }));
 
         focusInput(inputRefs[initialField].current);
     };
 
+    /**
+     * The popover content unmounts on close, and an element removed from the DOM blurs silently.
+     * When the focus is inside the popover (keyboard navigation) it goes back to the input first, so
+     * that leaving the picker still goes through the field's blur: on an outside press the browser
+     * moves the focus on from the input, on `Escape` it simply stays there.
+     */
     const handlePopoverClose: PopoverCloseHandler = (_event, reason) => {
+        const floating = popoverRef.current.floatingElement.current;
+        const isFocusInside = floating instanceof Node && floating.contains(document.activeElement);
+
         togglePopover(false);
 
-        if (reason === ESCAPE_CLOSE_REASON) {
+        if (reason === ESCAPE_CLOSE_REASON || isFocusInside) {
             focusInput(inputRefs[activeField].current);
         }
     };
@@ -445,6 +491,14 @@ const useTimePickerCore = <F extends string>({
     const handleShellClick = () => {
         inputRefs[activeField].current?.focus();
         togglePopover(true);
+    };
+
+    /**
+     * The end icon toggles the popover, so it can also be closed from there.
+     */
+    const handleIconClick = () => {
+        inputRefs[activeField].current?.focus();
+        togglePopover(!popoverOpenRef.current);
     };
 
     return {
@@ -457,6 +511,7 @@ const useTimePickerCore = <F extends string>({
             anchorRef,
             shellRef,
             onAreaClick: handleShellClick,
+            onIconClick: handleIconClick,
             onFocusOut: handleFocusOut,
             onClear: handleClear
         },
@@ -467,7 +522,14 @@ const useTimePickerCore = <F extends string>({
             popoverRef,
             onClose: handlePopoverClose,
             onFocusOut: handleFocusOut,
-            onTabOut: () => focusInput(inputRefs[activeField].current),
+            /**
+             * `Tab` inside the popover continues from the input, with the popover closed: open, its
+             * items would be the next tab stops after the input when nothing else follows the field.
+             */
+            onTabOut: () => {
+                focusInput(inputRefs[activeField].current);
+                togglePopover(false);
+            },
             onSelect: handleSelect
         }
     };
@@ -488,7 +550,7 @@ export interface IUseSingleTimePickerOptions {
     onClear?: () => void;
     onOpenChange?: (open: boolean) => void;
     onFocus?: (event: FocusEvent<HTMLInputElement>) => void;
-    onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
+    onBlur?: (event: FocusEvent<HTMLElement>) => void;
     onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void;
 }
 
@@ -539,7 +601,7 @@ export interface IUseRangeTimePickerOptions {
     onClear?: () => void;
     onOpenChange?: (open: boolean) => void;
     onFocus?: (event: FocusEvent<HTMLInputElement>, field: TimePickerRangeFields) => void;
-    onBlur?: (event: FocusEvent<HTMLInputElement>, field: TimePickerRangeFields) => void;
+    onBlur?: (event: FocusEvent<HTMLElement>, field: TimePickerRangeFields) => void;
     onKeyDown?: (event: KeyboardEvent<HTMLInputElement>, field: TimePickerRangeFields) => void;
 }
 

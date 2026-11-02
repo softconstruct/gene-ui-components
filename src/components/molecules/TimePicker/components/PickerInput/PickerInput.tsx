@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC, FocusEvent, Fragment, KeyboardEvent, Ref } from "react";
+import React, { ChangeEvent, FC, FocusEvent, Fragment, KeyboardEvent, MouseEvent, Ref } from "react";
 import classNames from "classnames";
 
 // Icons
@@ -29,9 +29,13 @@ interface IPickerInputBaseProps
             | "anchorRef"
             | "shellRef"
             | "onAreaClick"
+            | "onIconClick"
             | "onFocusOut"
         >,
-        Pick<IPickerMaskedInputProps, "name" | "required" | "mask" | "maskReplacement" | "maskTrack" | "isExpanded"> {
+        Pick<
+            IPickerMaskedInputProps,
+            "name" | "required" | "mask" | "maskReplacement" | "maskTrack" | "inputMode" | "isExpanded"
+        > {
     /**
      * The size of the input field.
      * @default "medium"
@@ -129,6 +133,14 @@ interface IRangePickerInputProps extends IPickerInputBaseProps {
 const RANGE_FIELDS = [PICKER_RANGE_FIELDS.START, PICKER_RANGE_FIELDS.END] as const;
 
 /**
+ * The separator between the two range inputs is part of the field around them: a press keeps the
+ * focus where it is.
+ */
+const keepFocus = (event: MouseEvent<SVGElement>) => {
+    event.preventDefault();
+};
+
+/**
  * Splits the props both pickers receive into what the shell renders and what every masked input gets.
  */
 const getSharedProps = (
@@ -144,12 +156,14 @@ const getSharedProps = (
         mask,
         maskReplacement,
         maskTrack,
+        inputMode,
         onClear,
         clearLabel,
         anchorProps,
         anchorRef,
         shellRef,
         onAreaClick,
+        onIconClick,
         onFocusOut,
         isExpanded,
         popoverId
@@ -171,6 +185,7 @@ const getSharedProps = (
         anchorRef,
         shellRef,
         onAreaClick,
+        onIconClick,
         onFocusOut
     },
     input: {
@@ -182,6 +197,7 @@ const getSharedProps = (
         mask,
         maskReplacement,
         maskTrack,
+        inputMode,
         isExpanded,
         "aria-controls": popoverId,
         "aria-describedby": helperText ? helperTextId : undefined
@@ -214,7 +230,7 @@ const SinglePickerInput: FC<ISinglePickerInputProps> = (props) => {
 
 const RangePickerInput: FC<IRangePickerInputProps> = (props) => {
     const { ids, labels, inputRefs, name, value, placeholder, onClick, onChange, onFocus, onBlur, onKeyDown } = props;
-    const { clearable, disabled, readOnly } = props;
+    const { clearable, disabled, readOnly, onAreaClick } = props;
     const { shell, input } = getSharedProps(props, `${ids.start}-helper-text`);
     const hasValue = !!(value?.start || value?.end);
 
@@ -229,6 +245,8 @@ const RangePickerInput: FC<IRangePickerInputProps> = (props) => {
                             })}
                             size={16}
                             aria-hidden="true"
+                            onMouseDown={keepFocus}
+                            onClick={onAreaClick}
                         />
                     )}
                     <PickerMaskedInput

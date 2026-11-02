@@ -364,17 +364,6 @@ export const getNearestAvailableTime = (
     return parts;
 };
 
-/**
- * @description
- * A complete time is disabled when it falls outside the `minParts`/`maxParts` bounds.
- */
-export const isTimeDisabled = (
-    parts: TimeParts,
-    is12Hour: boolean,
-    minParts?: TimeParts | null,
-    maxParts?: TimeParts | null
-): boolean => getNearestAvailableTime(parts, is12Hour, minParts, maxParts) !== parts;
-
 export const isPickerPartDisabled = (
     part: keyof TimeParts,
     item: string,

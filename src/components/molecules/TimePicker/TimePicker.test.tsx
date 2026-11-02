@@ -3,6 +3,9 @@ import { InputMask } from "@react-input/mask";
 import { mount, ReactWrapper } from "enzyme";
 import { act } from "react-dom/test-utils";
 
+// Components
+import GeneUIProvider from "@components/providers/GeneUIProvider";
+
 // Constants
 import {
     EMPTY_TIME_PARTS,
@@ -20,7 +23,6 @@ import {
     createMaskTrack,
     getNearestAvailableTime,
     isPickerPartDisabled,
-    isTimeDisabled,
     parseTime,
     parseTypedTimeParts,
     resolveLocalization
@@ -72,8 +74,10 @@ const columnButtons = (setup: ReactWrapper, columnIndex: number) =>
  * `defaultValue` is only read when the state is initialized, so tests that need it have to mount
  * a fresh wrapper instead of using `setProps`.
  */
-const mountSingle = (props: ISingleTimePickerProps) => mount(<TimePicker {...props} />);
-const mountRange = (props: IRangeTimePickerProps) => mount(<TimePicker.Range {...props} />);
+const mountSingle = (props: ISingleTimePickerProps) =>
+    mount(<TimePicker {...props} />, { wrappingComponent: GeneUIProvider });
+const mountRange = (props: IRangeTimePickerProps) =>
+    mount(<TimePicker.Range {...props} />, { wrappingComponent: GeneUIProvider });
 
 describe("TimePicker helpers", () => {
     describe("convertSecondsToParts", () => {
@@ -231,19 +235,6 @@ describe("TimePicker helpers", () => {
         });
     });
 
-    describe("isTimeDisabled", () => {
-        const minParts = { hours: "10", minutes: "00", seconds: "00" };
-
-        it("respects the min bound", () => {
-            expect(isTimeDisabled({ hours: "05", minutes: "00", seconds: "00" }, false, minParts)).toBe(true);
-            expect(isTimeDisabled({ hours: "10", minutes: "00", seconds: "00" }, false, minParts)).toBe(false);
-        });
-
-        it("returns false for incomplete parts", () => {
-            expect(isTimeDisabled({ hours: "05" }, false, minParts)).toBe(false);
-        });
-    });
-
     describe("getNearestAvailableTime", () => {
         it("returns the same parts when the time is allowed", () => {
             const parts = { hours: "10", minutes: "30", seconds: "00" };
@@ -357,7 +348,7 @@ describe("TimePicker", () => {
     let setup: ReactWrapper<ISingleTimePickerProps>;
 
     beforeEach(() => {
-        setup = mount(<TimePicker />);
+        setup = mount(<TimePicker />, { wrappingComponent: GeneUIProvider });
     });
 
     afterEach(() => {
@@ -566,14 +557,16 @@ describe("TimePicker", () => {
             expect(preventDefault).toHaveBeenCalled();
         });
 
-        it("hands the focus back to the input on Tab inside the popover", () => {
+        it("hands the focus back to the input and closes on Tab inside the popover", () => {
             openPopover(setup);
 
             const focus = jest.spyOn(setup.find("input.pickerMaskedInput").getDOMNode<HTMLInputElement>(), "focus");
 
             setup.find(".timePicker__wrapper").simulate("keydown", { key: "Tab" });
+            setup.update();
 
             expect(focus).toHaveBeenCalled();
+            expect(setup.find(".timePicker__wrapper").exists()).toBeFalsy();
         });
 
         it("closes the popover when the focus leaves the clear button", () => {
@@ -616,6 +609,183 @@ describe("TimePicker", () => {
             setup.update();
 
             expect(setup.find(".timePicker__wrapper").exists()).toBeTruthy();
+        });
+
+        it("keeps the focus in the input on presses around the inputs, but not on the controls", () => {
+            const clearable = mountSingle({ clearable: true, defaultValue: "10:00:00" });
+            const pressed = (selector: string) => {
+                const preventDefault = jest.fn();
+
+                clearable.find(selector).hostNodes().first().simulate("mousedown", { preventDefault });
+
+                return preventDefault.mock.calls.length;
+            };
+
+            expect(pressed(".pickerShell")).toBe(1);
+            expect(pressed(".pickerShell__append")).toBe(1);
+            expect(pressed(".pickerShell__icon")).toBe(1);
+            expect(pressed("input.pickerMaskedInput")).toBe(0);
+            expect(pressed(".pickerShell__append button")).toBe(0);
+
+            clearable.unmount();
+        });
+
+        it("does not treat a click on the clear button as a click on the field", () => {
+            const clearable = mountSingle({ clearable: true, defaultValue: "10:00:00" });
+
+            clearable.find(".pickerShell__append button").first().simulate("click");
+            clearable.update();
+
+            expect(clearable.find(".timePicker__wrapper").exists()).toBeFalsy();
+
+            clearable.unmount();
+        });
+
+        it("keeps an open popover open on click on the field area", () => {
+            openPopover(setup);
+            setup.find(".pickerShell__append").simulate("click");
+            setup.update();
+
+            expect(setup.find(".timePicker__wrapper").exists()).toBeTruthy();
+        });
+
+        it("toggles the popover from the clock icon", () => {
+            const onOpenChange = jest.fn();
+            setup.setProps({ onOpenChange });
+
+            setup.find(".pickerShell__icon").hostNodes().simulate("click");
+            setup.update();
+            expect(setup.find(".timePicker__wrapper").exists()).toBeTruthy();
+
+            setup.find(".pickerShell__icon").hostNodes().simulate("click");
+            setup.update();
+            expect(setup.find(".timePicker__wrapper").exists()).toBeFalsy();
+            expect(onOpenChange.mock.calls).toEqual([[true], [false]]);
+        });
+
+        it("keeps the typed text when the focus moves into the popover with the keyboard", () => {
+            const onBlur = jest.fn();
+            const onChange = jest.fn();
+            setup.setProps({ onBlur, onChange });
+
+            openPopover(setup);
+            typeInto(setup, "09");
+
+            setup
+                .find("input.pickerMaskedInput")
+                .simulate("blur", { relatedTarget: columnButtons(setup, 0).at(9).getDOMNode() });
+            setup.update();
+
+            expect(onBlur).not.toHaveBeenCalled();
+            expect(setup.find("input.pickerMaskedInput").prop("value")).toBe("09");
+            expect(columnButtons(setup, 0).at(9).prop("aria-selected")).toBe(true);
+
+            columnButtons(setup, 1).at(30).simulate("click");
+            setup.update();
+
+            expect(setup.find("input.pickerMaskedInput").prop("value")).toBe("09:30:00");
+            expect(onChange).toHaveBeenLastCalledWith("09:30:00", {
+                source: "select",
+                parts: { hours: "09", minutes: "30", seconds: "00", meridiem: undefined }
+            });
+        });
+
+        it("leaves the field when the focus goes from the popover to the outside", () => {
+            const onBlur = jest.fn();
+            const onChange = jest.fn();
+            setup.setProps({ onBlur, onChange });
+
+            openPopover(setup);
+            typeInto(setup, "09:3");
+            setup
+                .find("input.pickerMaskedInput")
+                .simulate("blur", { relatedTarget: columnButtons(setup, 0).at(9).getDOMNode() });
+            setup.update();
+
+            setup.find(".timePicker__wrapper").simulate("blur", { relatedTarget: null });
+            setup.update();
+
+            expect(setup.find(".timePicker__wrapper").exists()).toBeFalsy();
+            expect(onChange).toHaveBeenLastCalledWith("", { source: "input", parts: null });
+            expect(onBlur).toHaveBeenCalledTimes(1);
+            expect(setup.find("input.pickerMaskedInput").prop("value")).toBe("");
+        });
+
+        it("hands the focus back to the input when an outside press closes the popover while the focus is inside", () => {
+            const container = document.body.appendChild(document.createElement("div"));
+            const onBlur = jest.fn();
+            const onChange = jest.fn();
+            const attached = mount(<TimePicker onBlur={onBlur} onChange={onChange} />, {
+                wrappingComponent: GeneUIProvider,
+                attachTo: container
+            });
+            const input = () => attached.find("input.pickerMaskedInput");
+
+            openPopover(attached);
+            typeInto(attached, "09:3");
+
+            const item = columnButtons(attached, 0).at(9).getDOMNode<HTMLButtonElement>();
+
+            input().simulate("blur", { relatedTarget: item });
+            item.focus();
+            expect(document.activeElement).toBe(item);
+
+            closePopover(attached, new MouseEvent("mousedown"), "outside-press");
+
+            expect(document.activeElement).toBe(input().getDOMNode());
+            expect(onBlur).not.toHaveBeenCalled();
+            expect(input().prop("value")).toBe("09:3");
+
+            input().simulate("blur", { relatedTarget: null });
+            attached.update();
+
+            expect(onChange).toHaveBeenLastCalledWith("", { source: "input", parts: null });
+            expect(onBlur).toHaveBeenCalledTimes(1);
+
+            attached.detach();
+            container.remove();
+        });
+
+        it("does not leave the field when the focus moves to the clear button", () => {
+            const onBlur = jest.fn();
+            const clearable = mountSingle({ clearable: true, defaultValue: "10:00:00", onBlur });
+
+            typeInto(clearable, "10:3");
+            clearable.find("input.pickerMaskedInput").simulate("blur", {
+                relatedTarget: clearable.find(".pickerShell__append button").first().getDOMNode()
+            });
+            clearable.update();
+
+            expect(onBlur).not.toHaveBeenCalled();
+            expect(clearable.find("input.pickerMaskedInput").prop("value")).toBe("10:3");
+
+            clearable.find(".pickerShell__append button").first().simulate("blur", { relatedTarget: null });
+            clearable.update();
+
+            expect(onBlur).toHaveBeenCalledTimes(1);
+            expect(clearable.find("input.pickerMaskedInput").prop("value")).toBe("10:00:00");
+
+            clearable.unmount();
+        });
+
+        it("reports onBlur after the committed value", () => {
+            const calls: string[] = [];
+            setup.setProps({
+                onChange: (time: string) => calls.push(`change:${time}`),
+                onBlur: () => calls.push("blur")
+            });
+
+            typeWithoutPause(setup, "09:30");
+            setup.find("input.pickerMaskedInput").simulate("blur");
+
+            expect(calls).toEqual(["change:09:30", "change:09:30:00", "blur"]);
+        });
+
+        it("sets the numeric input mode only in the 24-hour format", () => {
+            expect(setup.find("input.pickerMaskedInput").prop("inputMode")).toBe("numeric");
+
+            setup.setProps({ format: "12h" });
+            expect(setup.find("input.pickerMaskedInput").prop("inputMode")).toBeUndefined();
         });
 
         it("opens the popover again with Enter after closing with Escape", () => {
@@ -1116,7 +1286,7 @@ describe("TimePicker", () => {
         });
 
         it("renders defaultValue prop correctly", () => {
-            const uncontrolled = mount(<TimePicker defaultValue="08:15:00" />);
+            const uncontrolled = mountSingle({ defaultValue: "08:15:00" });
 
             expect(uncontrolled.find("input.pickerMaskedInput").prop("value")).toBe("08:15:00");
 
@@ -1219,7 +1389,7 @@ describe("Time range picker", () => {
     let setup: ReactWrapper<IRangeTimePickerProps>;
 
     beforeEach(() => {
-        setup = mount(<TimePicker.Range />);
+        setup = mount(<TimePicker.Range />, { wrappingComponent: GeneUIProvider });
     });
 
     afterEach(() => {
@@ -1289,6 +1459,13 @@ describe("Time range picker", () => {
 
         expect(setup.find(".timePicker__wrapper").exists()).toBeTruthy();
         expect(setup.find("PickerPopover").prop("activeField")).toBe("end");
+    });
+
+    it("opens the popover on click on the separator", () => {
+        setup.find(".pickerInput__separator").hostNodes().simulate("click");
+        setup.update();
+
+        expect(setup.find(".timePicker__wrapper").exists()).toBeTruthy();
     });
 
     it("keeps the popover open and switches the active field when the other input is clicked", () => {
@@ -1405,8 +1582,46 @@ describe("Time range picker", () => {
 
         expect(inputs.at(0).prop("value")).toBe("");
         expect(inputs.at(1).prop("value")).toBe("");
-        expect(onChange).toHaveBeenCalledWith("", { field: "start", source: "clear", parts: null });
+        expect(onChange).toHaveBeenCalledTimes(2);
+        expect(onChange).toHaveBeenNthCalledWith(1, "", { field: "start", source: "clear", parts: null });
+        expect(onChange).toHaveBeenNthCalledWith(2, "", { field: "end", source: "clear", parts: null });
 
         clearable.unmount();
+    });
+
+    it("reports the clear only for the field that held a value", () => {
+        const onChange = jest.fn();
+        const clearable = mountRange({ clearable: true, defaultValue: { start: null, end: "12:00:00" }, onChange });
+
+        clearable.find(".pickerShell__append button").first().simulate("click");
+
+        expect(onChange).toHaveBeenCalledTimes(1);
+        expect(onChange).toHaveBeenCalledWith("", { field: "end", source: "clear", parts: null });
+
+        clearable.unmount();
+    });
+
+    it("keeps editing the start field while the focus is in the popover and leaves it for the end field", () => {
+        const onBlur = jest.fn();
+        const onChange = jest.fn();
+        setup.setProps({ onBlur, onChange });
+
+        openPopover(setup, 0);
+        typeInto(setup, "09", 0);
+
+        const inputs = setup.find("input.pickerMaskedInput");
+
+        inputs.at(0).simulate("blur", { relatedTarget: columnButtons(setup, 0).at(3).getDOMNode() });
+        setup.update();
+        expect(onBlur).not.toHaveBeenCalled();
+        expect(setup.find("input.pickerMaskedInput").at(0).prop("value")).toBe("09");
+
+        setup
+            .find("input.pickerMaskedInput")
+            .at(0)
+            .simulate("blur", { relatedTarget: inputs.at(1).getDOMNode() });
+        setup.update();
+        expect(onBlur).toHaveBeenCalledWith(expect.anything(), "start");
+        expect(onChange).toHaveBeenLastCalledWith("", { field: "start", source: "input", parts: null });
     });
 });
