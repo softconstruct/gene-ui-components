@@ -108,6 +108,9 @@ const pickerShellIconSizeMap = {
  * used for all of them and the `replacement` only lists the characters a time can contain.
  * The rules of the individual slots (hour tens `0-2`, minute tens `0-5`, the meridiem letters, ...)
  * are enforced by `createMaskTrack`, which receives them in mask order.
+ *
+ * The hour slots take 24-hour input in both formats: in the 12-hour format a typed `19:30:00` is
+ * converted to `07:30:00 PM` by `parseTime` once the field is left, instead of refusing the `2`.
  */
 const MASK_PLACEHOLDER = "_";
 const TIME_PICKER_INPUT_MASK = "__:__:__";
@@ -117,7 +120,7 @@ const MASK_REPLACEMENT_24H: Record<string, RegExp> = { [MASK_PLACEHOLDER]: /[0-9
 const MASK_REPLACEMENT_12H: Record<string, RegExp> = { [MASK_PLACEHOLDER]: /[0-9aApPmM]/ };
 
 const MASK_SLOT_RULES_24H: RegExp[] = [/[0-2]/, /[0-9]/, /[0-5]/, /[0-9]/, /[0-5]/, /[0-9]/];
-const MASK_SLOT_RULES_12H: RegExp[] = [/[0-1]/, /[0-9]/, /[0-5]/, /[0-9]/, /[0-5]/, /[0-9]/, /[aApP]/, /[mM]/];
+const MASK_SLOT_RULES_12H: RegExp[] = [...MASK_SLOT_RULES_24H, /[aApP]/, /[mM]/];
 
 // ---------------------------------------------------------
 // Accessibility & localization

@@ -99,7 +99,8 @@ interface ITimePickerBaseProps {
     /**
      * Clock format of both the input and the popover: `24h` reads and writes `HH:mm:ss`
      * (`18:45:00`), `12h` reads and writes `hh:mm:ss AM|PM` (`06:45:00 PM`) and adds the AM/PM column.
-     * An existing value is converted when the format changes.
+     * A 24-hour time typed in the 12-hour format (`19:30:00`) is converted (`07:30:00 PM`) when the
+     * field is left. An existing value is converted when the format changes.
      * @default "24h"
      */
     format?: TimePickerFormat;

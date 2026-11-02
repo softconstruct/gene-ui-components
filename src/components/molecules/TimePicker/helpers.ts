@@ -3,6 +3,7 @@ import { Track } from "@react-input/mask";
 // Constants
 import {
     DEFAULT_LOCALIZATION,
+    EMPTY_TIME_PARTS,
     FIRST_HOUR_IN_12H_FORMAT,
     HOURS_12,
     HOURS_24,
@@ -73,10 +74,10 @@ const convertTo24Hour = (hStr?: string, meridiem?: string): number => {
 
 /**
  * @description
- * Maps an hour onto the 1..12 clock: `00` reads as 12, anything above 12 is clamped.
+ * Tells whether an hour exists on the 12-hour clock (`1`..`12`). `00` and `13`..`23` do not, so a
+ * value carrying one of them can only be a 24-hour time.
  */
-const clampTo12HourClock = (hours: number): number =>
-    hours === 0 ? MERIDIEM_OFFSET : Math.min(Math.max(hours, FIRST_HOUR_IN_12H_FORMAT), MERIDIEM_OFFSET);
+const isTwelveHourClockHour = (hours: number): boolean => hours >= FIRST_HOUR_IN_12H_FORMAT && hours <= MERIDIEM_OFFSET;
 
 export const convertPartsToSeconds = (parts: TimeParts, is12Hour: boolean): number => {
     const hours = is12Hour ? convertTo24Hour(parts.hours, parts.meridiem) : toTimeNumber(parts.hours);
@@ -124,17 +125,54 @@ export const composeTime = (timePartsValues: TimeParts, is12Hours: boolean): str
 
 /**
  * @description
+ * Resolves a typed hour and meridiem for the active format.
+ *
+ * Both formats take 24-hour input. A valid 12-hour hour (`1`..`12` plus a meridiem) is kept as it
+ * is; an hour that only exists on the 24-hour clock (`00`, `13`..`23`) decides the meridiem itself,
+ * so `19` reads as `07 PM` and a contradicting meridiem (`19 AM`) is dropped. Hours above `23` are
+ * clamped.
+ *
+ * In the 12-hour format a `1`..`12` hour without a meridiem is ambiguous: its meridiem stays
+ * `undefined`, unless `allow24HourInput` reads it as a 24-hour hour (`08` becomes `08 AM`).
+ */
+const resolveHours = (
+    rawHours: number,
+    typedMeridiem: TimePickerMeridiem | undefined,
+    is12Hour: boolean,
+    allow24HourInput = false
+): Pick<TimeParts, "hours" | "meridiem"> => {
+    const hours = Math.min(rawHours, LAST_HOUR_IN_24H_FORMAT_DAY);
+    const meridiem = isTwelveHourClockHour(hours) ? typedMeridiem : undefined;
+
+    if (!is12Hour) {
+        const hours24 = meridiem ? convertTo24Hour(padTimePart(hours), meridiem) : hours;
+
+        return { hours: padTimePart(hours24), meridiem: undefined };
+    }
+
+    if (meridiem || (isTwelveHourClockHour(hours) && !allow24HourInput)) {
+        return { hours: padTimePart(hours), meridiem };
+    }
+
+    const converted = convertSecondsToParts(hours * SECONDS_IN_HOUR, true);
+
+    return { hours: converted.hours, meridiem: converted.meridiem };
+};
+
+/**
+ * @description
  * Parses a `HH:mm[:ss] [AM|PM]` string into time parts.
  *
  * Returns `null` for anything that is not a complete time, so partially typed input can be
- * distinguished from a committed value. Out of range numeric parts are clamped.
+ * distinguished from a committed value. Out of range numeric parts are clamped; the hour and the
+ * meridiem follow `resolveHours`, so a 24-hour time is accepted in the 12-hour format as well.
  *
- * In the 12-hour format a missing meridiem means the value is **incomplete**, unless
- * `allow24HourInput` is set. That option is only used for values that come from outside (the
- * `value`/`defaultValue` props, or a `format` switch), where `18:45` should become `06:45 PM`.
- * It must stay off while the user types: otherwise deleting the `AM` of `10:30:00 AM` leaves
- * `10:30:00`, which would be re-read as a 24-hour time and completed straight back to `AM` —
- * making the meridiem impossible to delete or change.
+ * In the 12-hour format a `1`..`12` hour without a meridiem is ambiguous and therefore
+ * **incomplete**, unless `allow24HourInput` is set. That option is only used for values that come
+ * from outside (the `value`/`defaultValue` props, or a `format` switch), where `08:45` should
+ * become `08:45 AM`. It must stay off while the user types: otherwise deleting the `AM` of
+ * `10:30:00 AM` leaves `10:30:00`, which would be re-read as a 24-hour time and completed straight
+ * back to `AM` — making the meridiem impossible to delete or change.
  */
 export const parseTime = (
     value?: string | null,
@@ -148,41 +186,53 @@ export const parseTime = (
     if (!parsedTime) return null;
 
     const [, rawHours, rawMinutes, rawSeconds, rawMeridiem] = parsedTime;
+    const { hours, meridiem } = resolveHours(
+        toTimeNumber(rawHours),
+        toMeridiem(rawMeridiem),
+        is12Hour,
+        allow24HourInput
+    );
 
-    let hours = toTimeNumber(rawHours);
-    const minutes = Math.min(toTimeNumber(rawMinutes), LAST_MINUTE_IN_HOUR);
-    const seconds = Math.min(rawSeconds ? toTimeNumber(rawSeconds) : 0, LAST_SECOND_IN_MINUTE);
-    let meridiem = toMeridiem(rawMeridiem);
-
-    if (!is12Hour) {
-        const hours24 = meridiem
-            ? convertTo24Hour(padTimePart(clampTo12HourClock(hours)), meridiem)
-            : Math.min(hours, LAST_HOUR_IN_24H_FORMAT_DAY);
-
-        return {
-            hours: padTimePart(hours24),
-            minutes: padTimePart(minutes),
-            seconds: padTimePart(seconds),
-            meridiem: undefined
-        };
-    }
-
-    if (meridiem) {
-        hours = clampTo12HourClock(hours);
-    } else if (allow24HourInput) {
-        const converted = convertSecondsToParts(Math.min(hours, LAST_HOUR_IN_24H_FORMAT_DAY) * SECONDS_IN_HOUR, true);
-
-        hours = toTimeNumber(converted.hours);
-        meridiem = converted.meridiem;
-    } else {
-        return null;
-    }
+    if (is12Hour && !meridiem) return null;
 
     return {
-        hours: padTimePart(hours),
-        minutes: padTimePart(minutes),
-        seconds: padTimePart(seconds),
+        hours,
+        minutes: padTimePart(Math.min(toTimeNumber(rawMinutes), LAST_MINUTE_IN_HOUR)),
+        seconds: padTimePart(Math.min(rawSeconds ? toTimeNumber(rawSeconds) : 0, LAST_SECOND_IN_MINUTE)),
         meridiem
+    };
+};
+
+/**
+ * @description
+ * Reads the parts of a value that is still being typed, as far as they are already complete: a
+ * column counts once both of its digits are there (`09:3` gives the hours only, `09:30` the hours
+ * and the minutes), the meridiem once its first letter is. Empty mask slots (`_`) are ignored.
+ *
+ * This keeps the popover selection in step with the typing; whether the value as a whole is
+ * complete is still decided by `parseTime`.
+ */
+export const parseTypedTimeParts = (value: string | null | undefined, is12Hour: boolean): TimeParts => {
+    const typedTime =
+        value &&
+        /^([\d_]{1,2})(?::([\d_]{0,2}))?(?::([\d_]{0,2}))?(?:\s*(?:([AaPp])|_)?(?:[Mm]|_)?)?$/.exec(value.trim());
+
+    if (!typedTime) return EMPTY_TIME_PARTS;
+
+    const [, rawHours, rawMinutes, rawSeconds, rawMeridiem] = typedTime;
+    const completeDigits = (segment?: string, max = LAST_MINUTE_IN_HOUR): string | undefined =>
+        segment && /^\d{2}$/.test(segment) ? padTimePart(Math.min(toTimeNumber(segment), max)) : undefined;
+
+    const typedMeridiem = is12Hour ? toMeridiem(rawMeridiem) : undefined;
+    const resolved = /^\d{2}$/.test(rawHours)
+        ? resolveHours(toTimeNumber(rawHours), typedMeridiem, is12Hour)
+        : { hours: undefined, meridiem: typedMeridiem };
+
+    return {
+        hours: resolved.hours,
+        minutes: completeDigits(rawMinutes),
+        seconds: completeDigits(rawSeconds, LAST_SECOND_IN_MINUTE),
+        meridiem: resolved.meridiem
     };
 };
 

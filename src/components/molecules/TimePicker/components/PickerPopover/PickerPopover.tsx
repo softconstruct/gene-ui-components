@@ -182,9 +182,6 @@ const getScrollableAncestor = (element: HTMLElement, boundary: HTMLElement | nul
     return null;
 };
 
-const hasAnyValue = (parts: TimeParts | undefined): boolean =>
-    !!parts && Object.values(parts).some((value) => value !== undefined);
-
 type ColumnHeaderProps = {
     text: string;
     size: TimePickerSizes;
@@ -393,6 +390,11 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
         }
     }, [open, activeField, columnOrder]);
 
+    /**
+     * Keeps the selection in view while the popover is open: every column whose value changed —
+     * typed in, filled with a default around a pick, or set from outside — scrolls to its selected
+     * item. The column that was just picked is left alone, its item is already in view.
+     */
     useEffect(() => {
         if (!open) {
             previousPartsRef.current = undefined;
@@ -402,16 +404,18 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
         }
 
         const previous = previousPartsRef.current;
+        const picked = pickedColumnRef.current;
+
         previousPartsRef.current = parts;
+        pickedColumnRef.current = null;
 
-        if (!previous || hasAnyValue(previous) || !hasAnyValue(parts)) return;
+        if (!previous) return;
 
-        scrollColumnsToSelection(
-            columnOrder.filter(
-                (part) =>
-                    part !== pickedColumnRef.current && previous[part] === undefined && parts?.[part] !== undefined
-            )
+        const changed = columnOrder.filter(
+            (part) => part !== picked && parts?.[part] !== undefined && parts?.[part] !== previous[part]
         );
+
+        if (changed.length) scrollColumnsToSelection(changed);
     }, [open, parts, columnOrder]);
 
     const handleWrapperKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {

@@ -7,7 +7,6 @@ import useDebouncedCallback from "@hooks/useDebounceCallback";
 
 // Constants
 import {
-    EMPTY_TIME_PARTS,
     INPUT_CHANGE_DEBOUNCE_MS,
     KEYS,
     MERIDIEMS,
@@ -16,7 +15,7 @@ import {
     TIME_PART_DEFAULT_TEXT_VALUE
 } from "../constants";
 // Helpers
-import { composeTime, getNearestAvailableTime, parseTime, withTimePart } from "../helpers";
+import { composeTime, getNearestAvailableTime, parseTime, parseTypedTimeParts, withTimePart } from "../helpers";
 // Types
 import { TimeParts, TimePickerChangeContext, TimePickerRangeChangeContext, TimePickerRangeFields } from "../types";
 
@@ -171,6 +170,15 @@ const useTimeField = (value: string | null | undefined, defaultValue: string | n
     );
 
     /**
+     * What the popover highlights and builds a selection on: the complete value, or, while the
+     * value is incomplete, the columns typed so far (`09:3` already selects the `09` hour).
+     */
+    const parts = useMemo(
+        () => parsedValue ?? parseTypedTimeParts(rawValue, is12Hour),
+        [parsedValue, rawValue, is12Hour]
+    );
+
+    /**
      * Last complete value, used to restore the field when the user leaves partially typed input.
      */
     const lastValidValueRef = useRef<string | null>(null);
@@ -189,8 +197,13 @@ const useTimeField = (value: string | null | undefined, defaultValue: string | n
 
     return {
         rawValue,
+        /**
+         * The value without the typed draft: the `value` prop, or the last value set by typing, a
+         * selection or a clear.
+         */
+        committedValue,
         displayValue: !isEditing && parsedValue ? composeTime(parsedValue, is12Hour) : rawValue,
-        parts: parsedValue ?? EMPTY_TIME_PARTS,
+        parts,
         lastValidValueRef,
         setValue,
         setTypedValue: (nextValue: string) => {
@@ -377,13 +390,22 @@ const useTimePickerCore = <F extends string>({
         };
     };
 
+    /**
+     * The popover keeps the focus in the field, so a selection can land in the middle of typing.
+     * It is built on top of the typed text (through `parts`) and then supersedes it: the pending
+     * typed report goes out first and the draft is dropped, otherwise the draft would keep hiding
+     * the selected value until the field is left.
+     */
     const handleSelect = (column: keyof TimeParts, value: string) => {
         if (!isInteractive) return;
 
         const current = fields[activeField];
         const result = processTimeSelection(current.parts, column, value, is12Hour, getBounds(activeField));
 
-        if (result.composedTime === current.rawValue) return;
+        typedChange.flush();
+        current.setIsEditing(false);
+
+        if (result.composedTime === current.committedValue) return;
 
         current.setValue(result.composedTime);
         onChange?.(activeField, result.composedTime, { source: "select", parts: result.nextParts });
@@ -397,7 +419,11 @@ const useTimePickerCore = <F extends string>({
         const allFields = Object.values<TimeField>(fields);
         const hadValue = allFields.some((field) => !!field.rawValue);
 
-        allFields.forEach((field) => field.setValue(null));
+        typedChange.flush();
+        allFields.forEach((field) => {
+            field.setIsEditing(false);
+            field.setValue(null);
+        });
         setActiveField(initialField);
         togglePopover(false);
 

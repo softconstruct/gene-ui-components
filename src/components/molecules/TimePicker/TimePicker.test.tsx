@@ -5,6 +5,7 @@ import { act } from "react-dom/test-utils";
 
 // Constants
 import {
+    EMPTY_TIME_PARTS,
     INPUT_CHANGE_DEBOUNCE_MS,
     MASK_SLOT_RULES_12H,
     MASK_SLOT_RULES_24H,
@@ -21,6 +22,7 @@ import {
     isPickerPartDisabled,
     isTimeDisabled,
     parseTime,
+    parseTypedTimeParts,
     resolveLocalization
 } from "./helpers";
 // Components
@@ -161,6 +163,31 @@ describe("TimePicker helpers", () => {
             expect(parseTime("12:00:00 pm", true)).toMatchObject({ hours: "12", meridiem: "PM" });
         });
 
+        it("keeps a valid 12-hour value as it is", () => {
+            expect(parseTime("09:30:00 PM", true)).toEqual({
+                hours: "09",
+                minutes: "30",
+                seconds: "00",
+                meridiem: "PM"
+            });
+        });
+
+        it("reads an hour outside 1-12 as a 24-hour time in the 12-hour format, even while the user types", () => {
+            expect(parseTime("19:30:00", true)).toEqual({
+                hours: "07",
+                minutes: "30",
+                seconds: "00",
+                meridiem: "PM"
+            });
+            expect(parseTime("00:30:00", true)).toMatchObject({ hours: "12", meridiem: "AM" });
+        });
+
+        it("lets a 24-hour hour win over a contradicting meridiem", () => {
+            expect(parseTime("19:30:00 AM", true)).toMatchObject({ hours: "07", meridiem: "PM" });
+            expect(parseTime("13:00:00 pm", true)).toMatchObject({ hours: "01", meridiem: "PM" });
+            expect(parseTime("19:30:00 AM", false)).toMatchObject({ hours: "19", meridiem: undefined });
+        });
+
         it("clamps out of range parts", () => {
             expect(parseTime("29:99:99")).toEqual({
                 hours: "23",
@@ -172,6 +199,35 @@ describe("TimePicker helpers", () => {
 
         it("rejects an invalid meridiem", () => {
             expect(parseTime("10:00:00 AA", true)).toBeNull();
+        });
+    });
+
+    describe("parseTypedTimeParts", () => {
+        it("returns the columns that are typed completely", () => {
+            expect(parseTypedTimeParts("0", false)).toEqual({});
+            expect(parseTypedTimeParts("09", false)).toEqual({ hours: "09" });
+            expect(parseTypedTimeParts("09:3", false)).toEqual({ hours: "09" });
+            expect(parseTypedTimeParts("09:30:4", false)).toEqual({ hours: "09", minutes: "30" });
+            expect(parseTypedTimeParts("09:30:45", false)).toEqual({ hours: "09", minutes: "30", seconds: "45" });
+        });
+
+        it("leaves the meridiem open until it is typed in the 12-hour format", () => {
+            expect(parseTypedTimeParts("10:30:00", true)).toEqual({ hours: "10", minutes: "30", seconds: "00" });
+            expect(parseTypedTimeParts("10:30:00 p", true)).toMatchObject({ hours: "10", meridiem: "PM" });
+        });
+
+        it("derives the meridiem from a 24-hour hour", () => {
+            expect(parseTypedTimeParts("19", true)).toEqual({ hours: "07", meridiem: "PM" });
+            expect(parseTypedTimeParts("00:3", true)).toEqual({ hours: "12", meridiem: "AM" });
+        });
+
+        it("skips empty mask slots", () => {
+            expect(parseTypedTimeParts("0_:30:00", false)).toEqual({ minutes: "30", seconds: "00" });
+        });
+
+        it("returns the shared empty parts for an empty value", () => {
+            expect(parseTypedTimeParts("", false)).toBe(EMPTY_TIME_PARTS);
+            expect(parseTypedTimeParts(null, true)).toBe(EMPTY_TIME_PARTS);
         });
     });
 
@@ -276,6 +332,12 @@ describe("TimePicker helpers", () => {
             expect(track12(insert("3", "10:30:00 "))).toBe(false);
             expect(track12(insert("p", "10:30:00 "))).toBe("p");
             expect(track12(insert("M", "10:30:00 P"))).toBe("M");
+        });
+
+        it("accepts 24-hour hours in the 12-hour format", () => {
+            expect(track12(insert("2", ""))).toBe("2");
+            expect(track12(insert("9", "1"))).toBe("9");
+            expect(track12(insert("3", ""))).toBe(false);
         });
 
         it("keeps the fitting characters of a pasted value in slot order", () => {
@@ -608,6 +670,21 @@ describe("TimePicker", () => {
             expect(setup.find(".timePicker__wrapper").hasClass("timePicker__wrapper_scrollbarsHidden")).toBeFalsy();
         });
 
+        it("scrolls a column to the value typed into it while the popover is open", () => {
+            openPopover(setup);
+            act(() => {
+                jest.runAllTicks();
+            });
+            setup.find(".timePicker__wrapper").simulate("wheel");
+            expect(setup.find(".timePicker__wrapper").hasClass("timePicker__wrapper_scrollbarsHidden")).toBeFalsy();
+
+            typeInto(setup, "0");
+            expect(setup.find(".timePicker__wrapper").hasClass("timePicker__wrapper_scrollbarsHidden")).toBeFalsy();
+
+            typeInto(setup, "09");
+            expect(setup.find(".timePicker__wrapper").hasClass("timePicker__wrapper_scrollbarsHidden")).toBeTruthy();
+        });
+
         it("opens with the keyboard", () => {
             setup.find("input.pickerMaskedInput").simulate("keydown", { key: "ArrowDown" });
             setup.update();
@@ -685,6 +762,102 @@ describe("TimePicker", () => {
             columnButtons(setup, 0).at(5).simulate("click");
 
             expect(onChange).toHaveBeenCalledTimes(1);
+        });
+
+        it("applies a selection on top of the text typed while the popover is open", () => {
+            const onChange = jest.fn();
+            setup.setProps({ onChange });
+
+            openPopover(setup);
+            typeWithoutPause(setup, "09:30:00");
+            columnButtons(setup, 0).at(5).simulate("click");
+            setup.update();
+
+            expect(onChange).toHaveBeenCalledTimes(2);
+            expect(onChange).toHaveBeenNthCalledWith(1, "09:30:00", {
+                source: "input",
+                parts: { hours: "09", minutes: "30", seconds: "00", meridiem: undefined }
+            });
+            expect(onChange).toHaveBeenNthCalledWith(2, "05:30:00", {
+                source: "select",
+                parts: { hours: "05", minutes: "30", seconds: "00", meridiem: undefined }
+            });
+            expect(setup.find("input.pickerMaskedInput").prop("value")).toBe("05:30:00");
+        });
+
+        it("applies a selection on top of a 24-hour time typed in the 12-hour format", () => {
+            const picker = mountSingle({ format: "12h" });
+
+            openPopover(picker);
+            typeInto(picker, "22:22:22");
+            picker.find(".timePicker__column_meridiem button").at(0).simulate("click");
+            picker.update();
+
+            expect(picker.find("input.pickerMaskedInput").prop("value")).toBe("10:22:22 AM");
+
+            picker.unmount();
+        });
+
+        it("drops the typed text when the field is cleared", () => {
+            const onChange = jest.fn();
+            const clearable = mountSingle({ clearable: true, onChange });
+
+            typeWithoutPause(clearable, "09:30:00");
+            clearable.find(".pickerShell__append button").first().simulate("click");
+            clearable.update();
+
+            expect(onChange).toHaveBeenLastCalledWith("", { source: "clear", parts: null });
+            expect(clearable.find("input.pickerMaskedInput").prop("value")).toBe("");
+
+            clearable.unmount();
+        });
+
+        it("highlights the typed columns in the popover as they are completed", () => {
+            const picker = mountSingle({ format: "12h" });
+            const selectedIn = (column: number): string[] =>
+                columnButtons(picker, column)
+                    .filterWhere((button) => button.prop("aria-selected") === true)
+                    .map((button) => button.text());
+            const selectedMeridiems = (): string[] =>
+                picker
+                    .find(".timePicker__column_meridiem button")
+                    .filterWhere((button) => button.prop("aria-selected") === true)
+                    .map((button) => button.text());
+
+            openPopover(picker);
+
+            typeInto(picker, "1");
+            expect(selectedIn(0)).toEqual([]);
+
+            typeInto(picker, "10:3");
+            expect(selectedIn(0)).toEqual(["10"]);
+            expect(selectedIn(1)).toEqual([]);
+
+            typeInto(picker, "10:30:00");
+            expect(selectedIn(1)).toEqual(["30"]);
+            expect(selectedIn(2)).toEqual(["00"]);
+            expect(selectedMeridiems()).toEqual([]);
+
+            typeInto(picker, "10:30:00 P");
+            expect(selectedMeridiems()).toEqual(["PM"]);
+
+            picker.unmount();
+        });
+
+        it("builds a selection on top of the typed columns", () => {
+            const onChange = jest.fn();
+            setup.setProps({ onChange });
+
+            openPopover(setup);
+            typeInto(setup, "09");
+            columnButtons(setup, 1).at(30).simulate("click");
+            setup.update();
+
+            expect(onChange).toHaveBeenLastCalledWith("09:30:00", {
+                source: "select",
+                parts: { hours: "09", minutes: "30", seconds: "00", meridiem: undefined }
+            });
+            expect(setup.find("input.pickerMaskedInput").prop("value")).toBe("09:30:00");
         });
 
         it("reports typed text through onChange after a pause", () => {
@@ -842,6 +1015,70 @@ describe("TimePicker", () => {
 
                 expect(meridiemButtons.at(0).prop("aria-selected")).toBe(false);
                 expect(meridiemButtons.at(1).prop("aria-selected")).toBe(true);
+
+                picker.unmount();
+            });
+        });
+
+        describe("24-hour input in the 12-hour format", () => {
+            const pmParts = { hours: "07", minutes: "30", seconds: "00", meridiem: "PM" };
+
+            it("keeps the typed 24-hour text while editing and converts it on blur", () => {
+                const onChange = jest.fn();
+                const picker = mountSingle({ format: "12h", onChange });
+
+                typeInto(picker, "19:30:00");
+
+                expect(picker.find("input.pickerMaskedInput").prop("value")).toBe("19:30:00");
+                expect(onChange).toHaveBeenLastCalledWith("19:30:00", { source: "input", parts: pmParts });
+
+                picker.find("input.pickerMaskedInput").simulate("blur");
+                picker.update();
+
+                expect(onChange).toHaveBeenLastCalledWith("07:30:00 PM", { source: "input", parts: pmParts });
+                expect(picker.find("input.pickerMaskedInput").prop("value")).toBe("07:30:00 PM");
+
+                picker.unmount();
+            });
+
+            it("lets the hour win over a contradicting meridiem", () => {
+                const picker = mountSingle({ format: "12h" });
+
+                typeInto(picker, "19:30:00 AM");
+                picker.find("input.pickerMaskedInput").simulate("blur");
+                picker.update();
+
+                expect(picker.find("input.pickerMaskedInput").prop("value")).toBe("07:30:00 PM");
+
+                picker.unmount();
+            });
+
+            it("keeps a valid 12-hour value as typed", () => {
+                const onChange = jest.fn();
+                const picker = mountSingle({ format: "12h", onChange });
+
+                typeInto(picker, "09:30:00 PM");
+                picker.find("input.pickerMaskedInput").simulate("blur");
+                picker.update();
+
+                expect(onChange).toHaveBeenCalledTimes(1);
+                expect(onChange).toHaveBeenCalledWith("09:30:00 PM", {
+                    source: "input",
+                    parts: { hours: "09", minutes: "30", seconds: "00", meridiem: "PM" }
+                });
+                expect(picker.find("input.pickerMaskedInput").prop("value")).toBe("09:30:00 PM");
+
+                picker.unmount();
+            });
+
+            it("highlights the converted time in the popover while the 24-hour text is still shown", () => {
+                const picker = mountSingle({ format: "12h" });
+
+                typeInto(picker, "19:30:00");
+                openPopover(picker);
+
+                expect(columnButtons(picker, 0).at(6).prop("aria-selected")).toBe(true);
+                expect(picker.find(".timePicker__column_meridiem button").at(1).prop("aria-selected")).toBe(true);
 
                 picker.unmount();
             });
