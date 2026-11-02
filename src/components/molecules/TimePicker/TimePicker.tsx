@@ -237,10 +237,6 @@ const usePickerSetup = ({ id, format = "24h", localization, disabled, readOnly }
         mask,
         maskReplacement: is12Hour ? MASK_REPLACEMENT_12H : MASK_REPLACEMENT_24H,
         maskTrack,
-        /**
-         * Digits only in the 24-hour format, so touch devices open the numeric keyboard; the 12-hour
-         * format needs letters for the meridiem.
-         */
         inputMode: is12Hour ? undefined : ("numeric" as const)
     };
 };

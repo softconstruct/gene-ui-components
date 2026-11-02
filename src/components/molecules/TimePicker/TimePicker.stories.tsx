@@ -170,8 +170,12 @@ const rangeArgTypes = {
 };
 
 /**
- * `defaultValue` is only read on mount, so the interactive stories remount when it changes.
+ * `defaultValue` is only read on mount, so the interactive stories remount when it changes; the
+ * two times of a range value make up its key.
  */
+const rangeValueKey = (value?: IRangeTimePickerProps["defaultValue"]): string =>
+    `${value?.start ?? ""}-${value?.end ?? ""}`;
+
 export const Default: SingleStory = {
     render: ({ defaultValue, ...props }) => (
         <div style={singleStoryStyle}>
@@ -184,7 +188,7 @@ export const Default: SingleStory = {
 export const Range: RangeStory = {
     render: ({ defaultValue, ...props }) => (
         <div style={rangeStoryStyle}>
-            <TimePicker.Range key={JSON.stringify(defaultValue)} defaultValue={defaultValue} {...props} />
+            <TimePicker.Range key={rangeValueKey(defaultValue)} defaultValue={defaultValue} {...props} />
         </div>
     ),
     args: {
@@ -224,7 +228,7 @@ export const RangePickerStates: RangeStory = {
         return (
             <div style={casesStyle}>
                 {rangePickerCases.map(({ key, RenderComponent, ...item }) => (
-                    <div key={`${key}-${JSON.stringify(controls.defaultValue)}`} style={rangeStoryStyle}>
+                    <div key={`${key}-${rangeValueKey(controls.defaultValue)}`} style={rangeStoryStyle}>
                         {RenderComponent ? (
                             <RenderComponent {...item} {...controls} label={label || item.label} />
                         ) : (
