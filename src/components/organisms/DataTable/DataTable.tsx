@@ -30,9 +30,11 @@ import Toolbar from "./Toolbar/Toolbar";
 import {
     ColumnVisibilityState,
     DataTableColumn,
+    DataTableEditValues,
     DataTableGetRowStatus,
     DataTableRenderExpandedRow,
     DataTableRowExpandChangeHandler,
+    IDataTableEditConfig,
     IDataTableRowAction,
     ITableNoDataTexts,
     ManageColumnsConfig,
@@ -188,6 +190,38 @@ interface IDataTableProps<TData> {
      * This object allows fine-grained control over the visibility, order, and position of columns.
      */
     manageColumnsConfig?: ManageColumnsConfig;
+    /**
+     * Configuration object for edit mode.
+     * Providing it renders the Edit button in the toolbar and lets the columns marked `editable` be edited;
+     * omitting it leaves the table read-only.
+     * The edit mode is owned by the table and is entered and left through those buttons, unless
+     * `editing` is provided, while the edited values are owned by the consumer and passed back
+     * through `editValues`.
+     *
+     * @example
+     * ```tsx
+     * <DataTable
+     *   editConfig={{
+     *     onCellChange: ({ rowId, columnId, value }) => updateDraft(rowId, columnId, value),
+     *     onSave: (values) => api.save(values),
+     *     onCancel: () => clearDrafts()
+     *   }}
+     *   editValues={drafts}
+     * />
+     * ```
+     */
+    editConfig?: IDataTableEditConfig<TData>;
+    /**
+     * Draft values displayed by the editing cells, keyed by row id.
+     * Sparse: a cell without an entry falls back to its value from `data`,
+     * which keeps the drafts out of sorting, filtering and pagination.
+     *
+     * @example
+     * ```tsx
+     * editValues={{ "12": { firstName: "Jane" } }}
+     * ```
+     */
+    editValues?: DataTableEditValues<TData>;
     /**
      * Resolves a stable, unique id for a row from its data.
      * Without it rows are identified by their index, so row-bound state (e.g. expanded rows)
