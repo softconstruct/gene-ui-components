@@ -266,8 +266,8 @@ export interface IDataTableEditConfig<TData> {
     editing: boolean;
     /**
      * Whether the user may change data at all, a permission check for example.
-     * When `true` both the edit and the save buttons are rendered in a disabled state, while cancel
-     * stays interactive so an edit mode entered earlier can always be left.
+     * When `true` the cell editors and the edit and save buttons are all rendered in a disabled
+     * state, while cancel stays interactive so an edit mode entered earlier can always be left.
      * @default false
      */
     disabled?: boolean;

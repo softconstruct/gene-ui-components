@@ -38,6 +38,20 @@ export interface ICellProps<TData, TValue> {
      * must invalidate the memo even when this column's value is unchanged.
      */
     rowData: TData;
+    /**
+     * Whether this cell renders an editor instead of its read-only content, that is whether the table
+     * is in edit mode and the column is `editable`.
+     */
+    isCellEditing: boolean;
+    /**
+     * Whether the editor of this cell is interactive.
+     */
+    isEditDisabled: boolean;
+    /**
+     * Value the editor shows: the draft from `editValues` when the cell has one, the value from
+     * `data` otherwise.
+     */
+    editValue: unknown;
 }
 
 /**
@@ -76,7 +90,10 @@ export const areCellsEqual = <TData, TValue>(prev: ICellProps<TData, TValue>, ne
     prev.width === next.width &&
     prev.dirMode === next.dirMode &&
     prev.value === next.value &&
-    prev.rowData === next.rowData;
+    prev.rowData === next.rowData &&
+    prev.isCellEditing === next.isCellEditing &&
+    prev.isEditDisabled === next.isEditDisabled &&
+    prev.editValue === next.editValue;
 
 export const DefaultCellComponent = ({ value }: { value: string }) => {
     const textRef = useRef<HTMLSpanElement | null>(null);
@@ -98,7 +115,7 @@ export const DefaultCellComponent = ({ value }: { value: string }) => {
  */
 export const adaptColumns = <TData,>(columns: DataTableColumn<TData>[]): ColumnDef<TData, ReactNode>[] =>
     columns.map((col, index) => {
-        const { accessorKey, id, header, size, renderCell, defaultVisible, defaultPinned } = col;
+        const { accessorKey, id, header, size, renderCell, defaultVisible, defaultPinned, editable } = col;
         const isAccessorColumn = Boolean(accessorKey);
 
         const base: ColumnDef<TData> = {
@@ -108,7 +125,8 @@ export const adaptColumns = <TData,>(columns: DataTableColumn<TData>[]): ColumnD
             meta: {
                 explicitSize: size,
                 defaultVisible,
-                defaultPinned
+                defaultPinned,
+                editable
             },
             ...(isAccessorColumn ? { accessorKey } : {})
         };

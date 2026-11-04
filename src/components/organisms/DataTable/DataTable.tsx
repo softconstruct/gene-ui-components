@@ -34,6 +34,7 @@ import {
     DataTableGetRowStatus,
     DataTableRenderExpandedRow,
     DataTableRowExpandChangeHandler,
+    IDataTableCellChange,
     IDataTableEditConfig,
     IDataTableRowAction,
     ITableNoDataTexts,
@@ -306,6 +307,10 @@ const DataTable = <TData,>({
         editConfigRef.current?.onSave(editValuesRef.current ?? {});
     }, []);
 
+    const handleCellChange = useCallback((change: IDataTableCellChange<TData>) => {
+        editConfigRef.current?.onCellChange(change);
+    }, []);
+
     const isExpandable = Boolean(renderExpandedRow);
 
     const onRowExpandChangeRef = useRef(onRowExpandChange);
@@ -499,6 +504,10 @@ const DataTable = <TData,>({
                                 rowActions={rowActions}
                                 getRowStatus={getRowStatus}
                                 renderExpandedRow={renderExpandedRow}
+                                isEditing={editConfig?.editing}
+                                isEditDisabled={editConfig?.disabled || editConfig?.loading}
+                                editValues={editValues}
+                                onCellChange={handleCellChange}
                             />
                         </table>
                     </Scrollbar>

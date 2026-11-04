@@ -6,7 +6,14 @@ import { IButtonProps } from "@components/atoms/Button";
 import Loader from "@components/atoms/Loader";
 import Empty from "@components/molecules/Empty";
 
-import { DataTableGetRowStatus, DataTableRenderExpandedRow, IDataTableRowAction, ITableNoDataTexts } from "../types";
+import {
+    DataTableEditValues,
+    DataTableGetRowStatus,
+    DataTableRenderExpandedRow,
+    IDataTableCellChange,
+    IDataTableRowAction,
+    ITableNoDataTexts
+} from "../types";
 import TableRow from "./Row/TableRow";
 
 // Styles
@@ -57,6 +64,22 @@ interface ITableBody<TData> {
      * Returns expanded row content for a given row.
      */
     renderExpandedRow?: DataTableRenderExpandedRow<TData>;
+    /**
+     * Whether the table is in edit mode, so that the cells of `editable` columns render an editor.
+     */
+    isEditing?: boolean;
+    /**
+     * Whether the editors are interactive.
+     */
+    isEditDisabled?: boolean;
+    /**
+     * Draft values displayed by the editing cells, keyed by row id.
+     */
+    editValues?: DataTableEditValues<TData>;
+    /**
+     * Reports what was typed into an editor.
+     */
+    onCellChange?: (change: IDataTableCellChange<TData>) => void;
 }
 
 interface ITableEmptyDataWrapperProps {
@@ -94,7 +117,11 @@ const TableBody = <TData,>({
     noDataAvailableActions,
     rowActions,
     getRowStatus,
-    renderExpandedRow
+    renderExpandedRow,
+    isEditing,
+    isEditDisabled,
+    editValues,
+    onCellChange
 }: ITableBody<TData>) => {
     if (loading) {
         return (
@@ -126,6 +153,10 @@ const TableBody = <TData,>({
                     rowActions={rowActions}
                     getRowStatus={getRowStatus}
                     renderExpandedRow={renderExpandedRow}
+                    isEditing={isEditing}
+                    isEditDisabled={isEditDisabled}
+                    rowEditValues={editValues?.[row.id]}
+                    onCellChange={onCellChange}
                 />
             ))}
         </tbody>

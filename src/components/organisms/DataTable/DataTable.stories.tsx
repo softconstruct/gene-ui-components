@@ -252,6 +252,7 @@ const EditModeTableWrapper = (props: IDataTableProps<MockRowType>) => {
     const editConfig = useMemo<IDataTableEditConfig<MockRowType>>(
         () => ({
             editing: isEditing,
+            saveDisabled: Object.keys(drafts).length === 0,
             onEditStart: () => setIsEditing(true),
             onCellChange: ({ rowId, columnId, value }) =>
                 setDrafts((previous) => ({ ...previous, [rowId]: { ...previous[rowId], [columnId]: value } })),
@@ -271,7 +272,7 @@ const EditModeTableWrapper = (props: IDataTableProps<MockRowType>) => {
                 setIsEditing(false);
             }
         }),
-        [isEditing]
+        [isEditing, drafts]
     );
 
     return (

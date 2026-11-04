@@ -8,7 +8,13 @@ import Tooltip from "@components/molecules/Tooltip";
 
 import { useDirMode } from "../../context";
 import TableBodyCell from "../../TableBody/Cell/TableBodyCell";
-import { DataTableGetRowStatus, DataTableRenderExpandedRow, IDataTableRowAction } from "../../types";
+import {
+    DataTableEditValues,
+    DataTableGetRowStatus,
+    DataTableRenderExpandedRow,
+    IDataTableCellChange,
+    IDataTableRowAction
+} from "../../types";
 import TableExpandedRow from "../Row/TableExpandedRow";
 
 // Styles
@@ -37,6 +43,22 @@ interface ITableRowProps<TData> {
      * Returns expanded row content for the current row.
      */
     renderExpandedRow?: DataTableRenderExpandedRow<TData>;
+    /**
+     * Whether the table is in edit mode, so that the cells of `editable` columns render an editor.
+     */
+    isEditing?: boolean;
+    /**
+     * Whether the editors of the row are interactive.
+     */
+    isEditDisabled?: boolean;
+    /**
+     * Draft values of this row, keyed by column id.
+     */
+    rowEditValues?: DataTableEditValues<TData>[string];
+    /**
+     * Reports what was typed into an editor of this row.
+     */
+    onCellChange?: (change: IDataTableCellChange<TData>) => void;
 }
 
 interface IRowActionsWrapperProps {
@@ -57,8 +79,18 @@ const RowActionsWrapper: FC<IRowActionsWrapperProps> = ({ title, children }) => 
  * @param props - The properties for the component.
  * @returns A table row element containing its respective rendered cells.
  */
-const TableRow = <TData,>({ row, rowActions, getRowStatus, renderExpandedRow }: ITableRowProps<TData>) => {
+const TableRow = <TData,>({
+    row,
+    rowActions,
+    getRowStatus,
+    renderExpandedRow,
+    isEditing,
+    isEditDisabled,
+    rowEditValues,
+    onCellChange
+}: ITableRowProps<TData>) => {
     const dirMode = useDirMode();
+    const drafts = rowEditValues as Record<string, unknown> | undefined;
     const rowStatus = getRowStatus?.(row.original);
     const isRowExpanded = row.getIsExpanded();
     const expandedRow = isRowExpanded ? renderExpandedRow?.(row.original) : null;
@@ -74,6 +106,10 @@ const TableRow = <TData,>({ row, rowActions, getRowStatus, renderExpandedRow }: 
                 {row.getVisibleCells().map((cell) => {
                     const isPinned = !!cell.column.getIsPinned();
                     const offset = isPinned ? cell.column.getStart("left") : 0;
+                    const columnId = cell.column.id;
+                    const value = cell.getValue();
+                    const hasDraft = !!drafts && columnId in drafts;
+
                     return (
                         <TableBodyCell<TData, unknown>
                             key={cell.id}
@@ -84,8 +120,12 @@ const TableRow = <TData,>({ row, rowActions, getRowStatus, renderExpandedRow }: 
                             offset={offset}
                             width={cell.column.getSize()}
                             dirMode={dirMode}
-                            value={cell.getValue()}
+                            value={value}
                             rowData={row.original}
+                            isCellEditing={!!isEditing && !!cell.column.columnDef.meta?.editable}
+                            isEditDisabled={!!isEditDisabled}
+                            editValue={hasDraft ? drafts[columnId] : value}
+                            onCellChange={onCellChange}
                         />
                     );
                 })}
