@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, { FunctionComponent, useEffect, useMemo, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { fn } from "@storybook/test";
@@ -12,7 +12,13 @@ import Pagination from "@components/molecules/Pagination";
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 import { mockColumns, mockData, renderMockExpandedRow } from "../../../../stories/data/__dataTable";
-import DataTable, { DataTableRowStatus, IDataTableProps, IDataTableRowAction } from "./index";
+import DataTable, {
+    DataTableEditValues,
+    DataTableRowStatus,
+    IDataTableEditConfig,
+    IDataTableProps,
+    IDataTableRowAction
+} from "./index";
 
 type MockRowType = (typeof mockData)[0];
 
@@ -59,7 +65,9 @@ const meta: Meta<IDataTableProps<MockRowType>> = {
         onRowExpandChange: args({ control: "false", ...propCategory.functionality }),
         rowActions: args({ control: "object", ...propCategory.functionality }),
         getRowStatus: args({ control: "false", ...propCategory.appearance }),
-        manageColumnsConfig: args({ control: "object", ...propCategory.functionality })
+        manageColumnsConfig: args({ control: "object", ...propCategory.functionality }),
+        editConfig: args({ control: "object", ...propCategory.functionality }),
+        editValues: args({ control: "false", ...propCategory.content })
     },
     args: {}
 };
@@ -224,5 +232,64 @@ export const WithManageColumns: Story = {
                 noResultsFoundDescription: undefined
             }
         }
+    }
+};
+
+const editableColumns: IDataTableProps<MockRowType>["columns"] = [
+    { accessorKey: "Id", header: "Id" },
+    { accessorKey: "FirstName", header: "First name", editable: true },
+    { accessorKey: "LastName", header: "Last name", editable: true },
+    { accessorKey: "Email", header: "Email", editable: true },
+    { accessorKey: "DayOffs", header: "Day offs", editable: true },
+    { accessorKey: "Created", header: "Created" }
+];
+
+const EditModeTableWrapper = (props: IDataTableProps<MockRowType>) => {
+    const [rows, setRows] = useState<MockRowType[]>(mockData);
+    const [drafts, setDrafts] = useState<DataTableEditValues<MockRowType>>({});
+    const [isEditing, setIsEditing] = useState(false);
+
+    const editConfig = useMemo<IDataTableEditConfig<MockRowType>>(
+        () => ({
+            editing: isEditing,
+            onEditStart: () => setIsEditing(true),
+            onCellChange: ({ rowId, columnId, value }) =>
+                setDrafts((previous) => ({ ...previous, [rowId]: { ...previous[rowId], [columnId]: value } })),
+            onCancel: () => {
+                setDrafts({});
+                setIsEditing(false);
+            },
+            onSave: (values) => {
+                setRows((previous) =>
+                    previous.map((row) => {
+                        const fields = values[String(row.Id)];
+
+                        return fields ? ({ ...row, ...fields } as MockRowType) : row;
+                    })
+                );
+                setDrafts({});
+                setIsEditing(false);
+            }
+        }),
+        [isEditing]
+    );
+
+    return (
+        <DataTable
+            {...props}
+            data={rows}
+            getRowId={(row) => String(row.Id)}
+            editConfig={editConfig}
+            editValues={drafts}
+        />
+    );
+};
+
+export const WithEditMode: Story = {
+    render: (props) => <EditModeTableWrapper {...props} />,
+    args: {
+        columns: editableColumns,
+        pagination: { pageSize: 10, rowsPerPageOptions: [2, 10, 20, 50, 100], showInputPageField: true },
+        manageColumnsConfig: { visible: true }
     }
 };

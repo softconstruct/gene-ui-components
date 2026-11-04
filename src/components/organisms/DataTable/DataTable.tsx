@@ -38,6 +38,7 @@ import {
     IDataTableRowAction,
     ITableNoDataTexts,
     ManageColumnsConfig,
+    ResolvedDataTableEditConfig,
     ResolvedManageColumnsConfig
 } from "./types";
 
@@ -194,17 +195,21 @@ interface IDataTableProps<TData> {
      * Configuration object for edit mode.
      * Providing it renders the Edit button in the toolbar and lets the columns marked `editable` be edited;
      * omitting it leaves the table read-only.
-     * The edit mode is owned by the table and is entered and left through those buttons, unless
-     * `editing` is provided, while the edited values are owned by the consumer and passed back
-     * through `editValues`.
+     * Both the mode and the edited values are owned by the consumer: `editing` says whether the table
+     * is in edit mode, and the drafts are passed back through `editValues`.
      *
      * @example
      * ```tsx
      * <DataTable
      *   editConfig={{
+     *     editing: isEditing,
+     *     onEditStart: () => setIsEditing(true),
      *     onCellChange: ({ rowId, columnId, value }) => updateDraft(rowId, columnId, value),
      *     onSave: (values) => api.save(values),
-     *     onCancel: () => clearDrafts()
+     *     onCancel: () => {
+     *       clearDrafts();
+     *       setIsEditing(false);
+     *     }
      *   }}
      *   editValues={drafts}
      * />
@@ -250,6 +255,17 @@ const DEFAULT_MANAGE_COLUMNS_CONFIG = {
     }
 } satisfies ResolvedManageColumnsConfig;
 
+const DEFAULT_EDIT_CONFIG = {
+    disabled: false,
+    saveDisabled: false,
+    loading: false,
+    texts: {
+        editButton: "Edit",
+        saveButton: "Save",
+        cancelButton: "Cancel"
+    }
+} satisfies Pick<ResolvedDataTableEditConfig<unknown>, "disabled" | "saveDisabled" | "loading" | "texts">;
+
 /**
  * Data Table used to display structured information in a grid format, making it easy to organize, view, and interact with large datasets.
  * Data tables are essential for presenting information such as reports, inventories, or user data in a clear,
@@ -275,10 +291,20 @@ const DataTable = <TData,>({
     rowActions,
     getRowStatus,
     manageColumnsConfig = DEFAULT_MANAGE_COLUMNS_CONFIG,
+    editConfig,
+    editValues,
     getRowId
 }: IDataTableProps<TData>): ReactElement => {
     const [expanded, setExpanded] = useState<ExpandedState>({});
     const [columnOrder, setColumnOrder] = useState<ColumnOrderState>([]);
+    const editConfigRef = useRef(editConfig);
+    const editValuesRef = useRef(editValues);
+    editConfigRef.current = editConfig;
+    editValuesRef.current = editValues;
+
+    const handleEditSave = useCallback(() => {
+        editConfigRef.current?.onSave(editValuesRef.current ?? {});
+    }, []);
 
     const isExpandable = Boolean(renderExpandedRow);
 
@@ -434,10 +460,18 @@ const DataTable = <TData,>({
                 ...manageColumnsConfig,
                 texts: { ...DEFAULT_MANAGE_COLUMNS_CONFIG.texts, ...manageColumnsConfig.texts }
             },
+            editConfig: editConfig
+                ? {
+                      ...DEFAULT_EDIT_CONFIG,
+                      ...editConfig,
+                      texts: { ...DEFAULT_EDIT_CONFIG.texts, ...editConfig.texts },
+                      onSave: handleEditSave
+                  }
+                : null,
             initialColumnVisibility,
             initialColumnPinning
         }),
-        [table, manageColumnsConfig, initialColumnVisibility, initialColumnPinning]
+        [table, manageColumnsConfig, editConfig, handleEditSave, initialColumnVisibility, initialColumnPinning]
     );
 
     return (
