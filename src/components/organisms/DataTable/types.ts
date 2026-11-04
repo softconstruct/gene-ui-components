@@ -289,9 +289,10 @@ export interface IDataTableEditConfig<TData> {
     texts?: IDataTableEditTexts;
     /**
      * Callback fired on every change made in an editing cell.
-     * Keeps `editValues` up to date.
+     * Required while `editValues` is provided, since the drafts are then the consumer's to keep up
+     * to date. Without `editValues` the table holds the drafts itself and this is only a notification.
      */
-    onCellChange: (change: IDataTableCellChange<TData>) => void;
+    onCellChange?: (change: IDataTableCellChange<TData>) => void;
     /**
      * Callback function which triggers when the save button is clicked, with the current drafts.
      * The table reports the click and nothing more: keeping `editing` on until the save succeeded,

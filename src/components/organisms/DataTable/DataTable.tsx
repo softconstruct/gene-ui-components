@@ -219,6 +219,8 @@ interface IDataTableProps<TData> {
     editConfig?: IDataTableEditConfig<TData>;
     /**
      * Draft values displayed by the editing cells, keyed by row id.
+     * Providing them makes the drafts controlled: keep them up to date from `onCellChange`.
+     * Omitting them lets the table hold the drafts itself and report them through `onSave`.
      * Sparse: a cell without an entry falls back to its value from `data`,
      * which keeps the drafts out of sorting, filtering and pagination.
      *
@@ -242,6 +244,7 @@ interface IDataTableProps<TData> {
 }
 
 const EMPTY_DATA: never[] = [];
+const EMPTY_EDIT_VALUES = {};
 const DEFAULT_MANAGE_COLUMNS_CONFIG = {
     disabled: false,
     visible: false,
@@ -298,17 +301,35 @@ const DataTable = <TData,>({
 }: IDataTableProps<TData>): ReactElement => {
     const [expanded, setExpanded] = useState<ExpandedState>({});
     const [columnOrder, setColumnOrder] = useState<ColumnOrderState>([]);
+    const [internalDrafts, setInternalDrafts] = useState<DataTableEditValues<TData>>(EMPTY_EDIT_VALUES);
+    const isControlled = editValues !== undefined;
+    const activeDrafts = editValues ?? internalDrafts;
+
+    const isEditing = Boolean(editConfig?.editing);
     const editConfigRef = useRef(editConfig);
-    const editValuesRef = useRef(editValues);
+    const isControlledRef = useRef(isControlled);
+    const activeDraftsRef = useRef(activeDrafts);
     editConfigRef.current = editConfig;
-    editValuesRef.current = editValues;
+    isControlledRef.current = isControlled;
+    activeDraftsRef.current = activeDrafts;
+
+    useEffect(() => {
+        if (!isEditing) setInternalDrafts(EMPTY_EDIT_VALUES);
+    }, [isEditing]);
 
     const handleEditSave = useCallback(() => {
-        editConfigRef.current?.onSave(editValuesRef.current ?? {});
+        editConfigRef.current?.onSave(activeDraftsRef.current);
     }, []);
 
     const handleCellChange = useCallback((change: IDataTableCellChange<TData>) => {
-        editConfigRef.current?.onCellChange(change);
+        if (!isControlledRef.current) {
+            setInternalDrafts((previous) => ({
+                ...previous,
+                [change.rowId]: { ...previous[change.rowId], [change.columnId]: change.value }
+            }));
+        }
+
+        editConfigRef.current?.onCellChange?.(change);
     }, []);
 
     const isExpandable = Boolean(renderExpandedRow);
@@ -504,9 +525,9 @@ const DataTable = <TData,>({
                                 rowActions={rowActions}
                                 getRowStatus={getRowStatus}
                                 renderExpandedRow={renderExpandedRow}
-                                isEditing={editConfig?.editing}
+                                isEditing={isEditing}
                                 isEditDisabled={editConfig?.disabled || editConfig?.loading}
-                                editValues={editValues}
+                                editValues={activeDrafts}
                                 onCellChange={handleCellChange}
                             />
                         </table>

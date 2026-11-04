@@ -286,6 +286,41 @@ const EditModeTableWrapper = (props: IDataTableProps<MockRowType>) => {
     );
 };
 
+const UncontrolledEditModeTableWrapper = (props: IDataTableProps<MockRowType>) => {
+    const [rows, setRows] = useState<MockRowType[]>(mockData);
+    const [isEditing, setIsEditing] = useState(false);
+
+    const editConfig = useMemo<IDataTableEditConfig<MockRowType>>(
+        () => ({
+            editing: isEditing,
+            onEditStart: () => setIsEditing(true),
+            onCancel: () => setIsEditing(false),
+            onSave: (values) => {
+                setRows((previous) =>
+                    previous.map((row) => {
+                        const fields = values[String(row.Id)];
+
+                        return fields ? ({ ...row, ...fields } as MockRowType) : row;
+                    })
+                );
+                setIsEditing(false);
+            }
+        }),
+        [isEditing]
+    );
+
+    return <DataTable {...props} data={rows} getRowId={(row) => String(row.Id)} editConfig={editConfig} />;
+};
+
+export const WithUncontrolledEditMode: Story = {
+    render: (props) => <UncontrolledEditModeTableWrapper {...props} />,
+    args: {
+        columns: editableColumns,
+        pagination: { pageSize: 10, rowsPerPageOptions: [2, 10, 20, 50, 100], showInputPageField: true },
+        manageColumnsConfig: { visible: true }
+    }
+};
+
 export const WithEditMode: Story = {
     render: (props) => <EditModeTableWrapper {...props} />,
     args: {
