@@ -7,7 +7,7 @@ import { areCellsEqual, getCellContentStyle, getCellStyle } from "@components/or
 
 import { EXPANDER_COLUMN_ID } from "../../constants";
 import { CellWidthContext } from "../../context";
-import { IDataTableCellChange } from "../../types";
+import { IDataTableCellChangePayload } from "../../types";
 
 // Styles
 import "./TableBodyCell.scss";
@@ -89,7 +89,7 @@ export interface ITableBodyCellProps<TData, TValue> {
      * Reports what was typed into the editor. Must stay referentially stable, it is not compared by
      * {@link areCellsEqual}.
      */
-    onCellChange?: (change: IDataTableCellChange<TData>) => void;
+    onCellChange?: (payload: IDataTableCellChangePayload<TData>) => void;
 }
 
 /**

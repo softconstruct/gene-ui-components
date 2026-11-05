@@ -34,7 +34,7 @@ import {
     DataTableGetRowStatus,
     DataTableRenderExpandedRow,
     DataTableRowExpandChangeHandler,
-    IDataTableCellChange,
+    IDataTableCellChangePayload,
     IDataTableEditConfig,
     IDataTableRowAction,
     ITableNoDataTexts,
@@ -321,15 +321,15 @@ const DataTable = <TData,>({
         editConfigRef.current?.onSave(activeDraftsRef.current);
     }, []);
 
-    const handleCellChange = useCallback((change: IDataTableCellChange<TData>) => {
+    const handleCellChange = useCallback((payload: IDataTableCellChangePayload<TData>) => {
         if (!isControlledRef.current) {
             setInternalDrafts((previous) => ({
                 ...previous,
-                [change.rowId]: { ...previous[change.rowId], [change.columnId]: change.value }
+                [payload.rowId]: { ...previous[payload.rowId], [payload.columnId]: payload.value }
             }));
         }
 
-        editConfigRef.current?.onCellChange?.(change);
+        editConfigRef.current?.onCellChange?.(payload);
     }, []);
 
     const isExpandable = Boolean(renderExpandedRow);

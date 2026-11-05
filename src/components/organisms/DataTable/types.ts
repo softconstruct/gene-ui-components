@@ -222,7 +222,7 @@ export type DataTableEditValues<TData> = Record<string, Partial<Record<keyof TDa
 /**
  * Payload reported for every change made in an editing cell.
  */
-export interface IDataTableCellChange<TData> {
+export interface IDataTableCellChangePayload<TData> {
     /**
      * Stable row id assigned by the table (matches `Row.id` from TanStack Table).
      */
@@ -292,7 +292,7 @@ export interface IDataTableEditConfig<TData> {
      * Required while `editValues` is provided, since the drafts are then the consumer's to keep up
      * to date. Without `editValues` the table holds the drafts itself and this is only a notification.
      */
-    onCellChange?: (change: IDataTableCellChange<TData>) => void;
+    onCellChange?: (payload: IDataTableCellChangePayload<TData>) => void;
     /**
      * Callback function which triggers when the save button is clicked, with the current drafts.
      * The table reports the click and nothing more: keeping `editing` on until the save succeeded,

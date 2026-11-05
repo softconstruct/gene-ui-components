@@ -6,7 +6,7 @@ export {
     DataTableRowExpandChangeHandler,
     DataTableRowExpandChangePayload,
     DataTableRowStatus,
-    IDataTableCellChange,
+    IDataTableCellChangePayload,
     IDataTableEditConfig,
     IDataTableEditTexts,
     IDataTableRowAction

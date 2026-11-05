@@ -67,7 +67,8 @@ const meta: Meta<IDataTableProps<MockRowType>> = {
         getRowStatus: args({ control: "false", ...propCategory.appearance }),
         manageColumnsConfig: args({ control: "object", ...propCategory.functionality }),
         editConfig: args({ control: "object", ...propCategory.functionality }),
-        editValues: args({ control: "false", ...propCategory.content })
+        editValues: args({ control: "false", ...propCategory.content }),
+        getRowId: args({ control: "false", ...propCategory.functionality })
     },
     args: {}
 };

@@ -10,7 +10,7 @@ import {
     DataTableEditValues,
     DataTableGetRowStatus,
     DataTableRenderExpandedRow,
-    IDataTableCellChange,
+    IDataTableCellChangePayload,
     IDataTableRowAction,
     ITableNoDataTexts
 } from "../types";
@@ -79,7 +79,7 @@ interface ITableBody<TData> {
     /**
      * Reports what was typed into an editor.
      */
-    onCellChange?: (change: IDataTableCellChange<TData>) => void;
+    onCellChange?: (payload: IDataTableCellChangePayload<TData>) => void;
 }
 
 interface ITableEmptyDataWrapperProps {

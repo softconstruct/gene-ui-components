@@ -12,7 +12,7 @@ import {
     DataTableEditValues,
     DataTableGetRowStatus,
     DataTableRenderExpandedRow,
-    IDataTableCellChange,
+    IDataTableCellChangePayload,
     IDataTableRowAction
 } from "../../types";
 import TableExpandedRow from "../Row/TableExpandedRow";
@@ -58,7 +58,7 @@ interface ITableRowProps<TData> {
     /**
      * Reports what was typed into an editor of this row.
      */
-    onCellChange?: (change: IDataTableCellChange<TData>) => void;
+    onCellChange?: (payload: IDataTableCellChangePayload<TData>) => void;
 }
 
 interface IRowActionsWrapperProps {
