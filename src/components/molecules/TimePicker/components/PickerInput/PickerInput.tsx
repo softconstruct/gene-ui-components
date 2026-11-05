@@ -18,7 +18,6 @@ import "./PickerInput.scss";
 interface IPickerInputBaseProps
     extends Pick<
             IPickerShellProps,
-            | "className"
             | "helperText"
             | "disabled"
             | "readOnly"
@@ -144,7 +143,6 @@ const keepFocus = (event: MouseEvent<SVGElement>) => {
  */
 const getSharedProps = (
     {
-        className,
         size = "medium",
         status = "rest",
         helperText,
@@ -169,7 +167,6 @@ const getSharedProps = (
     helperTextId: string
 ) => ({
     shell: {
-        className,
         size,
         status,
         helperText,

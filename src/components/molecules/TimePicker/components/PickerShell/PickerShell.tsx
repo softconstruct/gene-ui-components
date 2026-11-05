@@ -18,10 +18,6 @@ import "./PickerShell.scss";
 
 interface IPickerShellProps {
     /**
-     * ClassName for picker input wrapper.
-     */
-    className?: string;
-    /**
      * Helper text rendered below the field, styled according to `status`.
      */
     helperText?: string;
@@ -106,7 +102,6 @@ const keepFocus = (event: MouseEvent<HTMLElement | SVGElement>) => {
 };
 
 const PickerShell: FC<IPickerShellProps> = ({
-    className,
     size,
     children,
     status,
@@ -138,16 +133,10 @@ const PickerShell: FC<IPickerShellProps> = ({
                 {...anchorProps}
                 ref={anchorRef}
                 role="presentation"
-                className={classNames(
-                    "pickerShell",
-                    className,
-                    `pickerShell_size_${size}`,
-                    `pickerShell_status_${status}`,
-                    {
-                        pickerShell_disabled: disabled,
-                        pickerShell_readOnly: readOnly
-                    }
-                )}
+                className={classNames("pickerShell", `pickerShell_size_${size}`, `pickerShell_status_${status}`, {
+                    pickerShell_disabled: disabled,
+                    pickerShell_readOnly: readOnly
+                })}
                 onMouseDown={handleAreaMouseDown}
                 onClick={handleAreaClick}
                 onBlur={onFocusOut}
