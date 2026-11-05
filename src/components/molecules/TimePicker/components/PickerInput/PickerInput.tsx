@@ -22,12 +22,11 @@ interface IPickerInputBaseProps
             | "helperText"
             | "disabled"
             | "readOnly"
-            | "EndIcon"
+            | "Icon"
             | "onClear"
             | "clearLabel"
             | "anchorProps"
             | "anchorRef"
-            | "shellRef"
             | "onAreaClick"
             | "onIconClick"
             | "onFocusOut"
@@ -152,7 +151,7 @@ const getSharedProps = (
         disabled,
         readOnly,
         required,
-        EndIcon,
+        Icon,
         mask,
         maskReplacement,
         maskTrack,
@@ -161,7 +160,6 @@ const getSharedProps = (
         clearLabel,
         anchorProps,
         anchorRef,
-        shellRef,
         onAreaClick,
         onIconClick,
         onFocusOut,
@@ -178,12 +176,11 @@ const getSharedProps = (
         helperTextId,
         disabled,
         readOnly,
-        EndIcon,
+        Icon,
         onClear,
         clearLabel,
         anchorProps,
         anchorRef,
-        shellRef,
         onAreaClick,
         onIconClick,
         onFocusOut
@@ -210,7 +207,7 @@ const SinglePickerInput: FC<ISinglePickerInputProps> = (props) => {
     const { shell, input } = getSharedProps(props, `${id}-helper-text`);
 
     return (
-        <PickerShell {...shell} mode="single" showClearButton={!!(clearable && value && !disabled && !readOnly)}>
+        <PickerShell {...shell} showClearButton={!!(clearable && value && !disabled && !readOnly)}>
             <PickerMaskedInput
                 {...input}
                 id={id}
@@ -235,7 +232,7 @@ const RangePickerInput: FC<IRangePickerInputProps> = (props) => {
     const hasValue = !!(value?.start || value?.end);
 
     return (
-        <PickerShell {...shell} mode="range" showClearButton={!!(clearable && hasValue && !disabled && !readOnly)}>
+        <PickerShell {...shell} showClearButton={!!(clearable && hasValue && !disabled && !readOnly)}>
             {RANGE_FIELDS.map((field, index) => (
                 <Fragment key={field}>
                     {index > 0 && (

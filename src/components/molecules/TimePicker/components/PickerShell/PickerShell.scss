@@ -26,10 +26,6 @@
             height: var(--guit-sem-dimension-height-large);
             padding-inline-end: var(--guit-ref-spacing-medium);
             border-radius: var(--guit-ref-radius-2xsmall);
-
-            #{$this}__append {
-                min-width: 4.8rem;
-            }
         }
 
         &_medium {
@@ -37,10 +33,6 @@
             height: var(--guit-sem-dimension-height-medium);
             padding-inline-end: var(--guit-ref-spacing-xsmall);
             border-radius: var(--guit-ref-radius-3xsmall);
-
-            #{$this}__append {
-                min-width: 4.8rem;
-            }
         }
 
         &_small {
@@ -48,10 +40,6 @@
             height: var(--guit-sem-dimension-height-small);
             padding-inline-end: var(--guit-ref-spacing-xsmall);
             border-radius: var(--guit-ref-radius-3xsmall);
-
-            #{$this}__append {
-                min-width: 4rem;
-            }
         }
     }
 

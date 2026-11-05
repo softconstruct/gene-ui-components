@@ -17,7 +17,6 @@ import {
     MINUTES,
     PICKER_RANGE_FIELDS,
     SECONDS,
-    SECONDS_IN_DAY,
     SECONDS_IN_HOUR,
     SECONDS_IN_MINUTE,
     TIME_PART_DEFAULT_TEXT_VALUE,
@@ -25,7 +24,7 @@ import {
     TIME_PARTS_RADIX
 } from "./constants";
 // Types
-import { TimeParts, TimePickerLocalization, TimePickerMeridiem, TimePickerRangeFields } from "./types";
+import { ITimePickerLocalization, TimeParts, TimePickerMeridiem, TimePickerRangeFields } from "./types";
 
 // ---------------------------------------------------------
 // Primitives
@@ -79,38 +78,19 @@ const convertTo24Hour = (hStr?: string, meridiem?: string): number => {
  */
 const isTwelveHourClockHour = (hours: number): boolean => hours >= FIRST_HOUR_IN_12H_FORMAT && hours <= MERIDIEM_OFFSET;
 
-export const convertPartsToSeconds = (parts: TimeParts, is12Hour: boolean): number => {
+/**
+ * Converts a 24-hour clock hour (`0`..`23`) to the 12-hour clock: `0` is `12 AM`, `12` is `12 PM`,
+ * `19` is `07 PM`.
+ */
+const to12HourClock = (hours: number): Pick<TimeParts, "hours" | "meridiem"> => ({
+    hours: padTimePart(hours % MERIDIEM_OFFSET || MERIDIEM_OFFSET),
+    meridiem: hours >= MERIDIEM_OFFSET ? MERIDIEMS.PM : MERIDIEMS.AM
+});
+
+const convertPartsToSeconds = (parts: TimeParts, is12Hour: boolean): number => {
     const hours = is12Hour ? convertTo24Hour(parts.hours, parts.meridiem) : toTimeNumber(parts.hours);
 
     return hours * SECONDS_IN_HOUR + toTimeNumber(parts.minutes) * SECONDS_IN_MINUTE + toTimeNumber(parts.seconds);
-};
-
-export const convertSecondsToParts = (totalSeconds: number, is12Hour: boolean): TimeParts => {
-    const normalized = ((totalSeconds % SECONDS_IN_DAY) + SECONDS_IN_DAY) % SECONDS_IN_DAY;
-
-    let hours = Math.floor(normalized / SECONDS_IN_HOUR);
-    const minutes = Math.floor((normalized % SECONDS_IN_HOUR) / SECONDS_IN_MINUTE);
-    const seconds = normalized % SECONDS_IN_MINUTE;
-
-    let meridiem: TimePickerMeridiem | undefined;
-
-    if (is12Hour) {
-        meridiem = hours >= MERIDIEM_OFFSET ? MERIDIEMS.PM : MERIDIEMS.AM;
-
-        if (hours > MERIDIEM_OFFSET) {
-            hours -= MERIDIEM_OFFSET;
-        }
-        if (hours === 0) {
-            hours = MERIDIEM_OFFSET;
-        }
-    }
-
-    return {
-        hours: padTimePart(hours),
-        minutes: padTimePart(minutes),
-        seconds: padTimePart(seconds),
-        meridiem
-    };
 };
 
 export const composeTime = (timePartsValues: TimeParts, is12Hours: boolean): string => {
@@ -154,9 +134,7 @@ const resolveHours = (
         return { hours: padTimePart(hours), meridiem };
     }
 
-    const converted = convertSecondsToParts(hours * SECONDS_IN_HOUR, true);
-
-    return { hours: converted.hours, meridiem: converted.meridiem };
+    return to12HourClock(hours);
 };
 
 /**
@@ -241,12 +219,12 @@ export const parseTypedTimeParts = (value: string | null | undefined, is12Hour: 
  * Merges the consumer localization over the defaults, ignoring empty entries so a partially
  * provided object cannot blank out a label (including the accessible ones).
  */
-export const resolveLocalization = (localization?: TimePickerLocalization): Required<TimePickerLocalization> => {
-    const resolved: Required<TimePickerLocalization> = { ...DEFAULT_LOCALIZATION };
+export const resolveLocalization = (localization?: ITimePickerLocalization): Required<ITimePickerLocalization> => {
+    const resolved: Required<ITimePickerLocalization> = { ...DEFAULT_LOCALIZATION };
 
     if (!localization) return resolved;
 
-    (Object.keys(localization) as (keyof TimePickerLocalization)[]).forEach((key) => {
+    (Object.keys(localization) as (keyof ITimePickerLocalization)[]).forEach((key) => {
         const text = localization[key];
 
         if (text) {

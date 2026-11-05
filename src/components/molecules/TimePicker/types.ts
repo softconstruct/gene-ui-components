@@ -16,34 +16,25 @@ export type TimePickerFormat = "12h" | "24h";
 export type TimePickerStatus = "rest" | "warning" | "error";
 
 /**
- * Describes what caused an `onChange` call: `input` when the user typed,
- * `select` when a value was picked from the popover, `clear` when the clear button was used.
+ * The two values of a range picker as reported by `onChange` and `onBlur`: time strings, an empty
+ * string for an empty field.
  */
-export type TimePickerChangeSource = "input" | "select" | "clear";
-
-export type TimePickerChangeContext = {
-    source: TimePickerChangeSource;
-    /**
-     * The parsed time parts, or `null` when the current value is not a complete, valid time.
-     */
-    parts: TimeParts | null;
+export type TimePickerRangeValue = {
+    start: string;
+    end: string;
 };
 
-export type TimePickerRangeChangeContext = TimePickerChangeContext & {
-    field: TimePickerRangeFields;
-};
-
-export type TimePickerLocalization = {
+export type ITimePickerLocalization = {
     /**
-     * Header of the hours column.
+     * Header of the 'hours' column.
      */
     hours?: string;
     /**
-     * Header of the minutes column.
+     * Header of the 'minutes' column.
      */
     minutes?: string;
     /**
-     * Header of the seconds column.
+     * Header of the 'seconds' column.
      */
     seconds?: string;
     /**
@@ -51,15 +42,15 @@ export type TimePickerLocalization = {
      */
     clear?: string;
     /**
-     * Accessible label of the hours column.
+     * Accessible label of the 'hours' column.
      */
     selectHours?: string;
     /**
-     * Accessible label of the minutes column.
+     * Accessible label of the 'minutes' column.
      */
     selectMinutes?: string;
     /**
-     * Accessible label of the seconds column.
+     * Accessible label of the 'seconds' column.
      */
     selectSeconds?: string;
     /**

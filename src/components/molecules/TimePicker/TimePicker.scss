@@ -70,13 +70,6 @@
         }
     }
 
-    &__skeleton {
-        display: flex;
-        flex-direction: column;
-        gap: var(--guit-ref-spacing-3xsmall);
-        padding: var(--guit-ref-spacing-3xsmall) var(--guit-ref-spacing-medium);
-    }
-
     &__column {
         display: flex;
         align-items: center;

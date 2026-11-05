@@ -6,8 +6,6 @@ import { args, propCategory } from "../../../../stories/assets/storybook.globals
 import { DEFAULT_LOCALIZATION } from "./constants";
 // Components
 import TimePicker, { IRangeTimePickerProps, ISingleTimePickerProps, RangeTimePicker } from "./index";
-// Types
-import { TimePickerRangeChangeContext } from "./types";
 
 const meta: Meta<typeof TimePicker> = {
     title: "Molecules/TimePicker",
@@ -105,7 +103,14 @@ const ClearableSinglePicker = (props: ISingleTimePickerProps) => (
 const ControlledSinglePicker = (props: ISingleTimePickerProps) => {
     const [value, setValue] = useState<string | null>("10:24:30");
 
-    return <TimePicker {...props} value={value} onChange={setValue} placeholder="Choose time" />;
+    return (
+        <TimePicker
+            {...props}
+            value={value}
+            onChange={(event) => setValue(event.target.value)}
+            placeholder="Choose time"
+        />
+    );
 };
 
 const UncontrolledSinglePicker = (props: ISingleTimePickerProps) => (
@@ -128,11 +133,7 @@ const singlePickerCases: SinglePickerCase[] = [
 const ControlledRangePicker = (props: IRangeTimePickerProps) => {
     const [value, setValue] = useState<{ start: string | null; end: string | null }>({ start: null, end: null });
 
-    const handleChange = (time: string, { field }: TimePickerRangeChangeContext) => {
-        setValue((prev) => ({ ...prev, [field]: time }));
-    };
-
-    return <TimePicker.Range {...props} value={value} onChange={handleChange} />;
+    return <TimePicker.Range {...props} value={value} onChange={(_event, nextValue) => setValue(nextValue)} />;
 };
 
 const ClearableRangePicker = (props: IRangeTimePickerProps) => (

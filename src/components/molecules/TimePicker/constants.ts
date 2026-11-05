@@ -1,4 +1,4 @@
-import { TimeParts, TimePickerLocalization } from "./types";
+import { ITimePickerLocalization, TimeParts } from "./types";
 
 /**
  * @description
@@ -67,10 +67,8 @@ const EMPTY_TIME_PARTS: TimeParts = Object.freeze({
     meridiem: undefined
 });
 
-const HOURS_IN_DAY = 24;
 const SECONDS_IN_MINUTE = 60;
 const SECONDS_IN_HOUR = 3600;
-const SECONDS_IN_DAY = HOURS_IN_DAY * SECONDS_IN_HOUR;
 
 const LAST_MINUTE_IN_HOUR = 59;
 const LAST_SECOND_IN_MINUTE = 59;
@@ -131,7 +129,7 @@ const MASK_SLOT_RULES_12H: RegExp[] = [...MASK_SLOT_RULES_24H, /[aApP]/, /[mM]/]
  */
 const DEFAULT_ID_PREFIX = "default-id-";
 
-const DEFAULT_LOCALIZATION: Required<TimePickerLocalization> = {
+const DEFAULT_LOCALIZATION: Required<ITimePickerLocalization> = {
     hours: "hours",
     minutes: "minutes",
     seconds: "seconds",
@@ -165,7 +163,6 @@ export {
     headerTextVariantMap,
     HOURS_12,
     HOURS_24,
-    HOURS_IN_DAY,
     INPUT_CHANGE_DEBOUNCE_MS,
     KEYS,
     LAST_HOUR_IN_24H_FORMAT_DAY,
@@ -182,7 +179,6 @@ export {
     MINUTES,
     PICKER_RANGE_FIELDS,
     SECONDS,
-    SECONDS_IN_DAY,
     SECONDS_IN_HOUR,
     SECONDS_IN_MINUTE,
     textSizeMap,

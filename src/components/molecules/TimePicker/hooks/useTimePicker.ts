@@ -1,4 +1,15 @@
-import { ChangeEvent, FocusEvent, KeyboardEvent, MutableRefObject, useEffect, useMemo, useRef, useState } from "react";
+import {
+    ChangeEvent,
+    FocusEvent,
+    KeyboardEvent,
+    MouseEvent,
+    MutableRefObject,
+    SyntheticEvent,
+    useEffect,
+    useMemo,
+    useRef,
+    useState
+} from "react";
 
 import { IPopoverProps, IPopoverRef } from "@components/atoms/Popover";
 
@@ -17,7 +28,7 @@ import {
 // Helpers
 import { composeTime, getNearestAvailableTime, parseTime, parseTypedTimeParts, withTimePart } from "../helpers";
 // Types
-import { TimeParts, TimePickerChangeContext, TimePickerRangeChangeContext, TimePickerRangeFields } from "../types";
+import { TimeParts, TimePickerRangeFields, TimePickerRangeValue } from "../types";
 
 type PopoverCloseHandler = NonNullable<IPopoverProps["onClose"]>;
 type PopoverPosition = "bottom-left" | "bottom-right";
@@ -26,19 +37,13 @@ type InputRef = MutableRefObject<HTMLInputElement | null>;
 
 const ESCAPE_CLOSE_REASON = "escape-key";
 
-/**
- * Keys that open the popover from the input, mirroring the `Dropdown` trigger behaviour.
- */
-const OPEN_KEYS: string[] = [KEYS.ARROW_DOWN, KEYS.ENTER, KEYS.SPACE];
-
 // ---------------------------------------------------------
 // Shared action helpers
 // ---------------------------------------------------------
 
 /**
- * @description
- * Applies a single column selection on top of the current parts, filling the columns that have no
- * value yet, and keeps the result inside the range bounds.
+ * Applies one column pick on top of the current parts (empty columns get defaults) and keeps the
+ * result inside the range bounds. Returns the composed time.
  */
 const processTimeSelection = (
     prev: TimeParts,
@@ -46,7 +51,7 @@ const processTimeSelection = (
     value: string,
     is12Hour: boolean,
     { minParts, maxParts }: Bounds
-): { nextParts: TimeParts; composedTime: string } => {
+): string => {
     const base: TimeParts = {
         hours: prev.hours ?? (is12Hour ? TIME_PART_DEFAULT_12H_HOUR : TIME_PART_DEFAULT_TEXT_VALUE),
         minutes: prev.minutes ?? TIME_PART_DEFAULT_TEXT_VALUE,
@@ -56,40 +61,47 @@ const processTimeSelection = (
 
     const nearest = getNearestAvailableTime(withTimePart(base, column, value), is12Hour, minParts, maxParts);
 
-    return { nextParts: nearest, composedTime: composeTime(nearest, is12Hour) };
+    return composeTime(nearest, is12Hour);
 };
 
 /**
- * @description
- * Works out what a field should hold once it loses focus.
- *
- * Typed text is committed verbatim while the field has focus, so normalization (padding, 24 to
- * 12-hour conversion) and clamping against the range bounds happen here.
- * Returns `null` when there is nothing to change.
+ * The value a field should hold once it loses focus: normalized and clamped to the bounds.
+ * `null` when nothing changes; `{ value: null }` when incomplete text is dropped with nothing to
+ * restore.
  */
 const resolveBlurValue = (
     rawValue: string | null,
     lastValidValue: string | null,
     is12Hour: boolean,
     { minParts, maxParts }: Bounds
-): { value: string | null; parts: TimeParts | null } | null => {
+): { value: string | null } | null => {
     const parsed = parseTime(rawValue, is12Hour, { allow24HourInput: true });
     const nearest = parsed && getNearestAvailableTime(parsed, is12Hour, minParts, maxParts);
 
     if (!nearest) {
-        if (!rawValue) return null;
-
-        return {
-            value: lastValidValue,
-            parts: parseTime(lastValidValue, is12Hour, { allow24HourInput: true })
-        };
+        return rawValue ? { value: lastValidValue } : null;
     }
 
     const composedTime = composeTime(nearest, is12Hour);
 
-    if (composedTime === rawValue) return null;
+    return composedTime === rawValue ? null : { value: composedTime };
+};
 
-    return { value: composedTime, parts: nearest };
+/**
+ * The event reported for a change without an input event of its own (pick, clear, blur commit):
+ * a copy of the triggering event with the input as `target` and the time as `target.value`.
+ */
+const toChangeEvent = (
+    event: SyntheticEvent,
+    input: HTMLInputElement | null,
+    value: string
+): ChangeEvent<HTMLInputElement> => {
+    const target = { name: input?.name ?? "", id: input?.id ?? "", value };
+
+    return Object.assign(Object.create(Object.getPrototypeOf(event)), event, {
+        target,
+        currentTarget: target
+    }) as ChangeEvent<HTMLInputElement>;
 };
 
 // ---------------------------------------------------------
@@ -99,15 +111,15 @@ const resolveBlurValue = (
 /**
  * Reports typed text through `onChange` after a pause, or at once when the field is left.
  */
-const useTypedChange = <TArgs extends unknown[]>(onChange?: (...args: TArgs) => void) => {
-    const pendingRef = useRef<TArgs | null>(null);
+const useTypedChange = <TPayload>(emit: (payload: TPayload) => void) => {
+    const pendingRef = useRef<TPayload | null>(null);
 
     const emitPending = () => {
         const pending = pendingRef.current;
         pendingRef.current = null;
 
         if (pending) {
-            onChange?.(...pending);
+            emit(pending);
         }
     };
 
@@ -116,8 +128,8 @@ const useTypedChange = <TArgs extends unknown[]>(onChange?: (...args: TArgs) => 
     useEffect(() => clearDebounce, [clearDebounce]);
 
     return {
-        report: (...args: TArgs) => {
-            pendingRef.current = args;
+        report: (payload: TPayload) => {
+            pendingRef.current = payload;
             emitLater();
         },
         flush: () => {
@@ -128,21 +140,9 @@ const useTypedChange = <TArgs extends unknown[]>(onChange?: (...args: TArgs) => 
 };
 
 /**
- * @description
- * Owns the value of a single time input (the single picker has one, the range picker two).
- *
- * `parts` are **derived** from the value rather than mirrored into a second state: composing and
- * parsing round trip exactly, so a separate `parts` state could only ever drift out of sync (for
- * example a controlled `value` reset to `null` used to leave the popover highlighting the old
- * time).
- *
- * Whether the field is being edited decides how the value is read:
- * - from the first keystroke until the field is left, the typed text is authoritative and is
- *   rendered verbatim, so the mask is never fought and every character (including the meridiem)
- *   can be deleted or replaced;
- * - otherwise — including a plain focus or click, and for values that arrive from the
- *   `value`/`defaultValue` props — the value is normalized, which keeps the input text and the
- *   popover selection in agreement.
+ * Owns the value of one time input. While the field is being typed into, the typed text is shown
+ * verbatim; otherwise the value is shown normalized. `parts` are derived from the value, never
+ * stored, so the popover selection cannot drift from the text.
  */
 const useTimeField = (value: string | null | undefined, defaultValue: string | null | undefined, is12Hour: boolean) => {
     const isControlled = value !== undefined;
@@ -169,18 +169,13 @@ const useTimeField = (value: string | null | undefined, defaultValue: string | n
         [rawValue, is12Hour, isEditing]
     );
 
-    /**
-     * What the popover highlights and builds a selection on: the complete value, or, while the
-     * value is incomplete, the columns typed so far (`09:3` already selects the `09` hour).
-     */
+    // What the popover highlights: the complete value, or the columns typed so far.
     const parts = useMemo(
         () => parsedValue ?? parseTypedTimeParts(rawValue, is12Hour),
         [parsedValue, rawValue, is12Hour]
     );
 
-    /**
-     * Last complete value, used to restore the field when the user leaves partially typed input.
-     */
+    // Last complete value, restored when the field is left with incomplete text.
     const lastValidValueRef = useRef<string | null>(null);
 
     useEffect(() => {
@@ -197,11 +192,10 @@ const useTimeField = (value: string | null | undefined, defaultValue: string | n
 
     return {
         rawValue,
-        /**
-         * The value without the typed draft: the `value` prop, or the last value set by typing, a
-         * selection or a clear.
-         */
+        /** The value without the typed draft. */
         committedValue,
+        /** Whether the field has been typed into since it was last left, picked from or cleared. */
+        isEditing,
         displayValue: !isEditing && parsedValue ? composeTime(parsedValue, is12Hour) : rawValue,
         parts,
         lastValidValueRef,
@@ -232,26 +226,18 @@ interface ITimePickerCoreOptions<F extends string> {
     disabled?: boolean;
     readOnly?: boolean;
     getBounds?: (field: F) => Bounds;
-    onChange?: (field: F, time: string, context: TimePickerChangeContext) => void;
+    onChange?: (event: ChangeEvent<HTMLInputElement>, values: Record<F, string>, field: F) => void;
     onClear?: () => void;
     onOpenChange?: (open: boolean) => void;
     onFocus?: (event: FocusEvent<HTMLInputElement>, field: F) => void;
-    onBlur?: (event: FocusEvent<HTMLElement>, field: F) => void;
+    onBlur?: (values: Record<F, string>, event: FocusEvent<HTMLElement>, field: F) => void;
     onKeyDown?: (event: KeyboardEvent<HTMLInputElement>, field: F) => void;
 }
 
 /**
- * @description
- * Popover and field interaction shared by the single and the range picker. The popover opens on a
- * click on the field or on `Enter`, `Space` and `ArrowDown`, never on focus alone, and closes once
- * the focus leaves both the field (clear button included) and the popover.
- *
- * Leaving a field (the moment its typed text is committed and `onBlur` is reported) happens when
- * the focus goes outside the picker or to the other field of a range — not when it moves to the
- * clear button or into the popover, which are part of editing the same field.
- *
- * No outside click listener is registered here on purpose: `atoms/Popover` already closes itself
- * on outside press and on `Escape` and reports it through `onClose`.
+ * Popover and field interaction shared by both pickers. The popover opens on click or `ArrowDown`
+ * and closes once the focus leaves the field and the popover; `Enter` only closes it, so a form
+ * around the picker still submits. Outside presses and `Escape` are handled by `atoms/Popover`.
  */
 const useTimePickerCore = <F extends string>({
     fields,
@@ -275,47 +261,54 @@ const useTimePickerCore = <F extends string>({
     const [activeField, setActiveField] = useState<F>(initialField);
 
     const popoverOpenRef = useRef(false);
-    const shellRef = useRef<HTMLDivElement | null>(null);
     const popoverRef = useRef<IPopoverRef>({
         floatingElement: { current: null },
         referenceElement: { current: null }
     });
 
-    const typedChange = useTypedChange(onChange);
+    const typedChange = useTypedChange<{ event: ChangeEvent<HTMLInputElement>; values: Record<F, string>; field: F }>(
+        ({ event, values, field }) => onChange?.(event, values, field)
+    );
     const isInteractive = !disabled && !readOnly;
 
-    /**
-     * `Popover`'s reference props go to the shell without their ARIA attributes; the `ref` is merged
-     * with the shell's own ref.
-     */
+    /** The values of all fields with `field` replaced by `time`; an empty field reads as `""`. */
+    const getValues = (field?: F, time?: string): Record<F, string> =>
+        Object.fromEntries(
+            (Object.entries(fields) as [F, TimeField][]).map(([name, current]) => [
+                name,
+                name === field ? time : (current.committedValue ?? "")
+            ])
+        ) as Record<F, string>;
+
+    // The Popover's reference props without their ARIA attributes; the `ref` becomes the shell's ref.
     const { ref: anchorRef, ...anchorRest } = Object.fromEntries(
         Object.entries(anchorProps).filter(([key]) => !key.startsWith("aria-"))
     ) as { ref?: (node: HTMLElement | null) => void } & Record<string, unknown>;
 
-    /**
-     * `atoms/Popover` ignores RTL, so the side follows the edited field here.
-     */
+    // `atoms/Popover` ignores RTL, so the side follows the edited field here.
     const getPopoverPosition = (alignment: "start" | "end"): PopoverPosition => {
         const isRTL = typeof document !== "undefined" && document.dir === "rtl";
 
         return (alignment === "start") !== isRTL ? "bottom-left" : "bottom-right";
     };
 
+    // Whether `target` is inside the field or inside the popover.
     const isWithinPicker = (target: EventTarget | null): boolean => {
         if (!(target instanceof Node)) return false;
 
-        const floating = popoverRef.current.floatingElement.current;
+        const { referenceElement, floatingElement } = popoverRef.current;
 
-        return !!shellRef.current?.contains(target) || (floating instanceof Node && floating.contains(target));
+        return [referenceElement.current, floatingElement.current].some(
+            (element) => element instanceof Node && element.contains(target)
+        );
     };
 
     const isFieldInput = (target: EventTarget | null): boolean =>
         Object.values<InputRef>(inputRefs).some((ref) => ref.current === target);
 
     /**
-     * @param nextOpen target state
-     * @param focusOnOpen move focus into the popover, used for `ArrowDown`; `Enter` and `Space` open
-     * it while the input keeps the focus, so `Tab` continues to the next field
+     * @param focusOnOpen move the focus into the popover (`ArrowDown`); a click leaves it in the
+     * input, so `Tab` continues from there
      */
     const togglePopover = (nextOpen: boolean, focusOnOpen = false) => {
         if (nextOpen && !isInteractive) return;
@@ -337,16 +330,17 @@ const useTimePickerCore = <F extends string>({
     };
 
     /**
-     * Ends the editing of a field: the pending typed report goes out, the typed text is committed
-     * (normalized, completed from the last valid value or clamped) and then `onBlur` is reported,
-     * so the consumer sees the final value when it runs.
+     * Ends the editing of a field: flushes the pending typed report, commits the typed text
+     * (normalized, clamped or restored) through `onChange`, then reports `onBlur`. Only typed text
+     * is committed: a value from the props is displayed normalized but never reported back.
      */
     const leaveField = (field: F, event: FocusEvent<HTMLElement>) => {
         const current = fields[field];
+        let finalValue = current.rawValue ?? "";
 
         current.setIsEditing(false);
 
-        if (isInteractive) {
+        if (isInteractive && current.isEditing) {
             typedChange.flush();
 
             const resolved = resolveBlurValue(
@@ -357,18 +351,22 @@ const useTimePickerCore = <F extends string>({
             );
 
             if (resolved) {
+                finalValue = resolved.value ?? "";
                 current.setValue(resolved.value);
-                onChange?.(field, resolved.value ?? "", { source: "input", parts: resolved.parts });
+                onChange?.(
+                    toChangeEvent(event, inputRefs[field].current, finalValue),
+                    getValues(field, finalValue),
+                    field
+                );
             }
         }
 
-        onBlur?.(event, field);
+        onBlur?.(getValues(field, finalValue), event, field);
     };
 
     /**
-     * Focus leaving the shell or the popover. A field's own blur handler takes care of the focus
-     * leaving from its input; from the clear button or from inside the popover this is the moment
-     * the active field is left.
+     * Focus leaving the shell or the popover. The inputs report their own blur, so this covers the
+     * clear button and the popover items.
      */
     const handleFocusOut = (event: FocusEvent<HTMLElement>) => {
         if (isWithinPicker(event.relatedTarget)) return;
@@ -400,15 +398,12 @@ const useTimePickerCore = <F extends string>({
 
                 if (nextValue === current.rawValue) return;
 
+                event.persist?.();
                 current.setTypedValue(nextValue);
-                typedChange.report(field, nextValue, { source: "input", parts: parseTime(nextValue, is12Hour) });
+                typedChange.report({ event, values: getValues(field, nextValue), field });
             },
             onBlur: (event: FocusEvent<HTMLInputElement>) => {
-                /**
-                 * Moving the focus to the clear button or into the popover (`ArrowDown`) continues
-                 * the editing of this field: the typed text stays, so a value picked next is built
-                 * on top of it. Moving to the other field of a range does leave this one.
-                 */
+                // The clear button and the popover are part of editing this field; the other range field is not.
                 if (isWithinPicker(event.relatedTarget) && !isFieldInput(event.relatedTarget)) return;
 
                 leaveField(field, event);
@@ -416,66 +411,79 @@ const useTimePickerCore = <F extends string>({
             onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => {
                 onKeyDown?.(event, field);
 
-                if (!isInteractive || !OPEN_KEYS.includes(event.key)) return;
+                if (!isInteractive) return;
+
+                // Enter only closes an open popover (closed, a form may submit); ArrowDown opens it with the focus inside.
+                if (event.key === KEYS.ENTER) {
+                    if (!popoverOpenRef.current) return;
+
+                    event.preventDefault();
+                    togglePopover(false);
+                    return;
+                }
+
+                if (event.key !== KEYS.ARROW_DOWN) return;
 
                 event.preventDefault();
                 setActiveField(field);
-                togglePopover(true, event.key === KEYS.ARROW_DOWN);
+                togglePopover(true, true);
             }
         };
     };
 
     /**
-     * The popover keeps the focus in the field, so a selection can land in the middle of typing.
-     * It is built on top of the typed text (through `parts`) and then supersedes it: the pending
-     * typed report goes out first and the draft is dropped, otherwise the draft would keep hiding
-     * the selected value until the field is left.
+     * Applies a pick on top of the typed text, flushing the pending typed report first. The "no
+     * change" check uses `rawValue`: in controlled mode `committedValue` is still the prop of this
+     * render, without the draft that was just flushed.
      */
-    const handleSelect = (column: keyof TimeParts, value: string) => {
+    const handleSelect = (column: keyof TimeParts, value: string, event: SyntheticEvent) => {
         if (!isInteractive) return;
 
         const current = fields[activeField];
-        const result = processTimeSelection(current.parts, column, value, is12Hour, getBounds(activeField));
+        const composedTime = processTimeSelection(current.parts, column, value, is12Hour, getBounds(activeField));
 
         typedChange.flush();
         current.setIsEditing(false);
 
-        if (result.composedTime === current.committedValue) return;
+        if (composedTime === current.rawValue) return;
 
-        current.setValue(result.composedTime);
-        onChange?.(activeField, result.composedTime, { source: "select", parts: result.nextParts });
+        current.setValue(composedTime);
+        onChange?.(
+            toChangeEvent(event, inputRefs[activeField].current, composedTime),
+            getValues(activeField, composedTime),
+            activeField
+        );
     };
 
-    const handleClear = () => {
+    /** Clears every field; a range reports the clear once, for its initial field. */
+    const handleClear = (event: MouseEvent<HTMLButtonElement>) => {
         onClear?.();
 
         if (!clearable) return;
 
-        const allFields = Object.entries(fields) as [F, TimeField][];
-        const clearedFields = allFields.filter(([, field]) => !!field.rawValue).map(([name]) => name);
+        const allFields = Object.values<TimeField>(fields);
+        const hadValue = allFields.some((field) => !!field.rawValue);
 
         typedChange.flush();
-        allFields.forEach(([, field]) => {
+        allFields.forEach((field) => {
             field.setIsEditing(false);
             field.setValue(null);
         });
         setActiveField(initialField);
         togglePopover(false);
 
-        /**
-         * One report per field that held a value, so a controlled range updated field by field ends
-         * up with both fields empty.
-         */
-        clearedFields.forEach((field) => onChange?.(field, "", { source: "clear", parts: null }));
+        if (hadValue) {
+            const values = Object.fromEntries(Object.keys(fields).map((name) => [name, ""])) as Record<F, string>;
+
+            onChange?.(toChangeEvent(event, inputRefs[initialField].current, ""), values, initialField);
+        }
 
         focusInput(inputRefs[initialField].current);
     };
 
     /**
-     * The popover content unmounts on close, and an element removed from the DOM blurs silently.
-     * When the focus is inside the popover (keyboard navigation) it goes back to the input first, so
-     * that leaving the picker still goes through the field's blur: on an outside press the browser
-     * moves the focus on from the input, on `Escape` it simply stays there.
+     * Hands the focus back to the input when the popover closes on `Escape` or with the focus
+     * inside it (its content unmounts, and a removed element blurs silently).
      */
     const handlePopoverClose: PopoverCloseHandler = (_event, reason) => {
         const floating = popoverRef.current.floatingElement.current;
@@ -493,9 +501,7 @@ const useTimePickerCore = <F extends string>({
         togglePopover(true);
     };
 
-    /**
-     * The end icon toggles the popover, so it can also be closed from there.
-     */
+    // The icon toggles the popover, so it can also close it.
     const handleIconClick = () => {
         inputRefs[activeField].current?.focus();
         togglePopover(!popoverOpenRef.current);
@@ -509,7 +515,6 @@ const useTimePickerCore = <F extends string>({
             isExpanded: popoverOpen,
             anchorProps: anchorRest,
             anchorRef,
-            shellRef,
             onAreaClick: handleShellClick,
             onIconClick: handleIconClick,
             onFocusOut: handleFocusOut,
@@ -522,10 +527,7 @@ const useTimePickerCore = <F extends string>({
             popoverRef,
             onClose: handlePopoverClose,
             onFocusOut: handleFocusOut,
-            /**
-             * `Tab` inside the popover continues from the input, with the popover closed: open, its
-             * items would be the next tab stops after the input when nothing else follows the field.
-             */
+            // `Tab` continues from the input, with the popover closed.
             onTabOut: () => {
                 focusInput(inputRefs[activeField].current);
                 togglePopover(false);
@@ -546,24 +548,21 @@ export interface IUseSingleTimePickerOptions {
     disabled?: boolean;
     readOnly?: boolean;
     is12Hour?: boolean;
-    onChange?: (time: string, context: TimePickerChangeContext) => void;
+    onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
     onClear?: () => void;
     onOpenChange?: (open: boolean) => void;
     onFocus?: (event: FocusEvent<HTMLInputElement>) => void;
-    onBlur?: (event: FocusEvent<HTMLElement>) => void;
+    onBlur?: (time: string, event: FocusEvent<HTMLElement>) => void;
     onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void;
 }
 
-/**
- * @description
- * State and interaction handling of the single time picker, returned as the props of its input and
- * of its popover.
- */
+/** State and interaction of the single picker, as the props of its input and popover. */
 export const useSingleTimePicker = ({
     value,
     defaultValue,
     is12Hour = false,
     onChange,
+    onBlur,
     ...options
 }: IUseSingleTimePickerOptions) => {
     const field = useTimeField(value, defaultValue, is12Hour);
@@ -575,7 +574,8 @@ export const useSingleTimePicker = ({
         fields: { single: field },
         inputRefs: { single: inputRef },
         initialField: "single",
-        onChange: (_field, time, context) => onChange?.(time, context)
+        onChange: (event) => onChange?.(event),
+        onBlur: (values, event) => onBlur?.(values.single, event)
     });
 
     const handlers = core.getFieldHandlers("single");
@@ -597,25 +597,28 @@ export interface IUseRangeTimePickerOptions {
     disabled?: boolean;
     readOnly?: boolean;
     is12Hour?: boolean;
-    onChange?: (time: string, context: TimePickerRangeChangeContext) => void;
+    onChange?: (
+        event: ChangeEvent<HTMLInputElement>,
+        value: TimePickerRangeValue,
+        field: TimePickerRangeFields
+    ) => void;
     onClear?: () => void;
     onOpenChange?: (open: boolean) => void;
     onFocus?: (event: FocusEvent<HTMLInputElement>, field: TimePickerRangeFields) => void;
-    onBlur?: (event: FocusEvent<HTMLElement>, field: TimePickerRangeFields) => void;
+    onBlur?: (value: TimePickerRangeValue, event: FocusEvent<HTMLElement>, field: TimePickerRangeFields) => void;
     onKeyDown?: (event: KeyboardEvent<HTMLInputElement>, field: TimePickerRangeFields) => void;
 }
 
 /**
- * @description
- * State and interaction handling of the range time picker, returned as the props of its inputs and
- * of its popover. The start field can never go past the end one and vice versa, which is expressed
- * as a min/max bound around the value of the opposite field.
+ * State and interaction of the range picker, as the props of its inputs and popover. Each field is
+ * bounded by the other's value, so the start never passes the end.
  */
 export const useRangeTimePicker = ({
     value,
     defaultValue,
     is12Hour = false,
     onChange,
+    onBlur,
     ...options
 }: IUseRangeTimePickerOptions) => {
     const fields = {
@@ -637,7 +640,8 @@ export const useRangeTimePicker = ({
             minParts: field === PICKER_RANGE_FIELDS.END && fields.start.parts.hours ? fields.start.parts : null,
             maxParts: field === PICKER_RANGE_FIELDS.START && fields.end.parts.hours ? fields.end.parts : null
         }),
-        onChange: (field, time, context) => onChange?.(time, { ...context, field })
+        onChange,
+        onBlur
     });
 
     const { activeField, getFieldHandlers } = core;

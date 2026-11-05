@@ -1,8 +1,6 @@
 @use "../../../../../assets/styles/mixins";
 
 .pickerButton {
-    $this: &;
-
     display: flex;
     align-items: center;
     justify-content: center;
@@ -27,7 +25,7 @@
     &_selected {
         background-color: var(--guit-sem-color-background-selected-2);
         color: var(--guit-sem-color-foreground-inverse);
-        cursor: default;
+        pointer-events: none;
     }
 
     &_disabled {
@@ -36,15 +34,13 @@
         color: var(--guit-sem-color-foreground-disabled);
     }
 
-    &:not(#{$this}_selected) {
-        @include mixins.media-hover {
-            &:hover {
-                background-color: var(--guit-sem-color-background-neutral-1-hover);
-            }
+    @include mixins.media-hover {
+        &:hover {
+            background-color: var(--guit-sem-color-background-neutral-1-hover);
         }
+    }
 
-        &:active {
-            background-color: var(--guit-sem-color-background-neutral-1-pressed);
-        }
+    &:active {
+        background-color: var(--guit-sem-color-background-neutral-1-pressed);
     }
 }

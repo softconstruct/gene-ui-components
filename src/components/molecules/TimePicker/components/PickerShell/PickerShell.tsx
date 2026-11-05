@@ -1,14 +1,4 @@
-import React, {
-    FC,
-    FocusEvent,
-    HTMLAttributes,
-    MouseEvent,
-    MutableRefObject,
-    ReactNode,
-    Ref,
-    SyntheticEvent,
-    useCallback
-} from "react";
+import React, { FC, FocusEvent, HTMLAttributes, MouseEvent, ReactNode, SyntheticEvent } from "react";
 import classNames from "classnames";
 
 // Icons
@@ -46,11 +36,11 @@ interface IPickerShellProps {
     /**
      * Icon to display at the end of the input field.
      */
-    EndIcon?: FC<IconProps>;
+    Icon?: FC<IconProps>;
     /**
      * Callback function which triggers when the field value is getting cleared with the clear button.
      */
-    onClear?: () => void;
+    onClear?: (event: MouseEvent<HTMLButtonElement>) => void;
     /**
      * Accessible label of the clear button.
      */
@@ -61,13 +51,9 @@ interface IPickerShellProps {
      */
     anchorProps?: HTMLAttributes<HTMLDivElement>;
     /**
-     * `Popover` positioning ref, merged into the field element together with `shellRef`.
+     * `Popover` positioning ref of the field element.
      */
     anchorRef?: (node: HTMLElement | null) => void;
-    /**
-     * Reference to the field element, used to tell presses inside the field apart from outside ones.
-     */
-    shellRef?: Ref<HTMLDivElement>;
     /**
      * Callback for clicks on the field around the inputs (padding, separator), which behave like a
      * click on the input.
@@ -92,12 +78,7 @@ interface IPickerShellProps {
      */
     status: TimePickerStatus;
     /**
-     * Whether the field holds one input (`single`) or a start and end input (`range`). Added to the root as
-     * a `pickerShell_mode_*` modifier.
-     */
-    mode: "single" | "range";
-    /**
-     * The input or inputs rendered inside the field, before the clear button and `EndIcon`.
+     * The input or inputs rendered inside the field, before the clear button and `Icon`.
      */
     children: ReactNode;
     /**
@@ -126,7 +107,6 @@ const keepFocus = (event: MouseEvent<HTMLElement | SVGElement>) => {
 
 const PickerShell: FC<IPickerShellProps> = ({
     className,
-    mode,
     size,
     children,
     status,
@@ -134,31 +114,16 @@ const PickerShell: FC<IPickerShellProps> = ({
     helperTextId,
     disabled,
     readOnly,
-    EndIcon,
+    Icon,
     onClear,
     showClearButton,
     clearLabel,
     anchorProps,
     anchorRef,
-    shellRef,
     onAreaClick,
     onIconClick,
     onFocusOut
 }) => {
-    const setShellRef = useCallback(
-        (node: HTMLDivElement | null) => {
-            if (typeof shellRef === "function") {
-                shellRef(node);
-            } else if (shellRef) {
-                // eslint-disable-next-line no-param-reassign
-                (shellRef as MutableRefObject<HTMLDivElement | null>).current = node;
-            }
-
-            anchorRef?.(node);
-        },
-        [shellRef, anchorRef]
-    );
-
     const handleAreaMouseDown = (event: MouseEvent<HTMLDivElement>) => {
         if (isOwnTarget(event)) keepFocus(event);
     };
@@ -171,12 +136,11 @@ const PickerShell: FC<IPickerShellProps> = ({
         <>
             <div
                 {...anchorProps}
-                ref={setShellRef}
+                ref={anchorRef}
                 role="presentation"
                 className={classNames(
                     "pickerShell",
                     className,
-                    `pickerShell_mode_${mode}`,
                     `pickerShell_size_${size}`,
                     `pickerShell_status_${status}`,
                     {
@@ -189,7 +153,7 @@ const PickerShell: FC<IPickerShellProps> = ({
                 onBlur={onFocusOut}
             >
                 {children}
-                {(showClearButton || EndIcon) && (
+                {(showClearButton || Icon) && (
                     <div
                         role="presentation"
                         className="pickerShell__append"
@@ -206,8 +170,8 @@ const PickerShell: FC<IPickerShellProps> = ({
                                 layout="text"
                             />
                         )}
-                        {EndIcon && (
-                            <EndIcon
+                        {Icon && (
+                            <Icon
                                 size={20}
                                 className="pickerShell__icon"
                                 aria-hidden="true"

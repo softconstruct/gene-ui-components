@@ -1,10 +1,9 @@
 export { IRangeTimePickerProps, ISingleTimePickerProps, RangeTimePicker, default } from "./TimePicker";
 export {
-    TimeParts,
-    TimePickerChangeContext,
     TimePickerFormat,
-    TimePickerLocalization,
-    TimePickerRangeChangeContext,
+    ITimePickerLocalization,
+    TimePickerRangeFields,
+    TimePickerRangeValue,
     TimePickerSizes,
     TimePickerStatus
 } from "./types";

@@ -28,7 +28,7 @@ import useEllipsisDetection from "@hooks/useEllipsisDetection";
 import { headerTextVariantMap, KEYS, TIME_COLUMNS_ORDER, TIME_PARTS } from "../../constants";
 import { getTimePartValues, isPickerPartDisabled, resolveLocalization } from "../../helpers";
 // Types
-import { TimeParts, TimePickerLocalization, TimePickerRangeFields, TimePickerSizes } from "../../types";
+import { ITimePickerLocalization, TimeParts, TimePickerRangeFields, TimePickerSizes } from "../../types";
 import PickerButton from "../PickerButton/PickerButton";
 
 type PickerColumnEntry = {
@@ -111,9 +111,10 @@ interface IPickerPopoverProps {
      */
     id: string;
     /**
-     * Callback invoked with the edited column and the picked value.
+     * Callback invoked with the edited column, the picked value and the click that picked it (a key
+     * press on an option arrives as a click as well).
      */
-    onSelect?: (column: keyof TimeParts, val: string) => void;
+    onSelect?: (column: keyof TimeParts, val: string, event: MouseEvent<HTMLDivElement>) => void;
     /**
      * Currently selected time parts of the edited field.
      */
@@ -125,7 +126,7 @@ interface IPickerPopoverProps {
     /**
      * Custom localization for the component.
      */
-    localization?: TimePickerLocalization;
+    localization?: ITimePickerLocalization;
     /**
      * Current active field of the range picker.
      */
@@ -428,7 +429,7 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
         if (!button || button.disabled || !button.dataset.value) return;
 
         pickedColumnRef.current = part;
-        onSelect?.(part, button.dataset.value);
+        onSelect?.(part, button.dataset.value, event);
     };
 
     const handleColumnKeyDown = (part: keyof TimeParts) => (event: KeyboardEvent<HTMLDivElement>) => {

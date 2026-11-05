@@ -1,4 +1,4 @@
-import React, { FocusEvent, forwardRef, KeyboardEvent, useMemo } from "react";
+import React, { ChangeEvent, FocusEvent, forwardRef, KeyboardEvent, useMemo } from "react";
 import classNames from "classnames";
 import { nanoid } from "nanoid/non-secure";
 
@@ -26,11 +26,10 @@ import { createMaskTrack, resolveLocalization } from "./helpers";
 import { useRangeTimePicker, useSingleTimePicker } from "./hooks/useTimePicker";
 // Types
 import {
-    TimePickerChangeContext,
+    ITimePickerLocalization,
     TimePickerFormat,
-    TimePickerLocalization,
-    TimePickerRangeChangeContext,
     TimePickerRangeFields,
+    TimePickerRangeValue,
     TimePickerSizes,
     TimePickerStatus
 } from "./types";
@@ -116,7 +115,7 @@ interface ITimePickerBaseProps {
      * `selectHours`, `selectMinutes`, `selectSeconds`, `selectMeridiem` — accessible labels of the columns;<br>
      * `startTime`, `endTime` — accessible labels of the two range inputs.
      */
-    localization?: TimePickerLocalization;
+    localization?: ITimePickerLocalization;
     /**
      * Callback function which triggers when an input of the component is getting focused.
      */
@@ -125,10 +124,11 @@ interface ITimePickerBaseProps {
      * Callback function which triggers when the focus leaves the component — the input, its clear
      * button or the popover; moving the focus between them does not trigger it. The typed value is
      * committed first (completed, clamped, or restored to the last complete one when it is
-     * incomplete) and reported through `onChange`, so the value is final when this runs.
-     * `event.target` is the element the focus left.
+     * incomplete) and reported through `onChange`.
+     * @param time the final value, an empty string when the field is empty
+     * @param event `event.target` is the element the focus left
      */
-    onBlur?: (event: FocusEvent<HTMLElement>) => void;
+    onBlur?: (time: string, event: FocusEvent<HTMLElement>) => void;
     /**
      * Callback function which triggers on `keydown` of an input of the component.
      */
@@ -144,6 +144,8 @@ interface ISingleTimePickerProps extends ITimePickerBaseProps {
      * The value of the input field as a time string (`HH:mm:ss`, or `hh:mm:ss AM|PM` in the 12-hour
      * format; a 24-hour string is accepted in either format). Providing it makes the component
      * controlled, so it has to be updated from `onChange`. `null` or an empty string clears the field.
+     * A value that is not in the display form (`18:45`, or a 24-hour time in the 12-hour format) is
+     * displayed normalized but reported back only once the user edits it.
      */
     value?: string | null;
     /**
@@ -152,11 +154,16 @@ interface ISingleTimePickerProps extends ITimePickerBaseProps {
      */
     defaultValue?: string | null;
     /**
-     * Callback function that is triggered when the time picker value changes.
-     * @param time the composed time, an empty string when the value was cleared
-     * @param context what triggered the change and the parsed parts (`null` while incomplete)
+     * Callback function that is triggered when the time picker value changes: while the user types
+     * (the text as typed, which can be incomplete), on a pick from the popover, on clear and when the
+     * field is left with typed text that had to be completed or corrected. `onBlur` reports the
+     * final value once the user is done.
+     * @param event `event.target.value` is the time string (an empty string when the value was
+     * cleared) and `event.target.name` the `name` of the input. Typing reports the input's own
+     * change event; a pick, a clear and the blur commit have none, so the click, key or blur event
+     * that caused them is reported, with the input as its `target`.
      */
-    onChange?: (time: string, context: TimePickerChangeContext) => void;
+    onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
 interface IRangeTimePickerProps extends Omit<ITimePickerBaseProps, "onFocus" | "onBlur" | "onKeyDown"> {
@@ -170,7 +177,7 @@ interface IRangeTimePickerProps extends Omit<ITimePickerBaseProps, "onFocus" | "
     /**
      * Values of the two inputs, as `{ start, end }` time strings (`HH:mm:ss`, or `hh:mm:ss AM|PM` in
      * the 12-hour format). Providing it makes the component controlled, so it has to be updated from
-     * `onChange`, which reports the changed field in its context. `null` clears a field.
+     * `onChange`, which reports both values. `null` clears a field.
      */
     value?: {
         start: string | null;
@@ -185,11 +192,19 @@ interface IRangeTimePickerProps extends Omit<ITimePickerBaseProps, "onFocus" | "
         end: string | null;
     };
     /**
-     * Callback function that is triggered when one of the range values changes.
-     * @param time the composed time, an empty string when the value was cleared
-     * @param context which field changed, what triggered it and the parsed parts
+     * Callback function that is triggered when one of the range values changes, under the same
+     * conditions as the single picker's `onChange`.
+     * @param event `event.target.value` is the time string of the changed field and
+     * `event.target.name` the `name` of its input (`<name>-start` / `<name>-end`); see the single
+     * picker's `onChange` for which event is reported
+     * @param value both values as `{ start, end }` time strings, an empty string for an empty field
+     * @param field the field that changed; `start` when both fields were cleared
      */
-    onChange?: (time: string, context: TimePickerRangeChangeContext) => void;
+    onChange?: (
+        event: ChangeEvent<HTMLInputElement>,
+        value: TimePickerRangeValue,
+        field: TimePickerRangeFields
+    ) => void;
     /**
      * Callback function which triggers when one of the inputs is getting focused.
      * @param event
@@ -199,11 +214,12 @@ interface IRangeTimePickerProps extends Omit<ITimePickerBaseProps, "onFocus" | "
     /**
      * Callback function which triggers when one of the fields is left: the focus moves to the other
      * field, or leaves the component (the inputs, the clear button and the popover). The typed value
-     * is committed first and reported through `onChange`, so the value is final when this runs.
+     * is committed first and reported through `onChange`.
+     * @param value the final values as `{ start, end }` time strings, an empty string for an empty field
      * @param event `event.target` is the element the focus left
      * @param field the field that was left
      */
-    onBlur?: (event: FocusEvent<HTMLElement>, field: TimePickerRangeFields) => void;
+    onBlur?: (value: TimePickerRangeValue, event: FocusEvent<HTMLElement>, field: TimePickerRangeFields) => void;
     /**
      * Callback function which triggers on `keydown` of one of the inputs.
      * @param event
@@ -296,7 +312,7 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
                     name={name}
                     size={size}
                     placeholder={placeholder}
-                    EndIcon={Clock}
+                    Icon={Clock}
                     disabled={disabled}
                     readOnly={setup.isReadOnly}
                     required={required}
@@ -380,7 +396,7 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
                     name={name}
                     size={size}
                     placeholder={placeholder}
-                    EndIcon={Clock}
+                    Icon={Clock}
                     disabled={disabled}
                     readOnly={setup.isReadOnly}
                     required={required}
