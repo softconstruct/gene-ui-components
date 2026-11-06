@@ -563,6 +563,8 @@ export const useSingleTimePicker = ({
     is12Hour = false,
     onChange,
     onBlur,
+    onFocus,
+    onKeyDown,
     ...options
 }: IUseSingleTimePickerOptions) => {
     const field = useTimeField(value, defaultValue, is12Hour);
@@ -575,7 +577,9 @@ export const useSingleTimePicker = ({
         inputRefs: { single: inputRef },
         initialField: "single",
         onChange: (event) => onChange?.(event),
-        onBlur: (values, event) => onBlur?.(values.single, event)
+        onBlur: (values, event) => onBlur?.(values.single, event),
+        onFocus: (event) => onFocus?.(event),
+        onKeyDown: (event) => onKeyDown?.(event)
     });
 
     const handlers = core.getFieldHandlers("single");

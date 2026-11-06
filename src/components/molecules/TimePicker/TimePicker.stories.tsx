@@ -179,18 +179,14 @@ const rangeValueKey = (value?: IRangeTimePickerProps["defaultValue"]): string =>
 
 export const Default: SingleStory = {
     render: ({ defaultValue, ...props }) => (
-        <div style={singleStoryStyle}>
-            <TimePicker key={String(defaultValue)} defaultValue={defaultValue} {...props} />
-        </div>
+        <TimePicker key={String(defaultValue)} defaultValue={defaultValue} {...props} />
     ),
     args: { ...interactiveArgs, defaultValue: "" }
 };
 
 export const Range: RangeStory = {
     render: ({ defaultValue, ...props }) => (
-        <div style={rangeStoryStyle}>
-            <TimePicker.Range key={rangeValueKey(defaultValue)} defaultValue={defaultValue} {...props} />
-        </div>
+        <TimePicker.Range key={rangeValueKey(defaultValue)} defaultValue={defaultValue} {...props} />
     ),
     args: {
         ...interactiveArgs,

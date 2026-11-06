@@ -952,6 +952,22 @@ describe("TimePicker", () => {
             picker.unmount();
         });
 
+        it("calls onFocus and onKeyDown with the event only", () => {
+            const onFocus = jest.fn();
+            const onKeyDown = jest.fn();
+            const picker = mountSingle({ onFocus, onKeyDown });
+
+            picker.find("input.pickerMaskedInput").simulate("focus");
+            picker.find("input.pickerMaskedInput").simulate("keydown", { key: "1" });
+
+            expect(onFocus).toHaveBeenCalledTimes(1);
+            expect(onFocus.mock.calls[0]).toHaveLength(1);
+            expect(onKeyDown).toHaveBeenCalledTimes(1);
+            expect(onKeyDown.mock.calls[0]).toHaveLength(1);
+
+            picker.unmount();
+        });
+
         it("reports the input's own change event for typed text", () => {
             const onChange = jest.fn();
             const picker = mountSingle({ name: "time", onChange });
