@@ -30,9 +30,13 @@ import Toolbar from "./Toolbar/Toolbar";
 import {
     ColumnVisibilityState,
     DataTableColumn,
+    DataTableEditDefaults,
+    DataTableEditValues,
     DataTableGetRowStatus,
     DataTableRenderExpandedRow,
     DataTableRowExpandChangeHandler,
+    IDataTableCellChangePayload,
+    IDataTableEditConfig,
     IDataTableRowAction,
     ITableNoDataTexts,
     ManageColumnsConfig,
@@ -189,6 +193,44 @@ interface IDataTableProps<TData> {
      */
     manageColumnsConfig?: ManageColumnsConfig;
     /**
+     * Configuration object for edit mode.
+     * Providing it renders the Edit button in the toolbar and lets the columns marked `editable` be edited;
+     * omitting it leaves the table read-only.
+     * Both the mode and the edited values are owned by the consumer: `editing` says whether the table
+     * is in edit mode, and the drafts are passed back through `editValues`.
+     *
+     * @example
+     * ```tsx
+     * <DataTable
+     *   editConfig={{
+     *     editing: isEditing,
+     *     onEditStart: () => setIsEditing(true),
+     *     onCellChange: ({ rowId, columnId, value }) => updateDraft(rowId, columnId, value),
+     *     onSave: (values) => api.save(values),
+     *     onCancel: () => {
+     *       clearDrafts();
+     *       setIsEditing(false);
+     *     }
+     *   }}
+     *   editValues={drafts}
+     * />
+     * ```
+     */
+    editConfig?: IDataTableEditConfig<TData>;
+    /**
+     * Draft values displayed by the editing cells, keyed by row id.
+     * Providing them makes the drafts controlled: keep them up to date from `onCellChange`.
+     * Omitting them lets the table hold the drafts itself and report them through `onSave`.
+     * Sparse: a cell without an entry falls back to its value from `data`,
+     * which keeps the drafts out of sorting, filtering and pagination.
+     *
+     * @example
+     * ```tsx
+     * editValues={{ "12": { firstName: "Jane" } }}
+     * ```
+     */
+    editValues?: DataTableEditValues<TData>;
+    /**
      * Resolves a stable, unique id for a row from its data.
      * Without it rows are identified by their index, so row-bound state (e.g. expanded rows)
      * sticks to positions instead of records when data is re-sorted or paginated on the server.
@@ -202,6 +244,7 @@ interface IDataTableProps<TData> {
 }
 
 const EMPTY_DATA: never[] = [];
+const EMPTY_EDIT_VALUES = {};
 const DEFAULT_MANAGE_COLUMNS_CONFIG = {
     disabled: false,
     visible: false,
@@ -215,6 +258,16 @@ const DEFAULT_MANAGE_COLUMNS_CONFIG = {
         saveButton: "Save"
     }
 } satisfies ResolvedManageColumnsConfig;
+
+const DEFAULT_EDIT_CONFIG = {
+    saveDisabled: false,
+    loading: false,
+    texts: {
+        editButton: "Edit",
+        saveButton: "Save",
+        cancelButton: "Cancel"
+    }
+} satisfies DataTableEditDefaults;
 
 /**
  * Data Table used to display structured information in a grid format, making it easy to organize, view, and interact with large datasets.
@@ -241,10 +294,42 @@ const DataTable = <TData,>({
     rowActions,
     getRowStatus,
     manageColumnsConfig = DEFAULT_MANAGE_COLUMNS_CONFIG,
+    editConfig,
+    editValues,
     getRowId
 }: IDataTableProps<TData>): ReactElement => {
     const [expanded, setExpanded] = useState<ExpandedState>({});
     const [columnOrder, setColumnOrder] = useState<ColumnOrderState>([]);
+    const [internalDrafts, setInternalDrafts] = useState<DataTableEditValues<TData>>(EMPTY_EDIT_VALUES);
+    const isControlled = editValues !== undefined;
+    const activeDrafts = editValues ?? internalDrafts;
+
+    const isEditing = Boolean(editConfig?.editing);
+    const editConfigRef = useRef(editConfig);
+    const isControlledRef = useRef(isControlled);
+    const activeDraftsRef = useRef(activeDrafts);
+    editConfigRef.current = editConfig;
+    isControlledRef.current = isControlled;
+    activeDraftsRef.current = activeDrafts;
+
+    useEffect(() => {
+        if (!isEditing) setInternalDrafts(EMPTY_EDIT_VALUES);
+    }, [isEditing]);
+
+    const handleEditSave = useCallback(() => {
+        editConfigRef.current?.onSave(activeDraftsRef.current);
+    }, []);
+
+    const handleCellChange = useCallback((payload: IDataTableCellChangePayload<TData>) => {
+        if (!isControlledRef.current) {
+            setInternalDrafts((previous) => ({
+                ...previous,
+                [payload.rowId]: { ...previous[payload.rowId], [payload.columnId]: payload.value }
+            }));
+        }
+
+        editConfigRef.current?.onCellChange?.(payload);
+    }, []);
 
     const isExpandable = Boolean(renderExpandedRow);
 
@@ -400,17 +485,25 @@ const DataTable = <TData,>({
                 ...manageColumnsConfig,
                 texts: { ...DEFAULT_MANAGE_COLUMNS_CONFIG.texts, ...manageColumnsConfig.texts }
             },
+            editConfig: editConfig
+                ? {
+                      ...DEFAULT_EDIT_CONFIG,
+                      ...editConfig,
+                      texts: { ...DEFAULT_EDIT_CONFIG.texts, ...editConfig.texts },
+                      onSave: handleEditSave
+                  }
+                : null,
             initialColumnVisibility,
             initialColumnPinning
         }),
-        [table, manageColumnsConfig, initialColumnVisibility, initialColumnPinning]
+        [table, manageColumnsConfig, editConfig, handleEditSave, initialColumnVisibility, initialColumnPinning]
     );
 
     return (
         <DataTableProvider value={contextValue}>
             <DirModeContext.Provider value={dirMode}>
                 <div className={classNames("dataTable", className)}>
-                    <Toolbar />
+                    <Toolbar loading={isTableLoading} />
                     <Scrollbar>
                         <table
                             className={classNames("dataTable__table", {
@@ -431,6 +524,10 @@ const DataTable = <TData,>({
                                 rowActions={rowActions}
                                 getRowStatus={getRowStatus}
                                 renderExpandedRow={renderExpandedRow}
+                                isEditing={isEditing}
+                                isEditDisabled={editConfig?.loading}
+                                editValues={activeDrafts}
+                                onCellChange={handleCellChange}
                             />
                         </table>
                     </Scrollbar>

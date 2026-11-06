@@ -79,6 +79,12 @@ export type DataTableColumn<TData> = {
      */
     defaultPinned?: boolean;
     /**
+     * Whether the column's cells become editable while the table is in edit mode.
+     * Has no effect when `editConfig` is not provided.
+     * @default false
+     */
+    editable?: boolean;
+    /**
      * Lean cell renderer (no TanStack CellContext exposure).
      * IMPORTANT: For optimal performance on large tables, ensure this function is memoized
      * (e.g., using `useCallback` or defined outside the component) to avoid unnecessary cell re-renders.
@@ -208,11 +214,121 @@ export type ResolvedManageColumnsConfig = Omit<ManageColumnsConfig, "disabled" |
             Pick<IManageColumnsTexts, "noResultsFoundDescription">;
     };
 
+/**
+ * Draft values held by the consumer while the table is in edit mode, keyed by row id.
+ */
+export type DataTableEditValues<TData> = Record<string, Partial<Record<keyof TData & string, string>>>;
+
+/**
+ * Payload reported for every change made in an editing cell.
+ */
+export interface IDataTableCellChangePayload<TData> {
+    /**
+     * Stable row id assigned by the table (matches `Row.id` from TanStack Table).
+     */
+    rowId: string;
+    /**
+     * Id of the edited column.
+     */
+    columnId: string;
+    /**
+     * The full row data object, as it is in `data` (without the draft applied).
+     */
+    row: TData;
+    /**
+     * The current value of the editor. The built-in editor always reports a string.
+     */
+    value: string;
+}
+
+export interface IDataTableEditTexts {
+    /** Text for the button that enters edit mode * */
+    editButton?: string;
+    /** Text for the save button * */
+    saveButton?: string;
+    /** Text for the cancel button * */
+    cancelButton?: string;
+}
+
+/**
+ * Configuration object that makes the table editable.
+ * Providing it renders the Edit button; omitting it leaves the table read-only.
+ * Both the edit mode and the edited values are owned by the consumer: the table renders the buttons
+ * and the editors and reports every click and keystroke, holding no edit state of its own.
+ */
+export interface IDataTableEditConfig<TData> {
+    /**
+     * Whether the table is in edit mode.
+     * The mode is owned by the consumer: enter it from `onEditStart`, leave it from `onCancel` and,
+     * once the save succeeded, from `onSave`. A rejected save must leave it on, so the user keeps
+     * both the mode and the drafts.
+     */
+    editing: boolean;
+    /**
+     * Whether the save button is interactive.
+     * For conditions only the consumer knows, such as nothing having been changed yet.
+     * @default false
+     */
+    saveDisabled?: boolean;
+    /**
+     * Whether edit mode is in loading state, a save in progress included.
+     * Will disable the editors and all edit actions, and run the loading state of the save button.
+     * @default false
+     */
+    loading?: boolean;
+    /**
+     * Texts to be displayed on the edit mode buttons.
+     */
+    texts?: IDataTableEditTexts;
+    /**
+     * Callback fired on every change made in an editing cell.
+     * Required while `editValues` is provided, since the drafts are then the consumer's to keep up
+     * to date. Without `editValues` the table holds the drafts itself and this is only a notification.
+     */
+    onCellChange?: (payload: IDataTableCellChangePayload<TData>) => void;
+    /**
+     * Callback function which triggers when the save button is clicked, with the current drafts.
+     * The table reports the click and nothing more: keeping `editing` on until the save succeeded,
+     * and `loading` on while it runs, is the consumer's.
+     */
+    onSave: (values: DataTableEditValues<TData>) => void;
+    /**
+     * Callback function which triggers when the cancel button is clicked.
+     * Turns `editing` off and discards the drafts.
+     */
+    onCancel: () => void;
+    /**
+     * Callback function which triggers when the edit button is clicked.
+     * The only way into edit mode: it has to turn `editing` on.
+     */
+    onEditStart: () => void;
+}
+
+export type DataTableEditDefaults = {
+    saveDisabled: boolean;
+    loading: boolean;
+    texts: Required<IDataTableEditTexts>;
+};
+
+/**
+ * `IDataTableEditConfig` after the DataTable merged it with its defaults.
+ * Flags and texts that have a default are guaranteed to be defined, and `onSave` is already bound to
+ * the current `editValues`, so the save button can call it without arguments.
+ */
+export type ResolvedDataTableEditConfig<TData> = Omit<
+    IDataTableEditConfig<TData>,
+    "saveDisabled" | "loading" | "texts" | "onSave"
+> &
+    DataTableEditDefaults & {
+        onSave: () => void;
+    };
+
 declare module "@tanstack/react-table" {
     // eslint-disable-next-line
     interface ColumnMeta<TData extends RowData, TValue> {
         explicitSize?: number;
         defaultVisible?: boolean;
         defaultPinned?: boolean;
+        editable?: boolean;
     }
 }

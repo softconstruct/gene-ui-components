@@ -2,10 +2,12 @@ import React, { memo } from "react";
 import { Cell, ColumnDef, flexRender } from "@tanstack/react-table";
 import classNames from "classnames";
 
+import TextField from "@components/molecules/TextField";
 import { areCellsEqual, getCellContentStyle, getCellStyle } from "@components/organisms/DataTable/helper";
 
 import { EXPANDER_COLUMN_ID } from "../../constants";
 import { CellWidthContext } from "../../context";
+import { IDataTableCellChangePayload } from "../../types";
 
 // Styles
 import "./TableBodyCell.scss";
@@ -70,6 +72,24 @@ export interface ITableBodyCellProps<TData, TValue> {
      */
     // eslint-disable-next-line react/no-unused-prop-types -- consumed by the areCellsEqual memo comparator
     rowData: TData;
+    /**
+     * Whether this cell renders an editor instead of its read-only content.
+     */
+    isCellEditing: boolean;
+    /**
+     * Whether the editor of this cell is interactive.
+     */
+    isEditDisabled: boolean;
+    /**
+     * Value the editor shows: the draft from `editValues` when the cell has one, the value from
+     * `data` otherwise.
+     */
+    editValue: string;
+    /**
+     * Reports what was typed into the editor. Must stay referentially stable, it is not compared by
+     * {@link areCellsEqual}.
+     */
+    onCellChange?: (payload: IDataTableCellChangePayload<TData>) => void;
 }
 
 /**
@@ -90,24 +110,48 @@ const TableBodyCell = <TData, TValue>({
     isPinned,
     offset,
     width,
-    dirMode
+    dirMode,
+    isCellEditing,
+    isEditDisabled,
+    editValue,
+    onCellChange
 }: ITableBodyCellProps<TData, TValue>) => {
     const isExpanderCell = cell.column.id === EXPANDER_COLUMN_ID;
     const isRTL = dirMode === "rtl";
     const explicitSize = cell.column.columnDef.meta?.explicitSize;
+    const measuredSize = cell.getContext().table.getState().columnSizing[cell.column.id];
+    const frozenSize = isCellEditing ? (explicitSize ?? measuredSize) : explicitSize;
 
     return (
         <td
             className={classNames("tableBodyCell", {
                 tableBodyCell_expander: isExpanderCell,
                 tableBodyCell_expander_expanded: isExpanded,
-                tableBodyCell_pinned: isPinned
+                tableBodyCell_pinned: isPinned,
+                tableBodyCell_editing: isCellEditing
             })}
-            style={getCellStyle(explicitSize, offset, isPinned, isRTL)}
+            style={getCellStyle(frozenSize, offset, isPinned, isRTL)}
         >
             <CellWidthContext.Provider value={width}>
-                <div className="tableBodyCell__content" style={getCellContentStyle(explicitSize)}>
-                    {flexRender(renderer, cell.getContext())}
+                <div className="tableBodyCell__content" style={getCellContentStyle(frozenSize)}>
+                    {isCellEditing ? (
+                        <TextField
+                            className="tableBodyCell__editor"
+                            size="small"
+                            value={editValue}
+                            disabled={isEditDisabled}
+                            onChange={(event) =>
+                                onCellChange?.({
+                                    rowId: cell.row.id,
+                                    columnId: cell.column.id,
+                                    row: cell.row.original,
+                                    value: event.target.value
+                                })
+                            }
+                        />
+                    ) : (
+                        flexRender(renderer, cell.getContext())
+                    )}
                 </div>
             </CellWidthContext.Provider>
         </td>

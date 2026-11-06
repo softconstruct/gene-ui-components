@@ -28,8 +28,10 @@
         padding: 0;
     }
 
-    // Sizes the column (fit-content, paddings included) up to the maximum cell width; longer content
-    // is truncated, wider custom content is clipped horizontally only. Keep in sync with TableHeaderCell.
+    &_editing {
+        padding-block: var(--guit-ref-spacing-small);
+    }
+
     &__content {
         display: flex;
         align-items: center;
@@ -44,6 +46,11 @@
 
     &_expander &__content {
         padding-inline: var(--guit-ref-spacing-small);
+    }
+
+    &__editor {
+        width: 100%;
+        min-width: 0;
     }
 
     &__text {
