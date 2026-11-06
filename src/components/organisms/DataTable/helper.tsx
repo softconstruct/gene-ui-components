@@ -51,7 +51,7 @@ export interface ICellProps<TData, TValue> {
      * Value the editor shows: the draft from `editValues` when the cell has one, the value from
      * `data` otherwise.
      */
-    editValue: unknown;
+    editValue: string;
 }
 
 /**

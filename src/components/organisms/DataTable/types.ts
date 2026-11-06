@@ -217,7 +217,7 @@ export type ResolvedManageColumnsConfig = Omit<ManageColumnsConfig, "disabled" |
 /**
  * Draft values held by the consumer while the table is in edit mode, keyed by row id.
  */
-export type DataTableEditValues<TData> = Record<string, Partial<Record<keyof TData & string, unknown>>>;
+export type DataTableEditValues<TData> = Record<string, Partial<Record<keyof TData & string, string>>>;
 
 /**
  * Payload reported for every change made in an editing cell.
@@ -304,6 +304,12 @@ export interface IDataTableEditConfig<TData> {
     onEditStart: () => void;
 }
 
+export type DataTableEditDefaults = {
+    saveDisabled: boolean;
+    loading: boolean;
+    texts: Required<IDataTableEditTexts>;
+};
+
 /**
  * `IDataTableEditConfig` after the DataTable merged it with its defaults.
  * Flags and texts that have a default are guaranteed to be defined, and `onSave` is already bound to
@@ -313,8 +319,7 @@ export type ResolvedDataTableEditConfig<TData> = Omit<
     IDataTableEditConfig<TData>,
     "saveDisabled" | "loading" | "texts" | "onSave"
 > &
-    Required<Pick<IDataTableEditConfig<TData>, "saveDisabled" | "loading">> & {
-        texts: Required<IDataTableEditTexts>;
+    DataTableEditDefaults & {
         onSave: () => void;
     };
 

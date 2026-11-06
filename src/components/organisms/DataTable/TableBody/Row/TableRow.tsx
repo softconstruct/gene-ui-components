@@ -90,7 +90,7 @@ const TableRow = <TData,>({
     onCellChange
 }: ITableRowProps<TData>) => {
     const dirMode = useDirMode();
-    const drafts = rowEditValues as Record<string, unknown> | undefined;
+    const drafts = rowEditValues as Record<string, string> | undefined;
     const rowStatus = getRowStatus?.(row.original);
     const isRowExpanded = row.getIsExpanded();
     const expandedRow = isRowExpanded ? renderExpandedRow?.(row.original) : null;
@@ -124,7 +124,7 @@ const TableRow = <TData,>({
                             rowData={row.original}
                             isCellEditing={!!isEditing && !!cell.column.columnDef.meta?.editable}
                             isEditDisabled={!!isEditDisabled}
-                            editValue={hasDraft ? drafts[columnId] : value}
+                            editValue={String((hasDraft ? drafts[columnId] : value) ?? "")}
                             onCellChange={onCellChange}
                         />
                     );

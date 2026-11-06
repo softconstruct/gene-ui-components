@@ -30,6 +30,7 @@ import Toolbar from "./Toolbar/Toolbar";
 import {
     ColumnVisibilityState,
     DataTableColumn,
+    DataTableEditDefaults,
     DataTableEditValues,
     DataTableGetRowStatus,
     DataTableRenderExpandedRow,
@@ -39,7 +40,6 @@ import {
     IDataTableRowAction,
     ITableNoDataTexts,
     ManageColumnsConfig,
-    ResolvedDataTableEditConfig,
     ResolvedManageColumnsConfig
 } from "./types";
 
@@ -267,7 +267,7 @@ const DEFAULT_EDIT_CONFIG = {
         saveButton: "Save",
         cancelButton: "Cancel"
     }
-} satisfies Pick<ResolvedDataTableEditConfig<unknown>, "saveDisabled" | "loading" | "texts">;
+} satisfies DataTableEditDefaults;
 
 /**
  * Data Table used to display structured information in a grid format, making it easy to organize, view, and interact with large datasets.

@@ -84,7 +84,7 @@ export interface ITableBodyCellProps<TData, TValue> {
      * Value the editor shows: the draft from `editValues` when the cell has one, the value from
      * `data` otherwise.
      */
-    editValue: unknown;
+    editValue: string;
     /**
      * Reports what was typed into the editor. Must stay referentially stable, it is not compared by
      * {@link areCellsEqual}.
@@ -138,7 +138,7 @@ const TableBodyCell = <TData, TValue>({
                         <TextField
                             className="tableBodyCell__editor"
                             size="small"
-                            value={String(editValue ?? "")}
+                            value={editValue}
                             disabled={isEditDisabled}
                             onChange={(event) =>
                                 onCellChange?.({
