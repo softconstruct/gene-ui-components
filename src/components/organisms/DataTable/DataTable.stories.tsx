@@ -8,6 +8,7 @@ import { Pencil, RecycleBin } from "@geneui/icons";
 // Components
 import NumberField from "@components/molecules/NumberField";
 import Pagination from "@components/molecules/Pagination";
+import Switch from "@components/molecules/Switch";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
@@ -242,7 +243,12 @@ const editableColumns: IDataTableProps<MockRowType>["columns"] = [
     { accessorKey: "LastName", header: "Last name", editable: true },
     { accessorKey: "Email", header: "Email", editable: true },
     { accessorKey: "DayOffs", header: "Day offs", editable: true },
-    { accessorKey: "Created", header: "Created" }
+    {
+        accessorKey: "IsVerified",
+        header: "Verified",
+        editable: true,
+        renderCell: ({ value }) => <Switch defaultChecked={Boolean(value)} />
+    }
 ];
 
 const EditModeTableWrapper = (props: IDataTableProps<MockRowType>) => {
