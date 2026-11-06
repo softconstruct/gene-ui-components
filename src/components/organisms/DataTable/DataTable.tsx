@@ -260,7 +260,6 @@ const DEFAULT_MANAGE_COLUMNS_CONFIG = {
 } satisfies ResolvedManageColumnsConfig;
 
 const DEFAULT_EDIT_CONFIG = {
-    disabled: false,
     saveDisabled: false,
     loading: false,
     texts: {
@@ -268,7 +267,7 @@ const DEFAULT_EDIT_CONFIG = {
         saveButton: "Save",
         cancelButton: "Cancel"
     }
-} satisfies Pick<ResolvedDataTableEditConfig<unknown>, "disabled" | "saveDisabled" | "loading" | "texts">;
+} satisfies Pick<ResolvedDataTableEditConfig<unknown>, "saveDisabled" | "loading" | "texts">;
 
 /**
  * Data Table used to display structured information in a grid format, making it easy to organize, view, and interact with large datasets.
@@ -504,7 +503,7 @@ const DataTable = <TData,>({
         <DataTableProvider value={contextValue}>
             <DirModeContext.Provider value={dirMode}>
                 <div className={classNames("dataTable", className)}>
-                    <Toolbar />
+                    <Toolbar loading={isTableLoading} />
                     <Scrollbar>
                         <table
                             className={classNames("dataTable__table", {
@@ -526,7 +525,7 @@ const DataTable = <TData,>({
                                 getRowStatus={getRowStatus}
                                 renderExpandedRow={renderExpandedRow}
                                 isEditing={isEditing}
-                                isEditDisabled={editConfig?.disabled || editConfig?.loading}
+                                isEditDisabled={editConfig?.loading}
                                 editValues={activeDrafts}
                                 onCellChange={handleCellChange}
                             />

@@ -12,14 +12,21 @@ import ManageColumns from "./ManageColumns/ManageColumns";
 // Styles
 import "./Toolbar.scss";
 
-const Toolbar = <TData,>() => {
+interface IToolbarProps {
+    /**
+     * Whether the table is in loading state.
+     */
+    loading: boolean;
+}
+
+const Toolbar = <TData,>({ loading: isTableLoading }: IToolbarProps) => {
     const { table, manageColumnsConfig, editConfig } = useDataTableContext<TData>();
     const { visible: isManageColumnsVisible } = manageColumnsConfig;
 
     if (!isManageColumnsVisible && !editConfig) return null;
 
     const isEditing = Boolean(editConfig?.editing);
-    const isSaveDisabled = Boolean(editConfig?.loading || editConfig?.disabled || editConfig?.saveDisabled);
+    const isSaveDisabled = Boolean(editConfig?.loading || editConfig?.saveDisabled);
     const hasRows = table.getCoreRowModel().rows.length > 0;
 
     return (
@@ -46,7 +53,7 @@ const Toolbar = <TData,>() => {
                             iconPosition="before"
                             appearance="secondary"
                             layout="outline"
-                            disabled={editConfig.disabled || !hasRows}
+                            disabled={isTableLoading || !hasRows}
                             onClick={editConfig.onEditStart}
                         >
                             {editConfig.texts.editButton}

@@ -265,13 +265,6 @@ export interface IDataTableEditConfig<TData> {
      */
     editing: boolean;
     /**
-     * Whether the user may change data at all, a permission check for example.
-     * When `true` the cell editors and the edit and save buttons are all rendered in a disabled
-     * state, while cancel stays interactive so an edit mode entered earlier can always be left.
-     * @default false
-     */
-    disabled?: boolean;
-    /**
      * Whether the save button is interactive.
      * For conditions only the consumer knows, such as nothing having been changed yet.
      * @default false
@@ -318,9 +311,9 @@ export interface IDataTableEditConfig<TData> {
  */
 export type ResolvedDataTableEditConfig<TData> = Omit<
     IDataTableEditConfig<TData>,
-    "disabled" | "saveDisabled" | "loading" | "texts" | "onSave"
+    "saveDisabled" | "loading" | "texts" | "onSave"
 > &
-    Required<Pick<IDataTableEditConfig<TData>, "disabled" | "saveDisabled" | "loading">> & {
+    Required<Pick<IDataTableEditConfig<TData>, "saveDisabled" | "loading">> & {
         texts: Required<IDataTableEditTexts>;
         onSave: () => void;
     };
