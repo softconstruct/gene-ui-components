@@ -1,0 +1,10 @@
+.pickerInput {
+    &__separator {
+        flex: 0 0 auto;
+        color: var(--guit-sem-color-foreground-neutral-1);
+
+        &_disabled {
+            color: var(--guit-sem-color-foreground-disabled);
+        }
+    }
+}
