@@ -42,6 +42,11 @@
         max-width: 18rem;
         padding-inline: var(--guit-ref-spacing-large);
         overflow-x: clip;
+
+        .dataTable__table_sized & {
+            width: 100%;
+            max-width: none;
+        }
     }
 
     &_expander &__content {

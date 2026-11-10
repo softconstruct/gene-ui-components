@@ -462,6 +462,15 @@ const DataTable = <TData,>({
 
     const isTableDataEmpty = isTableLoading || !data?.length;
 
+    const headerGroups = table.getHeaderGroups();
+    const leafColumns = headerGroups[headerGroups.length - 1]?.headers.map(({ column }) => column) ?? [];
+    const { columnSizing } = table.getState();
+    const isSized =
+        leafColumns.length > 0 &&
+        leafColumns.every(
+            (column) => column.columnDef.meta?.explicitSize !== undefined || columnSizing[column.id] !== undefined
+        );
+
     const [dirMode, setDirMode] = useState(() => (typeof document === "undefined" ? "ltr" : document.dir || "ltr"));
 
     useEffect(() => {
@@ -503,17 +512,28 @@ const DataTable = <TData,>({
         <DataTableProvider value={contextValue}>
             <DirModeContext.Provider value={dirMode}>
                 <div className={classNames("dataTable", className)}>
-                    <Toolbar loading={isTableLoading} />
+                    <Toolbar isTableLoading={isTableLoading} />
                     <Scrollbar>
                         <table
                             className={classNames("dataTable__table", {
-                                dataTable__noDataToDisplay: isTableDataEmpty
+                                dataTable__noDataToDisplay: isTableDataEmpty,
+                                dataTable__table_sized: isSized
                             })}
+                            style={isSized ? { width: `${table.getTotalSize()}px` } : undefined}
                         >
+                            <colgroup>
+                                {leafColumns.map((column) => (
+                                    <col
+                                        key={column.id}
+                                        style={isSized ? { width: `${column.getSize()}px` } : undefined}
+                                    />
+                                ))}
+                            </colgroup>
                             <TableHeader
                                 sticky={sticky}
-                                headerGroups={table.getHeaderGroups()}
+                                headerGroups={headerGroups}
                                 hasRowActions={Boolean(rowActions?.length)}
+                                isSized={isSized}
                             />
                             <TableBody
                                 loading={isTableLoading}

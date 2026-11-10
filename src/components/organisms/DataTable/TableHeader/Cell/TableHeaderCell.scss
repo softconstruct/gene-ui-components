@@ -30,6 +30,11 @@
         min-width: 100%;
         max-width: 18rem;
         padding-inline: var(--guit-ref-spacing-large);
+
+        .dataTable__table_sized & {
+            width: 100%;
+            max-width: none;
+        }
     }
 
     &__text {

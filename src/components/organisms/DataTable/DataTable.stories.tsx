@@ -296,11 +296,17 @@ const EditModeTableWrapper = (props: IDataTableProps<MockRowType>) => {
 const UncontrolledEditModeTableWrapper = (props: IDataTableProps<MockRowType>) => {
     const [rows, setRows] = useState<MockRowType[]>(mockData);
     const [isEditing, setIsEditing] = useState(false);
+    const [hasChanges, setHasChanges] = useState(false);
 
     const editConfig = useMemo<IDataTableEditConfig<MockRowType>>(
         () => ({
             editing: isEditing,
-            onEditStart: () => setIsEditing(true),
+            saveDisabled: !hasChanges,
+            onEditStart: () => {
+                setHasChanges(false);
+                setIsEditing(true);
+            },
+            onCellChange: () => setHasChanges(true),
             onCancel: () => setIsEditing(false),
             onSave: (values) => {
                 setRows((previous) =>
@@ -313,7 +319,7 @@ const UncontrolledEditModeTableWrapper = (props: IDataTableProps<MockRowType>) =
                 setIsEditing(false);
             }
         }),
-        [isEditing]
+        [isEditing, hasChanges]
     );
 
     return <DataTable {...props} data={rows} getRowId={(row) => String(row.Id)} editConfig={editConfig} />;

@@ -119,8 +119,6 @@ const TableBodyCell = <TData, TValue>({
     const isExpanderCell = cell.column.id === EXPANDER_COLUMN_ID;
     const isRTL = dirMode === "rtl";
     const explicitSize = cell.column.columnDef.meta?.explicitSize;
-    const measuredSize = cell.getContext().table.getState().columnSizing[cell.column.id];
-    const frozenSize = isCellEditing ? (explicitSize ?? measuredSize) : explicitSize;
 
     return (
         <td
@@ -130,10 +128,10 @@ const TableBodyCell = <TData, TValue>({
                 tableBodyCell_pinned: isPinned,
                 tableBodyCell_editing: isCellEditing
             })}
-            style={getCellStyle(frozenSize, offset, isPinned, isRTL)}
+            style={getCellStyle(explicitSize, offset, isPinned, isRTL)}
         >
             <CellWidthContext.Provider value={width}>
-                <div className="tableBodyCell__content" style={getCellContentStyle(frozenSize)}>
+                <div className="tableBodyCell__content" style={getCellContentStyle(explicitSize)}>
                     {isCellEditing ? (
                         <TextField
                             className="tableBodyCell__editor"

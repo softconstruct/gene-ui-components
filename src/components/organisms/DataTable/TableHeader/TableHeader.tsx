@@ -31,6 +31,10 @@ interface ITableHeaderProps<TData> {
      * rows keep an equal cell count.
      */
     hasRowActions?: boolean;
+    /**
+     * Whether every column already has a width, so there is nothing left to measure.
+     */
+    isSized: boolean;
 }
 
 /**
@@ -43,7 +47,7 @@ interface ITableHeaderProps<TData> {
  * @param props - The properties for the component.
  * @returns The table header element containing all rendered header rows and cells.
  */
-const TableHeader = <TData,>({ headerGroups, sticky, hasRowActions }: ITableHeaderProps<TData>) => {
+const TableHeader = <TData,>({ headerGroups, sticky, hasRowActions, isSized }: ITableHeaderProps<TData>) => {
     const { table } = useDataTableContext<TData>();
     const theadRef = useRef<HTMLTableSectionElement>(null);
 
@@ -77,6 +81,8 @@ const TableHeader = <TData,>({ headerGroups, sticky, hasRowActions }: ITableHead
             });
         }
 
+        if (isSized) return () => undefined;
+
         const observer = new ResizeObserver((entries) => {
             const { columnSizing } = table.getState();
             const updates: Record<string, number> = {};
@@ -86,9 +92,9 @@ const TableHeader = <TData,>({ headerGroups, sticky, hasRowActions }: ITableHead
                 if (!columnId) return;
 
                 const newWidth = Math.round(target.getBoundingClientRect().width);
-                const currentSize = columnSizing[columnId] ?? table.getColumn(columnId)?.columnDef.size ?? 0;
+                const currentSize = columnSizing[columnId];
 
-                if (Math.abs(currentSize - newWidth) > 1) {
+                if (currentSize === undefined || Math.abs(currentSize - newWidth) > 1) {
                     updates[columnId] = newWidth;
                 }
             });
@@ -100,7 +106,7 @@ const TableHeader = <TData,>({ headerGroups, sticky, hasRowActions }: ITableHead
 
         thead.querySelectorAll("th[data-column-id]").forEach((th) => observer.observe(th));
         return () => observer.disconnect();
-    }, [table, autoSizedIdsKey, explicitSizedIdsKey]);
+    }, [table, autoSizedIdsKey, explicitSizedIdsKey, isSized]);
 
     return (
         <thead

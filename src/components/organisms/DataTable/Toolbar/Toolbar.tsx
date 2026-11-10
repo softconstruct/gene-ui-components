@@ -16,10 +16,10 @@ interface IToolbarProps {
     /**
      * Whether the table is in loading state.
      */
-    loading: boolean;
+    isTableLoading: boolean;
 }
 
-const Toolbar = <TData,>({ loading: isTableLoading }: IToolbarProps) => {
+const Toolbar = <TData,>({ isTableLoading }: IToolbarProps) => {
     const { table, manageColumnsConfig, editConfig } = useDataTableContext<TData>();
     const { visible: isManageColumnsVisible } = manageColumnsConfig;
 
