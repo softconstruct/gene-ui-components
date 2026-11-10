@@ -465,7 +465,7 @@ const DataTable = <TData,>({
     const headerGroups = table.getHeaderGroups();
     const leafColumns = headerGroups[headerGroups.length - 1]?.headers.map(({ column }) => column) ?? [];
     const { columnSizing } = table.getState();
-    const isSized =
+    const areColumnsSized =
         leafColumns.length > 0 &&
         leafColumns.every(
             (column) => column.columnDef.meta?.explicitSize !== undefined || columnSizing[column.id] !== undefined
@@ -517,15 +517,15 @@ const DataTable = <TData,>({
                         <table
                             className={classNames("dataTable__table", {
                                 dataTable__noDataToDisplay: isTableDataEmpty,
-                                dataTable__table_sized: isSized
+                                dataTable__table_sized: areColumnsSized
                             })}
-                            style={isSized ? { width: `${table.getTotalSize()}px` } : undefined}
+                            style={areColumnsSized ? { width: `${table.getTotalSize()}px` } : undefined}
                         >
                             <colgroup>
                                 {leafColumns.map((column) => (
                                     <col
                                         key={column.id}
-                                        style={isSized ? { width: `${column.getSize()}px` } : undefined}
+                                        style={areColumnsSized ? { width: `${column.getSize()}px` } : undefined}
                                     />
                                 ))}
                             </colgroup>
@@ -533,7 +533,7 @@ const DataTable = <TData,>({
                                 sticky={sticky}
                                 headerGroups={headerGroups}
                                 hasRowActions={Boolean(rowActions?.length)}
-                                isSized={isSized}
+                                areColumnsSized={areColumnsSized}
                             />
                             <TableBody
                                 loading={isTableLoading}

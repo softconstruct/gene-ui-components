@@ -34,7 +34,7 @@ interface ITableHeaderProps<TData> {
     /**
      * Whether every column already has a width, so there is nothing left to measure.
      */
-    isSized: boolean;
+    areColumnsSized: boolean;
 }
 
 /**
@@ -47,7 +47,7 @@ interface ITableHeaderProps<TData> {
  * @param props - The properties for the component.
  * @returns The table header element containing all rendered header rows and cells.
  */
-const TableHeader = <TData,>({ headerGroups, sticky, hasRowActions, isSized }: ITableHeaderProps<TData>) => {
+const TableHeader = <TData,>({ headerGroups, sticky, hasRowActions, areColumnsSized }: ITableHeaderProps<TData>) => {
     const { table } = useDataTableContext<TData>();
     const theadRef = useRef<HTMLTableSectionElement>(null);
 
@@ -81,7 +81,7 @@ const TableHeader = <TData,>({ headerGroups, sticky, hasRowActions, isSized }: I
             });
         }
 
-        if (isSized) return () => undefined;
+        if (areColumnsSized) return () => undefined;
 
         const observer = new ResizeObserver((entries) => {
             const { columnSizing } = table.getState();
@@ -106,7 +106,7 @@ const TableHeader = <TData,>({ headerGroups, sticky, hasRowActions, isSized }: I
 
         thead.querySelectorAll("th[data-column-id]").forEach((th) => observer.observe(th));
         return () => observer.disconnect();
-    }, [table, autoSizedIdsKey, explicitSizedIdsKey, isSized]);
+    }, [table, autoSizedIdsKey, explicitSizedIdsKey, areColumnsSized]);
 
     return (
         <thead
