@@ -152,6 +152,10 @@ existing files.
   `*:focus-visible` in `utils.scss` — don't override it per component.
 - **BEM, lowercase-camel block**: `.button`, element `.button__icon`, modifier `.button_size_large` /
   `.button_loading`. Use `$this: &;` for cross-modifier selectors. Build class lists with `classnames`.
+- **A block styles only itself.** Its SCSS selects only its own classes — not a parent block's
+  (`.dataTable__table_sized &`) and not a child block's (`.tableRow__actionsWrapper` nested in `.tableBodyCell`).
+  Pass the state down as a prop and add a modifier on the block's own element (`.tableBodyCell__content_sized`).
+  Existing cases in `TableBodyCell`, `TableHeaderCell` and `ActionableListItem` are debt, not precedent.
 - Prefer logical properties (`margin-inline-start`, `inset-inline-end`, `padding-block`) — the library supports RTL.
 - `html { font-size: 10px }` is set by the provider, so `1rem = 10px` in any unavoidable literal.
 - Responsive behavior reads `breakpoint` from `GeneUIDesignSystemContext` (`useBreakpoint`), breakpoints come from
