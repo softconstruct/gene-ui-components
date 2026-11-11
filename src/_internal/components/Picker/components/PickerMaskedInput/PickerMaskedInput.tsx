@@ -2,10 +2,8 @@ import React, { ChangeEvent, FC, FocusEvent, KeyboardEvent, Ref } from "react";
 import { InputMask, Track } from "@react-input/mask";
 import classNames from "classnames";
 
-// Constants
-import { TIME_PICKER_INPUT_MASK_WITH_MERIDIEM } from "../../constants";
 // Types
-import { TimePickerSizes, TimePickerStatus } from "../../types";
+import { PickerSizes, PickerStatus } from "../../types";
 
 // Styles
 import "./PickerMaskedInput.scss";
@@ -43,6 +41,11 @@ interface IPickerMaskedInputProps {
      * Virtual keyboard hint of the input: `numeric` when the value can only hold digits.
      */
     inputMode?: "numeric" | "text";
+    /**
+     * Width of the input in characters (the `HTML` `size` attribute). Sized for the longest value the
+     * picker can hold, so the field keeps its width whatever the value.
+     */
+    inputSize: number;
     /**
      * Placeholder value of the input.
      */
@@ -85,11 +88,11 @@ interface IPickerMaskedInputProps {
     /**
      * The size of the input: sets its font and, for the first input of the field, its start padding.
      */
-    size: TimePickerSizes;
+    size: PickerSizes;
     /**
      * Validation state of the input: `rest`, `warning` or `error`. `error` marks the input with `aria-invalid`.
      */
-    status: TimePickerStatus;
+    status: PickerStatus;
     /**
      * Accessible name of the input, for inputs without a visible label of their own, like the two inputs of a range.
      */
@@ -107,12 +110,6 @@ interface IPickerMaskedInputProps {
      */
     isExpanded: boolean;
 }
-
-/**
- * Every input is sized for the longest value it can hold, so the field keeps the same width in both
- * formats and never clips the AM/PM suffix.
- */
-const INPUT_SIZE = TIME_PICKER_INPUT_MASK_WITH_MERIDIEM.length + 1;
 
 const PickerMaskedInput: FC<IPickerMaskedInputProps> = ({
     id,
@@ -132,6 +129,7 @@ const PickerMaskedInput: FC<IPickerMaskedInputProps> = ({
     maskReplacement,
     maskTrack,
     inputMode,
+    inputSize,
     inputRef,
     onClick,
     onChange,
@@ -147,7 +145,7 @@ const PickerMaskedInput: FC<IPickerMaskedInputProps> = ({
         replacement={maskReplacement}
         track={maskTrack}
         inputMode={inputMode}
-        size={INPUT_SIZE}
+        size={inputSize}
         className={classNames("pickerMaskedInput", `pickerMaskedInput_size_${size}`, {
             pickerMaskedInput_disabled: disabled,
             pickerMaskedInput_readOnly: readOnly
