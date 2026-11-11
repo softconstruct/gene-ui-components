@@ -71,7 +71,9 @@ const meta: Meta<IDataTableProps<MockRowType>> = {
         editValues: args({ control: "false", ...propCategory.content }),
         getRowId: args({ control: "false", ...propCategory.functionality })
     },
-    args: {}
+    args: {
+        getRowId: (row) => String(row.Id)
+    }
 };
 
 export default meta;

@@ -46,7 +46,7 @@ describe("Table Component", () => {
 
     beforeEach(async () => {
         await act(async () => {
-            setup = mount(<DataTable columns={mockColumns} data={mockData} />);
+            setup = mount(<DataTable getRowId={(row) => String(row.Id)} columns={mockColumns} data={mockData} />);
         });
     });
 
@@ -402,7 +402,12 @@ describe("Table Component - body cell memoization", () => {
     it("does not re-render sibling rows' cells when one row toggles expanded; expander reflects new state", async () => {
         const { renderSpy, columns } = buildSpyColumns();
         const setupLocal: ReactWrapper<IDataTableProps<MockDataType>> = mount(
-            <DataTable columns={columns} data={visibleData} renderExpandedRow={() => <div>Expanded</div>} />
+            <DataTable
+                getRowId={(row) => String(row.Id)}
+                columns={columns}
+                data={visibleData}
+                renderExpandedRow={() => <div>Expanded</div>}
+            />
         );
 
         renderSpy.mockClear();
@@ -425,7 +430,7 @@ describe("Table Component - body cell memoization", () => {
     it("does not re-render any cells when data array reference changes but row references are stable", async () => {
         const { renderSpy, columns } = buildSpyColumns();
         const setupLocal: ReactWrapper<IDataTableProps<MockDataType>> = mount(
-            <DataTable columns={columns} data={visibleData} />
+            <DataTable getRowId={(row) => String(row.Id)} columns={columns} data={visibleData} />
         );
 
         renderSpy.mockClear();
@@ -443,7 +448,7 @@ describe("Table Component - body cell memoization", () => {
     it("re-renders cells when row references change (custom renderers may read any row field)", async () => {
         const { renderSpy, columns } = buildSpyColumns();
         const setupLocal: ReactWrapper<IDataTableProps<MockDataType>> = mount(
-            <DataTable columns={columns} data={visibleData} />
+            <DataTable getRowId={(row) => String(row.Id)} columns={columns} data={visibleData} />
         );
 
         renderSpy.mockClear();
@@ -462,7 +467,7 @@ describe("Table Component - body cell memoization", () => {
     it("updates rendered cell content when data values change in place", async () => {
         const { columns } = buildSpyColumns();
         const setupLocal: ReactWrapper<IDataTableProps<MockDataType>> = mount(
-            <DataTable columns={columns} data={visibleData} />
+            <DataTable getRowId={(row) => String(row.Id)} columns={columns} data={visibleData} />
         );
 
         const updated = visibleData.map((row) => ({ ...row, Email: `updated-${row.Email}` }));
@@ -484,6 +489,7 @@ describe("Table Component - Manage Columns Integration", () => {
         await act(async () => {
             setup = mount(
                 <DataTable
+                    getRowId={(row) => String(row.Id)}
                     columns={mockColumns}
                     data={mockData}
                     manageColumnsConfig={{
@@ -869,7 +875,7 @@ describe("Table Component - column defaults, row identity and structure", () => 
 
         let wrapper: ReactWrapper<IDataTableProps<SimpleRow>>;
         await act(async () => {
-            wrapper = mount(<DataTable columns={cols} data={simpleData} />);
+            wrapper = mount(<DataTable getRowId={(row) => String(row.Id)} columns={cols} data={simpleData} />);
         });
         wrapper!.update();
 
@@ -888,7 +894,7 @@ describe("Table Component - column defaults, row identity and structure", () => 
 
         let wrapper: ReactWrapper<IDataTableProps<SimpleRow>>;
         await act(async () => {
-            wrapper = mount(<DataTable columns={cols} data={simpleData} />);
+            wrapper = mount(<DataTable getRowId={(row) => String(row.Id)} columns={cols} data={simpleData} />);
         });
         wrapper!.update();
 
@@ -936,6 +942,7 @@ describe("Table Component - column defaults, row identity and structure", () => 
         await act(async () => {
             wrapper = mount(
                 <DataTable
+                    getRowId={(row) => String(row.Id)}
                     columns={simpleColumns}
                     data={simpleData}
                     renderExpandedRow={(row) => <div>{row.Email}</div>}
@@ -961,6 +968,7 @@ describe("Table Component - column defaults, row identity and structure", () => 
         await act(async () => {
             wrapper = mount(
                 <DataTable
+                    getRowId={(row) => String(row.Id)}
                     columns={simpleColumns}
                     data={simpleData}
                     rowActions={[{ Icon: TestIcon, title: "Edit", onClick: jest.fn(() => undefined) }]}
@@ -1034,7 +1042,12 @@ describe("Table Component - Manage Columns review fixes", () => {
         let wrapper: ReactWrapper<IDataTableProps<SimpleRow>>;
         await act(async () => {
             wrapper = mount(
-                <DataTable columns={simpleColumns} data={simpleData} manageColumnsConfig={{ visible: true }} />
+                <DataTable
+                    getRowId={(row) => String(row.Id)}
+                    columns={simpleColumns}
+                    data={simpleData}
+                    manageColumnsConfig={{ visible: true }}
+                />
             );
         });
         wrapper!.update();
@@ -1055,7 +1068,12 @@ describe("Table Component - Manage Columns review fixes", () => {
         let wrapper: ReactWrapper<IDataTableProps<SimpleRow>>;
         await act(async () => {
             wrapper = mount(
-                <DataTable columns={simpleColumns} data={simpleData} manageColumnsConfig={{ visible: true }} />
+                <DataTable
+                    getRowId={(row) => String(row.Id)}
+                    columns={simpleColumns}
+                    data={simpleData}
+                    manageColumnsConfig={{ visible: true }}
+                />
             );
         });
         wrapper!.update();
@@ -1084,7 +1102,12 @@ describe("Table Component - Manage Columns review fixes", () => {
         let wrapper: ReactWrapper<IDataTableProps<SimpleRow>>;
         await act(async () => {
             wrapper = mount(
-                <DataTable columns={simpleColumns} data={simpleData} manageColumnsConfig={{ visible: true }} />
+                <DataTable
+                    getRowId={(row) => String(row.Id)}
+                    columns={simpleColumns}
+                    data={simpleData}
+                    manageColumnsConfig={{ visible: true }}
+                />
             );
         });
         wrapper!.update();
@@ -1110,7 +1133,12 @@ describe("Table Component - Manage Columns review fixes", () => {
         let wrapper: ReactWrapper<IDataTableProps<SimpleRow>>;
         await act(async () => {
             wrapper = mount(
-                <DataTable columns={simpleColumns} data={simpleData} manageColumnsConfig={{ visible: true }} />
+                <DataTable
+                    getRowId={(row) => String(row.Id)}
+                    columns={simpleColumns}
+                    data={simpleData}
+                    manageColumnsConfig={{ visible: true }}
+                />
             );
         });
         wrapper!.update();
@@ -1133,11 +1161,13 @@ describe("Table Component - Manage Columns review fixes", () => {
             wrapper = mount(
                 <div>
                     <DataTable
+                        getRowId={(row) => String(row.Id)}
                         columns={simpleColumns}
                         data={simpleData}
                         manageColumnsConfig={{ visible: true, open: true }}
                     />
                     <DataTable
+                        getRowId={(row) => String(row.Id)}
                         columns={simpleColumns}
                         data={simpleData}
                         manageColumnsConfig={{ visible: true, open: true }}
@@ -1160,6 +1190,7 @@ describe("Table Component - Manage Columns review fixes", () => {
         await act(async () => {
             wrapper = mount(
                 <DataTable
+                    getRowId={(row) => String(row.Id)}
                     columns={simpleColumns}
                     data={simpleData}
                     manageColumnsConfig={{ visible: true, open: true, onOpenChange }}
@@ -1192,7 +1223,14 @@ describe("Table Component - Manage Columns review fixes", () => {
 
         let wrapper: ReactWrapper<IDataTableProps<SimpleRow>>;
         await act(async () => {
-            wrapper = mount(<DataTable columns={[]} data={simpleData} manageColumnsConfig={{ visible: true }} />);
+            wrapper = mount(
+                <DataTable
+                    getRowId={(row) => String(row.Id)}
+                    columns={[]}
+                    data={simpleData}
+                    manageColumnsConfig={{ visible: true }}
+                />
+            );
         });
 
         await act(async () => {
@@ -1210,7 +1248,14 @@ describe("Table Component - Manage Columns review fixes", () => {
     it("can reorder columns that arrive after mount", async () => {
         let wrapper: ReactWrapper<IDataTableProps<SimpleRow>>;
         await act(async () => {
-            wrapper = mount(<DataTable columns={[]} data={simpleData} manageColumnsConfig={{ visible: true }} />);
+            wrapper = mount(
+                <DataTable
+                    getRowId={(row) => String(row.Id)}
+                    columns={[]}
+                    data={simpleData}
+                    manageColumnsConfig={{ visible: true }}
+                />
+            );
         });
 
         await act(async () => {
@@ -1286,7 +1331,7 @@ describe("Table Component - column sizing", () => {
     const mountTable = async (props: Partial<IDataTableProps<SizingRow>>) => {
         let wrapper: ReactWrapper<IDataTableProps<SizingRow>>;
         await act(async () => {
-            wrapper = mount(<DataTable columns={[]} data={sizingData} {...props} />);
+            wrapper = mount(<DataTable getRowId={(row) => String(row.Id)} columns={[]} data={sizingData} {...props} />);
         });
         wrapper!.update();
         return wrapper!;

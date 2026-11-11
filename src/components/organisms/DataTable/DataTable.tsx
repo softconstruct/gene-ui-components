@@ -232,15 +232,14 @@ interface IDataTableProps<TData> {
     editValues?: DataTableEditValues<TData>;
     /**
      * Resolves a stable, unique id for a row from its data.
-     * Without it rows are identified by their index, so row-bound state (e.g. expanded rows)
-     * sticks to positions instead of records when data is re-sorted or paginated on the server.
+     * Every row-bound state is keyed by it: expanded rows and the edit mode drafts.
      *
      * @example
      * ```tsx
      * <DataTable getRowId={(row) => String(row.id)} />
      * ```
      */
-    getRowId?: (originalRow: TData, index: number) => string;
+    getRowId: (originalRow: TData, index: number) => string;
 }
 
 const EMPTY_DATA: never[] = [];
@@ -427,7 +426,7 @@ const DataTable = <TData,>({
         getCoreRowModel: getCoreRowModel(),
         ...(manualPagination ? {} : { getPaginationRowModel: getPaginationRowModel() }),
         manualPagination,
-        ...(getRowId ? { getRowId } : {}),
+        getRowId,
         getExpandedRowModel: getExpandedRowModel(),
         onExpandedChange: setExpanded,
         onColumnVisibilityChange: handleColumnVisibilityChange,
