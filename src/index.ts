@@ -118,11 +118,15 @@ export {
 // Organisms
 export {
     default as DataTable,
+    DataTableEditValues,
     DataTableGetRowStatus,
     DataTableRenderExpandedRow,
     DataTableRowExpandChangeHandler,
     DataTableRowExpandChangePayload,
     DataTableRowStatus,
+    IDataTableCellChangePayload,
+    IDataTableEditConfig,
+    IDataTableEditTexts,
     IDataTableProps,
     IDataTableRowAction
 } from "@components/organisms/DataTable";
