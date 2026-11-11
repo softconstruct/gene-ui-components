@@ -25,8 +25,8 @@ const Toolbar = <TData,>({ isTableLoading }: IToolbarProps) => {
 
     if (!isManageColumnsVisible && !editConfig) return null;
 
-    const isEditing = Boolean(editConfig?.editing);
-    const isSaveDisabled = Boolean(editConfig?.loading || editConfig?.saveDisabled);
+    const isEditing = editConfig?.editing;
+    const isSaveDisabled = editConfig?.loading || editConfig?.saveDisabled;
     const hasRows = table.getCoreRowModel().rows.length > 0;
 
     return (
