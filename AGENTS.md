@@ -6,7 +6,7 @@ do not port patterns between them.
 
 This file is for contributors to this repo and is **not shipped**: `npm publish` runs from `dist/`, and
 `scripts/utils.js → copyStaticFilesToDist` copies only `package.json`, `README.md`, `CHANGELOG.md`, `LICENSE`. Never add
-`CLAUDE.md` to that list or move it under `src/`.
+`AGENTS.md` to that list or move it under `src/`.
 
 ## Rules
 
