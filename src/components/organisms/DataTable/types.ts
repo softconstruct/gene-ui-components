@@ -271,8 +271,9 @@ export interface IDataTableEditConfig<TData> {
      */
     saveDisabled?: boolean;
     /**
-     * Whether edit mode is in loading state, a save in progress included.
-     * Will disable the editors and all edit actions, and run the loading state of the save button.
+     * Whether a save is in progress.
+     * Disables the cell editors, the save button and the cancel button, and runs the loading state
+     * of the save button.
      * @default false
      */
     loading?: boolean;

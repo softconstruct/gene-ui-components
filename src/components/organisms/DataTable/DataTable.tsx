@@ -301,34 +301,32 @@ const DataTable = <TData,>({
     const [expanded, setExpanded] = useState<ExpandedState>({});
     const [columnOrder, setColumnOrder] = useState<ColumnOrderState>([]);
     const [internalDrafts, setInternalDrafts] = useState<DataTableEditValues<TData>>(EMPTY_EDIT_VALUES);
-    const isControlled = editValues !== undefined;
     const activeDrafts = editValues ?? internalDrafts;
 
     const isEditing = Boolean(editConfig?.editing);
-    const editConfigRef = useRef(editConfig);
-    const isControlledRef = useRef(isControlled);
-    const activeDraftsRef = useRef(activeDrafts);
-    editConfigRef.current = editConfig;
-    isControlledRef.current = isControlled;
-    activeDraftsRef.current = activeDrafts;
+    const editStateRef = useRef({ editConfig, editValues, activeDrafts });
+    editStateRef.current = { editConfig, editValues, activeDrafts };
 
     useEffect(() => {
         if (!isEditing) setInternalDrafts(EMPTY_EDIT_VALUES);
     }, [isEditing]);
 
     const handleEditSave = useCallback(() => {
-        editConfigRef.current?.onSave(activeDraftsRef.current);
+        const currentEditState = editStateRef.current;
+        currentEditState.editConfig?.onSave(currentEditState.activeDrafts);
     }, []);
 
     const handleCellChange = useCallback((payload: IDataTableCellChangePayload<TData>) => {
-        if (!isControlledRef.current) {
+        const currentEditState = editStateRef.current;
+
+        if (currentEditState.editValues === undefined) {
             setInternalDrafts((previous) => ({
                 ...previous,
                 [payload.rowId]: { ...previous[payload.rowId], [payload.columnId]: payload.value }
             }));
         }
 
-        editConfigRef.current?.onCellChange?.(payload);
+        currentEditState.editConfig?.onCellChange?.(payload);
     }, []);
 
     const isExpandable = Boolean(renderExpandedRow);
