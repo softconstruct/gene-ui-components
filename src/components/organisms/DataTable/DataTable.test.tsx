@@ -1415,8 +1415,10 @@ describe("Table Component - Edit Mode", () => {
         ...overrides
     });
 
+    type EditTableWrapper = ReactWrapper<IDataTableProps<MockDataType>>;
+
     const mountTable = async (props: Partial<IDataTableProps<MockDataType>> = {}) => {
-        let wrapper: ReactWrapper<IDataTableProps<MockDataType>>;
+        let wrapper: EditTableWrapper;
 
         await act(async () => {
             wrapper = mount(
@@ -1428,13 +1430,10 @@ describe("Table Component - Edit Mode", () => {
         return wrapper!;
     };
 
-    type EditTableWrapper = ReactWrapper<IDataTableProps<MockDataType>>;
-
     const buttonWithText = (wrapper: EditTableWrapper, text: string) =>
         wrapper.find(Button).filterWhere((button) => button.text().includes(text));
 
-    const editorInputs = (wrapper: EditTableWrapper) =>
-        wrapper.find("input.tableBodyCell__editor, .tableBodyCell__editor input");
+    const editors = (wrapper: EditTableWrapper) => wrapper.find(".tableBodyCell__textField").find("input");
 
     it("does not render the edit button when editConfig is omitted", async () => {
         const setup = await mountTable({ manageColumnsConfig: { visible: true } });
@@ -1486,7 +1485,7 @@ describe("Table Component - Edit Mode", () => {
     it("renders editors only for editable columns and bypasses their renderCell", async () => {
         const setup = await mountTable({ editConfig: buildEditConfig({ editing: true }) });
 
-        expect(editorInputs(setup).length).toBe(editData.length * 2);
+        expect(editors(setup).length).toBe(editData.length * 2);
         expect(setup.find(".emailRenderer").length).toBe(0);
         expect(setup.find("tbody tr").first().find("td").first().text()).toBe(String(editData[0].Id));
 
@@ -1495,12 +1494,9 @@ describe("Table Component - Edit Mode", () => {
 
     it("renders an empty editor when the underlying value is nullish", async () => {
         const nullishData = [{ ...editData[0], FirstName: null as unknown as string }];
-        const setup = await mountTable({
-            data: nullishData,
-            editConfig: buildEditConfig({ editing: true })
-        });
+        const setup = await mountTable({ data: nullishData, editConfig: buildEditConfig({ editing: true }) });
 
-        expect(editorInputs(setup).first().prop("value")).toBe("");
+        expect(editors(setup).first().prop("value")).toBe("");
 
         setup.unmount();
     });
@@ -1508,7 +1504,7 @@ describe("Table Component - Edit Mode", () => {
     it("disables the editors while the edit config is loading", async () => {
         const setup = await mountTable({ editConfig: buildEditConfig({ editing: true, loading: true }) });
 
-        expect(editorInputs(setup).first().prop("disabled")).toBe(true);
+        expect(editors(setup).first().prop("disabled")).toBe(true);
 
         setup.unmount();
     });
@@ -1521,7 +1517,7 @@ describe("Table Component - Edit Mode", () => {
         });
 
         await act(async () => {
-            editorInputs(setup)
+            editors(setup)
                 .first()
                 .simulate("change", { target: { value: "Changed" } });
         });
@@ -1542,7 +1538,7 @@ describe("Table Component - Edit Mode", () => {
             editValues: { [String(editData[0].Id)]: { FirstName: "From drafts" } }
         });
 
-        expect(editorInputs(setup).first().prop("value")).toBe("From drafts");
+        expect(editors(setup).first().prop("value")).toBe("From drafts");
 
         setup.unmount();
     });
@@ -1552,13 +1548,13 @@ describe("Table Component - Edit Mode", () => {
         const setup = await mountTable({ editConfig });
 
         await act(async () => {
-            editorInputs(setup)
+            editors(setup)
                 .first()
                 .simulate("change", { target: { value: "Uncontrolled" } });
         });
         setup.update();
 
-        expect(editorInputs(setup).first().prop("value")).toBe("Uncontrolled");
+        expect(editors(setup).first().prop("value")).toBe("Uncontrolled");
 
         await act(async () => {
             buttonWithText(setup, "Save").first().simulate("click");
@@ -1575,7 +1571,7 @@ describe("Table Component - Edit Mode", () => {
         const setup = await mountTable({ editConfig: buildEditConfig({ editing: true }) });
 
         await act(async () => {
-            editorInputs(setup)
+            editors(setup)
                 .first()
                 .simulate("change", { target: { value: "Discarded" } });
         });
@@ -1589,7 +1585,7 @@ describe("Table Component - Edit Mode", () => {
         });
         setup.update();
 
-        expect(editorInputs(setup).first().prop("value")).toBe(editData[0].FirstName);
+        expect(editors(setup).first().prop("value")).toBe(editData[0].FirstName);
 
         setup.unmount();
     });
