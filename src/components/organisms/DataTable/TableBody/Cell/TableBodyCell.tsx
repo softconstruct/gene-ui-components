@@ -134,7 +134,7 @@ const TableBodyCell = <TData, TValue>({
                 <div className="tableBodyCell__content" style={getCellContentStyle(explicitSize)}>
                     {isCellEditing ? (
                         <TextField
-                            className="tableBodyCell__editor"
+                            className="tableBodyCell__textField"
                             size="small"
                             value={editValue}
                             disabled={isEditDisabled}
