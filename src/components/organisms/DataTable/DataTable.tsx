@@ -467,6 +467,7 @@ const DataTable = <TData,>({
         leafColumns.every(
             (column) => column.columnDef.meta?.explicitSize !== undefined || columnSizing[column.id] !== undefined
         );
+    const isLayoutFixed = isEditing && areColumnsSized;
 
     const [dirMode, setDirMode] = useState(() => (typeof document === "undefined" ? "ltr" : document.dir || "ltr"));
 
@@ -514,15 +515,15 @@ const DataTable = <TData,>({
                         <table
                             className={classNames("dataTable__table", {
                                 dataTable__noDataToDisplay: isTableDataEmpty,
-                                dataTable__table_sized: areColumnsSized
+                                dataTable__table_sized: isLayoutFixed
                             })}
-                            style={areColumnsSized ? { width: `${table.getTotalSize()}px` } : undefined}
+                            style={isLayoutFixed ? { width: `${table.getTotalSize()}px` } : undefined}
                         >
                             <colgroup>
                                 {leafColumns.map((column) => (
                                     <col
                                         key={column.id}
-                                        style={areColumnsSized ? { width: `${column.getSize()}px` } : undefined}
+                                        style={isLayoutFixed ? { width: `${column.getSize()}px` } : undefined}
                                     />
                                 ))}
                             </colgroup>
@@ -530,7 +531,7 @@ const DataTable = <TData,>({
                                 sticky={sticky}
                                 headerGroups={headerGroups}
                                 hasRowActions={Boolean(rowActions?.length)}
-                                areColumnsSized={areColumnsSized}
+                                isLayoutFixed={isLayoutFixed}
                             />
                             <TableBody
                                 loading={isTableLoading}

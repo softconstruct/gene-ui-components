@@ -1436,6 +1436,79 @@ describe("Table Component - column sizing", () => {
             restore();
         }
     });
+
+    const buildEditConfig = (editing: boolean) => ({
+        editing,
+        onSave: jest.fn(),
+        onCancel: jest.fn(),
+        onEditStart: jest.fn()
+    });
+
+    const colWidths = (wrapper: ReactWrapper<IDataTableProps<SizingRow>>) =>
+        wrapper.find("colgroup col").map((col) => col.prop("style"));
+
+    it("fixes the column widths only in edit mode", async () => {
+        const wrapper = await mountTable({
+            columns: [
+                { accessorKey: "Id", header: "Id", size: 80 },
+                { accessorKey: "Email", header: "Email", size: 120 }
+            ],
+            editConfig: buildEditConfig(false)
+        });
+        const table = () => wrapper.find("table.dataTable__table");
+
+        expect(table().hasClass("dataTable__table_sized")).toBeFalsy();
+        expect(table().prop("style")).toBeUndefined();
+        expect(colWidths(wrapper)).toStrictEqual([undefined, undefined]);
+
+        await act(async () => {
+            wrapper.setProps({ editConfig: buildEditConfig(true) });
+        });
+        wrapper.update();
+
+        expect(table().hasClass("dataTable__table_sized")).toBeTruthy();
+        expect(table().prop("style")).toEqual({ width: "200px" });
+        expect(colWidths(wrapper)).toStrictEqual([{ width: "80px" }, { width: "120px" }]);
+
+        await act(async () => {
+            wrapper.setProps({ editConfig: buildEditConfig(false) });
+        });
+        wrapper.update();
+
+        expect(table().hasClass("dataTable__table_sized")).toBeFalsy();
+        expect(colWidths(wrapper)).toStrictEqual([undefined, undefined]);
+
+        wrapper.unmount();
+    });
+
+    it("fixes the measured widths of the auto-sized columns in edit mode", async () => {
+        const { observed, restore } = mockResizeObserver();
+
+        try {
+            const wrapper = await mountTable({
+                columns: [
+                    { accessorKey: "Id", header: "Id" },
+                    { accessorKey: "Email", header: "Email", size: 120 }
+                ],
+                editConfig: buildEditConfig(false)
+            });
+
+            await resizeObservedHeader(observed[0], 90);
+            wrapper.update();
+            expect(colWidths(wrapper)).toStrictEqual([undefined, undefined]);
+
+            await act(async () => {
+                wrapper.setProps({ editConfig: buildEditConfig(true) });
+            });
+            wrapper.update();
+
+            expect(colWidths(wrapper)).toStrictEqual([{ width: "90px" }, { width: "120px" }]);
+
+            wrapper.unmount();
+        } finally {
+            restore();
+        }
+    });
 });
 
 describe("Table Component - Edit Mode", () => {
