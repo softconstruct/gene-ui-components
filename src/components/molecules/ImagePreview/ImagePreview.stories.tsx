@@ -9,10 +9,10 @@ import { args, propCategory } from "../../../../stories/assets/storybook.globals
 import ImagePreview, { IImagePreviewImage, IImagePreviewProps } from "./index";
 
 const previewImages: IImagePreviewImage[] = [
-    { path: "https://picsum.photos/id/237/500/500", title: "Black dog portrait" },
-    { path: "https://picsum.photos/id/238/500/700", title: "Forest trail" },
-    { path: "https://picsum.photos/id/239/800/500", title: "Mountain lake" },
-    { path: "https://picsum.photos/id/240/200/500", title: "City skyline" }
+    { path: "images/dog-square.jpg", title: "Dog portrait" },
+    { path: "images/forest-portrait.jpg", title: "Forest path" },
+    { path: "images/lake-landscape.jpg", title: "Mountain lake" },
+    { path: "images/waterfall-tall.jpg", title: "Waterfall" }
 ];
 
 const meta: Meta<IImagePreviewProps> = {
