@@ -110,8 +110,8 @@ export const WithImageContent: Story = {
         children: Array.from({ length: 8 }, (_, index) => (
             <CarouselItem key={index}>
                 <img
-                    src={`https://picsum.photos/id/${index * 10}/800/500`}
-                    alt={`https://picsum.photos/id/${index * 10}/800/500`}
+                    src={`images/landscape-${index + 1}.jpg`}
+                    alt={`Landscape ${index + 1}`}
                     style={{
                         width: "100%",
                         height: "100%",

@@ -11,7 +11,7 @@ import Pagination from "@components/molecules/Pagination";
 import TextField from "@components/molecules/TextField";
 import { INITIAL_PAGE_SIZE } from "@components/organisms/DataTable/constants";
 import Toolbar from "@components/organisms/DataTable/Toolbar/Toolbar";
-import { DataTableColumn, DataTableRenderCellArgs } from "@components/organisms/DataTable/types";
+import { DataTableColumn, DataTableRenderCellArgs, IDataTableEditConfig } from "@components/organisms/DataTable/types";
 
 import { mockColumns, mockData } from "../../../../stories/data/__dataTable";
 // Components
@@ -46,7 +46,7 @@ describe("Table Component", () => {
 
     beforeEach(async () => {
         await act(async () => {
-            setup = mount(<DataTable columns={mockColumns} data={mockData} />);
+            setup = mount(<DataTable getRowId={(row) => String(row.Id)} columns={mockColumns} data={mockData} />);
         });
     });
 
@@ -402,7 +402,12 @@ describe("Table Component - body cell memoization", () => {
     it("does not re-render sibling rows' cells when one row toggles expanded; expander reflects new state", async () => {
         const { renderSpy, columns } = buildSpyColumns();
         const setupLocal: ReactWrapper<IDataTableProps<MockDataType>> = mount(
-            <DataTable columns={columns} data={visibleData} renderExpandedRow={() => <div>Expanded</div>} />
+            <DataTable
+                getRowId={(row) => String(row.Id)}
+                columns={columns}
+                data={visibleData}
+                renderExpandedRow={() => <div>Expanded</div>}
+            />
         );
 
         renderSpy.mockClear();
@@ -425,7 +430,7 @@ describe("Table Component - body cell memoization", () => {
     it("does not re-render any cells when data array reference changes but row references are stable", async () => {
         const { renderSpy, columns } = buildSpyColumns();
         const setupLocal: ReactWrapper<IDataTableProps<MockDataType>> = mount(
-            <DataTable columns={columns} data={visibleData} />
+            <DataTable getRowId={(row) => String(row.Id)} columns={columns} data={visibleData} />
         );
 
         renderSpy.mockClear();
@@ -443,7 +448,7 @@ describe("Table Component - body cell memoization", () => {
     it("re-renders cells when row references change (custom renderers may read any row field)", async () => {
         const { renderSpy, columns } = buildSpyColumns();
         const setupLocal: ReactWrapper<IDataTableProps<MockDataType>> = mount(
-            <DataTable columns={columns} data={visibleData} />
+            <DataTable getRowId={(row) => String(row.Id)} columns={columns} data={visibleData} />
         );
 
         renderSpy.mockClear();
@@ -462,7 +467,7 @@ describe("Table Component - body cell memoization", () => {
     it("updates rendered cell content when data values change in place", async () => {
         const { columns } = buildSpyColumns();
         const setupLocal: ReactWrapper<IDataTableProps<MockDataType>> = mount(
-            <DataTable columns={columns} data={visibleData} />
+            <DataTable getRowId={(row) => String(row.Id)} columns={columns} data={visibleData} />
         );
 
         const updated = visibleData.map((row) => ({ ...row, Email: `updated-${row.Email}` }));
@@ -484,6 +489,7 @@ describe("Table Component - Manage Columns Integration", () => {
         await act(async () => {
             setup = mount(
                 <DataTable
+                    getRowId={(row) => String(row.Id)}
                     columns={mockColumns}
                     data={mockData}
                     manageColumnsConfig={{
@@ -869,7 +875,7 @@ describe("Table Component - column defaults, row identity and structure", () => 
 
         let wrapper: ReactWrapper<IDataTableProps<SimpleRow>>;
         await act(async () => {
-            wrapper = mount(<DataTable columns={cols} data={simpleData} />);
+            wrapper = mount(<DataTable getRowId={(row) => String(row.Id)} columns={cols} data={simpleData} />);
         });
         wrapper!.update();
 
@@ -888,7 +894,7 @@ describe("Table Component - column defaults, row identity and structure", () => 
 
         let wrapper: ReactWrapper<IDataTableProps<SimpleRow>>;
         await act(async () => {
-            wrapper = mount(<DataTable columns={cols} data={simpleData} />);
+            wrapper = mount(<DataTable getRowId={(row) => String(row.Id)} columns={cols} data={simpleData} />);
         });
         wrapper!.update();
 
@@ -936,6 +942,7 @@ describe("Table Component - column defaults, row identity and structure", () => 
         await act(async () => {
             wrapper = mount(
                 <DataTable
+                    getRowId={(row) => String(row.Id)}
                     columns={simpleColumns}
                     data={simpleData}
                     renderExpandedRow={(row) => <div>{row.Email}</div>}
@@ -961,6 +968,7 @@ describe("Table Component - column defaults, row identity and structure", () => 
         await act(async () => {
             wrapper = mount(
                 <DataTable
+                    getRowId={(row) => String(row.Id)}
                     columns={simpleColumns}
                     data={simpleData}
                     rowActions={[{ Icon: TestIcon, title: "Edit", onClick: jest.fn(() => undefined) }]}
@@ -1034,7 +1042,12 @@ describe("Table Component - Manage Columns review fixes", () => {
         let wrapper: ReactWrapper<IDataTableProps<SimpleRow>>;
         await act(async () => {
             wrapper = mount(
-                <DataTable columns={simpleColumns} data={simpleData} manageColumnsConfig={{ visible: true }} />
+                <DataTable
+                    getRowId={(row) => String(row.Id)}
+                    columns={simpleColumns}
+                    data={simpleData}
+                    manageColumnsConfig={{ visible: true }}
+                />
             );
         });
         wrapper!.update();
@@ -1055,7 +1068,12 @@ describe("Table Component - Manage Columns review fixes", () => {
         let wrapper: ReactWrapper<IDataTableProps<SimpleRow>>;
         await act(async () => {
             wrapper = mount(
-                <DataTable columns={simpleColumns} data={simpleData} manageColumnsConfig={{ visible: true }} />
+                <DataTable
+                    getRowId={(row) => String(row.Id)}
+                    columns={simpleColumns}
+                    data={simpleData}
+                    manageColumnsConfig={{ visible: true }}
+                />
             );
         });
         wrapper!.update();
@@ -1084,7 +1102,12 @@ describe("Table Component - Manage Columns review fixes", () => {
         let wrapper: ReactWrapper<IDataTableProps<SimpleRow>>;
         await act(async () => {
             wrapper = mount(
-                <DataTable columns={simpleColumns} data={simpleData} manageColumnsConfig={{ visible: true }} />
+                <DataTable
+                    getRowId={(row) => String(row.Id)}
+                    columns={simpleColumns}
+                    data={simpleData}
+                    manageColumnsConfig={{ visible: true }}
+                />
             );
         });
         wrapper!.update();
@@ -1110,7 +1133,12 @@ describe("Table Component - Manage Columns review fixes", () => {
         let wrapper: ReactWrapper<IDataTableProps<SimpleRow>>;
         await act(async () => {
             wrapper = mount(
-                <DataTable columns={simpleColumns} data={simpleData} manageColumnsConfig={{ visible: true }} />
+                <DataTable
+                    getRowId={(row) => String(row.Id)}
+                    columns={simpleColumns}
+                    data={simpleData}
+                    manageColumnsConfig={{ visible: true }}
+                />
             );
         });
         wrapper!.update();
@@ -1133,11 +1161,13 @@ describe("Table Component - Manage Columns review fixes", () => {
             wrapper = mount(
                 <div>
                     <DataTable
+                        getRowId={(row) => String(row.Id)}
                         columns={simpleColumns}
                         data={simpleData}
                         manageColumnsConfig={{ visible: true, open: true }}
                     />
                     <DataTable
+                        getRowId={(row) => String(row.Id)}
                         columns={simpleColumns}
                         data={simpleData}
                         manageColumnsConfig={{ visible: true, open: true }}
@@ -1160,6 +1190,7 @@ describe("Table Component - Manage Columns review fixes", () => {
         await act(async () => {
             wrapper = mount(
                 <DataTable
+                    getRowId={(row) => String(row.Id)}
                     columns={simpleColumns}
                     data={simpleData}
                     manageColumnsConfig={{ visible: true, open: true, onOpenChange }}
@@ -1192,7 +1223,14 @@ describe("Table Component - Manage Columns review fixes", () => {
 
         let wrapper: ReactWrapper<IDataTableProps<SimpleRow>>;
         await act(async () => {
-            wrapper = mount(<DataTable columns={[]} data={simpleData} manageColumnsConfig={{ visible: true }} />);
+            wrapper = mount(
+                <DataTable
+                    getRowId={(row) => String(row.Id)}
+                    columns={[]}
+                    data={simpleData}
+                    manageColumnsConfig={{ visible: true }}
+                />
+            );
         });
 
         await act(async () => {
@@ -1210,7 +1248,14 @@ describe("Table Component - Manage Columns review fixes", () => {
     it("can reorder columns that arrive after mount", async () => {
         let wrapper: ReactWrapper<IDataTableProps<SimpleRow>>;
         await act(async () => {
-            wrapper = mount(<DataTable columns={[]} data={simpleData} manageColumnsConfig={{ visible: true }} />);
+            wrapper = mount(
+                <DataTable
+                    getRowId={(row) => String(row.Id)}
+                    columns={[]}
+                    data={simpleData}
+                    manageColumnsConfig={{ visible: true }}
+                />
+            );
         });
 
         await act(async () => {
@@ -1286,7 +1331,7 @@ describe("Table Component - column sizing", () => {
     const mountTable = async (props: Partial<IDataTableProps<SizingRow>>) => {
         let wrapper: ReactWrapper<IDataTableProps<SizingRow>>;
         await act(async () => {
-            wrapper = mount(<DataTable columns={[]} data={sizingData} {...props} />);
+            wrapper = mount(<DataTable getRowId={(row) => String(row.Id)} columns={[]} data={sizingData} {...props} />);
         });
         wrapper!.update();
         return wrapper!;
@@ -1390,5 +1435,276 @@ describe("Table Component - column sizing", () => {
         } finally {
             restore();
         }
+    });
+
+    const buildEditConfig = (editing: boolean) => ({
+        editing,
+        onSave: jest.fn(),
+        onCancel: jest.fn(),
+        onEditStart: jest.fn()
+    });
+
+    const colWidths = (wrapper: ReactWrapper<IDataTableProps<SizingRow>>) =>
+        wrapper.find("colgroup col").map((col) => col.prop("style"));
+
+    it("fixes the column widths only in edit mode", async () => {
+        const wrapper = await mountTable({
+            columns: [
+                { accessorKey: "Id", header: "Id", size: 80 },
+                { accessorKey: "Email", header: "Email", size: 120 }
+            ],
+            editConfig: buildEditConfig(false)
+        });
+        const table = () => wrapper.find("table.dataTable__table");
+
+        expect(table().hasClass("dataTable__table_sized")).toBeFalsy();
+        expect(table().prop("style")).toBeUndefined();
+        expect(colWidths(wrapper)).toStrictEqual([undefined, undefined]);
+
+        await act(async () => {
+            wrapper.setProps({ editConfig: buildEditConfig(true) });
+        });
+        wrapper.update();
+
+        expect(table().hasClass("dataTable__table_sized")).toBeTruthy();
+        expect(table().prop("style")).toEqual({ width: "200px" });
+        expect(colWidths(wrapper)).toStrictEqual([{ width: "80px" }, { width: "120px" }]);
+
+        await act(async () => {
+            wrapper.setProps({ editConfig: buildEditConfig(false) });
+        });
+        wrapper.update();
+
+        expect(table().hasClass("dataTable__table_sized")).toBeFalsy();
+        expect(colWidths(wrapper)).toStrictEqual([undefined, undefined]);
+
+        wrapper.unmount();
+    });
+
+    it("fixes the measured widths of the auto-sized columns in edit mode", async () => {
+        const { observed, restore } = mockResizeObserver();
+
+        try {
+            const wrapper = await mountTable({
+                columns: [
+                    { accessorKey: "Id", header: "Id" },
+                    { accessorKey: "Email", header: "Email", size: 120 }
+                ],
+                editConfig: buildEditConfig(false)
+            });
+
+            await resizeObservedHeader(observed[0], 90);
+            wrapper.update();
+            expect(colWidths(wrapper)).toStrictEqual([undefined, undefined]);
+
+            await act(async () => {
+                wrapper.setProps({ editConfig: buildEditConfig(true) });
+            });
+            wrapper.update();
+
+            expect(colWidths(wrapper)).toStrictEqual([{ width: "90px" }, { width: "120px" }]);
+
+            wrapper.unmount();
+        } finally {
+            restore();
+        }
+    });
+});
+
+describe("Table Component - Edit Mode", () => {
+    const editData = mockData.slice(0, 3);
+
+    const editColumns: DataTableColumn<MockDataType>[] = [
+        { accessorKey: "Id", header: "Id" },
+        { accessorKey: "FirstName", header: "First name", editable: true },
+        {
+            accessorKey: "Email",
+            header: "Email",
+            editable: true,
+            renderCell: ({ value }) => <b className="emailRenderer">{String(value ?? "")}</b>
+        }
+    ];
+
+    const buildEditConfig = (overrides: Partial<IDataTableEditConfig<MockDataType>> = {}) => ({
+        editing: false,
+        onSave: jest.fn(),
+        onCancel: jest.fn(),
+        onEditStart: jest.fn(),
+        ...overrides
+    });
+
+    type EditTableWrapper = ReactWrapper<IDataTableProps<MockDataType>>;
+
+    const mountTable = async (props: Partial<IDataTableProps<MockDataType>> = {}) => {
+        let wrapper: EditTableWrapper;
+
+        await act(async () => {
+            wrapper = mount(
+                <DataTable columns={editColumns} data={editData} getRowId={(row) => String(row.Id)} {...props} />
+            );
+        });
+        wrapper!.update();
+
+        return wrapper!;
+    };
+
+    const buttonWithText = (wrapper: EditTableWrapper, text: string) =>
+        wrapper.find(Button).filterWhere((button) => button.text().includes(text));
+
+    const editors = (wrapper: EditTableWrapper) => wrapper.find(".tableBodyCell__textField").find("input");
+
+    it("does not render the edit button when editConfig is omitted", async () => {
+        const setup = await mountTable({ manageColumnsConfig: { visible: true } });
+
+        expect(buttonWithText(setup, "Edit").exists()).toBeFalsy();
+
+        setup.unmount();
+    });
+
+    it("disables the edit button while the table is loading", async () => {
+        const setup = await mountTable({ editConfig: buildEditConfig(), loading: true });
+
+        expect(buttonWithText(setup, "Edit").first().prop("disabled")).toBe(true);
+
+        setup.unmount();
+    });
+
+    it("disables the edit button when there are no rows", async () => {
+        const setup = await mountTable({ editConfig: buildEditConfig(), data: [] });
+
+        expect(buttonWithText(setup, "Edit").first().prop("disabled")).toBe(true);
+
+        setup.unmount();
+    });
+
+    it("replaces the edit button with cancel and save and hides manage columns while editing", async () => {
+        const setup = await mountTable({
+            editConfig: buildEditConfig({ editing: true }),
+            manageColumnsConfig: { visible: true }
+        });
+
+        expect(buttonWithText(setup, "Edit").exists()).toBeFalsy();
+        expect(buttonWithText(setup, "Cancel").exists()).toBeTruthy();
+        expect(buttonWithText(setup, "Save").exists()).toBeTruthy();
+        expect(buttonWithText(setup, "Manage columns").exists()).toBeFalsy();
+
+        setup.unmount();
+    });
+
+    it("keeps cancel interactive while save is disabled", async () => {
+        const setup = await mountTable({ editConfig: buildEditConfig({ editing: true, saveDisabled: true }) });
+
+        expect(buttonWithText(setup, "Save").first().prop("disabled")).toBe(true);
+        expect(buttonWithText(setup, "Cancel").first().prop("disabled")).toBe(false);
+
+        setup.unmount();
+    });
+
+    it("renders editors only for editable columns and bypasses their renderCell", async () => {
+        const setup = await mountTable({ editConfig: buildEditConfig({ editing: true }) });
+
+        expect(editors(setup).length).toBe(editData.length * 2);
+        expect(setup.find(".emailRenderer").length).toBe(0);
+        expect(setup.find("tbody tr").first().find("td").first().text()).toBe(String(editData[0].Id));
+
+        setup.unmount();
+    });
+
+    it("renders an empty editor when the underlying value is nullish", async () => {
+        const nullishData = [{ ...editData[0], FirstName: null as unknown as string }];
+        const setup = await mountTable({ data: nullishData, editConfig: buildEditConfig({ editing: true }) });
+
+        expect(editors(setup).first().prop("value")).toBe("");
+
+        setup.unmount();
+    });
+
+    it("disables the editors while the edit config is loading", async () => {
+        const setup = await mountTable({ editConfig: buildEditConfig({ editing: true, loading: true }) });
+
+        expect(editors(setup).first().prop("disabled")).toBe(true);
+
+        setup.unmount();
+    });
+
+    it("reports every change with the row id, column id and row data", async () => {
+        const onCellChange = jest.fn();
+        const setup = await mountTable({
+            editConfig: buildEditConfig({ editing: true, onCellChange }),
+            editValues: {}
+        });
+
+        await act(async () => {
+            editors(setup)
+                .first()
+                .simulate("change", { target: { value: "Changed" } });
+        });
+
+        expect(onCellChange).toHaveBeenCalledWith({
+            rowId: String(editData[0].Id),
+            columnId: "FirstName",
+            row: editData[0],
+            value: "Changed"
+        });
+
+        setup.unmount();
+    });
+
+    it("shows the draft from editValues instead of the value in data", async () => {
+        const setup = await mountTable({
+            editConfig: buildEditConfig({ editing: true, onCellChange: jest.fn() }),
+            editValues: { [String(editData[0].Id)]: { FirstName: "From drafts" } }
+        });
+
+        expect(editors(setup).first().prop("value")).toBe("From drafts");
+
+        setup.unmount();
+    });
+
+    it("holds the drafts itself when editValues is omitted and reports them on save", async () => {
+        const editConfig = buildEditConfig({ editing: true });
+        const setup = await mountTable({ editConfig });
+
+        await act(async () => {
+            editors(setup)
+                .first()
+                .simulate("change", { target: { value: "Uncontrolled" } });
+        });
+        setup.update();
+
+        expect(editors(setup).first().prop("value")).toBe("Uncontrolled");
+
+        await act(async () => {
+            buttonWithText(setup, "Save").first().simulate("click");
+        });
+
+        expect(editConfig.onSave).toHaveBeenCalledWith({
+            [String(editData[0].Id)]: { FirstName: "Uncontrolled" }
+        });
+
+        setup.unmount();
+    });
+
+    it("discards the internal drafts when edit mode is left", async () => {
+        const setup = await mountTable({ editConfig: buildEditConfig({ editing: true }) });
+
+        await act(async () => {
+            editors(setup)
+                .first()
+                .simulate("change", { target: { value: "Discarded" } });
+        });
+        setup.update();
+
+        await act(async () => {
+            setup.setProps({ editConfig: buildEditConfig({ editing: false }) });
+        });
+        await act(async () => {
+            setup.setProps({ editConfig: buildEditConfig({ editing: true }) });
+        });
+        setup.update();
+
+        expect(editors(setup).first().prop("value")).toBe(editData[0].FirstName);
+
+        setup.unmount();
     });
 });

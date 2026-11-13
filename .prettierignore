@@ -17,6 +17,11 @@ docs
 
 
 **/*.svg
+**/*.jpg
+**/*.jpeg
+**/*.png
+**/*.gif
+**/*.webp
 
 **/*.mdx
 **/*.md

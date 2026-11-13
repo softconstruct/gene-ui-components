@@ -31,7 +31,7 @@ const meta: Meta<IImageProps> = {
         failed: false,
         aspectRatio: "16x9",
         selected: false,
-        src: "https://picsum.photos/id/237/500/500"
+        src: "images/dog-square.jpg"
     }
 };
 

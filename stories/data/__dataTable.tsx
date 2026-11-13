@@ -402,6 +402,7 @@ export function renderMockExpandedRow(row: ClientProfile): ReactNode {
                 <DataTable
                     columns={nestedTableColumns}
                     data={nestedTableData}
+                    getRowId={(nestedRow) => String(nestedRow.Id)}
                     pagination={false}
                     sticky={false}
                     renderExpandedRow={renderMockExpandedRow}
