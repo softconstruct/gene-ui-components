@@ -36,6 +36,14 @@ export type DataTableRenderCellArgs<TData, TValue> = {
     rowId: string;
 };
 
+export type DataTableRenderEditCellArgs<TData> = {
+    value: string;
+    row: TData;
+    rowId: string;
+    disabled: boolean;
+    onChange: (value: string) => void;
+};
+
 export interface IDataTableRowAction<TData> {
     Icon: FC<IconProps>;
     title?: string;
@@ -90,6 +98,13 @@ export type DataTableColumn<TData> = {
      * (e.g., using `useCallback` or defined outside the component) to avoid unnecessary cell re-renders.
      */
     renderCell?: (args: DataTableRenderCellArgs<TData, ReactNode>) => ReactNode;
+    /**
+     * Renders the cell while the table is in edit mode, in place of the built-in control.
+     * Has no effect on a column that is not `editable`.
+     * IMPORTANT: For optimal performance on large tables, ensure this function is memoized
+     * (e.g., using `useCallback` or defined outside the component) to avoid unnecessary cell re-renders.
+     */
+    renderEditCell?: (args: DataTableRenderEditCellArgs<TData>) => ReactNode;
 };
 
 export type ColumnVisibilityState = Record<string, boolean>;
@@ -331,5 +346,6 @@ declare module "@tanstack/react-table" {
         defaultVisible?: boolean;
         defaultPinned?: boolean;
         editable?: boolean;
+        renderEditCell?: (args: DataTableRenderEditCellArgs<TData>) => ReactNode;
     }
 }

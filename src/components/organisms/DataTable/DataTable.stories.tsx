@@ -6,6 +6,7 @@ import { fn } from "@storybook/test";
 import { Pencil, RecycleBin } from "@geneui/icons";
 
 // Components
+import Dropdown, { IDropdownOption } from "@components/molecules/Dropdown";
 import NumberField from "@components/molecules/NumberField";
 import Pagination from "@components/molecules/Pagination";
 import Switch from "@components/molecules/Switch";
@@ -253,6 +254,63 @@ const editableColumns: IDataTableProps<MockRowType>["columns"] = [
     }
 ];
 
+const isTruthyCellValue = (value: unknown) => value === true || value === "true";
+
+const statusOptions: IDropdownOption[] = [
+    { id: "new", label: "New", value: "new" },
+    { id: "active", label: "Active", value: "active" },
+    { id: "inactive", label: "Inactive", value: "inactive" },
+    { id: "suspended", label: "Suspended", value: "suspended" }
+];
+
+const customEditCellColumns: IDataTableProps<MockRowType>["columns"] = [
+    { accessorKey: "Id", header: "Id" },
+    { accessorKey: "FirstName", header: "First name", editable: true },
+    {
+        accessorKey: "DayOffs",
+        header: "Day offs",
+        editable: true,
+        renderEditCell: ({ value, disabled, onChange }) => (
+            <NumberField size="small" value={value} disabled={disabled} onChange={onChange} />
+        )
+    },
+    {
+        accessorKey: "IsVerified",
+        header: "Verified",
+        editable: true,
+        renderCell: ({ value }) => (isTruthyCellValue(value) ? "Verified" : "Not verified"),
+        renderEditCell: ({ value, disabled, onChange }) => (
+            <Switch
+                checked={isTruthyCellValue(value)}
+                disabled={disabled}
+                onChange={(event) => onChange(String(event.target.checked))}
+            />
+        )
+    },
+    {
+        accessorKey: "Status",
+        header: "Status",
+        editable: true,
+        renderCell: ({ value }) => statusOptions.find((option) => option.value === String(value))?.label ?? "",
+        renderEditCell: ({ value, disabled, onChange }) => (
+            <Dropdown
+                size="small"
+                options={statusOptions}
+                value={value}
+                disabled={disabled}
+                onChange={(option) => {
+                    if (Array.isArray(option)) {
+                        onChange("");
+                    } else {
+                        onChange(option?.value ?? "");
+                    }
+                }}
+            />
+        )
+    },
+    { accessorKey: "Email", header: "Email", editable: true }
+];
+
 const EditModeTableWrapper = (props: IDataTableProps<MockRowType>) => {
     const [rows, setRows] = useState<MockRowType[]>(mockData);
     const [drafts, setDrafts] = useState<DataTableEditValues<MockRowType>>({});
@@ -342,5 +400,13 @@ export const WithEditMode: Story = {
         columns: editableColumns,
         pagination: { pageSize: 10, rowsPerPageOptions: [2, 10, 20, 50, 100], showInputPageField: true },
         manageColumnsConfig: { visible: true }
+    }
+};
+
+export const WithCustomEditCells: Story = {
+    render: (props) => <UncontrolledEditModeTableWrapper {...props} />,
+    args: {
+        columns: customEditCellColumns,
+        pagination: { pageSize: 10, rowsPerPageOptions: [2, 10, 20, 50, 100], showInputPageField: true }
     }
 };

@@ -118,8 +118,11 @@ export {
 // Organisms
 export {
     default as DataTable,
+    DataTableColumn,
     DataTableEditValues,
     DataTableGetRowStatus,
+    DataTableRenderCellArgs,
+    DataTableRenderEditCellArgs,
     DataTableRenderExpandedRow,
     DataTableRowExpandChangeHandler,
     DataTableRowExpandChangePayload,

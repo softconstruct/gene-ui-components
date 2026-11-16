@@ -125,6 +125,7 @@ const TableRow = <TData,>({
                             isCellEditing={!!isEditing && !!cell.column.columnDef.meta?.editable}
                             isEditDisabled={!!isEditDisabled}
                             editValue={String((hasDraft ? drafts[columnId] : value) ?? "")}
+                            renderEditCell={cell.column.columnDef.meta?.renderEditCell}
                             onCellChange={onCellChange}
                         />
                     );

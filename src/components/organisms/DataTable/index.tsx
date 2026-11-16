@@ -1,7 +1,10 @@
 export { IDataTableProps, default } from "./DataTable";
 export {
+    DataTableColumn,
     DataTableEditValues,
     DataTableGetRowStatus,
+    DataTableRenderCellArgs,
+    DataTableRenderEditCellArgs,
     DataTableRenderExpandedRow,
     DataTableRowExpandChangeHandler,
     DataTableRowExpandChangePayload,
