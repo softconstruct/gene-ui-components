@@ -84,12 +84,12 @@ export interface ITableBodyCellProps<TData, TValue> {
      * Value the editor shows: the draft from `editValues` when the cell has one, the value from
      * `data` otherwise.
      */
-    editValue: string;
+    editValue: ReactNode;
     /**
      * Snapshot of `column.columnDef.meta.renderEditCell` — the renderer reference. Catches
      * consumers updating the `columns` prop with a new renderer closure.
      */
-    renderEditCell?: (args: DataTableRenderEditCellArgs<TData>) => ReactNode;
+    renderEditCell?: (args: DataTableRenderEditCellArgs<TData, ReactNode>) => ReactNode;
     /**
      * Reports what was typed into the editor. Must stay referentially stable, it is not compared by
      * {@link areCellsEqual}.
@@ -126,7 +126,7 @@ const TableBodyCell = <TData, TValue>({
     const isRTL = dirMode === "rtl";
     const explicitSize = cell.column.columnDef.meta?.explicitSize;
 
-    const handleEditValueChange = (value: string) =>
+    const handleEditValueChange = (value: ReactNode) =>
         onCellChange?.({
             rowId: cell.row.id,
             columnId: cell.column.id,
@@ -149,7 +149,7 @@ const TableBodyCell = <TData, TValue>({
             <TextField
                 className="tableBodyCell__textField"
                 size="small"
-                value={editValue}
+                value={String(editValue ?? "")}
                 disabled={isEditDisabled}
                 onChange={(event) => handleEditValueChange(event.target.value)}
             />

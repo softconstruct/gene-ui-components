@@ -1717,10 +1717,14 @@ describe("Table Component - Edit Mode", () => {
 describe("Table Component - Edit Mode custom cell renderer", () => {
     const editData = mockData.slice(0, 3);
 
-    const renderEmailEditCell = ({ value, disabled, onChange }: DataTableRenderEditCellArgs<MockDataType>) => (
+    const renderEmailEditCell = ({
+        value,
+        disabled,
+        onChange
+    }: DataTableRenderEditCellArgs<MockDataType, ReactNode>) => (
         <input
             className="customEditor"
-            value={value}
+            value={String(value ?? "")}
             disabled={disabled}
             onChange={(event) => onChange(event.target.value)}
         />

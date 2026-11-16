@@ -51,12 +51,12 @@ export interface ICellProps<TData, TValue> {
      * Value the editor shows: the draft from `editValues` when the cell has one, the value from
      * `data` otherwise.
      */
-    editValue: string;
+    editValue: ReactNode;
     /**
      * Snapshot of `column.columnDef.meta.renderEditCell` — the renderer reference. Catches
      * consumers updating the `columns` prop with a new renderer closure.
      */
-    renderEditCell?: (args: DataTableRenderEditCellArgs<TData>) => ReactNode;
+    renderEditCell?: (args: DataTableRenderEditCellArgs<TData, ReactNode>) => ReactNode;
 }
 
 /**

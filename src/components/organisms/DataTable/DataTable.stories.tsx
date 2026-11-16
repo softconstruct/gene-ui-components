@@ -254,8 +254,6 @@ const editableColumns: IDataTableProps<MockRowType>["columns"] = [
     }
 ];
 
-const isTruthyCellValue = (value: unknown) => value === true || value === "true";
-
 const statusOptions: IDropdownOption[] = [
     { id: "new", label: "New", value: "new" },
     { id: "active", label: "Active", value: "active" },
@@ -271,32 +269,33 @@ const customEditCellColumns: IDataTableProps<MockRowType>["columns"] = [
         header: "Day offs",
         editable: true,
         renderEditCell: ({ value, disabled, onChange }) => (
-            <NumberField size="small" value={value} disabled={disabled} onChange={onChange} />
+            <NumberField
+                size="small"
+                value={typeof value === "number" ? value : ""}
+                disabled={disabled}
+                onChange={(nextValue) => onChange(nextValue === "" ? "" : Number(nextValue))}
+            />
         )
     },
     {
         accessorKey: "IsVerified",
         header: "Verified",
         editable: true,
-        renderCell: ({ value }) => (isTruthyCellValue(value) ? "Verified" : "Not verified"),
+        renderCell: ({ value }) => (value ? "Verified" : "Not verified"),
         renderEditCell: ({ value, disabled, onChange }) => (
-            <Switch
-                checked={isTruthyCellValue(value)}
-                disabled={disabled}
-                onChange={(event) => onChange(String(event.target.checked))}
-            />
+            <Switch checked={value === true} disabled={disabled} onChange={(event) => onChange(event.target.checked)} />
         )
     },
     {
         accessorKey: "Status",
         header: "Status",
         editable: true,
-        renderCell: ({ value }) => statusOptions.find((option) => option.value === String(value))?.label ?? "",
+        renderCell: ({ value }) => statusOptions.find((option) => option.value === value)?.label ?? "",
         renderEditCell: ({ value, disabled, onChange }) => (
             <Dropdown
                 size="small"
                 options={statusOptions}
-                value={value}
+                value={typeof value === "string" ? value : null}
                 disabled={disabled}
                 onChange={(option) => {
                     if (Array.isArray(option)) {
