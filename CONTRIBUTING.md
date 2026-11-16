@@ -105,6 +105,26 @@ satisfactory and close the issue if it is.
 [React](#react) [ESLint](#es-lint) [Stylelint](#stylelint) [Prettier](#prettier) [Storybook](#storybook)
 [BrowserStack](#browser-stack) [Commitizen](#commitizen) [Rollup](#rollup) [Jest](#jest)
 
+### Styling
+
+#### BEM
+
+Class names follow [BEM](https://getbem.com/naming/) with lowercase-camel names:
+
+-   **Block** — the component's root, named after the component: `.button`, `.tableBodyCell`.
+-   **Element** — a part of the block, joined with `__`: `.button__icon`, `.tableRow__actionsWrapper`.
+-   **Modifier** — a state or variant, joined with `_`. A key-value modifier is `_key_value` (`.button_size_large`); a
+    boolean one is just `_key` (`.button_loading`). Elements take modifiers the same way
+    (`.tableBodyCell__content_sized`).
+-   **Nesting** — write elements and modifiers with `&` inside the block. For a selector that combines modifiers,
+    store the block in `$this: &;` and use `#{ $this }_type_fill` instead of repeating the block name.
+-   **Class lists** — build them with `classnames` in the component; the consumer's `className` only places the
+    component in its parent and is never a styling hook.
+-   **A block styles only itself.** A component's SCSS selects only its own classes — not a parent block's
+    (`.dataTable__table_sized &` inside `.tableBodyCell`) and not a child block's (`.tableRow__actionsWrapper` nested in
+    `.tableBodyCell`). Otherwise renaming or reusing either block breaks the other silently. Pass the state down as a
+    prop and add a modifier on the block's own element instead (`.tableBodyCell__content_sized`).
+
 ## 📝 How to document
 
 ### Component prop guide

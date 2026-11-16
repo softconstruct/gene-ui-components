@@ -128,11 +128,15 @@ export {
 // Organisms
 export {
     default as DataTable,
+    DataTableEditValues,
     DataTableGetRowStatus,
     DataTableRenderExpandedRow,
     DataTableRowExpandChangeHandler,
     DataTableRowExpandChangePayload,
     DataTableRowStatus,
+    IDataTableCellChangePayload,
+    IDataTableEditConfig,
+    IDataTableEditTexts,
     IDataTableProps,
     IDataTableRowAction
 } from "@components/organisms/DataTable";
@@ -171,6 +175,7 @@ export {
     IStackedBarChartSeries
 } from "./components/charts/StackedBarChart";
 export { default as AreaChart, IAreaChartProps, IAreaChartSeries } from "./components/charts/AreaChart";
+export { default as DualAxisChart, IDualAxisChartProps, IDualAxisChartSeries } from "./components/charts/DualAxisChart";
 
 // Providers
 export {

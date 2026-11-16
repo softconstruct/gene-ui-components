@@ -12,7 +12,14 @@
         width: 100%;
         table-layout: auto;
         border-collapse: separate;
+        border-spacing: 0;
         isolation: isolate;
+
+        &_sized {
+            width: auto;
+            min-width: 100%;
+            table-layout: fixed;
+        }
     }
 
     &__noDataToDisplay {

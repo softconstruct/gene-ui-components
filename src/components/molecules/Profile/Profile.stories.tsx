@@ -22,7 +22,7 @@ const meta: Meta<typeof Profile> = {
     },
     args: {
         fullName: "User Name",
-        src: "https://picsum.photos/id/64/200/300"
+        src: "images/avatar.jpg"
     }
 };
 
