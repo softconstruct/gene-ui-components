@@ -48,17 +48,6 @@ export type CalendarRange = {
 };
 
 /**
- * The days of a week row that the range covers, as the indexes of the first and the last one, with
- * whether the range starts or ends there.
- */
-export type CalendarRangeBand = {
-    from: number;
-    to: number;
-    isStart: boolean;
-    isEnd: boolean;
-};
-
-/**
  * A day of a preset: an ISO date (`YYYY-MM-DD`), or a whole number of days from today, like `0` for
  * today and `-1` for yesterday.
  */

@@ -10,7 +10,6 @@ import { INPUT_CHANGE_DEBOUNCE_MS } from "@internal/components/Picker";
 
 // Helpers
 import {
-    addDays,
     addMonths,
     createBounds,
     createDateMaskTrack,
@@ -26,21 +25,19 @@ import {
     getMonthWeeks,
     getNearestAvailableDate,
     getPanelPageBounds,
-    getRangeBand,
     getWeekdayNames,
     getYearPageStart,
     getYearPageYears,
+    isCalendarCellOutOfBounds,
     isCalendarPageOutOfBounds,
     isFormattedDate,
     isSameCalendarPage,
     isSameDate,
     isSupportedDate,
-    isValidDateFormat,
     orderPanelDates,
     parseDate,
     resolveDateFormat,
     resolveLocalization,
-    resolvePresetDay,
     resolveRangePreset,
     resolveSinglePreset,
     toISO
@@ -56,9 +53,7 @@ jest.setSystemTime(new Date(2026, 10, 9, 12));
 
 const date = (iso: string) => fromISO(iso)!;
 
-// ---------------------------------------------------------
-// Calendar references, written without the helpers under test
-// ---------------------------------------------------------
+// Calendar references, written without the helpers under test.
 
 const referenceIsLeapYear = (year: number) => (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
 
@@ -92,7 +87,6 @@ const FORMATS: DatePickerFormat[] = [
 
 const monthBefore = (today: string) => toISO(addMonths(fromISO(today)!, -1));
 
-// The presets of the design, configured the way a consumer does.
 const SINGLE_PRESETS: DatePickerPreset[] = [
     { label: "Today", value: 0 },
     { label: "Yesterday", value: -1 },
@@ -193,6 +187,16 @@ const pressInGrid = (setup: ReactWrapper, key: string, shiftKey = false, index =
 const changedValues = (onChange: jest.Mock): string[] =>
     onChange.mock.calls.map(([event]: [ChangeEvent<HTMLInputElement>]) => event.target.value);
 
+const initialInnerWidth = window.innerWidth;
+
+/**
+ * Resizes the window, which the provider reads the breakpoint from: a phone below 768 pixels.
+ */
+const setWindowWidth = (value: number) => {
+    Object.defineProperty(window, "innerWidth", { writable: true, configurable: true, value });
+    window.dispatchEvent(new Event("resize"));
+};
+
 const mountSingle = (props: ISingleDatePickerProps = {}) =>
     mount(<DatePicker {...props} />, { wrappingComponent: GeneUIProvider });
 const mountRange = (props: IRangeDatePickerProps = {}) =>
@@ -292,14 +296,12 @@ describe("DatePicker helpers", () => {
             "DD de MM de YYYY",
             "(DD) MM YYYY"
         ])("accepts %s", (format) => {
-            expect(isValidDateFormat(format)).toBe(true);
             expect(resolveDateFormat(format)).toBe(format);
         });
 
         it.each(["D/M/YYYY", "DD/MM/YY", "MMM DD, YYYY", "DD/MM", "DD/DD/YYYY", "DD_MM_YYYY", "dd/mm/yyyy", ""])(
             "falls back to DD/MM/YYYY for %p",
             (format) => {
-                expect(isValidDateFormat(format)).toBe(false);
                 expect(resolveDateFormat(format)).toBe("DD/MM/YYYY");
             }
         );
@@ -352,6 +354,15 @@ describe("DatePicker helpers", () => {
             expect(formatMonthYear(2026, 11, "fa-IR")).toBe("نوامبر ۲۰۲۶");
             expect(formatYear(2026, "th-TH")).toBe("2026");
             expect(formatFullDate(day, "en-US")).toBe("Monday, November 9, 2026");
+        });
+
+        it("writes a day and a year as the number alone where a locale adds to it", () => {
+            const day = date("2026-11-09");
+
+            expect(formatDay(day, "ja-JP")).toBe("9");
+            expect(formatDay(day, "cs-CZ")).toBe("9");
+            expect(formatYear(2026, "ja-JP")).toBe("2026");
+            expect(formatYear(2026, "lv-LV")).toBe("2026");
         });
 
         it("pages the years by decade, with the year before and the year after it", () => {
@@ -500,6 +511,15 @@ describe("DatePicker helpers", () => {
             expect(getNearestAvailableDate(date("2026-09-01"), bounds)).toEqual(date("2026-05-20"));
         });
 
+        it("tells which cells of a view cannot be picked", () => {
+            expect(isCalendarCellOutOfBounds("days", date("2026-03-09"), bounds)).toBe(true);
+            expect(isCalendarCellOutOfBounds("days", date("2026-03-10"), bounds)).toBe(false);
+            expect(isCalendarCellOutOfBounds("months", date("2026-03-09"), bounds)).toBe(false);
+            expect(isCalendarCellOutOfBounds("months", date("2026-06-01"), bounds)).toBe(true);
+            expect(isCalendarCellOutOfBounds("years", date("2026-12-31"), bounds)).toBe(false);
+            expect(isCalendarCellOutOfBounds("years", date("2027-01-01"), bounds)).toBe(true);
+        });
+
         it("tells which calendar pages have nothing to select", () => {
             expect(isCalendarPageOutOfBounds("days", date("2026-02-28"), bounds)).toBe(true);
             expect(isCalendarPageOutOfBounds("days", date("2026-03-01"), bounds)).toBe(false);
@@ -514,13 +534,15 @@ describe("DatePicker helpers", () => {
         const today = date("2026-11-09");
 
         it("reads a day as an ISO date or as whole days from today", () => {
-            expect(resolvePresetDay(0, today)).toEqual(today);
-            expect(resolvePresetDay(-10, today)).toEqual(date("2026-10-30"));
-            expect(resolvePresetDay("2024-02-29", today)).toEqual(date("2024-02-29"));
-            expect(resolvePresetDay("2026-02-30", today)).toEqual(date("2026-02-28"));
-            expect(resolvePresetDay(0.5, today)).toBeNull();
-            expect(resolvePresetDay("09/11/2026", today)).toBeNull();
-            expect(resolvePresetDay(-800000, today)).toBeNull();
+            const resolve = (value: DatePickerPreset["value"]) => resolveSinglePreset({ label: "", value }, today);
+
+            expect(resolve(0)).toEqual(today);
+            expect(resolve(-10)).toEqual(date("2026-10-30"));
+            expect(resolve("2024-02-29")).toEqual(date("2024-02-29"));
+            expect(resolve("2026-02-30")).toEqual(date("2026-02-28"));
+            expect(resolve(0.5)).toBeNull();
+            expect(resolve("09/11/2026")).toBeNull();
+            expect(resolve(-800000)).toBeNull();
         });
 
         it("calls a function with today's ISO date and orders the days of a range", () => {
@@ -567,20 +589,12 @@ describe("DatePicker helpers", () => {
             expect(order(["2024-03-31", "2024-03-03"], 1)).toEqual(["2024-02-29", "2024-03-03"]);
         });
 
-        it("finds the days of a week row that a range covers", () => {
-            const range = { start: date("2024-09-23"), end: date("2024-10-06") };
-            const week = (first: string, empty = 0) =>
-                Array.from({ length: 7 }, (_, index) => (index < empty ? null : addDays(date(first), index)));
+        it("keeps a panel that would be pushed past the supported dates on their edge", () => {
+            const order = (dates: string[], index: number) =>
+                orderPanelDates(dates.map(date), index).map((day) => toISO(day));
 
-            expect(getRangeBand(week("2024-09-23"), range)).toEqual({ from: 0, to: 6, isStart: true, isEnd: false });
-            expect(getRangeBand(week("2024-09-30", 1), range)).toEqual({ from: 1, to: 6, isStart: false, isEnd: true });
-            expect(getRangeBand(week("2024-09-16"), range)).toBeNull();
-            expect(getRangeBand(week("2024-09-30").slice(0, 1).concat(Array(6).fill(null)), range)).toEqual({
-                from: 0,
-                to: 0,
-                isStart: false,
-                isEnd: false
-            });
+            expect(order(["9999-12-06", "9999-10-20"], 0)).toEqual(["9999-11-06", "9999-12-31"]);
+            expect(order(["0001-03-15", "0001-01-10"], 1)).toEqual(["0001-01-01", "0001-02-10"]);
         });
     });
 
@@ -706,27 +720,44 @@ describe("DatePicker", () => {
     });
 
     describe("loading", () => {
-        it("shows bars in place of the label, the field and the helper text", () => {
-            setup.setProps({ loading: true, label: "Birthday", helperText: "Working days only", size: "large" });
+        const bars = (picker: ReactWrapper) =>
+            picker.find("div.skeleton").map((bar) => ({
+                ...(bar.prop("style") as { width: number | string; height: number }),
+                rounded: bar.hasClass("skeleton_rounded2X") ? "rounded2X" : "rounded3X"
+            }));
+
+        it("shows Skeleton bars in place of the label, the field and the helper text", () => {
+            setup.setProps({ loading: true, label: "Birthday", helperText: "Working days only" });
 
             const skeleton = setup.find("div.datePicker");
 
             expect(skeleton.hasClass("datePicker_loading")).toBeTruthy();
-            expect(skeleton.hasClass("datePicker_size_large")).toBeTruthy();
             expect(skeleton.prop("aria-busy")).toBe(true);
-            expect(setup.find(".datePicker__skeleton").map((bar) => bar.prop("className"))).toEqual([
-                "datePicker__skeleton datePicker__skeleton_label",
-                "datePicker__skeleton datePicker__skeleton_field",
-                "datePicker__skeleton datePicker__skeleton_helperText"
+            expect(bars(setup)).toEqual([
+                { width: 68, height: 20, rounded: "rounded3X" },
+                { width: "100%", height: 32, rounded: "rounded3X" },
+                { width: 101, height: 20, rounded: "rounded3X" }
             ]);
             expect(inputs(setup).exists()).toBeFalsy();
             expect(setup.find("Label").exists()).toBeFalsy();
         });
 
+        it.each([
+            ["large", 20, 40, "rounded2X"],
+            ["small", 16, 24, "rounded3X"]
+        ] as const)("sizes the bars for the %s field", (size, text, field, rounded) => {
+            setup.setProps({ loading: true, label: "Birthday", size });
+
+            expect(bars(setup)).toEqual([
+                { width: 68, height: text, rounded: "rounded3X" },
+                { width: "100%", height: field, rounded }
+            ]);
+        });
+
         it("leaves out the bars of a missing label and helper text, and keeps the class name", () => {
             setup.setProps({ loading: true, className: "test-class" });
 
-            expect(setup.find(".datePicker__skeleton")).toHaveLength(1);
+            expect(setup.find("div.skeleton")).toHaveLength(1);
             expect(setup.find("div.datePicker").hasClass("test-class")).toBeTruthy();
         });
 
@@ -847,6 +878,24 @@ describe("DatePicker", () => {
             container.remove();
         });
 
+        it("moves the focus on to the new page when the mouse pages the calendar under a focused day", () => {
+            const container = document.createElement("div");
+
+            document.body.appendChild(container);
+
+            const picker = mount(<DatePicker />, { wrappingComponent: GeneUIProvider, attachTo: container });
+
+            inputs(picker).simulate("keydown", { key: "ArrowDown" });
+            picker.update();
+            click(picker, "Next month");
+
+            expect(heading(picker)).toBe("December 2026");
+            expect(document.activeElement?.getAttribute("aria-label")).toBe("Wednesday, December 9, 2026");
+
+            picker.unmount();
+            container.remove();
+        });
+
         it("keeps Tab inside the calendar between the header and the grid", () => {
             openPopover(setup);
             button(setup, "Next month").simulate("keydown", { key: "Tab" });
@@ -896,6 +945,19 @@ describe("DatePicker", () => {
             expect(heading(setup)).toBe("März 2026");
             expect(headerItems(setup)).toEqual(["Mär", "2026"]);
             expect(setup.find('[role="columnheader"]').first().prop("aria-label")).toBe("Montag");
+        });
+
+        it("shows the days and the year as numbers in a locale that writes them with more", () => {
+            setup.setProps({ value: "2026-03-05", locale: "ja-JP" });
+            openPopover(setup);
+
+            expect(headerItems(setup)).toEqual(["3月", "2026"]);
+            expect(
+                setup
+                    .find('button[role="gridcell"]')
+                    .slice(0, 7)
+                    .map((cell) => cell.text())
+            ).toEqual(["23", "24", "25", "26", "27", "28", "1"]);
         });
 
         it("pages through the months and the years with the header arrows", () => {
@@ -1121,6 +1183,49 @@ describe("DatePicker", () => {
             picker.unmount();
         });
 
+        it("does not report a typed date the field already holds, or an emptied field that was empty", () => {
+            const onChange = jest.fn();
+            const picker = mountSingle({ defaultValue: "2026-03-15", onChange });
+
+            typeInto(picker, "15/03/202");
+            typeInto(picker, "15/03/2026");
+            blurInput(picker);
+            expect(onChange).not.toHaveBeenCalled();
+
+            setup.setProps({ onChange });
+            typeInto(setup, "1");
+            typeInto(setup, "");
+            expect(onChange).not.toHaveBeenCalled();
+
+            picker.unmount();
+        });
+
+        it("does not report a typed date that is corrected to the one the field holds", () => {
+            const onChange = jest.fn();
+            const onBlur = jest.fn();
+            const picker = mountSingle({ defaultValue: "2026-04-30", onChange, onBlur });
+
+            typeInto(picker, "31/04/2026");
+            blurInput(picker);
+
+            expect(onChange).not.toHaveBeenCalled();
+            expect(onBlur.mock.calls[0][0]).toBe("2026-04-30");
+            expect(inputs(picker).prop("value")).toBe("30/04/2026");
+
+            picker.unmount();
+        });
+
+        it("reports a typed date again while the controlled value has not taken it", () => {
+            const onChange = jest.fn();
+
+            setup.setProps({ value: "2026-03-15", onChange });
+            typeInto(setup, "16/03/2026");
+            blurInput(setup);
+            typeInto(setup, "16/03/2026");
+
+            expect(changedValues(onChange)).toEqual(["2026-03-16", "2026-03-16"]);
+        });
+
         it("reports pending typed text at once when the field is left", () => {
             const onChange = jest.fn();
 
@@ -1166,6 +1271,19 @@ describe("DatePicker", () => {
             expect(inputs(picker).prop("value")).toBe("2026年04月30日");
 
             picker.unmount();
+        });
+
+        it("mounts a new input when the format changes the mask", () => {
+            setup.setProps({ value: "2026-03-05" });
+
+            const input = inputs(setup).getDOMNode();
+
+            setup.setProps({ format: "MM/DD/YYYY" });
+            expect(inputs(setup).getDOMNode()).toBe(input);
+
+            setup.setProps({ format: "YYYY.MM.DD" });
+            expect(inputs(setup).getDOMNode()).not.toBe(input);
+            expect(inputs(setup).prop("value")).toBe("2026.03.05");
         });
 
         it("falls back to DD/MM/YYYY for a format it cannot read", () => {
@@ -1270,6 +1388,17 @@ describe("DatePicker", () => {
 
             setup.setProps({ presets: [] });
             expect(presetList(setup).exists()).toBeFalsy();
+        });
+
+        it("resolves the presets only while the calendar shows them", () => {
+            const value = jest.fn(() => 0);
+
+            setup.setProps({ presets: [{ label: "Today", value }] });
+            typeInto(setup, "15/03/2026");
+            expect(value).not.toHaveBeenCalled();
+
+            openPopover(setup);
+            expect(value).toHaveBeenCalledWith("2026-11-09");
         });
 
         it("lists the presets of a single date beside the calendar", () => {
@@ -1427,13 +1556,6 @@ describe("DatePicker", () => {
     });
 
     describe("on a phone", () => {
-        const initialInnerWidth = window.innerWidth;
-
-        const setWindowWidth = (value: number) => {
-            Object.defineProperty(window, "innerWidth", { writable: true, configurable: true, value });
-            window.dispatchEvent(new Event("resize"));
-        };
-
         afterEach(() => setWindowWidth(initialInnerWidth));
 
         it("shows the large calendar, paged from the header month and year instead of arrows", () => {
@@ -1523,17 +1645,11 @@ describe("Date range picker", () => {
         setup.setProps({ loading: true, label: "Stay" });
 
         expect(setup.find("div.datePicker").hasClass("datePicker_loading")).toBeTruthy();
-        expect(setup.find(".datePicker__skeleton")).toHaveLength(2);
+        expect(setup.find("div.skeleton")).toHaveLength(2);
         expect(inputs(setup).exists()).toBeFalsy();
     });
 
     it("shows one month on a phone, without the days of the months around it", () => {
-        const initialInnerWidth = window.innerWidth;
-        const setWindowWidth = (value: number) => {
-            Object.defineProperty(window, "innerWidth", { writable: true, configurable: true, value });
-            window.dispatchEvent(new Event("resize"));
-        };
-
         window.scrollTo = jest.fn();
         setWindowWidth(500);
 
@@ -1542,7 +1658,7 @@ describe("Date range picker", () => {
         openPopover(range, 1);
         expect(headings(range)).toEqual(["December 2026"]);
         expect(range.find(".datePicker__cell_empty")).toHaveLength(11);
-        expect(range.find(".datePicker__band")).toHaveLength(1);
+        expect(range.find("button.datePicker__cell_band").map((cell) => cell.text())).toEqual(["1", "2", "3"]);
 
         range.unmount();
         setWindowWidth(initialInnerWidth);
@@ -1588,12 +1704,12 @@ describe("Date range picker", () => {
         expect(button(range, "Thursday, November 12, 2026").hasClass("datePicker__cell_inRange")).toBeTruthy();
         expect(button(range, "Sunday, November 15, 2026").hasClass("datePicker__cell_inRange")).toBeTruthy();
         expect(button(range, "Monday, November 16, 2026").hasClass("datePicker__cell_inRange")).toBeFalsy();
-        expect(range.find(".datePicker__band_end").exists()).toBeTruthy();
+        expect(button(range, "Monday, November 16, 2026").hasClass("datePicker__cell_bandEnd")).toBeTruthy();
 
         range.find('[role="grid"]').first().simulate("mouseleave");
         range.update();
         expect(button(range, "Thursday, November 12, 2026").hasClass("datePicker__cell_inRange")).toBeFalsy();
-        expect(range.find(".datePicker__band").exists()).toBeFalsy();
+        expect(range.find("button.datePicker__cell_band").exists()).toBeFalsy();
 
         range.unmount();
     });
@@ -1620,6 +1736,17 @@ describe("Date range picker", () => {
             expect(panel(setup, 0).find(".datePicker__cell_empty")).toHaveLength(12);
             expect(panel(setup, 1).find(".datePicker__cell_empty")).toHaveLength(11);
             expect(setup.find(".datePicker__cell_outside").exists()).toBeFalsy();
+        });
+
+        it("keeps seven cells in every week, so each day stays in the column of its weekday", () => {
+            openPopover(setup, 0);
+
+            const weeks = panel(setup, 0)
+                .find('div[role="row"]')
+                .slice(1)
+                .map((row) => row.find('button[role="gridcell"]').length + row.find('div[role="cell"]').length);
+
+            expect(weeks).toEqual([7, 7, 7, 7, 7, 7]);
         });
 
         it.each([
@@ -1760,29 +1887,43 @@ describe("Date range picker", () => {
             expect(headings(setup)).toEqual(["March 2027", "May 2027"]);
         });
 
-        it("draws the range as one band per row, rounded where it starts and ends", () => {
+        it("draws the range behind its days, rounded only where it starts and ends", () => {
             const range = mountRange({ defaultValue: { start: "2026-11-10", end: "2026-12-03" } });
 
             openPopover(range, 0);
 
-            const bands = (index: number) =>
+            const days = (index: number, modifier: string) =>
                 panel(range, index)
-                    .find(".datePicker__band")
-                    .map((band) => ({
-                        ...(band.prop("style") as Record<string, number>),
-                        start: band.hasClass("datePicker__band_start"),
-                        end: band.hasClass("datePicker__band_end")
-                    }));
-            const band = (from: number, to: number, start = false, end = false) => ({
-                "--date-picker-band-from": from,
-                "--date-picker-band-days": to - from + 1,
-                start,
-                end
-            });
+                    .find(`button.datePicker__cell_${modifier}`)
+                    .map((cell) => cell.text());
 
-            expect(bands(0)).toEqual([band(1, 6, true), band(0, 6), band(0, 6), band(0, 0)]);
-            expect(bands(1)).toEqual([band(1, 3, false, true)]);
-            expect(range.find(".datePicker__band").everyWhere((item) => item.prop("aria-hidden") === true)).toBe(true);
+            expect(days(0, "band")).toEqual(Array.from({ length: 21 }, (_, index) => String(index + 10)));
+            expect(days(1, "band")).toEqual(["1", "2", "3"]);
+            expect(days(0, "bandStart")).toEqual(["10"]);
+            expect(days(1, "bandStart")).toEqual([]);
+            expect(days(0, "bandEnd")).toEqual([]);
+            expect(days(1, "bandEnd")).toEqual(["3"]);
+
+            range.unmount();
+        });
+
+        it("goes back to the field on Tab from the header of a last month with nothing to pick", () => {
+            const range = mountRange({ defaultValue: { start: "2026-11-10", end: "2026-11-13" } });
+
+            openPopover(range, 0);
+            expect(tabStop(range).map((cell) => cell.prop("disabled"))).toEqual([false, true]);
+
+            button(range, "2026, choose year").at(0).simulate("keydown", { key: "Tab" });
+            range.update();
+            expect(range.find(".datePicker__calendar").exists()).toBeTruthy();
+
+            button(range, "December, choose month").simulate("keydown", { key: "Tab" });
+            range.update();
+            expect(range.find(".datePicker__calendar").exists()).toBeTruthy();
+
+            button(range, "2026, choose year").at(1).simulate("keydown", { key: "Tab" });
+            range.update();
+            expect(range.find(".datePicker__calendar").exists()).toBeFalsy();
 
             range.unmount();
         });
@@ -1816,6 +1957,18 @@ describe("Date range picker", () => {
 
         blurInput(range, 1);
         expect(onChange.mock.calls.slice(-1)[0][1]).toEqual({ start: "2026-11-10", end: "2026-11-10" });
+
+        range.unmount();
+    });
+
+    it("draws no range while a typed end is before the start", () => {
+        const range = mountRange({ defaultValue: { start: "2026-11-10", end: null } });
+
+        openPopover(range, 1);
+        typeInto(range, "02/11/2026", 1);
+
+        expect(button(range, "Monday, November 2, 2026").prop("aria-selected")).toBe(true);
+        expect(range.find("button.datePicker__cell_band").exists()).toBeFalsy();
 
         range.unmount();
     });

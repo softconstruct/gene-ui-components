@@ -7,43 +7,6 @@
     flex-direction: column;
     gap: var(--guit-ref-spacing-3xsmall);
 
-    &_loading {
-        --date-picker-skeleton-text-height: var(--guit-sem-font-label-medium-default-medium-line-height);
-        --date-picker-skeleton-field-height: var(--guit-sem-dimension-height-medium);
-        --date-picker-skeleton-field-radius: var(--guit-ref-radius-3xsmall);
-
-        opacity: 0.7;
-
-        &#{$this}_size_large {
-            --date-picker-skeleton-field-height: var(--guit-sem-dimension-height-large);
-            --date-picker-skeleton-field-radius: var(--guit-ref-radius-2xsmall);
-        }
-
-        &#{$this}_size_small {
-            --date-picker-skeleton-text-height: var(--guit-sem-font-label-small-default-medium-line-height);
-            --date-picker-skeleton-field-height: var(--guit-sem-dimension-height-small);
-        }
-    }
-
-    &__skeleton {
-        height: var(--date-picker-skeleton-text-height);
-        border-radius: var(--guit-ref-radius-3xsmall);
-        background-color: var(--guit-sem-color-background-transparent-2);
-
-        &_label {
-            width: var(--guit-sem-dimension-width-3xlarge);
-        }
-
-        &_field {
-            height: var(--date-picker-skeleton-field-height);
-            border-radius: var(--date-picker-skeleton-field-radius);
-        }
-
-        &_helperText {
-            width: var(--guit-sem-dimension-width-5xlarge);
-        }
-    }
-
     &__calendar {
         --date-picker-gap: var(--guit-ref-spacing-3xsmall);
         --date-picker-radius: var(--guit-ref-radius-3xsmall);
@@ -106,12 +69,20 @@
                 flex-direction: column;
             }
 
-            #{$this}__picker {
-                align-items: center;
+            #{$this}__grid {
+                width: auto;
+                container-type: inline-size;
             }
 
-            #{$this}__header {
-                align-self: stretch;
+            // The days spread over the sheet: the gaps of the design on a 360px screen, wider gaps on wider ones.
+            #{$this}__grid_view_days #{$this}__row {
+                --date-picker-free-space: calc(100cqi - var(--date-picker-control-size) * 7);
+                --date-picker-gap: max(
+                    var(--guit-ref-spacing-3xsmall),
+                    (var(--date-picker-free-space) - var(--guit-ref-spacing-2xlarge) * 2) / 6
+                );
+
+                padding-inline: calc((var(--date-picker-free-space) - var(--date-picker-gap) * 6) / 2);
             }
         }
     }
@@ -128,7 +99,6 @@
 
     &__presets {
         display: flex;
-        outline: none;
 
         &_vertical {
             flex-direction: column;
@@ -205,7 +175,7 @@
         width: calc(var(--date-picker-control-size) * 7 + var(--date-picker-gap) * 8);
         height: calc(var(--date-picker-control-size) * 7 + var(--date-picker-gap) * 8);
         padding: var(--date-picker-gap);
-        outline: none;
+        isolation: isolate;
 
         &_view {
             &_months,
@@ -226,30 +196,8 @@
     }
 
     &__row {
-        position: relative;
         display: flex;
         gap: var(--date-picker-gap);
-    }
-
-    // The range behind the days of a row, gaps included; it is rounded where the range starts and ends.
-    &__band {
-        --date-picker-band-step: calc(var(--date-picker-control-size) + var(--date-picker-gap));
-
-        position: absolute;
-        inset-block: 0;
-        inset-inline-start: calc(var(--date-picker-band-from) * var(--date-picker-band-step));
-        width: calc(var(--date-picker-band-days) * var(--date-picker-band-step) - var(--date-picker-gap));
-        background-color: var(--guit-sem-color-background-brand-1);
-
-        &_start {
-            border-start-start-radius: var(--date-picker-radius);
-            border-end-start-radius: var(--date-picker-radius);
-        }
-
-        &_end {
-            border-start-end-radius: var(--date-picker-radius);
-            border-end-end-radius: var(--date-picker-radius);
-        }
     }
 
     &__weekday {
@@ -279,7 +227,7 @@
             }
 
             &:active {
-                background-color: var(--guit-sem-color-background-selected-2-hover);
+                background-color: var(--guit-sem-color-background-selected-2-pressed);
             }
         }
 
@@ -308,6 +256,34 @@
             &:disabled {
                 background-color: var(--guit-sem-color-background-disabled);
             }
+
+            &:focus-visible {
+                border-radius: var(--date-picker-radius);
+            }
+        }
+
+        // The range behind its days and the gaps between them, rounded where it starts and ends.
+        &_band::before {
+            content: "";
+            position: absolute;
+            z-index: -1;
+            inset: 0;
+            background-color: var(--guit-sem-color-background-brand-1);
+            pointer-events: none;
+        }
+
+        &_band + &_band::before {
+            inset-inline-start: calc(var(--date-picker-gap) * -1);
+        }
+
+        &_bandStart::before {
+            border-start-start-radius: var(--date-picker-radius);
+            border-end-start-radius: var(--date-picker-radius);
+        }
+
+        &_bandEnd::before {
+            border-start-end-radius: var(--date-picker-radius);
+            border-end-end-radius: var(--date-picker-radius);
         }
     }
 }

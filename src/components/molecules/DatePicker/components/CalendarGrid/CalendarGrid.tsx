@@ -1,4 +1,4 @@
-import React, { CSSProperties, FC, KeyboardEvent, MouseEvent, Ref, useEffect, useRef } from "react";
+import React, { FC, KeyboardEvent, MouseEvent, useEffect } from "react";
 import classNames from "classnames";
 
 // Components
@@ -6,34 +6,54 @@ import Text from "@components/atoms/Text";
 
 import { PickerButton } from "@internal/components/Picker";
 
+// Hooks
+import useElementRefs from "../../hooks/useElementRefs";
 // Types
-import { CalendarRangeBand, CalendarView, DatePickerSizes } from "../../types";
+import { CalendarView, DatePickerSizes } from "../../types";
 
 export type CalendarGridCell = {
     /**
      * Identifies the cell: an ISO day, a `YYYY-MM` month or a `YYYY` year.
      */
     key: string;
+    /**
+     * The visible text of the cell: a day number, a month name or a year.
+     */
     text: string;
     /**
      * Accessible name of the cell, like the full date of a day.
      */
     label: string;
+    /**
+     * Whether the cell shows a selected day, or the month or year of the edited one.
+     */
     selected?: boolean;
+    /**
+     * Whether the cell is outside the selectable days.
+     */
     disabled?: boolean;
     /**
      * Whether the cell is today, or today's month or year.
      */
     current?: boolean;
     /**
-     * Keeps the place of a day or a year outside the supported dates, with nothing to pick.
+     * Keeps the place of a day or a year the grid leaves out, as a cell with nothing to pick.
      */
     empty?: boolean;
+    /**
+     * Classes of the cell's state, like a day of the range.
+     */
     className?: string;
 };
 
-export type CalendarGridColumnHeader = {
+type CalendarGridColumnHeader = {
+    /**
+     * The visible text of the header, like a narrow weekday name.
+     */
     text: string;
+    /**
+     * Accessible name of the header, like the full weekday name.
+     */
     label: string;
 };
 
@@ -42,14 +62,22 @@ interface ICalendarGridProps {
      * Accessible name of the grid, like the month it shows.
      */
     label: string;
-    size: DatePickerSizes;
-    view: CalendarView;
-    columnHeaders?: CalendarGridColumnHeader[];
-    rows: CalendarGridCell[][];
     /**
-     * The band of each row behind the days of a range, by the index of the row.
+     * The size of the cells.
      */
-    bands?: (CalendarRangeBand | null)[];
+    size: DatePickerSizes;
+    /**
+     * Whether the grid shows days, months or years.
+     */
+    view: CalendarView;
+    /**
+     * The weekday names above the days; left out by the month and the year view.
+     */
+    columnHeaders?: CalendarGridColumnHeader[];
+    /**
+     * The cells, row by row.
+     */
+    rows: CalendarGridCell[][];
     /**
      * The cell that takes part in the tab sequence.
      */
@@ -58,11 +86,25 @@ interface ICalendarGridProps {
      * Moves the focus to the `focusKey` cell once it is rendered; `onFocusMoved` confirms it.
      */
     shouldFocus: boolean;
+    /**
+     * Confirms that the focus moved to the `focusKey` cell.
+     */
     onFocusMoved: () => void;
-    gridRef: Ref<HTMLDivElement>;
+    /**
+     * Handles a key pressed inside the grid.
+     */
     onKeyDown: (event: KeyboardEvent<HTMLDivElement>) => void;
+    /**
+     * Picks the cell with `key`.
+     */
     onCellClick: (key: string, event: MouseEvent<HTMLButtonElement>) => void;
+    /**
+     * Reports the cell with `key` taking the focus.
+     */
     onCellFocus: (key: string) => void;
+    /**
+     * Reports the cell under the pointer, `null` when the pointer leaves the grid.
+     */
     onCellHover?: (key: string | null) => void;
 }
 
@@ -75,62 +117,26 @@ const CalendarGrid: FC<ICalendarGridProps> = ({
     view,
     columnHeaders,
     rows,
-    bands,
     focusKey,
     shouldFocus,
     onFocusMoved,
-    gridRef,
     onKeyDown,
     onCellClick,
     onCellFocus,
     onCellHover
 }) => {
-    const cellRefs = useRef(new Map<string, HTMLButtonElement>());
-    const cellRefCallbacks = useRef(new Map<string, (node: HTMLButtonElement | null) => void>());
-
-    const getCellRef = (key: string) => {
-        let callback = cellRefCallbacks.current.get(key);
-
-        if (!callback) {
-            callback = (node: HTMLButtonElement | null) => {
-                if (node) cellRefs.current.set(key, node);
-                else cellRefs.current.delete(key);
-            };
-            cellRefCallbacks.current.set(key, callback);
-        }
-
-        return callback;
-    };
+    const cells = useElementRefs<HTMLButtonElement>();
 
     useEffect(() => {
         if (!shouldFocus) return;
 
         onFocusMoved();
         // The popover may still be on its way to its position, so the page must not scroll to it.
-        cellRefs.current.get(focusKey)?.focus({ preventScroll: true });
+        cells.get(focusKey)?.focus({ preventScroll: true });
     }, [shouldFocus, focusKey]);
-
-    // One band behind the cells, so the range also covers the gaps between its days.
-    const renderBand = (band?: CalendarRangeBand | null) =>
-        band && (
-            <span
-                aria-hidden
-                className={classNames("datePicker__band", {
-                    datePicker__band_start: band.isStart,
-                    datePicker__band_end: band.isEnd
-                })}
-                style={
-                    {
-                        "--date-picker-band-from": band.from,
-                        "--date-picker-band-days": band.to - band.from + 1
-                    } as CSSProperties
-                }
-            />
-        );
 
     return (
         <div
-            ref={gridRef}
             role="grid"
             tabIndex={-1}
             aria-label={label}
@@ -154,21 +160,19 @@ const CalendarGrid: FC<ICalendarGridProps> = ({
                     ))}
                 </div>
             )}
-            {rows.map((row, rowIndex) => (
+            {rows.map((row) => (
                 <div key={row[0].key} role="row" className="datePicker__row">
-                    {renderBand(bands?.[rowIndex])}
                     {row.map((cell) =>
                         cell.empty ? (
                             <div
                                 key={cell.key}
-                                role="gridcell"
-                                aria-hidden
+                                role="cell"
                                 className={classNames("datePicker__cell", "datePicker__cell_empty", cell.className)}
                             />
                         ) : (
                             <PickerButton
                                 key={cell.key}
-                                ref={getCellRef(cell.key)}
+                                ref={cells.getRef(cell.key)}
                                 role="gridcell"
                                 value={cell.key}
                                 size={size}
@@ -177,11 +181,7 @@ const CalendarGrid: FC<ICalendarGridProps> = ({
                                 disabled={cell.disabled}
                                 aria-label={cell.label}
                                 aria-current={cell.current ? "date" : undefined}
-                                className={classNames(
-                                    "datePicker__cell",
-                                    `datePicker__cell_size_${size}`,
-                                    cell.className
-                                )}
+                                className={classNames("datePicker__cell", cell.className)}
                                 onClick={onCellClick}
                                 onFocus={onCellFocus}
                                 onMouseEnter={onCellHover}

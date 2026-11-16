@@ -116,7 +116,6 @@ const monthsBefore = (date: string, months: number): string => {
     return target.toISOString().slice(0, 10);
 };
 
-// The presets of the design, counted from today: numbers are days from today.
 const singlePresets: DatePickerPreset[] = [
     { label: "Today", value: 0 },
     { label: "Yesterday", value: -1 },
@@ -134,7 +133,6 @@ const rangePresets: DatePickerRangePreset[] = [
     { label: "1 month ago", value: (today) => ({ start: monthsBefore(today, 1), end: today }) }
 ];
 
-// Each kind of value: days from today, a function of today and fixed ISO dates.
 const customRangePresets: DatePickerRangePreset[] = [
     { label: "Last 11 days", value: { start: -10, end: 0 } },
     { label: "This month", value: (today) => ({ start: `${today.slice(0, 8)}01`, end: today }) },

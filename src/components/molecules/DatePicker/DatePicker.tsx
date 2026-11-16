@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FocusEvent, forwardRef, KeyboardEvent, useMemo } from "react";
+import React, { ChangeEvent, FocusEvent, forwardRef, KeyboardEvent, Ref, useMemo } from "react";
 import classNames from "classnames";
 import { nanoid } from "nanoid/non-secure";
 
@@ -6,13 +6,19 @@ import { Calendar as CalendarIcon } from "@geneui/icons";
 
 // Components
 import Label from "@components/atoms/Label";
+import Skeleton from "@components/atoms/Skeleton";
 
 import { DEFAULT_ID_PREFIX, PickerInput, PickerPopover, textSizeMap } from "@internal/components/Picker";
 
 import Calendar from "./components/Calendar/Calendar";
-import DatePickerSkeleton from "./components/DatePickerSkeleton/DatePickerSkeleton";
 // Constants
-import { DATE_MASK_REPLACEMENT, DEFAULT_LOCALE } from "./constants";
+import {
+    DATE_MASK_REPLACEMENT,
+    DEFAULT_LOCALE,
+    SKELETON_HEIGHTS,
+    SKELETON_HELPER_TEXT_WIDTH,
+    SKELETON_LABEL_WIDTH
+} from "./constants";
 // Helpers
 import { createDateMaskTrack, getDateMask, resolveDateFormat, resolveLocalization } from "./helpers";
 // Hooks
@@ -80,7 +86,7 @@ interface IDatePickerBaseProps {
     loading?: boolean;
     /**
      * Validation state of the component: `rest` (no highlight), `warning` or `error`.
-     * Colors the border and the `helperText`.<br>
+     * Colors the `helperText`, and the border on `error`.<br>
      * Possible values: `rest | warning | error`
      * @default "rest"
      */
@@ -284,9 +290,27 @@ const usePickerSetup = ({ id, format: formatProp, localization, disabled, readOn
         texts,
         mask,
         maskTrack,
+        // The mask library reads the text of an input with the mask it was mounted with, so a new mask
+        // mounts a new input.
+        inputKey: mask,
         inputSize: mask.length + 1
     };
 };
+
+type SkeletonOptions = Pick<IDatePickerBaseProps, "className" | "label" | "helperText"> & { size: DatePickerSizes };
+
+/**
+ * The picker while its data is loading: Skeleton bars in place of the label, the field and the helper text.
+ */
+const renderSkeleton = ({ className, size, label, helperText }: SkeletonOptions, ref: Ref<HTMLDivElement>) => (
+    <div ref={ref} aria-busy className={classNames("datePicker", "datePicker_loading", className)}>
+        {label && <Skeleton width={SKELETON_LABEL_WIDTH} height={SKELETON_HEIGHTS[size].text} rounded="rounded3X" />}
+        <Skeleton height={SKELETON_HEIGHTS[size].field} rounded={size === "large" ? "rounded2X" : "rounded3X"} />
+        {helperText && (
+            <Skeleton width={SKELETON_HELPER_TEXT_WIDTH} height={SKELETON_HEIGHTS[size].text} rounded="rounded3X" />
+        )}
+    </div>
+);
 
 /**
  * Component for selecting a single date, by typing it or by picking it in a calendar.
@@ -324,17 +348,7 @@ const SingleDatePicker = forwardRef<HTMLDivElement, ISingleDatePickerProps>(
             readOnly: setup.isReadOnly
         });
 
-        if (loading) {
-            return (
-                <DatePickerSkeleton
-                    ref={ref}
-                    className={className}
-                    size={size}
-                    withLabel={!!label}
-                    withHelperText={!!helperText}
-                />
-            );
-        }
+        if (loading) return renderSkeleton({ className, size, label, helperText }, ref);
 
         return (
             <div className={classNames("datePicker", className)} ref={ref}>
@@ -349,6 +363,7 @@ const SingleDatePicker = forwardRef<HTMLDivElement, ISingleDatePickerProps>(
                     text={label}
                 />
                 <PickerInput
+                    key={setup.inputKey}
                     {...inputProps}
                     id={setup.generatedId}
                     name={name}
@@ -416,17 +431,7 @@ const RangeDatePicker = forwardRef<HTMLDivElement, IRangeDatePickerProps>(
 
         const ids = { start: `${setup.generatedId}-start`, end: `${setup.generatedId}-end` };
 
-        if (loading) {
-            return (
-                <DatePickerSkeleton
-                    ref={ref}
-                    className={className}
-                    size={size}
-                    withLabel={!!label}
-                    withHelperText={!!helperText}
-                />
-            );
-        }
+        if (loading) return renderSkeleton({ className, size, label, helperText }, ref);
 
         return (
             <div className={classNames("datePicker", className)} ref={ref}>
@@ -441,6 +446,7 @@ const RangeDatePicker = forwardRef<HTMLDivElement, IRangeDatePickerProps>(
                     text={label}
                 />
                 <PickerInput.Range
+                    key={setup.inputKey}
                     {...inputProps}
                     ids={ids}
                     labels={{ start: setup.texts.startDate, end: setup.texts.endDate }}

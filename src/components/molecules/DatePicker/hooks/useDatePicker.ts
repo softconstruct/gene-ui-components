@@ -33,10 +33,6 @@ import {
     DatePickerRangeValue
 } from "../types";
 
-// ---------------------------------------------------------
-// Value helpers
-// ---------------------------------------------------------
-
 /**
  * The value typed text stands for: an ISO date once the text is a complete, existing and allowed
  * date, `null` for an emptied field, and `undefined` for anything else, which is left to the blur.
@@ -50,10 +46,6 @@ const getTypedDateValue = (text: string, format: DatePickerFormat, bounds: DateB
 
     return toISO(date);
 };
-
-// ---------------------------------------------------------
-// Field
-// ---------------------------------------------------------
 
 /**
  * Owns the value of one date input. The value is an ISO date; the input shows it in `format`, or
@@ -73,7 +65,6 @@ const useDateField = (
     const committedDate = useMemo(() => fromISO(committedValue), [committedValue]);
     const draftDate = useMemo(() => parseDate(draftValue, format), [draftValue, format]);
 
-    // The value the field last settled on, restored when it is left with incomplete text.
     const lastValidValueRef = useRef<string | null>(committedDate ? committedValue : null);
 
     useEffect(() => {
@@ -91,7 +82,6 @@ const useDateField = (
         value: draftValue !== null ? getDraftValue(draftValue) : committedValue,
         committedValue,
         isEditing,
-        /** The day the text stands for. */
         date: draftValue !== null ? draftDate : committedDate,
         lastValidValueRef,
         setValue: (nextValue: string | null) => {
@@ -106,10 +96,30 @@ const useDateField = (
 type DateField = ReturnType<typeof useDateField>;
 
 /**
- * @description
+ * Whether the field already holds `value`, so that reporting it would not be a change.
+ */
+const isHeldValue = (field: DateField, value: string | null): boolean =>
+    value === field.committedValue && value === field.lastValidValueRef.current;
+
+/**
+ * The value typed text changes the field to: `undefined` while the text is not a value, and when it
+ * is the value the field already holds.
+ */
+const getTypedChange = (
+    field: DateField,
+    text: string,
+    format: DatePickerFormat,
+    bounds: DateBounds
+): string | null | undefined => {
+    const value = getTypedDateValue(text, format, bounds);
+
+    return value !== undefined && isHeldValue(field, value) ? undefined : value;
+};
+
+/**
  * The value a field settles on when it is left. A typed date that was already reported stays as it
- * is; a complete date that needed clamping is committed clamped; incomplete text falls back to the
- * last value the field held.
+ * is; a complete date that needed clamping is committed clamped, unless the field already holds it;
+ * incomplete text falls back to the last value the field held.
  */
 const resolveDateLeave = (
     field: DateField,
@@ -119,16 +129,17 @@ const resolveDateLeave = (
 ): PickerLeaveResult => {
     if (!isEditing) return { value: field.committedValue, commit: false };
 
-    const text = field.text ?? "";
-    const typedValue = getTypedDateValue(text, format, bounds);
+    const typedValue = getTypedDateValue(field.text, format, bounds);
 
     if (typedValue !== undefined) return { value: typedValue, commit: false };
 
-    const date = parseDate(text, format);
+    const date = parseDate(field.text, format);
 
     if (!date) return { value: field.lastValidValueRef.current, commit: false };
 
-    return { value: toISO(getNearestAvailableDate(date, bounds)), commit: true };
+    const value = toISO(getNearestAvailableDate(date, bounds));
+
+    return { value, commit: !isHeldValue(field, value) };
 };
 
 const useLimits = (min?: string | null, max?: string | null) =>
@@ -145,11 +156,7 @@ interface IDatePickerHookOptions {
     onOpenChange?: (open: boolean) => void;
 }
 
-// ---------------------------------------------------------
-// Single picker
-// ---------------------------------------------------------
-
-export interface IUseSingleDatePickerOptions extends IDatePickerHookOptions {
+interface IUseSingleDatePickerOptions extends IDatePickerHookOptions {
     value?: string | null;
     defaultValue?: string | null;
     presets?: DatePickerPreset[];
@@ -183,7 +190,7 @@ export const useSingleDatePicker = ({
         fields: { single: field },
         inputRefs: { single: inputRef },
         initialField: "single",
-        getTypedValue: (_name, text) => getTypedDateValue(text, format, bounds),
+        getTypedValue: (_name, text) => getTypedChange(field, text, format, bounds),
         resolveLeave: (_name, isEditing) => resolveDateLeave(field, isEditing, format, bounds),
         onChange: (event) => onChange?.(event),
         onBlur: (values, event) => onBlur?.(values.single, event),
@@ -193,7 +200,6 @@ export const useSingleDatePicker = ({
 
     const { focusOnOpen, onTabOut, ...popoverProps } = core.popoverProps;
 
-    // Worked out on every render, so the presets counted from today follow it.
     const getPresets = (): CalendarPresetState[] | undefined => {
         if (!presets?.length) return undefined;
 
@@ -224,7 +230,7 @@ export const useSingleDatePicker = ({
         calendarProps: {
             selection: { start: field.date, end: null },
             bounds,
-            presets: getPresets(),
+            presets: popoverProps.open ? getPresets() : undefined,
             focusOnOpen,
             onTabOut,
             onSelect: (date: CalendarDate, event: SyntheticEvent) => core.commit("single", toISO(date), event),
@@ -233,11 +239,7 @@ export const useSingleDatePicker = ({
     };
 };
 
-// ---------------------------------------------------------
-// Range picker
-// ---------------------------------------------------------
-
-export interface IUseRangeDatePickerOptions extends IDatePickerHookOptions {
+interface IUseRangeDatePickerOptions extends IDatePickerHookOptions {
     value?: { start: string | null; end: string | null };
     defaultValue?: { start: string | null; end: string | null };
     presets?: DatePickerRangePreset[];
@@ -263,8 +265,6 @@ export const useRangeDatePicker = ({
     min,
     max,
     presets,
-    onChange,
-    onBlur,
     ...options
 }: IUseRangeDatePickerOptions) => {
     const fields = {
@@ -288,10 +288,8 @@ export const useRangeDatePicker = ({
         fields,
         inputRefs,
         initialField: PICKER_RANGE_FIELDS.START,
-        getTypedValue: (field, text) => getTypedDateValue(text, format, getBounds(field)),
-        resolveLeave: (field, isEditing) => resolveDateLeave(fields[field], isEditing, format, getBounds(field)),
-        onChange,
-        onBlur
+        getTypedValue: (field, text) => getTypedChange(fields[field], text, format, getBounds(field)),
+        resolveLeave: (field, isEditing) => resolveDateLeave(fields[field], isEditing, format, getBounds(field))
     });
 
     const { activeField, getFieldHandlers } = core;
@@ -308,7 +306,6 @@ export const useRangeDatePicker = ({
         if (!core.isFocusInPopover()) core.moveFocusTo(PICKER_RANGE_FIELDS.END);
     };
 
-    // Worked out on every render, so the presets counted from today follow it.
     const getPresets = (): CalendarPresetState[] | undefined => {
         if (!presets?.length) return undefined;
 
@@ -327,7 +324,6 @@ export const useRangeDatePicker = ({
         });
     };
 
-    // A preset fills both fields, reported once, for the start.
     const handlePresetSelect = (key: string, event: SyntheticEvent) => {
         const preset = presets?.[Number(key)];
         const range = preset && resolveRangePreset(preset, getToday());
@@ -360,7 +356,7 @@ export const useRangeDatePicker = ({
             selection: { start: fields.start.date, end: fields.end.date },
             activeField,
             bounds: getBounds(activeField),
-            presets: getPresets(),
+            presets: popoverProps.open ? getPresets() : undefined,
             focusOnOpen,
             onTabOut,
             onSelect: handleSelect,

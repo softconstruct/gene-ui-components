@@ -1,4 +1,4 @@
-import React, { FC, KeyboardEvent, MouseEvent, RefObject, useMemo, useRef } from "react";
+import React, { FC, KeyboardEvent, MouseEvent, RefObject, useEffect, useMemo, useRef } from "react";
 import classNames from "classnames";
 
 import { ChevronDoubleLeft, ChevronDoubleRight, ChevronLeft, ChevronRight } from "@geneui/icons";
@@ -30,12 +30,13 @@ import {
     getCalendarKeyTarget,
     getMonthWeeks,
     getNearestAvailableDate,
-    getRangeBand,
     getWeekdayNames,
     getYearPageStart,
     getYearPageYears,
+    isCalendarCellOutOfBounds,
     isCalendarPageOutOfBounds,
     isDateOutOfBounds,
+    isDocumentRTL,
     isMonthOutOfBounds,
     isSameDate,
     isSupportedDate,
@@ -56,23 +57,37 @@ import {
 import CalendarGrid, { CalendarGridCell } from "../CalendarGrid/CalendarGrid";
 
 interface ICalendarPanelProps {
+    /**
+     * The size of the cells and the header.
+     */
     size: DatePickerSizes;
     /**
      * Locale of the month and weekday names, as a BCP 47 language tag.
      */
     locale: string;
+    /**
+     * The accessible texts of the calendar, with their defaults filled in.
+     */
     texts: Required<IDatePickerLocalization>;
     /**
      * Leaves out the header arrows: phones page from the header month and year.
      */
     isMobile: boolean;
-    isRTL: boolean;
+    /**
+     * The current day, marked in the grid.
+     */
     today: CalendarDate;
+    /**
+     * Whether the panel shows days, months or years.
+     */
     view: CalendarView;
     /**
      * The day the panel shows the page of, and its tab stop.
      */
     date: CalendarDate;
+    /**
+     * The selected day, or the selected start and end of a range.
+     */
     selection: CalendarSelection;
     /**
      * The edited field of a range picker; left out by a single picker.
@@ -90,7 +105,13 @@ interface ICalendarPanelProps {
      * The pages the header arrows can lead to.
      */
     pageBounds: DateBounds;
+    /**
+     * Moves the focus to the tab stop of the grid once it is rendered.
+     */
     shouldFocusGrid: boolean;
+    /**
+     * Confirms that the grid took the focus `shouldFocusGrid` asked for.
+     */
     onFocusMoved: () => void;
     /**
      * Changes the view or the day of the panel; `focusGrid` moves the focus into the grid with it.
@@ -100,7 +121,14 @@ interface ICalendarPanelProps {
      * Moves the keyboard focus to a day: in this panel, or in another one that shows it.
      */
     onKeyMove: (date: CalendarDate) => void;
+    /**
+     * Picks a day.
+     */
     onSelect: (date: CalendarDate, event: MouseEvent<HTMLButtonElement>) => void;
+    /**
+     * Reports the day under the pointer, `null` when the pointer leaves the grid; left out where
+     * nothing previews it.
+     */
     onHover?: (date: CalendarDate | null) => void;
     /**
      * Leaves the calendar on `Shift+Tab` from the first tab stop of the panel; left out where the
@@ -130,7 +158,6 @@ const CalendarPanel: FC<ICalendarPanelProps> = ({
     locale,
     texts,
     isMobile,
-    isRTL,
     today,
     view,
     date,
@@ -151,8 +178,10 @@ const CalendarPanel: FC<ICalendarPanelProps> = ({
     const { start, end } = selection;
     const activeDate = activeField === PICKER_RANGE_FIELDS.END ? end : start;
     const isRange = !!activeField;
+    const isRTL = isDocumentRTL();
 
-    const gridRef = useRef<HTMLDivElement | null>(null);
+    const panelRef = useRef<HTMLDivElement | null>(null);
+    const hasFocusRef = useRef(false);
     const previousJumpRef = useRef<HTMLButtonElement | null>(null);
     const previousStepRef = useRef<HTMLButtonElement | null>(null);
     const monthItemRef = useRef<HTMLButtonElement | null>(null);
@@ -161,16 +190,25 @@ const CalendarPanel: FC<ICalendarPanelProps> = ({
     const nextJumpRef = useRef<HTMLButtonElement | null>(null);
 
     const pageStep = CALENDAR_PAGE_MONTHS[view];
-    // The double arrows of the day view skip a year, like the arrows of the month view.
     const jumpStep = view === "days" ? MONTHS_IN_YEAR : pageStep;
     const isPreviousDisabled = isCalendarPageOutOfBounds(view, addMonths(date, -pageStep), pageBounds);
     const isNextDisabled = isCalendarPageOutOfBounds(view, addMonths(date, pageStep), pageBounds);
     const yearPageStart = getYearPageStart(date.year);
+    const focusKey = getCalendarCellKey(view, date);
 
     const weekdays = useMemo(
         () => getWeekdayNames(locale).map((name) => ({ text: name.narrow, label: name.long })),
         [locale]
     );
+
+    // An element replaced under the focus, as the page or the view changes, drops the focus without a
+    // blur, so the grid takes it over.
+    useEffect(() => {
+        if (!hasFocusRef.current || panelRef.current?.contains(document.activeElement)) return;
+
+        hasFocusRef.current = false;
+        onNavigate({}, true);
+    });
 
     const keyToDate = (key: string): CalendarDate => {
         const [year, month = date.month, day = date.day] = key.split("-").map(Number);
@@ -207,42 +245,53 @@ const CalendarPanel: FC<ICalendarPanelProps> = ({
         onNavigate({ date: target, view: view === "years" ? "months" : "days" }, focusGrid);
     };
 
-    const handleCellFocus = (key: string) => onNavigate({ date: keyToDate(key) }, false);
-
-    const handleGridKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-        const target = getCalendarKeyTarget(view, date, event.key, { shiftKey: event.shiftKey, isRTL });
-
-        if (!target) return;
-
-        event.preventDefault();
-        onKeyMove(getNearestAvailableDate(target, bounds));
+    const handleCellFocus = (key: string) => {
+        if (key !== focusKey) onNavigate({ date: keyToDate(key) }, false);
     };
 
-    const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-        if (event.key !== KEYS.TAB) return;
-
-        const isInGrid = event.target instanceof Node && !!gridRef.current?.contains(event.target);
-
-        if (!event.shiftKey) {
-            if (isInGrid) onTabOutForward?.();
-            return;
-        }
-
-        if (!onTabOutBackward) return;
-
-        const firstStop = [
+    const getHeaderStops = () =>
+        [
             isPreviousDisabled ? null : previousJumpRef.current,
             isPreviousDisabled ? null : previousStepRef.current,
             monthItemRef.current,
             yearItemRef.current,
             isNextDisabled ? null : nextStepRef.current,
             isNextDisabled ? null : nextJumpRef.current
-        ].find((element) => !!element);
+        ].filter((element) => !!element);
 
-        if (event.target === firstStop || (!firstStop && isInGrid)) {
-            event.preventDefault();
-            onTabOutBackward();
+    const tabOutBackward = (event: KeyboardEvent<HTMLDivElement>) => {
+        if (!onTabOutBackward) return;
+
+        event.preventDefault();
+        onTabOutBackward();
+    };
+
+    const handleHeaderKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+        if (event.key !== KEYS.TAB) return;
+
+        const stops = getHeaderStops();
+
+        if (event.shiftKey) {
+            if (event.target === stops[0]) tabOutBackward(event);
+        } else if (event.target === stops[stops.length - 1] && isCalendarCellOutOfBounds(view, date, bounds)) {
+            // A page with nothing to pick has no tab stop in its grid to leave the calendar from.
+            onTabOutForward?.();
         }
+    };
+
+    const handleGridKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+        if (event.key === KEYS.TAB) {
+            if (!event.shiftKey) onTabOutForward?.();
+            else if (!getHeaderStops().length) tabOutBackward(event);
+            return;
+        }
+
+        const target = getCalendarKeyTarget(view, date, event.key, { shiftKey: event.shiftKey, isRTL });
+
+        if (!target) return;
+
+        event.preventDefault();
+        onKeyMove(getNearestAvailableDate(target, bounds));
     };
 
     const decade = `${formatYear(Math.max(yearPageStart, FIRST_SUPPORTED_DATE.year), locale)}-${formatYear(
@@ -256,16 +305,18 @@ const CalendarPanel: FC<ICalendarPanelProps> = ({
         years: decade
     };
 
-    const weeks = getMonthWeeks(date.year, date.month);
-    const isShownDay = (day: CalendarDate) =>
-        isSupportedDate(day) && (!isRange || (day.year === date.year && day.month === date.month));
-
     const getDayRows = (): CalendarGridCell[][] =>
-        weeks.map((week) =>
+        getMonthWeeks(date.year, date.month).map((week) =>
             week.map((day) => {
                 const key = getCalendarCellKey("days", day);
+                const isOutside = day.year !== date.year || day.month !== date.month;
 
-                if (!isShownDay(day)) return emptyCell(key);
+                if (!isSupportedDate(day) || (isRange && isOutside)) return emptyCell(key);
+
+                const isToday = isSameDate(day, today);
+                const isRangeStart = isSameDate(day, range?.start);
+                const isRangeEnd = isSameDate(day, range?.end);
+                const isInRange = !!range && compareDates(day, range.start) > 0 && compareDates(day, range.end) < 0;
 
                 return {
                     key,
@@ -273,12 +324,14 @@ const CalendarPanel: FC<ICalendarPanelProps> = ({
                     label: formatFullDate(day, locale),
                     selected: isSameDate(day, start) || isSameDate(day, end),
                     disabled: isDateOutOfBounds(day, bounds),
-                    current: isSameDate(day, today),
+                    current: isToday,
                     className: classNames({
-                        datePicker__cell_outside: day.year !== date.year || day.month !== date.month,
-                        datePicker__cell_today: isSameDate(day, today),
-                        datePicker__cell_inRange:
-                            !!range && compareDates(day, range.start) > 0 && compareDates(day, range.end) < 0
+                        datePicker__cell_outside: isOutside,
+                        datePicker__cell_today: isToday,
+                        datePicker__cell_inRange: isInRange,
+                        datePicker__cell_band: isRangeStart || isInRange || isRangeEnd,
+                        datePicker__cell_bandStart: isRangeStart,
+                        datePicker__cell_bandEnd: isRangeEnd
                     })
                 };
             })
@@ -313,16 +366,19 @@ const CalendarPanel: FC<ICalendarPanelProps> = ({
 
                 if (!isSupportedDate({ year, month: 1, day: 1 }) || (isRange && isOutside)) return emptyCell(key);
 
+                const text = formatYear(year, locale);
+                const isCurrent = today.year === year;
+
                 return {
                     key,
-                    text: formatYear(year, locale),
-                    label: formatYear(year, locale),
+                    text,
+                    label: text,
                     selected: activeDate?.year === year,
                     disabled: isYearOutOfBounds(year, bounds),
-                    current: today.year === year,
+                    current: isCurrent,
                     className: classNames({
                         datePicker__cell_outside: isOutside,
-                        datePicker__cell_today: today.year === year
+                        datePicker__cell_today: isCurrent
                     })
                 };
             }),
@@ -335,16 +391,6 @@ const CalendarPanel: FC<ICalendarPanelProps> = ({
         months: getMonthRows,
         years: getYearRows
     };
-
-    const bands =
-        view === "days" && range
-            ? weeks.map((week) =>
-                  getRangeBand(
-                      week.map((day) => (isShownDay(day) ? day : null)),
-                      range
-                  )
-              )
-            : undefined;
 
     const jumpLabels =
         view === "years"
@@ -377,8 +423,17 @@ const CalendarPanel: FC<ICalendarPanelProps> = ({
     );
 
     return (
-        <div role="presentation" className="datePicker__picker" onKeyDown={handleKeyDown}>
-            <div className="datePicker__header">
+        <div
+            ref={panelRef}
+            className="datePicker__picker"
+            onFocus={() => {
+                hasFocusRef.current = true;
+            }}
+            onBlur={() => {
+                hasFocusRef.current = false;
+            }}
+        >
+            <div role="presentation" className="datePicker__header" onKeyDown={handleHeaderKeyDown}>
                 {!isMobile &&
                     renderArrow(
                         previousJumpRef,
@@ -448,11 +503,9 @@ const CalendarPanel: FC<ICalendarPanelProps> = ({
                 view={view}
                 columnHeaders={view === "days" ? weekdays : undefined}
                 rows={rowsByView[view]()}
-                bands={bands}
-                focusKey={getCalendarCellKey(view, date)}
+                focusKey={focusKey}
                 shouldFocus={shouldFocusGrid}
                 onFocusMoved={onFocusMoved}
-                gridRef={gridRef}
                 onKeyDown={handleGridKeyDown}
                 onCellClick={handleCellClick}
                 onCellFocus={handleCellFocus}

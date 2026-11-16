@@ -1,4 +1,4 @@
-import React, { FC, KeyboardEvent, MouseEvent, Ref, useRef, useState } from "react";
+import React, { FC, KeyboardEvent, MouseEvent, useState } from "react";
 import classNames from "classnames";
 
 // Components
@@ -6,6 +6,10 @@ import Scrollbar from "@components/atoms/Scrollbar";
 
 import { KEYS, PickerButton } from "@internal/components/Picker";
 
+// Helpers
+import { isDocumentRTL } from "../../helpers";
+// Hooks
+import useElementRefs from "../../hooks/useElementRefs";
 // Types
 import { CalendarPresetState, DatePickerSizes } from "../../types";
 
@@ -14,51 +18,75 @@ interface ICalendarPresetsProps {
      * Accessible name of the list.
      */
     label: string;
+    /**
+     * The size of the preset buttons.
+     */
     size: DatePickerSizes;
     /**
      * A column beside the calendar, or a row under it on phones.
      */
     orientation: "vertical" | "horizontal";
+    /**
+     * The presets in the order they are listed.
+     */
     presets: CalendarPresetState[];
-    listRef: Ref<HTMLDivElement>;
+    /**
+     * Picks the preset with `key`.
+     */
     onSelect: (key: string, event: MouseEvent<HTMLButtonElement>) => void;
+    /**
+     * Leaves the calendar on `Shift+Tab`; left out where the calendar has tab stops before the presets.
+     */
+    onTabOutBackward?: () => void;
+    /**
+     * Leaves the calendar on `Tab`; left out where the calendar has tab stops after the presets.
+     */
+    onTabOutForward?: () => void;
 }
 
 /**
  * The presets of the calendar, as a list with a single tab stop that the arrow keys move.
  */
-const CalendarPresets: FC<ICalendarPresetsProps> = ({ label, size, orientation, presets, listRef, onSelect }) => {
+const CalendarPresets: FC<ICalendarPresetsProps> = ({
+    label,
+    size,
+    orientation,
+    presets,
+    onSelect,
+    onTabOutBackward,
+    onTabOutForward
+}) => {
     const [focusedKey, setFocusedKey] = useState<string | null>(null);
-    const itemRefs = useRef(new Map<string, HTMLButtonElement>());
-    const itemRefCallbacks = useRef(new Map<string, (node: HTMLButtonElement | null) => void>());
+    const items = useElementRefs<HTMLButtonElement>();
 
     const enabledKeys = presets.filter((preset) => !preset.disabled).map((preset) => preset.key);
-    // The tab stop stays where the focus was, and starts on the selected preset.
     const tabStopKey =
         (focusedKey && enabledKeys.includes(focusedKey) ? focusedKey : undefined) ??
         presets.find((preset) => preset.selected && !preset.disabled)?.key ??
         enabledKeys[0];
 
-    const getItemRef = (key: string) => {
-        let callback = itemRefCallbacks.current.get(key);
-
-        if (!callback) {
-            callback = (node: HTMLButtonElement | null) => {
-                if (node) itemRefs.current.set(key, node);
-                else itemRefs.current.delete(key);
-            };
-            itemRefCallbacks.current.set(key, callback);
+    const handleTab = (event: KeyboardEvent<HTMLDivElement>) => {
+        if (!event.shiftKey) {
+            onTabOutForward?.();
+            return;
         }
 
-        return callback;
+        if (onTabOutBackward) {
+            event.preventDefault();
+            onTabOutBackward();
+        }
     };
 
     const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-        const isRTL = typeof document !== "undefined" && document.dir === "rtl";
+        if (event.key === KEYS.TAB) {
+            handleTab(event);
+            return;
+        }
+
         const [backward, forward] =
             orientation === "vertical" ? [KEYS.ARROW_UP, KEYS.ARROW_DOWN] : [KEYS.ARROW_LEFT, KEYS.ARROW_RIGHT];
         const [previousKey, nextKey] =
-            isRTL && orientation === "horizontal" ? [forward, backward] : [backward, forward];
+            isDocumentRTL() && orientation === "horizontal" ? [forward, backward] : [backward, forward];
         const index = tabStopKey ? enabledKeys.indexOf(tabStopKey) : -1;
         const targets: Record<string, string | undefined> = {
             [nextKey]: enabledKeys[Math.min(index + 1, enabledKeys.length - 1)],
@@ -72,12 +100,11 @@ const CalendarPresets: FC<ICalendarPresetsProps> = ({ label, size, orientation, 
 
         event.preventDefault();
         setFocusedKey(target);
-        itemRefs.current.get(target)?.focus();
+        items.get(target)?.focus();
     };
 
     const list = (
         <div
-            ref={listRef}
             role="listbox"
             tabIndex={-1}
             aria-label={label}
@@ -88,7 +115,7 @@ const CalendarPresets: FC<ICalendarPresetsProps> = ({ label, size, orientation, 
             {presets.map((preset) => (
                 <PickerButton
                     key={preset.key}
-                    ref={getItemRef(preset.key)}
+                    ref={items.getRef(preset.key)}
                     value={preset.key}
                     size={size}
                     tabIndex={preset.key === tabStopKey ? 0 : -1}
@@ -104,9 +131,8 @@ const CalendarPresets: FC<ICalendarPresetsProps> = ({ label, size, orientation, 
         </div>
     );
 
-    // The row under the calendar on phones scrolls sideways when the presets do not fit.
     return orientation === "horizontal" ? (
-        <Scrollbar className="datePicker__presetsScroll" width="full" height="auto">
+        <Scrollbar width="full" height="auto">
             {list}
         </Scrollbar>
     ) : (

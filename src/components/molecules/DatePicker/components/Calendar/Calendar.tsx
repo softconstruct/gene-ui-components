@@ -1,10 +1,10 @@
-import React, { FC, KeyboardEvent, MouseEvent, useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { FC, MouseEvent, useContext, useEffect, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
 
 // Components
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
-import { KEYS, PICKER_RANGE_FIELDS } from "@internal/components/Picker";
+import { PICKER_RANGE_FIELDS } from "@internal/components/Picker";
 
 // Constants
 import { RANGE_CALENDAR_PANELS } from "../../constants";
@@ -38,12 +38,21 @@ import CalendarPanel from "../CalendarPanel/CalendarPanel";
 import CalendarPresets from "../CalendarPresets/CalendarPresets";
 
 interface ICalendarProps {
+    /**
+     * The size of the cells and the header; phones always get the large one.
+     */
     size: DatePickerSizes;
     /**
      * Locale of the month and weekday names, as a BCP 47 language tag.
      */
     locale: string;
+    /**
+     * The accessible texts of the calendar, with their defaults filled in.
+     */
     texts: Required<IDatePickerLocalization>;
+    /**
+     * The selected day, or the selected start and end of a range.
+     */
     selection: CalendarSelection;
     /**
      * The edited field of a range picker; left out by a single picker.
@@ -61,8 +70,14 @@ interface ICalendarProps {
      * Moves the focus into the calendar, when it was opened from the keyboard.
      */
     focusOnOpen?: boolean;
+    /**
+     * Picks a day.
+     */
     onSelect: (date: CalendarDate, event: MouseEvent<HTMLButtonElement>) => void;
-    onPresetSelect?: (key: string, event: MouseEvent<HTMLButtonElement>) => void;
+    /**
+     * Picks the preset with `key`.
+     */
+    onPresetSelect: (key: string, event: MouseEvent<HTMLButtonElement>) => void;
     /**
      * Leaves the calendar for the field: `Tab` on its last tab stop or `Shift+Tab` on its first one.
      */
@@ -74,12 +89,17 @@ type PanelState = {
      * The place of the panel, which never changes.
      */
     id: number;
+    /**
+     * Whether the panel shows days, months or years.
+     */
     view: CalendarView;
+    /**
+     * The day the panel shows the page of.
+     */
     date: CalendarDate;
 };
 
 /**
- * @description
  * The days the panels open on. A single panel opens on the edited day. Side by side panels open on
  * the months of the start and the end, or on a month after the start or before the end, or on
  * today's month and the next one; a month with nothing to pick gives way to the one at the other end.
@@ -132,8 +152,6 @@ const Calendar: FC<ICalendarProps> = ({
 }) => {
     const { breakpoint } = useContext(GeneUIDesignSystemContext);
     const isMobile = !!breakpoint?.isMobileBreakpoint;
-    const isRTL = typeof document !== "undefined" && document.dir === "rtl";
-    // Phones get the large cells, and switch pages from the header month and year instead of arrows.
     const calendarSize = isMobile ? "large" : size;
     const isRange = !!activeField;
     const stateCount = isRange ? RANGE_CALENDAR_PANELS : 1;
@@ -153,8 +171,6 @@ const Calendar: FC<ICalendarProps> = ({
     const [focusedPanel, setFocusedPanel] = useState<number | null>(null);
     const [hoverDate, setHoverDate] = useState<CalendarDate | null>(null);
 
-    const presetsRef = useRef<HTMLDivElement | null>(null);
-
     const visiblePanels = panels.slice(0, panelCount);
     // A panel alone moves to a day it can pick; one beside another keeps its page, which may have none.
     const pageDates = visiblePanels.map(({ view, date }) => {
@@ -163,14 +179,17 @@ const Calendar: FC<ICalendarProps> = ({
         return panelCount === 1 || isSameCalendarPage(view, nearest, date) ? nearest : date;
     });
 
-    // While a range field is edited, the hovered day previews the range it would make.
     const previewStart =
         activeField === PICKER_RANGE_FIELDS.START && end && hoverDate && compareDates(hoverDate, end) <= 0;
     const previewEnd =
         activeField === PICKER_RANGE_FIELDS.END && start && hoverDate && compareDates(hoverDate, start) >= 0;
     const rangeStart = previewStart ? hoverDate : start;
     const rangeEnd = previewEnd ? hoverDate : end;
-    const range = isRange && rangeStart && rangeEnd ? { start: rangeStart, end: rangeEnd } : null;
+    // A start typed past the end, or an end typed before the start, is not a range until the field is left.
+    const range =
+        isRange && rangeStart && rangeEnd && compareDates(rangeStart, rangeEnd) <= 0
+            ? { start: rangeStart, end: rangeEnd }
+            : null;
 
     const updatePanel = (index: number, changes: Partial<PanelState>, focusGrid = false) => {
         setPanels((current) => {
@@ -242,7 +261,6 @@ const Calendar: FC<ICalendarProps> = ({
         updatePanel(shown >= 0 ? shown : getPanelFor(activeDate, preferred), { view: "days", date: activeDate });
     }, [activeField, startKey, endKey]);
 
-    // The focus moves on to the panel that shows the day, or the page of its own panel follows it.
     const handleKeyMove = (index: number, date: CalendarDate) => {
         const shown = visiblePanels[index].view === "days" ? findPanelShowing(date, true) : index;
 
@@ -255,40 +273,23 @@ const Calendar: FC<ICalendarProps> = ({
     const isPresetStopFirst = hasPresetStop && !isMobile;
     const isPresetStopLast = hasPresetStop && isMobile;
 
-    const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-        const isInPresets = event.target instanceof Node && !!presetsRef.current?.contains(event.target);
-
-        if (event.key !== KEYS.TAB || !isInPresets) return;
-
-        if (!event.shiftKey) {
-            if (isPresetStopLast) onTabOut();
-            return;
-        }
-
-        if (isPresetStopFirst) {
-            event.preventDefault();
-            onTabOut();
-        }
-    };
-
-    const presetList = !!presets?.length && onPresetSelect && (
+    const presetList = !!presets?.length && (
         <CalendarPresets
             label={texts.presets}
             size={calendarSize}
             orientation={isMobile ? "horizontal" : "vertical"}
             presets={presets}
-            listRef={presetsRef}
             onSelect={onPresetSelect}
+            onTabOutBackward={isPresetStopFirst ? onTabOut : undefined}
+            onTabOutForward={isPresetStopLast ? onTabOut : undefined}
         />
     );
 
     return (
         <div
-            role="presentation"
             className={classNames("datePicker__calendar", `datePicker__calendar_size_${calendarSize}`, {
                 datePicker__calendar_mobile: isMobile
             })}
-            onKeyDown={handleKeyDown}
         >
             {!isMobile && presetList}
             <div className="datePicker__panels">
@@ -299,7 +300,6 @@ const Calendar: FC<ICalendarProps> = ({
                         locale={locale}
                         texts={texts}
                         isMobile={isMobile}
-                        isRTL={isRTL}
                         today={today}
                         view={panel.view}
                         date={pageDates[index]}

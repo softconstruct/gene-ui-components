@@ -23,7 +23,6 @@ import {
 import {
     CalendarDate,
     CalendarRange,
-    CalendarRangeBand,
     CalendarView,
     DateBounds,
     DatePickerFormat,
@@ -35,10 +34,6 @@ import {
 
 type FormatToken = "DD" | "MM" | "YYYY";
 
-// ---------------------------------------------------------
-// Primitives
-// ---------------------------------------------------------
-
 const pad = (value: number, length = 2): string => String(value).padStart(length, "0");
 
 const clamp = (value: number, min: number, max: number): number => Math.min(Math.max(value, min), max);
@@ -48,9 +43,9 @@ const clamp = (value: number, min: number, max: number): number => Math.min(Math
  */
 const modulo = (value: number, divisor: number): number => ((value % divisor) + divisor) % divisor;
 
-export const isLeapYear = (year: number): boolean => (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+const isLeapYear = (year: number): boolean => (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
 
-export const getDaysInMonth = (year: number, month: number): number => {
+const getDaysInMonth = (year: number, month: number): number => {
     if (month === 2) return isLeapYear(year) ? 29 : 28;
 
     return [4, 6, 9, 11].includes(month) ? 30 : 31;
@@ -63,7 +58,6 @@ export const isSameDate = (a?: CalendarDate | null, b?: CalendarDate | null): bo
     !!a && !!b && compareDates(a, b) === 0;
 
 /**
- * @description
  * Brings every part into its range: the year into the supported years, the month into `1`..`12`
  * and the day into the month, so `31/04` becomes `30/04` and `29/02/2027` becomes `28/02/2027`.
  */
@@ -97,11 +91,7 @@ export const getToday = (): CalendarDate => {
     return { year: now.getFullYear(), month: now.getMonth() + 1, day: now.getDate() };
 };
 
-// ---------------------------------------------------------
-// Arithmetic
-// ---------------------------------------------------------
-
-export const addDays = (date: CalendarDate, days: number): CalendarDate =>
+const addDays = (date: CalendarDate, days: number): CalendarDate =>
     fromUTCDate(toUTCDate({ ...date, day: date.day + days }));
 
 /**
@@ -124,13 +114,12 @@ export const getMonthDistance = (from: CalendarDate, to: CalendarDate): number =
 /**
  * Weekday in `Date.getDay()` numbering: `0` is Sunday.
  */
-export const getWeekday = (date: CalendarDate): number => toUTCDate(date).getUTCDay();
+const getWeekday = (date: CalendarDate): number => toUTCDate(date).getUTCDay();
 
-export const getWeekStart = (date: CalendarDate): CalendarDate =>
+const getWeekStart = (date: CalendarDate): CalendarDate =>
     addDays(date, -modulo(getWeekday(date) - WEEK_START_DAY, DAYS_IN_WEEK));
 
 /**
- * @description
  * The days shown for a month: six weeks from the week start day, with the days of the neighbouring
  * months around it.
  */
@@ -160,10 +149,6 @@ export const getYearPageYears = (year: number): number[] => {
 export const isSupportedDate = (date: CalendarDate): boolean =>
     compareDates(date, FIRST_SUPPORTED_DATE) >= 0 && compareDates(date, LAST_SUPPORTED_DATE) <= 0;
 
-// ---------------------------------------------------------
-// Bounds
-// ---------------------------------------------------------
-
 const latest = (date: CalendarDate, other?: CalendarDate | null): CalendarDate =>
     other && compareDates(other, date) > 0 ? other : date;
 
@@ -171,7 +156,6 @@ const earliest = (date: CalendarDate, other?: CalendarDate | null): CalendarDate
     other && compareDates(other, date) < 0 ? other : date;
 
 /**
- * @description
  * Bounds from optional limits, always kept inside the supported days. Several limits on one side
  * combine into the tightest one.
  */
@@ -194,16 +178,22 @@ export const isYearOutOfBounds = (year: number, { min, max }: DateBounds): boole
     year < min.year || year > max.year;
 
 /**
- * @description
  * Returns the closest allowed day: the day itself while it is inside the bounds, otherwise the
  * bound it went past.
  */
 export const getNearestAvailableDate = (date: CalendarDate, { min, max }: DateBounds): CalendarDate =>
     earliest(latest(date, min), max);
 
-// ---------------------------------------------------------
-// Calendar navigation
-// ---------------------------------------------------------
+/**
+ * Whether the cell of `view` that shows `date` cannot be picked: the day, its month or its year is
+ * outside the bounds.
+ */
+export const isCalendarCellOutOfBounds = (view: CalendarView, date: CalendarDate, bounds: DateBounds): boolean => {
+    if (view === "days") return isDateOutOfBounds(date, bounds);
+    if (view === "months") return isMonthOutOfBounds(date.year, date.month, bounds);
+
+    return isYearOutOfBounds(date.year, bounds);
+};
 
 /**
  * Whether the page of `view` that shows `date` has nothing selectable, so the header button that
@@ -228,7 +218,6 @@ export const isSameCalendarPage = (view: CalendarView, a: CalendarDate, b: Calen
 };
 
 /**
- * @description
  * The pages the panel at `index` of `count` side by side panels can be paged to: the months of the
  * bounds, less the ones the panels before and after it need, as the panels never meet.
  */
@@ -242,12 +231,12 @@ export const getPanelPageBounds = ({ min, max }: DateBounds, index: number, coun
 };
 
 /**
- * @description
  * Keeps side by side panels in order, each a month after the one before it at least: the panel at
- * `index` keeps its date, and the panels it would meet move away from it, on the same day of the month.
+ * `index` keeps its date, and the panels it would meet move away from it, on the same day of the
+ * month. A panel pushed past the supported dates stays on their edge, and the others give way to it.
  */
-export const orderPanelDates = (dates: CalendarDate[], index: number): CalendarDate[] =>
-    dates.map((date, other) => {
+export const orderPanelDates = (dates: CalendarDate[], index: number): CalendarDate[] => {
+    const ordered = dates.map((date, other) => {
         const offset = other - index;
         const distance = getMonthDistance(dates[index], date);
 
@@ -255,27 +244,22 @@ export const orderPanelDates = (dates: CalendarDate[], index: number): CalendarD
 
         return addMonths({ ...dates[index], day: date.day }, offset);
     });
+    const pushedOut = ordered.findIndex((date) => !isSupportedDate(date));
 
-/**
- * @description
- * The days of a week row that a range covers, or `null` for a row it does not reach. The `null`
- * cells of the row, which show no day, are never covered.
- */
-export const getRangeBand = (week: (CalendarDate | null)[], range: CalendarRange): CalendarRangeBand | null => {
-    const indexes = week.flatMap((date, index) =>
-        date && compareDates(date, range.start) >= 0 && compareDates(date, range.end) <= 0 ? [index] : []
+    if (pushedOut < 0) return ordered;
+
+    return orderPanelDates(
+        ordered.map((date) => getNearestAvailableDate(date, createBounds())),
+        pushedOut
     );
-
-    if (!indexes.length) return null;
-
-    const from = indexes[0];
-    const to = indexes[indexes.length - 1];
-
-    return { from, to, isStart: isSameDate(week[from], range.start), isEnd: isSameDate(week[to], range.end) };
 };
 
 /**
- * @description
+ * Whether the page is laid out right to left, which the arrow keys and the header chevrons follow.
+ */
+export const isDocumentRTL = (): boolean => typeof document !== "undefined" && document.dir === "rtl";
+
+/**
  * The day a key moves the calendar focus to, or `null` for keys the calendar leaves alone. Days:
  * the arrows move by a day or a week, `Home`/`End` to the edges of the week, `PageUp`/`PageDown` by
  * a month, or by a year with `Shift`. Months and years: the arrows move by a cell or a row,
@@ -340,26 +324,21 @@ export const getCalendarKeyTarget = (
     }
 };
 
-/**
- * Identifies the cell of `view` that shows `date`: an ISO day, a `YYYY-MM` month or a `YYYY` year.
- */
-export const getCalendarCellKey = (view: CalendarView, { year, month, day }: CalendarDate): string => {
-    if (view === "days") return `${pad(year, 4)}-${pad(month)}-${pad(day)}`;
-    if (view === "months") return `${pad(year, 4)}-${pad(month)}`;
-
-    return pad(year, 4);
-};
-
-// ---------------------------------------------------------
-// ISO values
-// ---------------------------------------------------------
-
 const ISO_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
 
 export const toISO = ({ year, month, day }: CalendarDate): string => `${pad(year, 4)}-${pad(month)}-${pad(day)}`;
 
 /**
- * @description
+ * Identifies the cell of `view` that shows `date`: an ISO day, a `YYYY-MM` month or a `YYYY` year.
+ */
+export const getCalendarCellKey = (view: CalendarView, date: CalendarDate): string => {
+    if (view === "days") return toISO(date);
+    if (view === "months") return `${pad(date.year, 4)}-${pad(date.month)}`;
+
+    return pad(date.year, 4);
+};
+
+/**
  * Reads an ISO date (`YYYY-MM-DD`). Out of range parts are clamped; anything else is `null`.
  */
 export const fromISO = (value?: string | null): CalendarDate | null => {
@@ -372,16 +351,11 @@ export const fromISO = (value?: string | null): CalendarDate | null => {
     return normalizeDate({ year: Number(year), month: Number(month), day: Number(day) });
 };
 
-// ---------------------------------------------------------
-// Presets
-// ---------------------------------------------------------
-
 /**
- * @description
  * A day of a preset: an ISO date, or a whole number of days from `today`. Anything else, and a day
  * outside the supported dates, is `null`.
  */
-export const resolvePresetDay = (day: DatePickerPresetDay, today: CalendarDate): CalendarDate | null => {
+const resolvePresetDay = (day: DatePickerPresetDay, today: CalendarDate): CalendarDate | null => {
     let date: CalendarDate | null = null;
 
     if (typeof day === "number") date = Number.isInteger(day) ? addDays(today, day) : null;
@@ -397,7 +371,6 @@ export const resolveSinglePreset = ({ value }: DatePickerPreset, today: Calendar
     resolvePresetDay(typeof value === "function" ? value(toISO(today)) : value, today);
 
 /**
- * @description
  * The range a preset of the range picker picks on `today`, start first whatever the order of its
  * days, or `null` when one of them is not a day.
  */
@@ -410,10 +383,6 @@ export const resolveRangePreset = ({ value }: DatePickerRangePreset, today: Cale
 
     return compareDates(start, end) <= 0 ? { start, end } : { start: end, end: start };
 };
-
-// ---------------------------------------------------------
-// Display format
-// ---------------------------------------------------------
 
 /**
  * The parts of the date a format writes, each one exactly once; the rest of the format is text.
@@ -446,11 +415,10 @@ const getFormatSuffix = (format: DatePickerFormat): string => {
 };
 
 /**
- * @description
  * Whether the picker can use a format: `DD`, `MM` and `YYYY` once each, in any order, with any
  * text around them that has no other capital `D`, `M` or `Y` and no `_`, the placeholder of the mask.
  */
-export const isValidDateFormat = (format: string): boolean => {
+const isValidDateFormat = (format: string): boolean => {
     const tokens = getFormatSegments(format).filter((segment) => /^[DMY]/.test(segment));
 
     return (
@@ -493,7 +461,6 @@ const getFormatPattern = (format: DatePickerFormat): RegExp => {
 export const getDateMask = (format: DatePickerFormat): string => format.replace(/[DMY]/g, MASK_PLACEHOLDER);
 
 /**
- * @description
  * The `track` of the input mask of a format: a day starts with `0`..`3`, a month with `0` or `1`,
  * so a typed value can only be off by its last digit, which `parseDate` clamps.
  */
@@ -512,7 +479,6 @@ export const formatDate = ({ year, month, day }: CalendarDate, format: DatePicke
 };
 
 /**
- * @description
  * Reads a date typed in `format`. Out of range parts are clamped (`31/04/2026` reads as
  * `30/04/2026`); anything that is not a complete date is `null`. The text after the last part may
  * be left out, as the input mask does while the date is typed.
@@ -534,7 +500,6 @@ export const parseDate = (text: string | null | undefined, format: DatePickerFor
 };
 
 /**
- * @description
  * Whether `text` is `date` written in `format`, with or without the text after the last part, so
  * a typed date that needed clamping (`31/04/2026`) is told from one that did not.
  */
@@ -544,13 +509,9 @@ export const isFormattedDate = (text: string, date: CalendarDate, format: DatePi
     return text === formatted || text === formatted.slice(0, formatted.length - getFormatSuffix(format).length);
 };
 
-// ---------------------------------------------------------
-// Localized names
-// ---------------------------------------------------------
-
 const formatters = new Map<string, Intl.DateTimeFormat>();
 
-const formatInLocale = (date: CalendarDate, locale: string, options: Intl.DateTimeFormatOptions): string => {
+const getFormatter = (locale: string, options: Intl.DateTimeFormatOptions): Intl.DateTimeFormat => {
     const key = `${locale}|${JSON.stringify(options)}`;
     let formatter = formatters.get(key);
 
@@ -561,14 +522,33 @@ const formatInLocale = (date: CalendarDate, locale: string, options: Intl.DateTi
         formatters.set(key, formatter);
     }
 
-    return formatter.format(toUTCDate(date));
+    return formatter;
 };
+
+const formatInLocale = (date: CalendarDate, locale: string, options: Intl.DateTimeFormatOptions): string =>
+    getFormatter(locale, options).format(toUTCDate(date));
+
+/**
+ * One part of the date alone, in the digits of the locale. On its own a day or a year is written with
+ * more than its number in some locales (`15日`, `15.`, `2026 г.`), which a cell has no room for.
+ */
+const formatPartInLocale = (
+    date: CalendarDate,
+    locale: string,
+    options: Intl.DateTimeFormatOptions,
+    type: Intl.DateTimeFormatPartTypes
+): string =>
+    getFormatter(locale, options)
+        .formatToParts(toUTCDate(date))
+        .filter((part) => part.type === type)
+        .map((part) => part.value)
+        .join("");
 
 export const formatFullDate = (date: CalendarDate, locale: string): string =>
     formatInLocale(date, locale, { weekday: "long", year: "numeric", month: "long", day: "numeric" });
 
 export const formatDay = (date: CalendarDate, locale: string): string =>
-    formatInLocale(date, locale, { day: "numeric" });
+    formatPartInLocale(date, locale, { day: "numeric" }, "day");
 
 export const formatMonthYear = (year: number, month: number, locale: string): string =>
     formatInLocale({ year, month, day: 1 }, locale, { year: "numeric", month: "long" });
@@ -577,25 +557,23 @@ export const formatMonth = (month: number, locale: string, style: "long" | "shor
     formatInLocale({ year: 2000, month, day: 1 }, locale, { month: style });
 
 export const formatYear = (year: number, locale: string): string =>
-    formatInLocale({ year, month: 1, day: 1 }, locale, { year: "numeric" });
+    formatPartInLocale({ year, month: 1, day: 1 }, locale, { year: "numeric" }, "year");
 
 /**
  * The column headers of the day view, from the week start day.
  */
-export const getWeekdayNames = (locale: string): { narrow: string; short: string; long: string }[] =>
+export const getWeekdayNames = (locale: string): { narrow: string; long: string }[] =>
     Array.from({ length: DAYS_IN_WEEK }, (_, index) => {
         // 1 January 2023 is a Sunday, so day `1 + n` has the weekday `n`.
         const date = { year: 2023, month: 1, day: 1 + modulo(WEEK_START_DAY + index, DAYS_IN_WEEK) };
 
         return {
             narrow: formatInLocale(date, locale, { weekday: "narrow" }),
-            short: formatInLocale(date, locale, { weekday: "short" }),
             long: formatInLocale(date, locale, { weekday: "long" })
         };
     });
 
 /**
- * @description
  * Merges the consumer localization over the defaults, ignoring empty entries.
  */
 export const resolveLocalization = (localization?: IDatePickerLocalization): Required<IDatePickerLocalization> =>

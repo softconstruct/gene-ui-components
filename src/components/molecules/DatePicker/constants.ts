@@ -1,7 +1,7 @@
 import { MASK_PLACEHOLDER } from "@internal/components/Picker";
 
 // Types
-import { CalendarDate, CalendarView, DatePickerFormat, IDatePickerLocalization } from "./types";
+import { CalendarDate, CalendarView, DatePickerFormat, DatePickerSizes, IDatePickerLocalization } from "./types";
 
 const DEFAULT_FORMAT: DatePickerFormat = "DD/MM/YYYY";
 
@@ -51,6 +51,20 @@ const CALENDAR_PAGE_MONTHS: Record<CalendarView, number> = {
 const RANGE_CALENDAR_PANELS = 2;
 
 /**
+ * Sizes of the loading skeleton bars in pixels, as the `Skeleton` atom takes them: the label and
+ * helper text bars are as tall as their text, the field bar as the input.
+ */
+const SKELETON_HEIGHTS: Record<DatePickerSizes, { text: number; field: number }> = {
+    large: { text: 20, field: 40 },
+    medium: { text: 20, field: 32 },
+    small: { text: 16, field: 24 }
+};
+
+const SKELETON_LABEL_WIDTH = 68;
+
+const SKELETON_HELPER_TEXT_WIDTH = 101;
+
+/**
  * Digits are the only characters a date can contain; the rules of the individual slots (day tens
  * `0-3`, month tens `0-1`, ...) are enforced by `createMaskTrack`.
  */
@@ -83,6 +97,9 @@ export {
     MONTH_AND_YEAR_VIEW_COLUMNS,
     MONTHS_IN_YEAR,
     RANGE_CALENDAR_PANELS,
+    SKELETON_HEIGHTS,
+    SKELETON_HELPER_TEXT_WIDTH,
+    SKELETON_LABEL_WIDTH,
     WEEK_START_DAY,
     WEEKS_IN_MONTH_VIEW,
     YEARS_PER_PAGE
