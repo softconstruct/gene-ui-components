@@ -6,6 +6,7 @@ import { fn } from "@storybook/test";
 import { Pencil, RecycleBin } from "@geneui/icons";
 
 // Components
+import Checkbox from "@components/molecules/Checkbox";
 import Dropdown, { IDropdownOption } from "@components/molecules/Dropdown";
 import NumberField from "@components/molecules/NumberField";
 import Pagination from "@components/molecules/Pagination";
@@ -240,20 +241,6 @@ export const WithManageColumns: Story = {
     }
 };
 
-const editableColumns: IDataTableProps<MockRowType>["columns"] = [
-    { accessorKey: "Id", header: "Id" },
-    { accessorKey: "FirstName", header: "First name", editable: true },
-    { accessorKey: "LastName", header: "Last name", editable: true },
-    { accessorKey: "Email", header: "Email", editable: true },
-    { accessorKey: "DayOffs", header: "Day offs", editable: true },
-    {
-        accessorKey: "IsVerified",
-        header: "Verified",
-        editable: true,
-        renderCell: ({ value }) => <Switch defaultChecked={Boolean(value)} />
-    }
-];
-
 const statusOptions: IDropdownOption[] = [
     { id: "new", label: "New", value: "new" },
     { id: "active", label: "Active", value: "active" },
@@ -261,9 +248,10 @@ const statusOptions: IDropdownOption[] = [
     { id: "suspended", label: "Suspended", value: "suspended" }
 ];
 
-const customEditCellColumns: IDataTableProps<MockRowType>["columns"] = [
+const editableColumns: IDataTableProps<MockRowType>["columns"] = [
     { accessorKey: "Id", header: "Id" },
     { accessorKey: "FirstName", header: "First name", editable: true },
+    { accessorKey: "LastName", header: "Last name", editable: true },
     {
         accessorKey: "DayOffs",
         header: "Day offs",
@@ -275,15 +263,6 @@ const customEditCellColumns: IDataTableProps<MockRowType>["columns"] = [
                 disabled={disabled}
                 onChange={(nextValue) => onChange(nextValue === "" ? "" : Number(nextValue))}
             />
-        )
-    },
-    {
-        accessorKey: "IsVerified",
-        header: "Verified",
-        editable: true,
-        renderCell: ({ value }) => (value ? "Verified" : "Not verified"),
-        renderEditCell: ({ value, disabled, onChange }) => (
-            <Switch checked={value === true} disabled={disabled} onChange={(event) => onChange(event.target.checked)} />
         )
     },
     {
@@ -307,7 +286,28 @@ const customEditCellColumns: IDataTableProps<MockRowType>["columns"] = [
             />
         )
     },
-    { accessorKey: "Email", header: "Email", editable: true }
+    {
+        accessorKey: "IsVerified",
+        header: "Verified",
+        editable: true,
+        renderCell: ({ value }) => (value ? "Verified" : "Not verified"),
+        renderEditCell: ({ value, disabled, onChange }) => (
+            <Switch checked={value === true} disabled={disabled} onChange={(event) => onChange(event.target.checked)} />
+        )
+    },
+    {
+        accessorKey: "IsLocked",
+        header: "Locked",
+        editable: true,
+        renderCell: ({ value }) => (value ? "Locked" : "Unlocked"),
+        renderEditCell: ({ value, disabled, onChange }) => (
+            <Checkbox
+                checked={value === true}
+                disabled={disabled}
+                onChange={(event) => onChange(event.target.checked)}
+            />
+        )
+    }
 ];
 
 const EditModeTableWrapper = (props: IDataTableProps<MockRowType>) => {
@@ -399,13 +399,5 @@ export const WithEditMode: Story = {
         columns: editableColumns,
         pagination: { pageSize: 10, rowsPerPageOptions: [2, 10, 20, 50, 100], showInputPageField: true },
         manageColumnsConfig: { visible: true }
-    }
-};
-
-export const WithCustomEditCells: Story = {
-    render: (props) => <UncontrolledEditModeTableWrapper {...props} />,
-    args: {
-        columns: customEditCellColumns,
-        pagination: { pageSize: 10, rowsPerPageOptions: [2, 10, 20, 50, 100], showInputPageField: true }
     }
 };

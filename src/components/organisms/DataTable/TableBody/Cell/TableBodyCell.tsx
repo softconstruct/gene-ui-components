@@ -147,7 +147,6 @@ const TableBodyCell = <TData, TValue>({
 
         return (
             <TextField
-                className="tableBodyCell__textField"
                 size="small"
                 value={String(editValue ?? "")}
                 disabled={isEditDisabled}
@@ -168,7 +167,11 @@ const TableBodyCell = <TData, TValue>({
         >
             <CellWidthContext.Provider value={width}>
                 <div className="tableBodyCell__content" style={getCellContentStyle(explicitSize)}>
-                    {isCellEditing ? renderEditControl() : flexRender(renderer, cell.getContext())}
+                    {isCellEditing ? (
+                        <div className="tableBodyCell__editControl">{renderEditControl()}</div>
+                    ) : (
+                        flexRender(renderer, cell.getContext())
+                    )}
                 </div>
             </CellWidthContext.Provider>
         </td>

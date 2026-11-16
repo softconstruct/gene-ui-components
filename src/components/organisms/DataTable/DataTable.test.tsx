@@ -1556,7 +1556,7 @@ describe("Table Component - Edit Mode", () => {
     const buttonWithText = (wrapper: EditTableWrapper, text: string) =>
         wrapper.find(Button).filterWhere((button) => button.text().includes(text));
 
-    const editors = (wrapper: EditTableWrapper) => wrapper.find(".tableBodyCell__textField").find("input");
+    const editors = (wrapper: EditTableWrapper) => wrapper.find("input.textField__input");
 
     it("does not render the edit button when editConfig is omitted", async () => {
         const setup = await mountTable({ manageColumnsConfig: { visible: true } });
@@ -1769,7 +1769,7 @@ describe("Table Component - Edit Mode custom cell renderer", () => {
         wrapper.find(Button).filterWhere((button) => button.text().includes(text));
 
     const customEditors = (wrapper: EditTableWrapper) => wrapper.find("input.customEditor");
-    const builtInEditors = (wrapper: EditTableWrapper) => wrapper.find(".tableBodyCell__textField").find("input");
+    const builtInEditors = (wrapper: EditTableWrapper) => wrapper.find("input.textField__input");
 
     it("renders the custom control for its column and the built-in one for the others", async () => {
         const setup = await mountTable({ editConfig: buildEditConfig({ editing: true }) });
