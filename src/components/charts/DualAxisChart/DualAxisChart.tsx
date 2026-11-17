@@ -115,11 +115,12 @@ interface IDualAxisChartProps {
      */
     emptyDescription?: string;
     /**
-     * Returns the label of the legend toggle shown when legend items wrap past one row and the legend is collapsed.
-     * Receives the number of hidden items, so translations can handle plural forms and word order.
+     * Label of the legend toggle shown when legend items wrap past one row and the legend is collapsed.
+     * Either a string, or a function that receives the number of hidden items, so translations can handle
+     * plural forms and word order.
      * @default (hiddenCount) => `Show ${hiddenCount} more`
      */
-    legendShowMoreText?: (hiddenCount: number) => string;
+    legendShowMoreText?: string | ((hiddenCount: number) => string);
     /**
      * Label of the legend toggle while the legend is expanded.
      * @default "Show less"

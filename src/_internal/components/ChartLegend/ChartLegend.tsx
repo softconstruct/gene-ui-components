@@ -47,11 +47,11 @@ interface IChartLegendProps {
      */
     onExpandedChange?: (expanded: boolean) => void;
     /**
-     * Returns the overflow toggle label while the legend is collapsed. Receives the number of hidden items,
-     * so translations can handle plural forms and word order.
+     * Overflow toggle label while the legend is collapsed. Either a string, or a function that receives the
+     * number of hidden items, so translations can handle plural forms and word order.
      * @default (hiddenCount) => `Show ${hiddenCount} more`
      */
-    showMoreText?: (hiddenCount: number) => string;
+    showMoreText?: string | ((hiddenCount: number) => string);
     /**
      * Overflow toggle label while the legend is expanded.
      * @default "Show less"
@@ -109,7 +109,7 @@ const ChartLegendItem: FC<IChartLegendItemProps> = ({ item, index, onItemClick }
  *
  * Long labels truncate with an ellipsis and reveal the full text in a Tooltip on hover (only when
  * actually truncated). The list wraps with flexbox; while collapsed it is clipped to a single row and
- * any items that wrapped are hidden behind a toggle labelled by `showMoreText` / `showLessText`. Expanding
+ * any items that wrapped are hidden behind a toggle labeled by `showMoreText` / `showLessText`. Expanding
  * removes the clip.
  */
 const ChartLegend: FC<IChartLegendProps> = ({
@@ -117,7 +117,7 @@ const ChartLegend: FC<IChartLegendProps> = ({
     items,
     onItemClick,
     onExpandedChange,
-    showMoreText = (hiddenCount) => `Show ${hiddenCount} more`,
+    showMoreText = (hiddenCount: number) => `Show ${hiddenCount} more`,
     showLessText = "Show less"
 }) => {
     const listRef = useRef<HTMLUListElement>(null);
@@ -172,6 +172,7 @@ const ChartLegend: FC<IChartLegendProps> = ({
 
     const isOverflowing = hiddenCount > 0;
     const isExpanded = expanded && isOverflowing;
+    const showMoreLabel = typeof showMoreText === "function" ? showMoreText(hiddenCount) : showMoreText;
 
     // Collapse automatically when everything fits again (e.g. the container grew wider).
     useEffect(() => {
@@ -211,7 +212,7 @@ const ChartLegend: FC<IChartLegendProps> = ({
                     onClick={toggleExpanded}
                 >
                     <Text as="span" variant="bodyMediumSemibold" className="chartLegend__toggleLabel">
-                        {isExpanded ? showLessText : showMoreText(hiddenCount)}
+                        {isExpanded ? showLessText : showMoreLabel}
                     </Text>
                 </button>
             )}

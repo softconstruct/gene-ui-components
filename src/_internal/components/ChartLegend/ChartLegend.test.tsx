@@ -48,6 +48,10 @@ describe("ChartLegend", () => {
         expect(wrapper.find("button.chartLegend__toggle").text()).toBe("Less");
     });
 
+    it("renders string showMoreText prop correctly", () => {
+        expect(mountLegend({ showMoreText: "More" }).find("button.chartLegend__toggle").text()).toBe("More");
+    });
+
     it("renders default toggle text", () => {
         const wrapper = mountLegend();
 
