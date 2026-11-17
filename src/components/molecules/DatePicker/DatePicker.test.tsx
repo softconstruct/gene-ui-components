@@ -924,6 +924,7 @@ describe("DatePicker", () => {
             ]);
             expect(setup.find('button[role="gridcell"]')).toHaveLength(42);
             expect(button(setup, "Thursday, March 5, 2026").prop("aria-selected")).toBe(true);
+            expect(button(setup, "Thursday, March 5, 2026").hasClass("datePicker__cell_selected")).toBeTruthy();
             expect(tabStop(setup).prop("aria-label")).toBe("Thursday, March 5, 2026");
         });
 

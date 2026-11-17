@@ -11,14 +11,6 @@
         --date-picker-gap: var(--guit-ref-spacing-3xsmall);
         --date-picker-radius: var(--guit-ref-radius-3xsmall);
         --date-picker-control-size: var(--guit-sem-dimension-height-medium);
-        --date-picker-day-height: var(--guit-sem-dimension-height-medium-nudge);
-        --date-picker-month-width: var(--guit-sem-dimension-width-xlarge);
-        --date-picker-month-height: var(--guit-sem-dimension-height-medium);
-        --date-picker-month-inset: var(--guit-ref-spacing-medium);
-        --date-picker-header-item-inset: var(--guit-ref-spacing-2xsmall);
-        --date-picker-preset-height: var(--guit-sem-dimension-height-medium-nudge);
-        --date-picker-preset-inset: var(--guit-ref-spacing-medium);
-        --date-picker-panel-gap: var(--guit-ref-spacing-medium);
 
         display: flex;
         gap: var(--guit-ref-spacing-xsmall);
@@ -34,30 +26,66 @@
             &_large {
                 --date-picker-radius: var(--guit-ref-radius-2xsmall);
                 --date-picker-control-size: var(--guit-sem-dimension-height-large);
-                --date-picker-day-height: var(--guit-sem-dimension-height-large);
-                --date-picker-month-width: var(--guit-sem-dimension-width-3xlarge);
-                --date-picker-month-height: var(--guit-sem-dimension-height-large);
-                --date-picker-month-inset: var(--guit-ref-spacing-xlarge);
-                --date-picker-header-item-inset: var(--guit-ref-spacing-xsmall);
-                --date-picker-preset-height: var(--guit-sem-dimension-height-large);
-                --date-picker-preset-inset: var(--guit-ref-spacing-large);
-                --date-picker-panel-gap: var(--guit-ref-spacing-large);
 
                 border-radius: var(--guit-ref-radius-2xsmall);
+
+                #{$this}__panels {
+                    gap: var(--guit-ref-spacing-large);
+                }
+
+                #{$this}__preset {
+                    height: var(--guit-sem-dimension-height-large);
+                    padding-inline: var(--guit-ref-spacing-large);
+                }
+
+                #{$this}__headerItem {
+                    padding-inline: var(--guit-ref-spacing-xsmall);
+                }
+
+                #{$this}__cell {
+                    height: var(--guit-sem-dimension-height-large);
+                }
+
+                #{$this}__grid_view_months,
+                #{$this}__grid_view_years {
+                    #{$this}__row {
+                        padding-inline: var(--guit-ref-spacing-xlarge);
+                    }
+
+                    #{$this}__cell {
+                        width: var(--guit-sem-dimension-width-3xlarge);
+                    }
+                }
             }
 
             &_small {
                 --date-picker-control-size: var(--guit-sem-dimension-height-small);
-                --date-picker-day-height: var(--guit-sem-dimension-height-small);
-                --date-picker-month-width: var(--guit-sem-dimension-width-large);
-                --date-picker-month-height: var(--guit-sem-dimension-height-small);
-                --date-picker-month-inset: var(--guit-ref-spacing-xsmall);
-                --date-picker-header-item-inset: var(--guit-ref-spacing-3xsmall);
-                --date-picker-preset-height: var(--guit-sem-dimension-height-small);
+
+                #{$this}__preset {
+                    height: var(--guit-sem-dimension-height-small);
+                }
+
+                #{$this}__headerItem {
+                    padding-inline: var(--guit-ref-spacing-3xsmall);
+                }
+
+                #{$this}__cell {
+                    height: var(--guit-sem-dimension-height-small);
+                }
+
+                #{$this}__grid_view_months,
+                #{$this}__grid_view_years {
+                    #{$this}__row {
+                        padding-inline: var(--guit-ref-spacing-xsmall);
+                    }
+
+                    #{$this}__cell {
+                        width: var(--guit-sem-dimension-width-large);
+                    }
+                }
             }
         }
 
-        // The bottom sheet of the popover frames the calendar on phones.
         &_mobile {
             flex-direction: column;
             gap: var(--guit-ref-spacing-3xsmall);
@@ -74,7 +102,6 @@
                 container-type: inline-size;
             }
 
-            // The days spread over the sheet: the gaps of the design on a 360px screen, wider gaps on wider ones.
             #{$this}__grid_view_days #{$this}__row {
                 --date-picker-free-space: calc(100cqi - var(--date-picker-control-size) * 7);
                 --date-picker-gap: max(
@@ -89,7 +116,7 @@
 
     &__panels {
         display: flex;
-        gap: var(--date-picker-panel-gap);
+        gap: var(--guit-ref-spacing-medium);
     }
 
     &__picker {
@@ -120,8 +147,8 @@
 
     &__preset {
         flex: 0 0 auto;
-        height: var(--date-picker-preset-height);
-        padding-inline: var(--date-picker-preset-inset);
+        height: var(--guit-sem-dimension-height-medium-nudge);
+        padding-inline: var(--guit-ref-spacing-medium);
         border-radius: var(--date-picker-radius);
         white-space: nowrap;
     }
@@ -147,7 +174,7 @@
         align-items: center;
         justify-content: center;
         height: var(--date-picker-control-size);
-        padding-inline: var(--date-picker-header-item-inset);
+        padding-inline: var(--guit-ref-spacing-2xsmall);
         border-radius: var(--date-picker-radius);
         background-color: var(--guit-sem-color-background-neutral-1);
         color: inherit;
@@ -184,12 +211,12 @@
                     flex: 1 1 0;
                     align-items: center;
                     justify-content: space-between;
-                    padding-inline: var(--date-picker-month-inset);
+                    padding-inline: var(--guit-ref-spacing-medium);
                 }
 
                 #{$this}__cell {
-                    width: var(--date-picker-month-width);
-                    height: var(--date-picker-month-height);
+                    width: var(--guit-sem-dimension-width-xlarge);
+                    height: var(--date-picker-control-size);
                 }
             }
         }
@@ -213,11 +240,11 @@
         position: relative;
         flex: 0 0 auto;
         width: var(--date-picker-control-size);
-        height: var(--date-picker-day-height);
+        height: var(--guit-sem-dimension-height-medium-nudge);
         border-radius: var(--date-picker-radius);
 
         // A selected cell stays clickable: a month or a year opens its days, a range can start and end on one day.
-        &.pickerButton_selected {
+        &#{$this}__cell_selected {
             pointer-events: auto;
 
             @include mixins.media-hover {
@@ -231,7 +258,7 @@
             }
         }
 
-        &_outside:not(:disabled, .pickerButton_selected) {
+        &_outside:not(:disabled, #{$this}__cell_selected) {
             color: var(--guit-sem-color-foreground-neutral-1);
         }
 
@@ -239,7 +266,7 @@
             box-shadow: inset 0 0 0 var(--guit-ref-border-width-thin) var(--guit-sem-color-border-brand);
         }
 
-        &_inRange:not(.pickerButton_selected) {
+        &_inRange:not(#{$this}__cell_selected) {
             border-radius: 0;
             background-color: var(--guit-sem-color-background-brand-1);
 

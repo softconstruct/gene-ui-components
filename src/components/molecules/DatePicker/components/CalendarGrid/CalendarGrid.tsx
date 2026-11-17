@@ -131,7 +131,6 @@ const CalendarGrid: FC<ICalendarGridProps> = ({
         if (!shouldFocus) return;
 
         onFocusMoved();
-        // The popover may still be on its way to its position, so the page must not scroll to it.
         cells.get(focusKey)?.focus({ preventScroll: true });
     }, [shouldFocus, focusKey]);
 
@@ -181,7 +180,9 @@ const CalendarGrid: FC<ICalendarGridProps> = ({
                                 disabled={cell.disabled}
                                 aria-label={cell.label}
                                 aria-current={cell.current ? "date" : undefined}
-                                className={classNames("datePicker__cell", cell.className)}
+                                className={classNames("datePicker__cell", cell.className, {
+                                    datePicker__cell_selected: cell.selected
+                                })}
                                 onClick={onCellClick}
                                 onFocus={onCellFocus}
                                 onMouseEnter={onCellHover}

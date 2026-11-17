@@ -46,7 +46,6 @@ interface IDatePickerBaseProps {
     className?: string;
     /**
      * The size of the component.<br>
-     * Possible values: `small | medium | large`
      * @default "medium"
      */
     size?: DatePickerSizes;
@@ -80,14 +79,11 @@ interface IDatePickerBaseProps {
      */
     readOnly?: boolean;
     /**
-     * Shows the skeleton of the component while its data is loading: bars in place of the label, the
-     * input field and the helper text, each one only where its content is set.
+     * Shows the skeleton of the component while its data is loading
      */
     loading?: boolean;
     /**
      * Validation state of the component: `rest` (no highlight), `warning` or `error`.
-     * Colors the `helperText`, and the border on `error`.<br>
-     * Possible values: `rest | warning | error`
      * @default "rest"
      */
     status?: DatePickerStatus;
@@ -290,8 +286,6 @@ const usePickerSetup = ({ id, format: formatProp, localization, disabled, readOn
         texts,
         mask,
         maskTrack,
-        // The mask library reads the text of an input with the mask it was mounted with, so a new mask
-        // mounts a new input.
         inputKey: mask,
         inputSize: mask.length + 1
     };
