@@ -6,6 +6,8 @@ import { fn } from "@storybook/test";
 import { Pencil, RecycleBin } from "@geneui/icons";
 
 // Components
+import Checkbox from "@components/molecules/Checkbox";
+import Dropdown, { IDropdownOption } from "@components/molecules/Dropdown";
 import NumberField from "@components/molecules/NumberField";
 import Pagination from "@components/molecules/Pagination";
 import Switch from "@components/molecules/Switch";
@@ -239,17 +241,72 @@ export const WithManageColumns: Story = {
     }
 };
 
+const statusOptions: IDropdownOption[] = [
+    { id: "new", label: "New", value: "new" },
+    { id: "active", label: "Active", value: "active" },
+    { id: "inactive", label: "Inactive", value: "inactive" },
+    { id: "suspended", label: "Suspended", value: "suspended" }
+];
+
 const editableColumns: IDataTableProps<MockRowType>["columns"] = [
     { accessorKey: "Id", header: "Id" },
     { accessorKey: "FirstName", header: "First name", editable: true },
     { accessorKey: "LastName", header: "Last name", editable: true },
-    { accessorKey: "Email", header: "Email", editable: true },
-    { accessorKey: "DayOffs", header: "Day offs", editable: true },
+    {
+        accessorKey: "DayOffs",
+        header: "Day offs",
+        editable: true,
+        renderEditCell: ({ value, disabled, onChange }) => (
+            <NumberField
+                size="small"
+                value={typeof value === "number" ? value : ""}
+                disabled={disabled}
+                onChange={(nextValue) => onChange(nextValue === "" ? "" : Number(nextValue))}
+            />
+        )
+    },
+    {
+        accessorKey: "Status",
+        header: "Status",
+        editable: true,
+        renderCell: ({ value }) => statusOptions.find((option) => option.value === value)?.label ?? "",
+        renderEditCell: ({ value, disabled, onChange }) => (
+            <Dropdown
+                size="small"
+                options={statusOptions}
+                value={typeof value === "string" ? value : null}
+                disabled={disabled}
+                onChange={(option) => {
+                    if (Array.isArray(option)) {
+                        onChange("");
+                    } else {
+                        onChange(option?.value ?? "");
+                    }
+                }}
+            />
+        )
+    },
     {
         accessorKey: "IsVerified",
         header: "Verified",
         editable: true,
-        renderCell: ({ value }) => <Switch defaultChecked={Boolean(value)} />
+        renderCell: ({ value }) => (value ? "Verified" : "Not verified"),
+        renderEditCell: ({ value, disabled, onChange }) => (
+            <Switch checked={value === true} disabled={disabled} onChange={(event) => onChange(event.target.checked)} />
+        )
+    },
+    {
+        accessorKey: "IsLocked",
+        header: "Locked",
+        editable: true,
+        renderCell: ({ value }) => (value ? "Locked" : "Unlocked"),
+        renderEditCell: ({ value, disabled, onChange }) => (
+            <Checkbox
+                checked={value === true}
+                disabled={disabled}
+                onChange={(event) => onChange(event.target.checked)}
+            />
+        )
     }
 ];
 

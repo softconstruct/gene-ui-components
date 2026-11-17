@@ -11,7 +11,12 @@ import useEllipsisDetection from "@hooks/useEllipsisDetection";
 import { EXPANDER_COLUMN_ID, EXPANDER_COLUMN_SIZE } from "./constants";
 import { useCellWidth } from "./context";
 import ExpanderCell from "./TableBody/ExpanderCell/ExpanderCell";
-import { DataTableColumn, DataTableRowExpandChangeHandler } from "./types";
+import {
+    DataTableCellValue,
+    DataTableColumn,
+    DataTableRenderEditCellArgs,
+    DataTableRowExpandChangeHandler
+} from "./types";
 
 /**
  * Props for the TableBodyCell component, defined here to be used by areCellsEqual.
@@ -51,7 +56,12 @@ export interface ICellProps<TData, TValue> {
      * Value the editor shows: the draft from `editValues` when the cell has one, the value from
      * `data` otherwise.
      */
-    editValue: string;
+    editValue: unknown;
+    /**
+     * Snapshot of `column.columnDef.meta.renderEditCell` — the renderer reference. Catches
+     * consumers updating the `columns` prop with a new renderer closure.
+     */
+    renderEditCell?: (args: DataTableRenderEditCellArgs<TData, unknown>) => ReactNode;
 }
 
 /**
@@ -93,7 +103,8 @@ export const areCellsEqual = <TData, TValue>(prev: ICellProps<TData, TValue>, ne
     prev.rowData === next.rowData &&
     prev.isCellEditing === next.isCellEditing &&
     prev.isEditDisabled === next.isEditDisabled &&
-    prev.editValue === next.editValue;
+    prev.editValue === next.editValue &&
+    prev.renderEditCell === next.renderEditCell;
 
 export const DefaultCellComponent = ({ value }: { value: string }) => {
     const textRef = useRef<HTMLSpanElement | null>(null);
@@ -115,7 +126,8 @@ export const DefaultCellComponent = ({ value }: { value: string }) => {
  */
 export const adaptColumns = <TData,>(columns: DataTableColumn<TData>[]): ColumnDef<TData, ReactNode>[] =>
     columns.map((col, index) => {
-        const { accessorKey, id, header, size, renderCell, defaultVisible, defaultPinned, editable } = col;
+        const { accessorKey, id, header, size, renderCell, renderEditCell, defaultVisible, defaultPinned, editable } =
+            col;
         const isAccessorColumn = Boolean(accessorKey);
 
         const base: ColumnDef<TData> = {
@@ -126,7 +138,8 @@ export const adaptColumns = <TData,>(columns: DataTableColumn<TData>[]): ColumnD
                 explicitSize: size,
                 defaultVisible,
                 defaultPinned,
-                editable
+                editable,
+                renderEditCell
             },
             ...(isAccessorColumn ? { accessorKey } : {})
         };
@@ -137,7 +150,7 @@ export const adaptColumns = <TData,>(columns: DataTableColumn<TData>[]): ColumnD
             ...base,
             cell: (ctx: CellContext<TData, ReactNode>) =>
                 renderCell({
-                    value: isAccessorColumn ? ctx.getValue() : undefined,
+                    value: (isAccessorColumn ? ctx.getValue() : undefined) as DataTableCellValue<TData>,
                     row: ctx.row.original,
                     rowId: ctx.row.id
                 })

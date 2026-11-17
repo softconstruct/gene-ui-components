@@ -30,10 +30,20 @@ export interface DataTableRowExpandChangePayload<TData> {
 
 export type DataTableRowExpandChangeHandler<TData> = (payload: DataTableRowExpandChangePayload<TData>) => void;
 
+export type DataTableCellValue<TData> = TData[keyof TData & string] | undefined;
+
 export type DataTableRenderCellArgs<TData, TValue> = {
     value: TValue;
     row: TData;
     rowId: string;
+};
+
+export type DataTableRenderEditCellArgs<TData, TValue> = {
+    value: TValue;
+    row: TData;
+    rowId: string;
+    disabled: boolean;
+    onChange: (value: TValue) => void;
 };
 
 export interface IDataTableRowAction<TData> {
@@ -89,7 +99,14 @@ export type DataTableColumn<TData> = {
      * IMPORTANT: For optimal performance on large tables, ensure this function is memoized
      * (e.g., using `useCallback` or defined outside the component) to avoid unnecessary cell re-renders.
      */
-    renderCell?: (args: DataTableRenderCellArgs<TData, ReactNode>) => ReactNode;
+    renderCell?: (args: DataTableRenderCellArgs<TData, DataTableCellValue<TData>>) => ReactNode;
+    /**
+     * Renders the cell while the table is in edit mode, in place of the built-in control.
+     * Has no effect on a column that is not `editable`.
+     * IMPORTANT: For optimal performance on large tables, ensure this function is memoized
+     * (e.g., using `useCallback` or defined outside the component) to avoid unnecessary cell re-renders.
+     */
+    renderEditCell?: (args: DataTableRenderEditCellArgs<TData, unknown>) => ReactNode;
 };
 
 export type ColumnVisibilityState = Record<string, boolean>;
@@ -217,7 +234,7 @@ export type ResolvedManageColumnsConfig = Omit<ManageColumnsConfig, "disabled" |
 /**
  * Draft values held by the consumer while the table is in edit mode, keyed by row id.
  */
-export type DataTableEditValues<TData> = Record<string, Partial<Record<keyof TData & string, string>>>;
+export type DataTableEditValues<TData> = Record<string, Partial<Record<keyof TData & string, unknown>>>;
 
 /**
  * Payload reported for every change made in an editing cell.
@@ -236,9 +253,10 @@ export interface IDataTableCellChangePayload<TData> {
      */
     row: TData;
     /**
-     * The current value of the editor. The built-in editor always reports a string.
+     * The current value of the control, reported as the control provided it. The built-in control
+     * always reports a string.
      */
-    value: string;
+    value: unknown;
 }
 
 export interface IDataTableEditTexts {
@@ -331,5 +349,6 @@ declare module "@tanstack/react-table" {
         defaultVisible?: boolean;
         defaultPinned?: boolean;
         editable?: boolean;
+        renderEditCell?: (args: DataTableRenderEditCellArgs<TData, unknown>) => ReactNode;
     }
 }

@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, ReactNode } from "react";
 import { Cell, ColumnDef, flexRender } from "@tanstack/react-table";
 import classNames from "classnames";
 
@@ -7,7 +7,7 @@ import { areCellsEqual, getCellContentStyle, getCellStyle } from "@components/or
 
 import { EXPANDER_COLUMN_ID } from "../../constants";
 import { CellWidthContext } from "../../context";
-import { IDataTableCellChangePayload } from "../../types";
+import { DataTableRenderEditCellArgs, IDataTableCellChangePayload } from "../../types";
 
 // Styles
 import "./TableBodyCell.scss";
@@ -84,7 +84,12 @@ export interface ITableBodyCellProps<TData, TValue> {
      * Value the editor shows: the draft from `editValues` when the cell has one, the value from
      * `data` otherwise.
      */
-    editValue: string;
+    editValue: unknown;
+    /**
+     * Snapshot of `column.columnDef.meta.renderEditCell` — the renderer reference. Catches
+     * consumers updating the `columns` prop with a new renderer closure.
+     */
+    renderEditCell?: (args: DataTableRenderEditCellArgs<TData, unknown>) => ReactNode;
     /**
      * Reports what was typed into the editor. Must stay referentially stable, it is not compared by
      * {@link areCellsEqual}.
@@ -114,11 +119,41 @@ const TableBodyCell = <TData, TValue>({
     isCellEditing,
     isEditDisabled,
     editValue,
+    renderEditCell,
     onCellChange
 }: ITableBodyCellProps<TData, TValue>) => {
     const isExpanderCell = cell.column.id === EXPANDER_COLUMN_ID;
     const isRTL = dirMode === "rtl";
     const explicitSize = cell.column.columnDef.meta?.explicitSize;
+
+    const handleEditValueChange = (value: unknown) =>
+        onCellChange?.({
+            rowId: cell.row.id,
+            columnId: cell.column.id,
+            row: cell.row.original,
+            value
+        });
+
+    const renderEditControl = () => {
+        if (renderEditCell) {
+            return renderEditCell({
+                value: editValue,
+                row: cell.row.original,
+                rowId: cell.row.id,
+                disabled: isEditDisabled,
+                onChange: handleEditValueChange
+            });
+        }
+
+        return (
+            <TextField
+                size="small"
+                value={String(editValue ?? "")}
+                disabled={isEditDisabled}
+                onChange={(event) => handleEditValueChange(event.target.value)}
+            />
+        );
+    };
 
     return (
         <td
@@ -133,20 +168,7 @@ const TableBodyCell = <TData, TValue>({
             <CellWidthContext.Provider value={width}>
                 <div className="tableBodyCell__content" style={getCellContentStyle(explicitSize)}>
                     {isCellEditing ? (
-                        <TextField
-                            className="tableBodyCell__textField"
-                            size="small"
-                            value={editValue}
-                            disabled={isEditDisabled}
-                            onChange={(event) =>
-                                onCellChange?.({
-                                    rowId: cell.row.id,
-                                    columnId: cell.column.id,
-                                    row: cell.row.original,
-                                    value: event.target.value
-                                })
-                            }
-                        />
+                        <div className="tableBodyCell__editControl">{renderEditControl()}</div>
                     ) : (
                         flexRender(renderer, cell.getContext())
                     )}
