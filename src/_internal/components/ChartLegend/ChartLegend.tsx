@@ -46,6 +46,17 @@ interface IChartLegendProps {
      * growing taller (e.g. keep the chart from shrinking).
      */
     onExpandedChange?: (expanded: boolean) => void;
+    /**
+     * Returns the overflow toggle label while the legend is collapsed. Receives the number of hidden items,
+     * so translations can handle plural forms and word order.
+     * @default (hiddenCount) => `Show ${hiddenCount} more`
+     */
+    showMoreText?: (hiddenCount: number) => string;
+    /**
+     * Overflow toggle label while the legend is expanded.
+     * @default "Show less"
+     */
+    showLessText?: string;
 }
 
 interface IChartLegendItemProps {
@@ -98,9 +109,17 @@ const ChartLegendItem: FC<IChartLegendItemProps> = ({ item, index, onItemClick }
  *
  * Long labels truncate with an ellipsis and reveal the full text in a Tooltip on hover (only when
  * actually truncated). The list wraps with flexbox; while collapsed it is clipped to a single row and
- * any items that wrapped are hidden behind a "Show N more" toggle. Expanding removes the clip.
+ * any items that wrapped are hidden behind a toggle labelled by `showMoreText` / `showLessText`. Expanding
+ * removes the clip.
  */
-const ChartLegend: FC<IChartLegendProps> = ({ className, items, onItemClick, onExpandedChange }) => {
+const ChartLegend: FC<IChartLegendProps> = ({
+    className,
+    items,
+    onItemClick,
+    onExpandedChange,
+    showMoreText = (hiddenCount) => `Show ${hiddenCount} more`,
+    showLessText = "Show less"
+}) => {
     const listRef = useRef<HTMLUListElement>(null);
     const [expanded, setExpanded] = useState(false);
     const [hiddenCount, setHiddenCount] = useState(0);
@@ -192,7 +211,7 @@ const ChartLegend: FC<IChartLegendProps> = ({ className, items, onItemClick, onE
                     onClick={toggleExpanded}
                 >
                     <Text as="span" variant="bodyMediumSemibold" className="chartLegend__toggleLabel">
-                        {isExpanded ? "Show less" : `Show ${hiddenCount} more`}
+                        {isExpanded ? showLessText : showMoreText(hiddenCount)}
                     </Text>
                 </button>
             )}

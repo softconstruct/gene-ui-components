@@ -100,6 +100,17 @@ interface IStackedBarChartProps {
      */
     emptyDescription?: string;
     /**
+     * Returns the label of the legend toggle shown when legend items wrap past one row and the legend is collapsed.
+     * Receives the number of hidden items, so translations can handle plural forms and word order.
+     * @default (hiddenCount) => `Show ${hiddenCount} more`
+     */
+    legendShowMoreText?: (hiddenCount: number) => string;
+    /**
+     * Label of the legend toggle while the legend is expanded.
+     * @default "Show less"
+     */
+    legendShowLessText?: string;
+    /**
      * Formats a point value for the tooltip (raw number in, display string out).
      * Hover shows all series of the category; when any value is negative (diverging), only the hovered segment.
      */
@@ -134,6 +145,8 @@ const StackedBarChart: FC<IStackedBarChartProps> = ({
     loadingText,
     emptyTitle,
     emptyDescription,
+    legendShowMoreText,
+    legendShowLessText,
     valueFormatter = defaultValueFormatter,
     options
 }) => {
@@ -466,6 +479,8 @@ const StackedBarChart: FC<IStackedBarChartProps> = ({
                     items={legendItems}
                     onItemClick={handleLegendItemClick}
                     onExpandedChange={handleLegendExpandedChange}
+                    showMoreText={legendShowMoreText}
+                    showLessText={legendShowLessText}
                 />
             )}
         </div>
