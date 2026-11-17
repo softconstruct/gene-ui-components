@@ -7,7 +7,7 @@ import { areCellsEqual, getCellContentStyle, getCellStyle } from "@components/or
 
 import { EXPANDER_COLUMN_ID } from "../../constants";
 import { CellWidthContext } from "../../context";
-import { DataTableCellValue, DataTableRenderEditCellArgs, IDataTableCellChangePayload } from "../../types";
+import { DataTableRenderEditCellArgs, IDataTableCellChangePayload } from "../../types";
 
 // Styles
 import "./TableBodyCell.scss";
@@ -84,12 +84,12 @@ export interface ITableBodyCellProps<TData, TValue> {
      * Value the editor shows: the draft from `editValues` when the cell has one, the value from
      * `data` otherwise.
      */
-    editValue: DataTableCellValue<TData>;
+    editValue: unknown;
     /**
      * Snapshot of `column.columnDef.meta.renderEditCell` — the renderer reference. Catches
      * consumers updating the `columns` prop with a new renderer closure.
      */
-    renderEditCell?: (args: DataTableRenderEditCellArgs<TData, DataTableCellValue<TData>>) => ReactNode;
+    renderEditCell?: (args: DataTableRenderEditCellArgs<TData, unknown>) => ReactNode;
     /**
      * Reports what was typed into the editor. Must stay referentially stable, it is not compared by
      * {@link areCellsEqual}.
@@ -126,7 +126,7 @@ const TableBodyCell = <TData, TValue>({
     const isRTL = dirMode === "rtl";
     const explicitSize = cell.column.columnDef.meta?.explicitSize;
 
-    const handleEditValueChange = (value: DataTableCellValue<TData>) =>
+    const handleEditValueChange = (value: unknown) =>
         onCellChange?.({
             rowId: cell.row.id,
             columnId: cell.column.id,
@@ -150,7 +150,7 @@ const TableBodyCell = <TData, TValue>({
                 size="small"
                 value={String(editValue ?? "")}
                 disabled={isEditDisabled}
-                onChange={(event) => handleEditValueChange(event.target.value as DataTableCellValue<TData>)}
+                onChange={(event) => handleEditValueChange(event.target.value)}
             />
         );
     };
