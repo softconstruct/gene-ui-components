@@ -37,7 +37,7 @@ const meta: Meta<IGroupedBarChartProps> = {
         loadingText: args({ control: "text", ...propCategory.content }),
         emptyTitle: args({ control: "text", ...propCategory.content }),
         emptyDescription: args({ control: "text", ...propCategory.content }),
-        legendShowMoreText: args({ control: "false", ...propCategory.content }),
+        legendShowMoreText: args({ control: "text", ...propCategory.content }),
         legendShowLessText: args({ control: "text", ...propCategory.content }),
         options: args({ control: "object", ...propCategory.others }),
         valueFormatter: args({ control: "false", ...propCategory.functionality })
