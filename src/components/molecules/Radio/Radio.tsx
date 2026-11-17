@@ -20,7 +20,7 @@ interface IRadioProps {
      *  Toggles the label's and HelperText position between above or beside the radio.
      *   Possible values: `horizontal | vertical`
      */
-    direction?: "horizontal " | "vertical";
+    direction?: "horizontal" | "vertical";
     /**
      *  Specifies whether the radio is mandatory for completing a form.
      */
@@ -103,7 +103,7 @@ const Radio: FC<IRadioProps> = (props) => {
         helperText,
         readOnly,
         status = "rest",
-        direction = "horizontal ",
+        direction = "horizontal",
         autoFocus,
         onChange,
         onFocus,
