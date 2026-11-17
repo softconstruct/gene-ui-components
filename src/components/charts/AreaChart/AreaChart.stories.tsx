@@ -13,6 +13,12 @@ const sampleSeries = [
     { name: "Channel 4", data: [60, 120, 220, 90, 150, 140, 90, 70] }
 ];
 
+// Enough series for the legend to wrap past one row and show its "Show more" toggle.
+const manySeries = Array.from({ length: 15 }, (_, seriesIndex) => ({
+    name: `Channel ${seriesIndex + 1}`,
+    data: sampleCategories.map((_category, pointIndex) => 20 + ((seriesIndex * 37 + pointIndex * 53) % 260))
+}));
+
 const meta: Meta<IAreaChartProps> = {
     title: "Charts/AreaChart",
     component: AreaChart,
@@ -37,6 +43,8 @@ const meta: Meta<IAreaChartProps> = {
         loadingText: args({ control: "text", ...propCategory.content }),
         emptyTitle: args({ control: "text", ...propCategory.content }),
         emptyDescription: args({ control: "text", ...propCategory.content }),
+        legendShowMoreText: args({ control: "text", ...propCategory.content }),
+        legendShowLessText: args({ control: "text", ...propCategory.content }),
         options: args({ control: "object", ...propCategory.others }),
         valueFormatter: args({ control: "false", ...propCategory.functionality })
     },
@@ -52,6 +60,8 @@ const meta: Meta<IAreaChartProps> = {
         loadingText: "Loading Info",
         emptyTitle: "No Data Available",
         emptyDescription: "No data is available for display at this moment.",
+        legendShowMoreText: (hiddenCount) => `Show ${hiddenCount} more`,
+        legendShowLessText: "Show less",
         valueFormatter: (value) => `${value}`
     },
     parameters: {
@@ -64,6 +74,13 @@ export default meta;
 type Story = StoryObj<IAreaChartProps>;
 
 export const Rest: Story = {};
+
+export const LegendOverflow: Story = {
+    args: {
+        series: manySeries,
+        subtitle: "Legend items past the first row are hidden behind a toggle"
+    }
+};
 
 export const Loading: Story = {
     args: { loading: true }
