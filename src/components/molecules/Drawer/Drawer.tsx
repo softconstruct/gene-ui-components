@@ -51,7 +51,7 @@ interface IDrawerProps {
      * 'start' corresponds to the left, 'end' to the right.
      * @default "end"
      */
-    position?: "bottom " | "end" | "start";
+    position?: "bottom" | "end" | "start";
     /**
      *
      * Callback function triggered when the modal is requested to be closed (e.g., via the close button, Escape key, or overlay click).

@@ -65,11 +65,11 @@ describe("Drawer", () => {
         expect(wrapper.find(".drawer").hasClass(`drawer_size_${size}`)).toBeTruthy();
     });
 
-    it.each<IDrawerProps["position"]>(["bottom ", "end", "start"])(
+    it.each<IDrawerProps["position"]>(["bottom", "end", "start"])(
         "should render with %s position for overlay variant",
         (position) => {
             const wrapper = setup.setProps({ position, variant: "overlay" });
-            expect(wrapper.find(".drawer").hasClass(`drawer_position_${position?.trim()}`)).toBeTruthy();
+            expect(wrapper.find(".drawer").hasClass(`drawer_position_${position}`)).toBeTruthy();
         }
     );
 
