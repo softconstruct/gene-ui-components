@@ -11,7 +11,12 @@ import useEllipsisDetection from "@hooks/useEllipsisDetection";
 import { EXPANDER_COLUMN_ID, EXPANDER_COLUMN_SIZE } from "./constants";
 import { useCellWidth } from "./context";
 import ExpanderCell from "./TableBody/ExpanderCell/ExpanderCell";
-import { DataTableColumn, DataTableRenderEditCellArgs, DataTableRowExpandChangeHandler } from "./types";
+import {
+    DataTableCellValue,
+    DataTableColumn,
+    DataTableRenderEditCellArgs,
+    DataTableRowExpandChangeHandler
+} from "./types";
 
 /**
  * Props for the TableBodyCell component, defined here to be used by areCellsEqual.
@@ -51,12 +56,12 @@ export interface ICellProps<TData, TValue> {
      * Value the editor shows: the draft from `editValues` when the cell has one, the value from
      * `data` otherwise.
      */
-    editValue: ReactNode;
+    editValue: DataTableCellValue<TData>;
     /**
      * Snapshot of `column.columnDef.meta.renderEditCell` — the renderer reference. Catches
      * consumers updating the `columns` prop with a new renderer closure.
      */
-    renderEditCell?: (args: DataTableRenderEditCellArgs<TData, ReactNode>) => ReactNode;
+    renderEditCell?: (args: DataTableRenderEditCellArgs<TData, DataTableCellValue<TData>>) => ReactNode;
 }
 
 /**
@@ -145,7 +150,7 @@ export const adaptColumns = <TData,>(columns: DataTableColumn<TData>[]): ColumnD
             ...base,
             cell: (ctx: CellContext<TData, ReactNode>) =>
                 renderCell({
-                    value: isAccessorColumn ? ctx.getValue() : undefined,
+                    value: (isAccessorColumn ? ctx.getValue() : undefined) as DataTableCellValue<TData>,
                     row: ctx.row.original,
                     rowId: ctx.row.id
                 })

@@ -1,4 +1,4 @@
-import React, { MouseEvent, ReactNode } from "react";
+import React, { MouseEvent } from "react";
 import { mount, ReactWrapper } from "enzyme";
 import { act } from "react-dom/test-utils";
 
@@ -12,6 +12,7 @@ import TextField from "@components/molecules/TextField";
 import { INITIAL_PAGE_SIZE } from "@components/organisms/DataTable/constants";
 import Toolbar from "@components/organisms/DataTable/Toolbar/Toolbar";
 import {
+    DataTableCellValue,
     DataTableColumn,
     DataTableRenderCellArgs,
     DataTableRenderEditCellArgs,
@@ -391,9 +392,11 @@ describe("Table Component - body cell memoization", () => {
     const visibleData = mockData.slice(0, 3);
 
     const buildSpyColumns = () => {
-        const renderSpy = jest.fn(({ value }: DataTableRenderCellArgs<MockDataType, ReactNode>) => (
-            <span>{String(value ?? "")}</span>
-        ));
+        const renderSpy = jest.fn(
+            ({ value }: DataTableRenderCellArgs<MockDataType, DataTableCellValue<MockDataType>>) => (
+                <span>{String(value ?? "")}</span>
+            )
+        );
         const columns: DataTableColumn<MockDataType>[] = [
             { accessorKey: "Id", header: "Id", renderCell: renderSpy },
             { accessorKey: "Email", header: "Email", renderCell: renderSpy }
@@ -1721,7 +1724,7 @@ describe("Table Component - Edit Mode custom cell renderer", () => {
         value,
         disabled,
         onChange
-    }: DataTableRenderEditCellArgs<MockDataType, ReactNode>) => (
+    }: DataTableRenderEditCellArgs<MockDataType, DataTableCellValue<MockDataType>>) => (
         <input
             className="customEditor"
             value={String(value ?? "")}

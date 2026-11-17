@@ -1,5 +1,6 @@
 export { IDataTableProps, default } from "./DataTable";
 export {
+    DataTableCellValue,
     DataTableColumn,
     DataTableEditValues,
     DataTableGetRowStatus,

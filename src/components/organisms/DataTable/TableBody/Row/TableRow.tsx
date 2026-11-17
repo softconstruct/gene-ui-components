@@ -1,4 +1,4 @@
-import React, { FC, JSX, MouseEvent, ReactNode } from "react";
+import React, { FC, JSX, MouseEvent } from "react";
 import { Row } from "@tanstack/table-core";
 import classNames from "classnames";
 
@@ -9,6 +9,7 @@ import Tooltip from "@components/molecules/Tooltip";
 import { useDirMode } from "../../context";
 import TableBodyCell from "../../TableBody/Cell/TableBodyCell";
 import {
+    DataTableCellValue,
     DataTableEditValues,
     DataTableGetRowStatus,
     DataTableRenderExpandedRow,
@@ -90,7 +91,7 @@ const TableRow = <TData,>({
     onCellChange
 }: ITableRowProps<TData>) => {
     const dirMode = useDirMode();
-    const drafts = rowEditValues as Record<string, ReactNode> | undefined;
+    const drafts = rowEditValues as Record<string, DataTableCellValue<TData>> | undefined;
     const rowStatus = getRowStatus?.(row.original);
     const isRowExpanded = row.getIsExpanded();
     const expandedRow = isRowExpanded ? renderExpandedRow?.(row.original) : null;
@@ -124,7 +125,7 @@ const TableRow = <TData,>({
                             rowData={row.original}
                             isCellEditing={!!isEditing && !!cell.column.columnDef.meta?.editable}
                             isEditDisabled={!!isEditDisabled}
-                            editValue={(hasDraft ? drafts[columnId] : value) as ReactNode}
+                            editValue={(hasDraft ? drafts[columnId] : value) as DataTableCellValue<TData>}
                             renderEditCell={cell.column.columnDef.meta?.renderEditCell}
                             onCellChange={onCellChange}
                         />
