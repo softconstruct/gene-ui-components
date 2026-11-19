@@ -275,11 +275,11 @@ interface IGlobalHeaderProps {
      */
     onCurrencyConvertorSelect?: (item: IMenuItemProps) => void;
     /**
-     * Optional React component or element to display dynamic content in the header's left section,
+     * Optional React component or element to display dynamic content in the header's start section,
      * positioned adjacent to the logo. Commonly used for real-time information such as exchange rates,
      * system status, etc.
      */
-    leftContent?: ReactNode;
+    startSwappable?: ReactNode;
     /**
      * Callback function triggered when the Help button (with the QuestionMark icon) is clicked.
      * If not provided, the Help button will not be displayed in the header.
@@ -349,7 +349,7 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     onCurrencySelect,
     currencyConvertorText,
     onCurrencyConvertorSelect,
-    leftContent = null,
+    startSwappable = null,
     onHelpActionSelect,
     actions,
     fullName,
@@ -559,7 +559,7 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                     <Logo className="globalHeader__logo" type="logomark" appearance="inverse" size="small" />
                 )}
 
-                {isDesktopBreakpoint && leftContent}
+                {isDesktopBreakpoint && startSwappable}
             </div>
             <div className="globalHeader_side_right">
                 {partners && !isMobileBreakpoint && (
