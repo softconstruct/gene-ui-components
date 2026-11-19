@@ -34,6 +34,11 @@ interface IChartTooltipItem {
      * Swatch color. Accepts any valid CSS color (including `var(--guit-...)`).
      */
     color: string;
+    /**
+     * Shows the color swatch before the row.
+     * @default true
+     */
+    showSwatch?: boolean;
 }
 
 interface IChartTooltipProps {
@@ -46,6 +51,14 @@ interface IChartTooltipProps {
      * Tooltip rows to display.
      */
     items: IChartTooltipItem[];
+    /**
+     * Title displayed above the rows.
+     */
+    title?: string;
+    /**
+     * Description displayed below the rows.
+     */
+    description?: string;
     /**
      * Controls tooltip visibility. Parent chart should set this from point hover.
      */
@@ -75,6 +88,8 @@ interface IChartTooltipProps {
 const ChartTooltip: FC<IChartTooltipProps> = ({
     className,
     items,
+    title,
+    description,
     open = false,
     left = 0,
     top = 0,
@@ -102,21 +117,33 @@ const ChartTooltip: FC<IChartTooltipProps> = ({
                 onClose={onClose}
             >
                 <PopoverBody withPadding={false} withScrollbar={false}>
-                    {items.length > 0 && (
+                    {(items.length > 0 || title || description) && (
                         <div className={classNames("chartTooltip", className)}>
                             <div className="chartTooltip__content">
-                                {items.map(({ name, value, color }) => (
+                                {title && (
+                                    <Text as="span" variant="labelMediumMedium" className="chartTooltip__text">
+                                        {title}
+                                    </Text>
+                                )}
+                                {items.map(({ name, value, color, showSwatch = true }) => (
                                     <div key={`${name}-${value}`} className="chartTooltip__row">
-                                        <span
-                                            className="chartTooltip__swatch"
-                                            style={{ backgroundColor: color }}
-                                            aria-hidden
-                                        />
+                                        {showSwatch && (
+                                            <span
+                                                className="chartTooltip__swatch"
+                                                style={{ backgroundColor: color }}
+                                                aria-hidden
+                                            />
+                                        )}
                                         <Text as="span" variant="captionLargeMedium" className="chartTooltip__text">
                                             {`${name}: ${value}`}
                                         </Text>
                                     </div>
                                 ))}
+                                {description && (
+                                    <Text as="span" variant="labelSmallSemibold" className="chartTooltip__text">
+                                        {description}
+                                    </Text>
+                                )}
                             </div>
                         </div>
                     )}
