@@ -170,6 +170,7 @@ export {
 } from "./components/charts/StackedBarChart";
 export { default as AreaChart, IAreaChartProps, IAreaChartSeries } from "./components/charts/AreaChart";
 export { default as DualAxisChart, IDualAxisChartProps, IDualAxisChartSeries } from "./components/charts/DualAxisChart";
+export { default as PieChart, IPieChartProps, IPieChartSeries } from "./components/charts/PieChart";
 
 // Providers
 export {
