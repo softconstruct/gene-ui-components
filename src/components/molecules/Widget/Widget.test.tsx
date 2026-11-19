@@ -99,13 +99,13 @@ describe("Widget", () => {
     it("renders swappableElement when provided", () => {
         const swappableElement = <div className="custom-swap">Custom content</div>;
         const wrapper = setup.setProps({ swappableElement });
-        expect(wrapper.find(".widget__swap").exists()).toBeTruthy();
+        expect(wrapper.find(".widget__swappable").exists()).toBeTruthy();
         expect(wrapper.find(".custom-swap").exists()).toBeTruthy();
         expect(wrapper.find(".custom-swap").text()).toBe("Custom content");
     });
 
     it("does not render swap area when swappableElement is not provided", () => {
-        expect(setup.find(".widget__swap").exists()).toBeFalsy();
+        expect(setup.find(".widget__swappable").exists()).toBeFalsy();
     });
 
     it("renders widget body with info section", () => {
@@ -225,7 +225,7 @@ describe("Widget", () => {
         expect(wrapper.find(ArrowBounceUp).exists()).toBeTruthy();
         expect(wrapper.find(".widget__trendWrapper").text()).toContain("+12%");
         expect(wrapper.find(Globe).exists()).toBeTruthy();
-        expect(wrapper.find(".widget__swap").text()).toContain("Swap content");
+        expect(wrapper.find(".widget__swappable").text()).toContain("Swap content");
         expect(wrapper.find("SegmentedControl").exists()).toBeTruthy();
         expect(wrapper.find(".widget__detailsButton").exists()).toBeTruthy();
     });
