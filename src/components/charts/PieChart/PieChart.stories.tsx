@@ -59,11 +59,3 @@ export default meta;
 type Story = StoryObj<IPieChartProps>;
 
 export const Rest: Story = {};
-
-export const Loading: Story = {
-    args: { loading: true }
-};
-
-export const NoData: Story = {
-    args: { series: [] }
-};
