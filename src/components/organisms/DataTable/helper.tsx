@@ -3,6 +3,7 @@ import { Cell, CellContext, ColumnDef } from "@tanstack/react-table";
 
 // Components
 import Text from "@components/atoms/Text";
+import TextField from "@components/molecules/TextField";
 import Tooltip from "@components/molecules/Tooltip";
 
 // hooks
@@ -14,6 +15,7 @@ import ExpanderCell from "./TableBody/ExpanderCell/ExpanderCell";
 import {
     DataTableCellValue,
     DataTableColumn,
+    DataTableColumnType,
     DataTableRenderEditCellArgs,
     DataTableRowExpandChangeHandler
 } from "./types";
@@ -120,15 +122,50 @@ export const DefaultCellComponent = ({ value }: { value: string }) => {
     );
 };
 
+export type DataTableColumnTypeDefinition = {
+    renderValue: (value: unknown) => ReactNode;
+    renderEditControl: (args: DataTableRenderEditCellArgs<unknown, unknown>) => ReactNode;
+};
+
+export const DEFAULT_COLUMN_TYPE: DataTableColumnType = "text";
+
+export const columnTypes: Record<DataTableColumnType, DataTableColumnTypeDefinition> = {
+    text: {
+        renderValue: (value) => <DefaultCellComponent value={String(value ?? "")} />,
+        renderEditControl: ({ value, disabled, onChange }) => (
+            <TextField
+                size="small"
+                value={String(value ?? "")}
+                disabled={disabled}
+                onChange={(event) => onChange(event.target.value)}
+            />
+        )
+    }
+};
+
+export const getColumnType = (type?: DataTableColumnType): DataTableColumnTypeDefinition =>
+    columnTypes[type ?? DEFAULT_COLUMN_TYPE];
+
 /**
  * Normalizes the public {@link DataTableColumn} shape into TanStack `ColumnDef[]`.
  * Pure transformation: does not inject any non-data columns.
  */
 export const adaptColumns = <TData,>(columns: DataTableColumn<TData>[]): ColumnDef<TData, ReactNode>[] =>
     columns.map((col, index) => {
-        const { accessorKey, id, header, size, renderCell, renderEditCell, defaultVisible, defaultPinned, editable } =
-            col;
+        const {
+            accessorKey,
+            id,
+            header,
+            size,
+            type,
+            renderCell,
+            renderEditCell,
+            defaultVisible,
+            defaultPinned,
+            editable
+        } = col;
         const isAccessorColumn = Boolean(accessorKey);
+        const columnType = getColumnType(type);
 
         const base: ColumnDef<TData> = {
             id: id ?? accessorKey ?? `display_${index}`,
@@ -139,21 +176,21 @@ export const adaptColumns = <TData,>(columns: DataTableColumn<TData>[]): ColumnD
                 defaultVisible,
                 defaultPinned,
                 editable,
-                renderEditCell
+                renderEditCell: renderEditCell ?? columnType.renderEditControl
             },
             ...(isAccessorColumn ? { accessorKey } : {})
         };
 
-        if (!renderCell) return base;
-
         return {
             ...base,
-            cell: (ctx: CellContext<TData, ReactNode>) =>
-                renderCell({
-                    value: (isAccessorColumn ? ctx.getValue() : undefined) as DataTableCellValue<TData>,
-                    row: ctx.row.original,
-                    rowId: ctx.row.id
-                })
+            cell: renderCell
+                ? (ctx: CellContext<TData, ReactNode>) =>
+                      renderCell({
+                          value: (isAccessorColumn ? ctx.getValue() : undefined) as DataTableCellValue<TData>,
+                          row: ctx.row.original,
+                          rowId: ctx.row.id
+                      })
+                : (ctx: CellContext<TData, ReactNode>) => columnType.renderValue(ctx.getValue())
         };
     });
 

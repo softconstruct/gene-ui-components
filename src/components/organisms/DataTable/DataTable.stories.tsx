@@ -250,7 +250,7 @@ const statusOptions: IDropdownOption[] = [
 
 const editableColumns: IDataTableProps<MockRowType>["columns"] = [
     { accessorKey: "Id", header: "Id" },
-    { accessorKey: "FirstName", header: "First name", editable: true },
+    { accessorKey: "FirstName", header: "First name", type: "text", editable: true },
     { accessorKey: "LastName", header: "Last name", editable: true },
     {
         accessorKey: "DayOffs",
