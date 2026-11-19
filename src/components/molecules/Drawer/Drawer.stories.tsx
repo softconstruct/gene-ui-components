@@ -29,8 +29,8 @@ const meta: Meta<IDrawerProps> = {
         onClose: args({ control: "false", ...propCategory.action }),
         children: args({ control: "text", ...propCategory.content }),
         actions: args({ control: "false", ...propCategory.functionality }),
-        headerContent: args({ control: "text", ...propCategory.content }),
-        footerContent: args({ control: "text", ...propCategory.content }),
+        headerSwappable: args({ control: "text", ...propCategory.content }),
+        footerSwappable: args({ control: "text", ...propCategory.content }),
         variant: args({ control: "select", ...propCategory.appearance })
     },
     args: {
@@ -74,7 +74,7 @@ const DrawerTemplate: FC = (props) => {
                 {...props}
                 onClose={handleClose}
                 open={isOpen}
-                headerContent={<Pill appearance="lagoon" text="Header Content" Icon={Globe} filled />}
+                headerSwappable={<Pill appearance="lagoon" text="Header Content" Icon={Globe} filled />}
                 actions={[
                     {
                         children: "Secondary",
@@ -103,7 +103,7 @@ const DrawerTemplate: FC = (props) => {
                 hasCloseButton
                 onClose={handleNestedClose}
                 title="Nested Drawer"
-                footerContent={<Pill appearance="success" text="Footer Content" Icon={Globe} filled />}
+                footerSwappable={<Pill appearance="success" text="Footer Content" Icon={Globe} filled />}
             >
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Assumenda corporis ex itaque magnam nisi
                 praesentium quisquam sint vero. Adipisci aspernatur at eum magnam nihil odio optio recusandae sequi sit
@@ -133,7 +133,7 @@ const DrawerInlineTemplate: FC = (props) => {
                 {...props}
                 onClose={handleClose}
                 open={isOpen}
-                headerContent={<Pill appearance="lagoon" text="Header Content" Icon={Globe} filled />}
+                headerSwappable={<Pill appearance="lagoon" text="Header Content" Icon={Globe} filled />}
                 actions={[
                     {
                         children: "Secondary",

@@ -108,10 +108,10 @@ describe("Drawer", () => {
         expect(wrapper.text()).toContain(title);
     });
 
-    it("should not render header when no title, headerContent, or hasCloseButton", () => {
+    it("should not render header when no title, headerSwappable, or hasCloseButton", () => {
         const wrapper = setup.setProps({
             title: undefined,
-            headerContent: undefined,
+            headerSwappable: undefined,
             hasCloseButton: false
         });
         expect(wrapper.find(".drawer__header").exists()).toBeFalsy();
@@ -140,26 +140,26 @@ describe("Drawer", () => {
         expect(wrapper.find(".drawer__paragraph").exists()).toBeFalsy();
     });
 
-    it("should render headerContent when provided", () => {
-        const headerContent = <div className="test-header-content">Header Content</div>;
-        const wrapper = setup.setProps({ headerContent });
+    it("should render headerSwappable when provided", () => {
+        const headerSwappable = <div className="test-header-content">Header Content</div>;
+        const wrapper = setup.setProps({ headerSwappable });
 
         expect(wrapper.find(".drawer__header").exists()).toBeTruthy();
-        expect(wrapper.find(".drawer__headerContent").exists()).toBeTruthy();
+        expect(wrapper.find(".drawer__headerSwappable").exists()).toBeTruthy();
         expect(wrapper.find(".test-header-content").exists()).toBeTruthy();
     });
 
-    it("should render footerContent when provided", () => {
-        const footerContent = <div className="test-footer-content">Footer Content</div>;
-        const wrapper = setup.setProps({ footerContent });
+    it("should render footerSwappable when provided", () => {
+        const footerSwappable = <div className="test-footer-content">Footer Content</div>;
+        const wrapper = setup.setProps({ footerSwappable });
 
         expect(wrapper.find(".drawer__footer").exists()).toBeTruthy();
-        expect(wrapper.find(".drawer__footerContent").exists()).toBeTruthy();
+        expect(wrapper.find(".drawer__footerSwappable").exists()).toBeTruthy();
         expect(wrapper.find(".test-footer-content").exists()).toBeTruthy();
     });
 
-    it("should not render footer when no footerContent or actions", () => {
-        const wrapper = setup.setProps({ footerContent: undefined, actions: undefined });
+    it("should not render footer when no footerSwappable or actions", () => {
+        const wrapper = setup.setProps({ footerSwappable: undefined, actions: undefined });
         expect(wrapper.find(".drawer__footer").exists()).toBeFalsy();
     });
 
