@@ -3,6 +3,7 @@ import { Cell, CellContext, ColumnDef } from "@tanstack/react-table";
 
 // Components
 import Text from "@components/atoms/Text";
+import NumberField from "@components/molecules/NumberField";
 import TextField from "@components/molecules/TextField";
 import Tooltip from "@components/molecules/Tooltip";
 
@@ -140,11 +141,22 @@ export const columnTypes: Record<DataTableColumnType, DataTableColumnTypeDefinit
                 onChange={(event) => onChange(event.target.value)}
             />
         )
+    },
+    number: {
+        renderValue: (value) => <DefaultCellComponent value={String(value ?? "")} />,
+        renderEditControl: ({ value, disabled, onChange }) => (
+            <NumberField
+                size="small"
+                value={typeof value === "number" || typeof value === "string" ? value : ""}
+                disabled={disabled}
+                onChange={(nextValue) => onChange(nextValue)}
+            />
+        )
     }
 };
 
 export const getColumnType = (type?: DataTableColumnType): DataTableColumnTypeDefinition =>
-    columnTypes[type ?? DEFAULT_COLUMN_TYPE];
+    columnTypes[type as DataTableColumnType] ?? columnTypes[DEFAULT_COLUMN_TYPE];
 
 /**
  * Normalizes the public {@link DataTableColumn} shape into TanStack `ColumnDef[]`.

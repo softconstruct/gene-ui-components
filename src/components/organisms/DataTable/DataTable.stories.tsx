@@ -252,19 +252,7 @@ const editableColumns: IDataTableProps<MockRowType>["columns"] = [
     { accessorKey: "Id", header: "Id" },
     { accessorKey: "FirstName", header: "First name", type: "text", editable: true },
     { accessorKey: "LastName", header: "Last name", editable: true },
-    {
-        accessorKey: "DayOffs",
-        header: "Day offs",
-        editable: true,
-        renderEditCell: ({ value, disabled, onChange }) => (
-            <NumberField
-                size="small"
-                value={typeof value === "number" ? value : ""}
-                disabled={disabled}
-                onChange={(nextValue) => onChange(nextValue === "" ? "" : Number(nextValue))}
-            />
-        )
-    },
+    { accessorKey: "DayOffs", header: "Day offs", type: "number", editable: true },
     {
         accessorKey: "Status",
         header: "Status",
