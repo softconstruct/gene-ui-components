@@ -52,12 +52,6 @@ interface IPieChartProps {
      */
     subtitle?: string;
     /**
-     * Rotation of the pie in degrees: the angle where the first slice starts.
-     * `0` is 12 o'clock, positive values rotate clockwise, negative counter-clockwise.
-     * @default 0
-     */
-    rotate?: number;
-    /**
      * Shows the external chart legend under the plot.
      */
     showLegend?: boolean;
@@ -123,7 +117,6 @@ const PieChart: FC<IPieChartProps> = ({
     className,
     series,
     subtitle,
-    rotate = 0,
     showLegend = true,
     loading = false,
     loadingText,
@@ -249,7 +242,6 @@ const PieChart: FC<IPieChartProps> = ({
                 },
                 pie: {
                     animation: false,
-                    startAngle: rotate,
                     // ponytail: slice separators are painted in the default surface color; on another
                     // surface override `plotOptions.pie.borderColor` through `options`.
                     borderColor: "var(--guit-sem-color-background-neutral-1)",
@@ -299,7 +291,7 @@ const PieChart: FC<IPieChartProps> = ({
         }
 
         return mergeChartOptions(baseOptions, optionsOverride);
-    }, [hiddenSeriesIndexes, options, resolvedSeries, rotate]);
+    }, [hiddenSeriesIndexes, options, resolvedSeries]);
 
     // `HighchartsReact` is memoized; a new `containerProps` object per render would call
     // `chart.update()` on every hover and reset the hovered slice's state.

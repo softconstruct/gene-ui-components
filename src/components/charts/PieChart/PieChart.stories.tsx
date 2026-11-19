@@ -25,7 +25,6 @@ const meta: Meta<IPieChartProps> = {
         className: args({ control: "false", ...propCategory.appearance }),
         series: args({ control: "object", ...propCategory.content }),
         subtitle: args({ control: "text", ...propCategory.content }),
-        rotate: args({ control: "number", ...propCategory.appearance }),
         showLegend: args({ control: "boolean", ...propCategory.appearance }),
         loading: args({ control: "boolean", ...propCategory.states }),
         loadingText: args({ control: "text", ...propCategory.content }),
@@ -39,7 +38,6 @@ const meta: Meta<IPieChartProps> = {
     args: {
         series: sampleSeries,
         subtitle: "Subtitle",
-        rotate: -45,
         showLegend: true,
         loading: false,
         loadingText: "Loading Info",

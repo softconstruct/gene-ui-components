@@ -15,7 +15,7 @@ jest.mock("highcharts-react-official", () => {
     }: {
         options: {
             chart?: { animation?: boolean; type?: string };
-            plotOptions?: { series?: { animation?: boolean }; pie?: { startAngle?: number } };
+            plotOptions?: { series?: { animation?: boolean } };
             series?: { data: { y: number; visible: boolean }[] }[];
         };
     }) => (
@@ -24,7 +24,6 @@ jest.mock("highcharts-react-official", () => {
             data-animation={String(options?.chart?.animation)}
             data-series-animation={String(options?.plotOptions?.series?.animation)}
             data-type={options?.chart?.type}
-            data-start-angle={options?.plotOptions?.pie?.startAngle}
             data-values={options?.series?.[0]?.data.map(({ y }) => y).join(",")}
             data-visible={options?.series?.[0]?.data.map(({ visible }) => visible).join(",")}
         />
@@ -75,11 +74,6 @@ describe("PieChart", () => {
             expect(wrapper.find(".highcharts-react-mock").exists()).toBeFalsy();
         }
     );
-
-    it("renders rotate prop correctly", () => {
-        expect(mountPieChart().find(".highcharts-react-mock").prop("data-start-angle")).toBe(0);
-        expect(mountPieChart({ rotate: -45 }).find(".highcharts-react-mock").prop("data-start-angle")).toBe(-45);
-    });
 
     it("renders showLegend prop correctly", () => {
         expect(mountPieChart().find(ChartLegend).exists()).toBeTruthy();
