@@ -83,7 +83,7 @@ interface IModalProps {
     /**
      * Custom content or component to be displayed in the footer, typically to the left of the action buttons.
      */
-    footerContent?: ReactNode;
+    footerSwappable?: ReactNode;
     /**
      * An array of action button objects to display in the modal's footer.
      * The rendered buttons are automatically wrapped in a `ButtonGroup` component to ensure proper spacing and alignment.
@@ -124,7 +124,7 @@ const Modal: FC<IModalProps> = ({
     size = "medium",
     withPadding = true,
     position = "center",
-    footerContent,
+    footerSwappable,
     actions,
     lockBodyScroll = true
 }) => {
@@ -244,9 +244,9 @@ const Modal: FC<IModalProps> = ({
                         </div>
                     </Scrollbar>
                 </div>
-                {(actions || footerContent) && (
+                {(actions || footerSwappable) && (
                     <div className="modal__footer">
-                        {footerContent && <div className="modal__footerContent">{footerContent}</div>}
+                        {footerSwappable && <div className="modal__footerSwappable">{footerSwappable}</div>}
                         {actions && actions.length > 0 && (
                             <ButtonGroup className="modal__buttonGroup" size="medium">
                                 {actions.map((action: IButtonProps) => {

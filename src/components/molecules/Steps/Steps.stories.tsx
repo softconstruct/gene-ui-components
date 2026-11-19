@@ -187,7 +187,7 @@ const StepsWizardTemplate: FC<IStepsProps> = (props) => {
                             (isLastStep && !stepsData[stepsData.length - 1].complete)
                     }
                 ]}
-                footerContent={
+                footerSwappable={
                     <Button disabled={currentStep === 0} onClick={handlePrev}>
                         Prev
                     </Button>
