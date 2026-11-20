@@ -166,7 +166,7 @@ export const columnTypes: Record<DataTableColumnType, DataTableColumnTypeDefinit
     }
 };
 
-export const getColumnType = (type?: DataTableColumnType): DataTableColumnTypeDefinition =>
+export const resolveColumnType = (type?: DataTableColumnType): DataTableColumnTypeDefinition =>
     columnTypes[type as DataTableColumnType] ?? columnTypes[DEFAULT_COLUMN_TYPE];
 
 /**
@@ -188,7 +188,7 @@ export const adaptColumns = <TData,>(columns: DataTableColumn<TData>[]): ColumnD
             editable
         } = col;
         const isAccessorColumn = Boolean(accessorKey);
-        const columnType = getColumnType(type);
+        const typeDefaults = resolveColumnType(type);
 
         const base: ColumnDef<TData> = {
             id: id ?? accessorKey ?? `display_${index}`,
@@ -199,7 +199,7 @@ export const adaptColumns = <TData,>(columns: DataTableColumn<TData>[]): ColumnD
                 defaultVisible,
                 defaultPinned,
                 editable,
-                renderEditCell: renderEditCell ?? columnType.renderEditControl
+                renderEditCell: renderEditCell ?? typeDefaults.renderEditControl
             },
             ...(isAccessorColumn ? { accessorKey } : {})
         };
@@ -213,7 +213,7 @@ export const adaptColumns = <TData,>(columns: DataTableColumn<TData>[]): ColumnD
                           row: ctx.row.original,
                           rowId: ctx.row.id
                       })
-                : (ctx: CellContext<TData, ReactNode>) => columnType.renderValue(ctx.getValue())
+                : (ctx: CellContext<TData, ReactNode>) => typeDefaults.renderValue(ctx.getValue())
         };
     });
 
