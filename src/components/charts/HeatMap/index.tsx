@@ -1,1 +1,1 @@
-export { IHeatMapProps, default } from "./HeatMap";
+export { IHeatMapProps, IHeatMapSeries, default } from "./HeatMap";
