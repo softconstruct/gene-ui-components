@@ -155,6 +155,7 @@ export {
     IUploaderUploadPayload
 } from "./components/organisms/Uploader";
 export { default as Editor, IEditorProps, IEditorFooterAction } from "./components/organisms/Editor";
+export { default as Filter } from "./components/organisms/Filter";
 
 // Charts
 export { default as BarChart, IBarChartProps, IBarChartSeries } from "./components/charts/BarChart";
