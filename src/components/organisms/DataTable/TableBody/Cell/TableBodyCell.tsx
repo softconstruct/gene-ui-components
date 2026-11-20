@@ -2,7 +2,6 @@ import React, { memo, ReactNode } from "react";
 import { Cell, ColumnDef, flexRender } from "@tanstack/react-table";
 import classNames from "classnames";
 
-import TextField from "@components/molecules/TextField";
 import { areCellsEqual, getCellContentStyle, getCellStyle } from "@components/organisms/DataTable/helper";
 
 import { EXPANDER_COLUMN_ID } from "../../constants";
@@ -79,7 +78,7 @@ export interface ITableBodyCellProps<TData, TValue> {
     /**
      * Whether the editor of this cell is interactive.
      */
-    isEditDisabled: boolean;
+    isEditDisabled?: boolean;
     /**
      * Value the editor shows: the draft from `editValues` when the cell has one, the value from
      * `data` otherwise.
@@ -134,27 +133,6 @@ const TableBodyCell = <TData, TValue>({
             value
         });
 
-    const renderEditControl = () => {
-        if (renderEditCell) {
-            return renderEditCell({
-                value: editValue,
-                row: cell.row.original,
-                rowId: cell.row.id,
-                disabled: isEditDisabled,
-                onChange: handleEditValueChange
-            });
-        }
-
-        return (
-            <TextField
-                size="small"
-                value={String(editValue ?? "")}
-                disabled={isEditDisabled}
-                onChange={(event) => handleEditValueChange(event.target.value)}
-            />
-        );
-    };
-
     return (
         <td
             className={classNames("tableBodyCell", {
@@ -168,7 +146,15 @@ const TableBodyCell = <TData, TValue>({
             <CellWidthContext.Provider value={width}>
                 <div className="tableBodyCell__content" style={getCellContentStyle(explicitSize)}>
                     {isCellEditing ? (
-                        <div className="tableBodyCell__editControl">{renderEditControl()}</div>
+                        <div className="tableBodyCell__editControl">
+                            {renderEditCell?.({
+                                value: editValue,
+                                row: cell.row.original,
+                                rowId: cell.row.id,
+                                disabled: !!isEditDisabled,
+                                onChange: handleEditValueChange
+                            })}
+                        </div>
                     ) : (
                         flexRender(renderer, cell.getContext())
                     )}

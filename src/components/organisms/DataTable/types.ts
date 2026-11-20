@@ -30,6 +30,8 @@ export interface DataTableRowExpandChangePayload<TData> {
 
 export type DataTableRowExpandChangeHandler<TData> = (payload: DataTableRowExpandChangePayload<TData>) => void;
 
+export type DataTableColumnType = "text" | "number" | "boolean";
+
 export type DataTableCellValue<TData> = TData[keyof TData & string] | undefined;
 
 export type DataTableRenderCellArgs<TData, TValue> = {
@@ -77,6 +79,11 @@ export type DataTableColumn<TData> = {
      * Column width in px.
      */
     size?: number;
+    /**
+     * Decides how the value is displayed and which control the cell renders in edit mode.
+     * @default "text"
+     */
+    type?: DataTableColumnType;
     /**
      * Whether the column is visible by default.
      * @default true
