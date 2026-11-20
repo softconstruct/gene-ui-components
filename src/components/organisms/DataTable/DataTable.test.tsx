@@ -2017,6 +2017,29 @@ describe("Table Component - Column types", () => {
         setup.unmount();
     });
 
+    it("checks the checkbox of a boolean column for a truthy value that is not a boolean", async () => {
+        const onCellChange = jest.fn();
+        const setup = await mountTable(
+            [{ accessorKey: "DayOffs", header: "Day offs", type: "boolean", editable: true }],
+            { editConfig: buildEditConfig({ onCellChange }) }
+        );
+
+        const checkboxes = setup.find("input.checkbox__input");
+        expect(checkboxes.map((checkbox) => checkbox.prop("checked"))).toEqual(
+            typedData.map((row) => Boolean(row.DayOffs))
+        );
+
+        await act(async () => {
+            checkboxes.at(1).simulate("change", { target: { checked: true } });
+        });
+
+        expect(onCellChange).toHaveBeenCalledWith(
+            expect.objectContaining({ columnId: "DayOffs", rowId: String(typedData[1].Id), value: true })
+        );
+
+        setup.unmount();
+    });
+
     it("lets renderCell and renderEditCell take over a typed column", async () => {
         const setup = await mountTable(
             [

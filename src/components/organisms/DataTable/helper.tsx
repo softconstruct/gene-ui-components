@@ -158,7 +158,7 @@ export const columnTypes: Record<DataTableColumnType, DataTableColumnTypeDefinit
         renderValue: (value) => <DefaultCellComponent value={typeof value === "boolean" ? String(value) : ""} />,
         renderEditControl: ({ value, disabled, onChange }) => (
             <Checkbox
-                checked={value === true}
+                checked={Boolean(value)}
                 disabled={disabled}
                 onChange={(event) => onChange(event.target.checked)}
             />
