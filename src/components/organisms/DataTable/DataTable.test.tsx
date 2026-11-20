@@ -1874,3 +1874,187 @@ describe("Table Component - Edit Mode custom cell renderer", () => {
         setup.unmount();
     });
 });
+
+describe("Table Component - Column types", () => {
+    const typedData = mockData.slice(0, 3);
+
+    type TypedTableWrapper = ReactWrapper<IDataTableProps<MockDataType>>;
+
+    const buildEditConfig = (overrides: Partial<IDataTableEditConfig<MockDataType>> = {}) => ({
+        editing: true,
+        onSave: jest.fn(),
+        onCancel: jest.fn(),
+        onEditStart: jest.fn(),
+        ...overrides
+    });
+
+    const mountTable = async (
+        columns: DataTableColumn<MockDataType>[],
+        props: Partial<IDataTableProps<MockDataType>> = {}
+    ) => {
+        let wrapper: TypedTableWrapper;
+
+        await act(async () => {
+            wrapper = mount(
+                <DataTable columns={columns} data={typedData} getRowId={(row) => String(row.Id)} {...props} />
+            );
+        });
+        wrapper!.update();
+
+        return wrapper!;
+    };
+
+    const cellTexts = (wrapper: TypedTableWrapper) =>
+        wrapper.find(".tableBodyCell__text").map((cellText) => cellText.text());
+
+    it("renders a text column as text and edits it with a text field", async () => {
+        const columns: DataTableColumn<MockDataType>[] = [
+            { accessorKey: "FirstName", header: "First name", type: "text", editable: true }
+        ];
+
+        const readMode = await mountTable(columns);
+        expect(cellTexts(readMode)).toEqual(typedData.map((row) => row.FirstName));
+        readMode.unmount();
+
+        const editMode = await mountTable(columns, { editConfig: buildEditConfig() });
+        expect(editMode.find("input.textField__input").length).toBe(typedData.length);
+        expect(editMode.find("input.textField__input").first().prop("value")).toBe(typedData[0].FirstName);
+        editMode.unmount();
+    });
+
+    it("falls back to the text type when no type is given", async () => {
+        const setup = await mountTable([{ accessorKey: "FirstName", header: "First name", editable: true }], {
+            editConfig: buildEditConfig()
+        });
+
+        expect(setup.find("input.textField__input").length).toBe(typedData.length);
+
+        setup.unmount();
+    });
+
+    it("falls back to the text type when the type is not a known one", async () => {
+        const columns = [
+            { accessorKey: "FirstName", header: "First name", type: "integer", editable: true }
+        ] as unknown as DataTableColumn<MockDataType>[];
+        const setup = await mountTable(columns, { editConfig: buildEditConfig() });
+
+        expect(setup.find("input.textField__input").length).toBe(typedData.length);
+
+        setup.unmount();
+    });
+
+    it("renders a number column as text and edits it with a number field", async () => {
+        const columns: DataTableColumn<MockDataType>[] = [
+            { accessorKey: "DayOffs", header: "Day offs", type: "number", editable: true }
+        ];
+
+        const readMode = await mountTable(columns);
+        expect(cellTexts(readMode)).toEqual(typedData.map((row) => String(row.DayOffs)));
+        readMode.unmount();
+
+        const editMode = await mountTable(columns, { editConfig: buildEditConfig() });
+        expect(editMode.find("input.numberField__input").length).toBe(typedData.length);
+        expect(editMode.find("input.textField__input").length).toBe(0);
+        editMode.unmount();
+    });
+
+    it("reports the value of a number field as the field provides it", async () => {
+        const onCellChange = jest.fn();
+        const setup = await mountTable(
+            [{ accessorKey: "DayOffs", header: "Day offs", type: "number", editable: true }],
+            { editConfig: buildEditConfig({ onCellChange }) }
+        );
+
+        await act(async () => {
+            setup
+                .find("input.numberField__input")
+                .first()
+                .simulate("change", { target: { value: "1." } });
+        });
+
+        expect(onCellChange).toHaveBeenCalledWith(
+            expect.objectContaining({ columnId: "DayOffs", rowId: String(typedData[0].Id), value: "1." })
+        );
+
+        setup.unmount();
+    });
+
+    it("renders a boolean column as true and false", async () => {
+        const setup = await mountTable([{ accessorKey: "IsVerified", header: "Verified", type: "boolean" }]);
+
+        expect(cellTexts(setup)).toEqual(typedData.map((row) => String(row.IsVerified)));
+
+        setup.unmount();
+    });
+
+    it("renders an empty cell when a boolean column holds a value that is not a boolean", async () => {
+        const setup = await mountTable([{ accessorKey: "DayOffs", header: "Day offs", type: "boolean" }]);
+
+        expect(cellTexts(setup)).toEqual(typedData.map(() => ""));
+
+        setup.unmount();
+    });
+
+    it("edits a boolean column with a checkbox and reports a boolean", async () => {
+        const onCellChange = jest.fn();
+        const setup = await mountTable(
+            [{ accessorKey: "IsVerified", header: "Verified", type: "boolean", editable: true }],
+            { editConfig: buildEditConfig({ onCellChange }) }
+        );
+
+        const checkboxes = setup.find("input.checkbox__input");
+        expect(checkboxes.length).toBe(typedData.length);
+        expect(checkboxes.first().prop("checked")).toBe(typedData[0].IsVerified);
+
+        await act(async () => {
+            checkboxes.first().simulate("change", { target: { checked: true } });
+        });
+
+        expect(onCellChange).toHaveBeenCalledWith(
+            expect.objectContaining({ columnId: "IsVerified", rowId: String(typedData[0].Id), value: true })
+        );
+
+        setup.unmount();
+    });
+
+    it("lets renderCell and renderEditCell take over a typed column", async () => {
+        const setup = await mountTable(
+            [
+                {
+                    accessorKey: "DayOffs",
+                    header: "Day offs",
+                    type: "number",
+                    editable: true,
+                    renderCell: ({ value }) => <b className="customCell">{String(value ?? "")}</b>,
+                    renderEditCell: ({ value }) => (
+                        <input className="customEditor" readOnly value={String(value ?? "")} />
+                    )
+                }
+            ],
+            { editConfig: buildEditConfig({ editing: false }) }
+        );
+
+        expect(setup.find("b.customCell").length).toBe(typedData.length);
+
+        const editMode = await mountTable(
+            [
+                {
+                    accessorKey: "DayOffs",
+                    header: "Day offs",
+                    type: "number",
+                    editable: true,
+                    renderEditCell: ({ value }) => (
+                        <input className="customEditor" readOnly value={String(value ?? "")} />
+                    )
+                }
+            ],
+            { editConfig: buildEditConfig() }
+        );
+
+        expect(editMode.find("input.numberField__input").length).toBe(0);
+        expect(editMode.find("input.customEditor").length).toBe(typedData.length);
+
+        setup.unmount();
+        editMode.unmount();
+    });
+});
