@@ -378,4 +378,81 @@ describe("Drawer", () => {
         expect(wrapper.find(ButtonGroup).exists()).toBeTruthy();
         expect(wrapper.text()).toContain("Valid");
     });
+
+    describe("Responsive", () => {
+        const initialInnerWidth = window.innerWidth;
+
+        const setWindowWidth = (width: number) => {
+            Object.defineProperty(window, "innerWidth", { writable: true, configurable: true, value: width });
+            window.dispatchEvent(new Event("resize"));
+        };
+
+        afterEach(() => {
+            setWindowWidth(initialInnerWidth);
+        });
+
+        it.each<IDrawerProps["position"]>(["bottom", "end", "start"])(
+            "should have drawer_device_mobile class with %s position on mobile",
+            (position) => {
+                setWindowWidth(500);
+                const wrapper = mount(<Drawer open position={position} />, { wrappingComponent: GeneUIProvider });
+
+                const drawer = wrapper.find(".drawer");
+                expect(drawer.hasClass("drawer_device_mobile")).toBeTruthy();
+                expect(drawer.hasClass(`drawer_position_${position}`)).toBeTruthy();
+                wrapper.unmount();
+            }
+        );
+
+        it("should have drawer_device_desktop class on desktop", () => {
+            setWindowWidth(1440);
+            const wrapper = mount(<Drawer open />, { wrappingComponent: GeneUIProvider });
+
+            const drawer = wrapper.find(".drawer");
+            expect(drawer.hasClass("drawer_device_desktop")).toBeTruthy();
+            expect(drawer.hasClass("drawer_device_mobile")).toBeFalsy();
+            wrapper.unmount();
+        });
+
+        it("should render close button on mobile even when hasCloseButton is false", () => {
+            setWindowWidth(500);
+            const wrapper = mount(<Drawer open hasCloseButton={false} onClose={mockOnClose} />, {
+                wrappingComponent: GeneUIProvider
+            });
+
+            const closeButton = wrapper.find(".drawer__closeButton").find(Button);
+            expect(closeButton.exists()).toBeTruthy();
+            closeButton.simulate("click");
+            expect(mockOnClose).toHaveBeenCalledTimes(1);
+            wrapper.unmount();
+        });
+
+        it("should not force close button for inline variant on mobile", () => {
+            setWindowWidth(500);
+            const wrapper = mount(<Drawer open variant="inline" hasCloseButton={false} />, {
+                wrappingComponent: GeneUIProvider
+            });
+
+            expect(wrapper.find(".drawer__closeButton").exists()).toBeFalsy();
+            wrapper.unmount();
+        });
+
+        it("should not force close button on desktop", () => {
+            setWindowWidth(1440);
+            const wrapper = mount(<Drawer open hasCloseButton={false} />, { wrappingComponent: GeneUIProvider });
+
+            expect(wrapper.find(".drawer__closeButton").exists()).toBeFalsy();
+            wrapper.unmount();
+        });
+
+        it("should have drawer_device_mobile class for inline variant on mobile", () => {
+            setWindowWidth(500);
+            const wrapper = mount(<Drawer open variant="inline" />, { wrappingComponent: GeneUIProvider });
+
+            const drawer = wrapper.find(".drawer");
+            expect(drawer.hasClass("drawer_device_mobile")).toBeTruthy();
+            expect(drawer.hasClass("drawer_device_desktop")).toBeFalsy();
+            wrapper.unmount();
+        });
+    });
 });

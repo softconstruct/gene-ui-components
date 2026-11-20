@@ -34,6 +34,7 @@ interface IDrawerProps {
     title?: string;
     /**
      * Determines whether the close (X) button is displayed in the Drawer's header.
+     * On the mobile breakpoint the `overlay` Drawer is full screen, so the close button is always displayed there.
      */
     hasCloseButton?: boolean;
     /**
@@ -131,8 +132,12 @@ const Drawer: FC<IDrawerProps> = ({
     headerSwappable,
     variant = "overlay"
 }) => {
-    const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
+    const { geneUIProviderRef, breakpoint } = useContext(GeneUIDesignSystemContext);
     const providerCurrent = geneUIProviderRef.current;
+    const isMobileBreakpoint = !!breakpoint?.isMobileBreakpoint;
+    const isMobileOverlay = isMobileBreakpoint && variant === "overlay";
+    // A full-screen drawer has no visible overlay to click, so the close button is the only way out
+    const showCloseButton = hasCloseButton || isMobileOverlay;
     const titleRef = useRef<HTMLHeadingElement | null>(null);
     const isTruncated: boolean = useEllipsisDetection(titleRef);
 
@@ -167,7 +172,7 @@ const Drawer: FC<IDrawerProps> = ({
     const drawerContent = (
         <div
             className={classNames(
-                `drawer drawer_variant_${variant} `,
+                `drawer drawer_variant_${variant} drawer_device_${isMobileBreakpoint ? "mobile" : "desktop"}`,
                 {
                     drawer_withPadding: withPadding,
                     [`drawer_position_${position}`]: variant === "overlay",
@@ -179,7 +184,7 @@ const Drawer: FC<IDrawerProps> = ({
             role="presentation"
         >
             <div className={classNames("drawer__wrapper", { [`drawer__wrapper_size_${size}`]: variant === "overlay" })}>
-                {(hasCloseButton || title || headerSwappable) && (
+                {(showCloseButton || title || headerSwappable) && (
                     <div className="drawer__header">
                         {title && (
                             <Tooltip text={title} isVisible={isTruncated}>
@@ -194,7 +199,7 @@ const Drawer: FC<IDrawerProps> = ({
                             </Tooltip>
                         )}
                         {headerSwappable && <div className="drawer__headerSwappable">{headerSwappable}</div>}
-                        {hasCloseButton && (
+                        {showCloseButton && (
                             <Button
                                 size="medium"
                                 Icon={X}
