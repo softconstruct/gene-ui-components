@@ -75,6 +75,7 @@ const DrawerTemplate: FC = (props) => {
                 onClose={handleClose}
                 open={isOpen}
                 headerSwappable={<Pill appearance="lagoon" text="Header Content" Icon={Globe} filled />}
+                footerSwappable={<Pill appearance="success" text="Footer Content" Icon={Globe} filled />}
                 actions={[
                     {
                         children: "Secondary",
@@ -134,6 +135,7 @@ const DrawerInlineTemplate: FC = (props) => {
                 onClose={handleClose}
                 open={isOpen}
                 headerSwappable={<Pill appearance="lagoon" text="Header Content" Icon={Globe} filled />}
+                footerSwappable={<Pill appearance="success" text="Footer Content" Icon={Globe} filled />}
                 actions={[
                     {
                         children: "Secondary",
