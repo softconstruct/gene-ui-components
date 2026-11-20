@@ -349,7 +349,7 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     onCurrencySelect,
     currencyConvertorText,
     onCurrencyConvertorSelect,
-    startSwappable = null,
+    startSwappable,
     onHelpActionSelect,
     actions,
     fullName,
