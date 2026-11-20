@@ -93,14 +93,14 @@ describe("Modal ", () => {
         expect(wrapper.find(ButtonGroup).exists()).toBeTruthy();
     });
 
-    it("does not render footer when no actions or footerContent", () => {
+    it("does not render footer when no actions or footerSwappable", () => {
         expect(setup.find(".modal__footer").exists()).toBeFalsy();
     });
 
-    it("renders footerContent correctly", () => {
-        const footerContent = <div className="custom-footer">Custom Footer</div>;
-        const wrapper = setup.setProps({ footerContent });
-        expect(wrapper.find(".modal__footerContent").exists()).toBeTruthy();
+    it("renders footerSwappable correctly", () => {
+        const footerSwappable = <div className="custom-footer">Custom Footer</div>;
+        const wrapper = setup.setProps({ footerSwappable });
+        expect(wrapper.find(".modal__footerSwappable").exists()).toBeTruthy();
         expect(wrapper.find(".custom-footer").exists()).toBeTruthy();
     });
 

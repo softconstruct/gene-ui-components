@@ -75,7 +75,7 @@
         min-width: 1rem;
     }
 
-    &__headerContent {
+    &__headerSwappable {
         margin-left: auto;
     }
 
@@ -162,6 +162,13 @@
 
         &_start {
             justify-content: flex-start;
+        }
+    }
+
+    &_device_mobile {
+        #{ $this }__wrapper {
+            max-width: 100%;
+            max-height: 100%;
         }
     }
 }

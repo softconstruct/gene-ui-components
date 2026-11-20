@@ -34,6 +34,7 @@ interface IDrawerProps {
     title?: string;
     /**
      * Determines whether the close (X) button is displayed in the Drawer's header.
+     * On the mobile breakpoint the `overlay` Drawer is full screen, so the close button is always displayed there.
      */
     hasCloseButton?: boolean;
     /**
@@ -96,11 +97,11 @@ interface IDrawerProps {
     /**
      * Custom content or component to be displayed in the footer, typically to the left of the action buttons.
      */
-    footerContent?: ReactNode;
+    footerSwappable?: ReactNode;
     /**
      * Custom content or component to be displayed in the header, typically to the left of the X button.
      */
-    headerContent?: ReactNode;
+    headerSwappable?: ReactNode;
     /**
      * Controls how the Drawer is rendered, either as a global overlay or as an inline element within the layout.
      * - `'overlay'`: (Default) Renders the Drawer using a portal, making it appear on top of all other page content. It is positioned relative to the viewport via the `position` prop and includes a backdrop. This is ideal for modal-like interactions.
@@ -127,12 +128,16 @@ const Drawer: FC<IDrawerProps> = ({
     lockBodyScroll = true,
     children,
     actions,
-    footerContent,
-    headerContent,
+    footerSwappable,
+    headerSwappable,
     variant = "overlay"
 }) => {
-    const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
+    const { geneUIProviderRef, breakpoint } = useContext(GeneUIDesignSystemContext);
     const providerCurrent = geneUIProviderRef.current;
+    const isMobileBreakpoint = !!breakpoint?.isMobileBreakpoint;
+    const isMobileOverlay = isMobileBreakpoint && variant === "overlay";
+    // A full-screen drawer has no visible overlay to click, so the close button is the only way out
+    const showCloseButton = hasCloseButton || isMobileOverlay;
     const titleRef = useRef<HTMLHeadingElement | null>(null);
     const isTruncated: boolean = useEllipsisDetection(titleRef);
 
@@ -167,7 +172,7 @@ const Drawer: FC<IDrawerProps> = ({
     const drawerContent = (
         <div
             className={classNames(
-                `drawer drawer_variant_${variant} `,
+                `drawer drawer_variant_${variant} drawer_device_${isMobileBreakpoint ? "mobile" : "desktop"}`,
                 {
                     drawer_withPadding: withPadding,
                     [`drawer_position_${position}`]: variant === "overlay",
@@ -179,7 +184,7 @@ const Drawer: FC<IDrawerProps> = ({
             role="presentation"
         >
             <div className={classNames("drawer__wrapper", { [`drawer__wrapper_size_${size}`]: variant === "overlay" })}>
-                {(hasCloseButton || title || headerContent) && (
+                {(showCloseButton || title || headerSwappable) && (
                     <div className="drawer__header">
                         {title && (
                             <Tooltip text={title} isVisible={isTruncated}>
@@ -193,8 +198,8 @@ const Drawer: FC<IDrawerProps> = ({
                                 </Text>
                             </Tooltip>
                         )}
-                        {headerContent && <div className="drawer__headerContent">{headerContent}</div>}
-                        {hasCloseButton && (
+                        {headerSwappable && <div className="drawer__headerSwappable">{headerSwappable}</div>}
+                        {showCloseButton && (
                             <Button
                                 size="medium"
                                 Icon={X}
@@ -220,9 +225,9 @@ const Drawer: FC<IDrawerProps> = ({
                         </div>
                     </Scrollbar>
                 </div>
-                {(actions || footerContent) && (
+                {(actions || footerSwappable) && (
                     <div className="drawer__footer">
-                        {footerContent && <div className="drawer__footerContent">{footerContent}</div>}
+                        {footerSwappable && <div className="drawer__footerSwappable">{footerSwappable}</div>}
                         {actions && actions.length > 0 && (
                             <ButtonGroup className="drawer__buttonGroup" size="medium">
                                 {actions.map((action: IButtonProps) => {

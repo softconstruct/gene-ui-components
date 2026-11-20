@@ -108,10 +108,10 @@ describe("Drawer", () => {
         expect(wrapper.text()).toContain(title);
     });
 
-    it("should not render header when no title, headerContent, or hasCloseButton", () => {
+    it("should not render header when no title, headerSwappable, or hasCloseButton", () => {
         const wrapper = setup.setProps({
             title: undefined,
-            headerContent: undefined,
+            headerSwappable: undefined,
             hasCloseButton: false
         });
         expect(wrapper.find(".drawer__header").exists()).toBeFalsy();
@@ -140,26 +140,26 @@ describe("Drawer", () => {
         expect(wrapper.find(".drawer__paragraph").exists()).toBeFalsy();
     });
 
-    it("should render headerContent when provided", () => {
-        const headerContent = <div className="test-header-content">Header Content</div>;
-        const wrapper = setup.setProps({ headerContent });
+    it("should render headerSwappable when provided", () => {
+        const headerSwappable = <div className="test-header-content">Header Content</div>;
+        const wrapper = setup.setProps({ headerSwappable });
 
         expect(wrapper.find(".drawer__header").exists()).toBeTruthy();
-        expect(wrapper.find(".drawer__headerContent").exists()).toBeTruthy();
+        expect(wrapper.find(".drawer__headerSwappable").exists()).toBeTruthy();
         expect(wrapper.find(".test-header-content").exists()).toBeTruthy();
     });
 
-    it("should render footerContent when provided", () => {
-        const footerContent = <div className="test-footer-content">Footer Content</div>;
-        const wrapper = setup.setProps({ footerContent });
+    it("should render footerSwappable when provided", () => {
+        const footerSwappable = <div className="test-footer-content">Footer Content</div>;
+        const wrapper = setup.setProps({ footerSwappable });
 
         expect(wrapper.find(".drawer__footer").exists()).toBeTruthy();
-        expect(wrapper.find(".drawer__footerContent").exists()).toBeTruthy();
+        expect(wrapper.find(".drawer__footerSwappable").exists()).toBeTruthy();
         expect(wrapper.find(".test-footer-content").exists()).toBeTruthy();
     });
 
-    it("should not render footer when no footerContent or actions", () => {
-        const wrapper = setup.setProps({ footerContent: undefined, actions: undefined });
+    it("should not render footer when no footerSwappable or actions", () => {
+        const wrapper = setup.setProps({ footerSwappable: undefined, actions: undefined });
         expect(wrapper.find(".drawer__footer").exists()).toBeFalsy();
     });
 
@@ -377,5 +377,82 @@ describe("Drawer", () => {
         const wrapper = setup.setProps({ actions });
         expect(wrapper.find(ButtonGroup).exists()).toBeTruthy();
         expect(wrapper.text()).toContain("Valid");
+    });
+
+    describe("Responsive", () => {
+        const initialInnerWidth = window.innerWidth;
+
+        const setWindowWidth = (width: number) => {
+            Object.defineProperty(window, "innerWidth", { writable: true, configurable: true, value: width });
+            window.dispatchEvent(new Event("resize"));
+        };
+
+        afterEach(() => {
+            setWindowWidth(initialInnerWidth);
+        });
+
+        it.each<IDrawerProps["position"]>(["bottom", "end", "start"])(
+            "should have drawer_device_mobile class with %s position on mobile",
+            (position) => {
+                setWindowWidth(500);
+                const wrapper = mount(<Drawer open position={position} />, { wrappingComponent: GeneUIProvider });
+
+                const drawer = wrapper.find(".drawer");
+                expect(drawer.hasClass("drawer_device_mobile")).toBeTruthy();
+                expect(drawer.hasClass(`drawer_position_${position}`)).toBeTruthy();
+                wrapper.unmount();
+            }
+        );
+
+        it("should have drawer_device_desktop class on desktop", () => {
+            setWindowWidth(1440);
+            const wrapper = mount(<Drawer open />, { wrappingComponent: GeneUIProvider });
+
+            const drawer = wrapper.find(".drawer");
+            expect(drawer.hasClass("drawer_device_desktop")).toBeTruthy();
+            expect(drawer.hasClass("drawer_device_mobile")).toBeFalsy();
+            wrapper.unmount();
+        });
+
+        it("should render close button on mobile even when hasCloseButton is false", () => {
+            setWindowWidth(500);
+            const wrapper = mount(<Drawer open hasCloseButton={false} onClose={mockOnClose} />, {
+                wrappingComponent: GeneUIProvider
+            });
+
+            const closeButton = wrapper.find(".drawer__closeButton").find(Button);
+            expect(closeButton.exists()).toBeTruthy();
+            closeButton.simulate("click");
+            expect(mockOnClose).toHaveBeenCalledTimes(1);
+            wrapper.unmount();
+        });
+
+        it("should not force close button for inline variant on mobile", () => {
+            setWindowWidth(500);
+            const wrapper = mount(<Drawer open variant="inline" hasCloseButton={false} />, {
+                wrappingComponent: GeneUIProvider
+            });
+
+            expect(wrapper.find(".drawer__closeButton").exists()).toBeFalsy();
+            wrapper.unmount();
+        });
+
+        it("should not force close button on desktop", () => {
+            setWindowWidth(1440);
+            const wrapper = mount(<Drawer open hasCloseButton={false} />, { wrappingComponent: GeneUIProvider });
+
+            expect(wrapper.find(".drawer__closeButton").exists()).toBeFalsy();
+            wrapper.unmount();
+        });
+
+        it("should have drawer_device_mobile class for inline variant on mobile", () => {
+            setWindowWidth(500);
+            const wrapper = mount(<Drawer open variant="inline" />, { wrappingComponent: GeneUIProvider });
+
+            const drawer = wrapper.find(".drawer");
+            expect(drawer.hasClass("drawer_device_mobile")).toBeTruthy();
+            expect(drawer.hasClass("drawer_device_desktop")).toBeFalsy();
+            wrapper.unmount();
+        });
     });
 });
