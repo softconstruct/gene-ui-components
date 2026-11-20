@@ -312,10 +312,10 @@ describe("GlobalHeader ", () => {
 
     describe("Left Content", () => {
         it("renders left content when provided", () => {
-            const leftContent = <div className="test-left-content">Test Content</div>;
-            const wrapper = setup.setProps({ leftContent });
+            const startSwappable = <div className="test-left-content">Test Content</div>;
+            const wrapper = setup.setProps({ startSwappable });
             // Left content rendering depends on breakpoint, so we just test that props are passed
-            expect(wrapper.prop("leftContent")).toBeDefined();
+            expect(wrapper.prop("startSwappable")).toBeDefined();
         });
     });
 

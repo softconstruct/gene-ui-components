@@ -106,6 +106,10 @@ Canonical examples to copy: `atoms/Button` (simple, `forwardRef`), `atoms/Popove
   Check how sibling components name the same concept before inventing a new name.
 - `className` is for placement relative to the parent only — never a styling escape hatch.
 - Icons are passed as components: `Icon?: FC<IconProps>` from `@geneui/icons`, rendered with a size from the design.
+- **Slot props** (custom content, the "swap instance" slots in Figma) are typed `ReactNode`.
+- **Slot naming** follows `Section`: several slots → `<position>Swappable` (`headerSwappable`, `footerSwappable`), BEM
+  element `<block>__<position>Swappable`. A component with one slot keeps `swappableElement`, BEM element
+  `<block>__swappable`.
 - Pass through `aria-*` props where meaningful; jsx-a11y is enforced.
 - Use `forwardRef` for components that render a focusable/measurable root element.
 - `@typescript-eslint/no-explicit-any` is a warning — don't add new `any`.
