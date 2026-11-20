@@ -55,7 +55,7 @@ export interface ICellProps<TData, TValue> {
     /**
      * Whether the editor of this cell is interactive.
      */
-    isEditDisabled: boolean;
+    isEditDisabled?: boolean;
     /**
      * Value the editor shows: the draft from `editValues` when the cell has one, the value from
      * `data` otherwise.
@@ -199,7 +199,7 @@ export const adaptColumns = <TData,>(columns: DataTableColumn<TData>[]): ColumnD
                 defaultVisible,
                 defaultPinned,
                 editable,
-                renderEditCell: renderEditCell ?? typeDefaults.renderEditControl
+                renderEditCell: editable ? (renderEditCell ?? typeDefaults.renderEditControl) : undefined
             },
             ...(isAccessorColumn ? { accessorKey } : {})
         };

@@ -78,7 +78,7 @@ export interface ITableBodyCellProps<TData, TValue> {
     /**
      * Whether the editor of this cell is interactive.
      */
-    isEditDisabled: boolean;
+    isEditDisabled?: boolean;
     /**
      * Value the editor shows: the draft from `editValues` when the cell has one, the value from
      * `data` otherwise.
@@ -151,7 +151,7 @@ const TableBodyCell = <TData, TValue>({
                                 value: editValue,
                                 row: cell.row.original,
                                 rowId: cell.row.id,
-                                disabled: isEditDisabled,
+                                disabled: !!isEditDisabled,
                                 onChange: handleEditValueChange
                             })}
                         </div>
