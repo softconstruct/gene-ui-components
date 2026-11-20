@@ -35,18 +35,18 @@ describe("HeatMap", () => {
     const getOptions = (wrapper: ReturnType<typeof mountHeatMap>) =>
         JSON.parse(wrapper.find(".highcharts-react-mock").prop("data-options"));
 
-    it("renders without crashing", () => {
+    it("should render without crashing", () => {
         const wrapper = mountHeatMap();
         expect(wrapper.exists()).toBeTruthy();
         expect(wrapper.find(".highcharts-react-mock").exists()).toBeTruthy();
     });
 
-    it("renders className prop correctly", () => {
+    it("should render className prop correctly", () => {
         const wrapper = mountHeatMap({ className: "test-class" });
         expect(wrapper.find(".heatMap").hasClass("test-class")).toBeTruthy();
     });
 
-    it("renders series prop correctly", () => {
+    it("should render series prop correctly", () => {
         const options = getOptions(mountHeatMap());
 
         expect(options.chart.type).toBe("heatmap");
@@ -61,7 +61,7 @@ describe("HeatMap", () => {
         expect(options.yAxis.categories).toEqual(["01:00", "02:00"]);
     });
 
-    it("renders min and max props correctly", () => {
+    it("should render min and max props correctly", () => {
         const { colorAxis } = getOptions(mountHeatMap({ min: 0, max: 100 }));
 
         expect(colorAxis.min).toBe(0);
@@ -74,24 +74,24 @@ describe("HeatMap", () => {
         expect(getOptions(mountHeatMap({ showLegend })).legend.enabled).toBe(showLegend);
     });
 
-    it("renders subtitle prop correctly", () => {
+    it("should render subtitle prop correctly", () => {
         const wrapper = mountHeatMap({ subtitle: "Subtitle" });
         expect(wrapper.find(".heatMap__subtitle").first().text()).toBe("Subtitle");
     });
 
-    it("renders loading state", () => {
+    it("should render loading state", () => {
         const wrapper = mountHeatMap({ loading: true, loadingText: "Loading Info" });
         expect(wrapper.find(Loader).exists()).toBeTruthy();
         expect(wrapper.find(".highcharts-react-mock").exists()).toBeFalsy();
     });
 
-    it("renders empty state when series has no data", () => {
+    it("should render empty state when series has no data", () => {
         const wrapper = mountHeatMap({ series: undefined, emptyTitle: "No Data Available" });
         expect(wrapper.find(Empty).exists()).toBeTruthy();
         expect(wrapper.find(".highcharts-react-mock").exists()).toBeFalsy();
     });
 
-    it("disables chart animations by default", () => {
+    it("should disable chart animations by default", () => {
         const options = getOptions(mountHeatMap());
         expect(options.chart.animation).toBe(false);
         expect(options.plotOptions.series.animation).toBe(false);
