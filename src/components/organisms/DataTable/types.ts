@@ -30,7 +30,7 @@ export interface DataTableRowExpandChangePayload<TData> {
 
 export type DataTableRowExpandChangeHandler<TData> = (payload: DataTableRowExpandChangePayload<TData>) => void;
 
-export type DataTableColumnType = "text" | "number";
+export type DataTableColumnType = "text" | "number" | "boolean";
 
 export type DataTableCellValue<TData> = TData[keyof TData & string] | undefined;
 

@@ -3,6 +3,7 @@ import { Cell, CellContext, ColumnDef } from "@tanstack/react-table";
 
 // Components
 import Text from "@components/atoms/Text";
+import Checkbox from "@components/molecules/Checkbox";
 import NumberField from "@components/molecules/NumberField";
 import TextField from "@components/molecules/TextField";
 import Tooltip from "@components/molecules/Tooltip";
@@ -150,6 +151,16 @@ export const columnTypes: Record<DataTableColumnType, DataTableColumnTypeDefinit
                 value={typeof value === "number" || typeof value === "string" ? value : ""}
                 disabled={disabled}
                 onChange={(nextValue) => onChange(nextValue)}
+            />
+        )
+    },
+    boolean: {
+        renderValue: (value) => <DefaultCellComponent value={typeof value === "boolean" ? String(value) : ""} />,
+        renderEditControl: ({ value, disabled, onChange }) => (
+            <Checkbox
+                checked={value === true}
+                disabled={disabled}
+                onChange={(event) => onChange(event.target.checked)}
             />
         )
     }

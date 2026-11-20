@@ -6,7 +6,6 @@ import { fn } from "@storybook/test";
 import { Pencil, RecycleBin } from "@geneui/icons";
 
 // Components
-import Checkbox from "@components/molecules/Checkbox";
 import Dropdown, { IDropdownOption } from "@components/molecules/Dropdown";
 import NumberField from "@components/molecules/NumberField";
 import Pagination from "@components/molecules/Pagination";
@@ -286,15 +285,8 @@ const editableColumns: IDataTableProps<MockRowType>["columns"] = [
     {
         accessorKey: "IsLocked",
         header: "Locked",
-        editable: true,
-        renderCell: ({ value }) => (value ? "Locked" : "Unlocked"),
-        renderEditCell: ({ value, disabled, onChange }) => (
-            <Checkbox
-                checked={value === true}
-                disabled={disabled}
-                onChange={(event) => onChange(event.target.checked)}
-            />
-        )
+        type: "boolean",
+        editable: true
     }
 ];
 
