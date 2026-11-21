@@ -114,6 +114,16 @@ export {
     TimePickerRangeFields,
     TimePickerRangeValue
 } from "./components/molecules/TimePicker";
+export {
+    default as DatePicker,
+    ISingleDatePickerProps,
+    IRangeDatePickerProps,
+    IDatePickerLocalization,
+    DatePickerRangeFields,
+    DatePickerRangeValue,
+    DatePickerPreset,
+    DatePickerRangePreset
+} from "./components/molecules/DatePicker";
 
 // Organisms
 export {

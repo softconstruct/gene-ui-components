@@ -7,21 +7,20 @@ import { Clock } from "@geneui/icons";
 // Components
 import Label from "@components/atoms/Label";
 
-import PickerInput from "./components/PickerInput/PickerInput";
-import PickerPopover from "./components/PickerPopover/PickerPopover";
+import { createMaskTrack, DEFAULT_ID_PREFIX, PickerInput, textSizeMap } from "@internal/components/Picker";
+
+import TimePickerPopover from "./components/TimePickerPopover/TimePickerPopover";
 // Constants
 import {
-    DEFAULT_ID_PREFIX,
     MASK_REPLACEMENT_12H,
     MASK_REPLACEMENT_24H,
     MASK_SLOT_RULES_12H,
     MASK_SLOT_RULES_24H,
-    textSizeMap,
     TIME_PICKER_INPUT_MASK,
     TIME_PICKER_INPUT_MASK_WITH_MERIDIEM
 } from "./constants";
 // Helpers
-import { createMaskTrack, resolveLocalization } from "./helpers";
+import { resolveLocalization } from "./helpers";
 // Hooks
 import { useRangeTimePicker, useSingleTimePicker } from "./hooks/useTimePicker";
 // Types
@@ -231,6 +230,12 @@ interface IRangeTimePickerProps extends Omit<ITimePickerBaseProps, "onFocus" | "
 type PickerSetupOptions = Pick<ITimePickerBaseProps, "id" | "format" | "localization" | "disabled" | "readOnly">;
 
 /**
+ * Every input is sized for the longest value it can hold, so the field keeps the same width in both
+ * formats and never clips the AM/PM suffix.
+ */
+const INPUT_SIZE = TIME_PICKER_INPUT_MASK_WITH_MERIDIEM.length + 1;
+
+/**
  * Derived values shared by both pickers: ids, texts, the mask of the active format, and the
  * read-only state, which `disabled` takes precedence over.
  */
@@ -253,7 +258,8 @@ const usePickerSetup = ({ id, format = "24h", localization, disabled, readOnly }
         mask,
         maskReplacement: is12Hour ? MASK_REPLACEMENT_12H : MASK_REPLACEMENT_24H,
         maskTrack,
-        inputMode: is12Hour ? undefined : ("numeric" as const)
+        inputMode: is12Hour ? undefined : ("numeric" as const),
+        inputSize: INPUT_SIZE
     };
 };
 
@@ -325,8 +331,9 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
                     maskReplacement={setup.maskReplacement}
                     maskTrack={setup.maskTrack}
                     inputMode={setup.inputMode}
+                    inputSize={setup.inputSize}
                 />
-                <PickerPopover
+                <TimePickerPopover
                     {...popoverProps}
                     id={setup.popoverId}
                     size={size}
@@ -409,8 +416,9 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
                     maskReplacement={setup.maskReplacement}
                     maskTrack={setup.maskTrack}
                     inputMode={setup.inputMode}
+                    inputSize={setup.inputSize}
                 />
-                <PickerPopover
+                <TimePickerPopover
                     {...popoverProps}
                     id={setup.popoverId}
                     size={size}

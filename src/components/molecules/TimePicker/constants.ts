@@ -1,3 +1,6 @@
+import { MASK_PLACEHOLDER } from "@internal/components/Picker";
+
+// Types
 import { ITimePickerLocalization, TimeParts } from "./types";
 
 /**
@@ -36,11 +39,6 @@ const TIME_PARTS = {
  */
 const TIME_COLUMNS_ORDER = [TIME_PARTS.HOURS, TIME_PARTS.MINUTES, TIME_PARTS.SECONDS] as const;
 
-const PICKER_RANGE_FIELDS = {
-    START: "start",
-    END: "end"
-} as const;
-
 // ---------------------------------------------------------
 // Numeric constants
 // ---------------------------------------------------------
@@ -50,11 +48,6 @@ const MERIDIEM_OFFSET = 12;
 const TIME_PART_DEFAULT_TEXT_VALUE = "00";
 const TIME_PART_DEFAULT_12H_HOUR = "12";
 const TIME_PARTS_RADIX = 10;
-
-/**
- * Typing reports through `onChange` once the user pauses for this long.
- */
-const INPUT_CHANGE_DEBOUNCE_MS = 300;
 
 /**
  * Shared "nothing selected yet" value. Kept as a single frozen object so that the derived
@@ -76,28 +69,6 @@ const LAST_HOUR_IN_24H_FORMAT_DAY = 23;
 const FIRST_HOUR_IN_12H_FORMAT = 1;
 
 // ---------------------------------------------------------
-// Size mappers
-// ---------------------------------------------------------
-
-const textSizeMap = {
-    large: "medium",
-    medium: "medium",
-    small: "small"
-} as const;
-
-const headerTextVariantMap = {
-    large: "bodyMediumSemibold",
-    medium: "bodyMediumSemibold",
-    small: "captionLargeSemibold"
-} as const;
-
-const pickerShellIconSizeMap = {
-    small: "smallNudge",
-    medium: "small",
-    large: "small"
-} as const;
-
-// ---------------------------------------------------------
 // Input mask
 // ---------------------------------------------------------
 
@@ -110,7 +81,6 @@ const pickerShellIconSizeMap = {
  * The hour slots take 24-hour input in both formats: in the 12-hour format a typed `19:30:00` is
  * converted to `07:30:00 PM` by `parseTime` once the field is left, instead of refusing the `2`.
  */
-const MASK_PLACEHOLDER = "_";
 const TIME_PICKER_INPUT_MASK = "__:__:__";
 const TIME_PICKER_INPUT_MASK_WITH_MERIDIEM = "__:__:__ __";
 
@@ -121,13 +91,8 @@ const MASK_SLOT_RULES_24H: RegExp[] = [/[0-2]/, /[0-9]/, /[0-5]/, /[0-9]/, /[0-5
 const MASK_SLOT_RULES_12H: RegExp[] = [...MASK_SLOT_RULES_24H, /[aApP]/, /[mM]/];
 
 // ---------------------------------------------------------
-// Accessibility & localization
+// Localization
 // ---------------------------------------------------------
-
-/**
- * `id` prefix used when the consumer does not provide an `id`.
- */
-const DEFAULT_ID_PREFIX = "default-id-";
 
 const DEFAULT_LOCALIZATION: Required<ITimePickerLocalization> = {
     hours: "hours",
@@ -142,33 +107,15 @@ const DEFAULT_LOCALIZATION: Required<ITimePickerLocalization> = {
     endTime: "End time"
 };
 
-const KEYS = {
-    TAB: "Tab",
-    ENTER: "Enter",
-    SPACE: " ",
-    ESCAPE: "Escape",
-    ARROW_UP: "ArrowUp",
-    ARROW_DOWN: "ArrowDown",
-    ARROW_LEFT: "ArrowLeft",
-    ARROW_RIGHT: "ArrowRight",
-    HOME: "Home",
-    END: "End"
-} as const;
-
 export {
-    DEFAULT_ID_PREFIX,
     DEFAULT_LOCALIZATION,
     EMPTY_TIME_PARTS,
     FIRST_HOUR_IN_12H_FORMAT,
-    headerTextVariantMap,
     HOURS_12,
     HOURS_24,
-    INPUT_CHANGE_DEBOUNCE_MS,
-    KEYS,
     LAST_HOUR_IN_24H_FORMAT_DAY,
     LAST_MINUTE_IN_HOUR,
     LAST_SECOND_IN_MINUTE,
-    MASK_PLACEHOLDER,
     MASK_REPLACEMENT_12H,
     MASK_REPLACEMENT_24H,
     MASK_SLOT_RULES_12H,
@@ -177,17 +124,14 @@ export {
     MERIDIEM_OFFSET,
     MERIDIEMS,
     MINUTES,
-    PICKER_RANGE_FIELDS,
     SECONDS,
     SECONDS_IN_HOUR,
     SECONDS_IN_MINUTE,
-    textSizeMap,
     TIME_COLUMNS_ORDER,
     TIME_PART_DEFAULT_12H_HOUR,
     TIME_PART_DEFAULT_TEXT_VALUE,
     TIME_PARTS,
     TIME_PARTS_RADIX,
     TIME_PICKER_INPUT_MASK,
-    TIME_PICKER_INPUT_MASK_WITH_MERIDIEM,
-    pickerShellIconSizeMap
+    TIME_PICKER_INPUT_MASK_WITH_MERIDIEM
 };

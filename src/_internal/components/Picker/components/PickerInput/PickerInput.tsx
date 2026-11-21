@@ -7,7 +7,7 @@ import { Minus } from "@geneui/icons";
 // Constants
 import { PICKER_RANGE_FIELDS } from "../../constants";
 // Types
-import { TimePickerRangeFields, TimePickerSizes, TimePickerStatus } from "../../types";
+import { PickerRangeFields, PickerSizes, PickerStatus } from "../../types";
 // Components
 import PickerMaskedInput, { IPickerMaskedInputProps } from "../PickerMaskedInput/PickerMaskedInput";
 import PickerShell, { IPickerShellProps } from "../PickerShell/PickerShell";
@@ -32,18 +32,18 @@ interface IPickerInputBaseProps
         >,
         Pick<
             IPickerMaskedInputProps,
-            "name" | "required" | "mask" | "maskReplacement" | "maskTrack" | "inputMode" | "isExpanded"
+            "name" | "required" | "mask" | "maskReplacement" | "maskTrack" | "inputMode" | "inputSize" | "isExpanded"
         > {
     /**
      * The size of the input field.
      * @default "medium"
      */
-    size?: TimePickerSizes;
+    size?: PickerSizes;
     /**
      * Validation state of the field.
      * @default "rest"
      */
-    status?: TimePickerStatus;
+    status?: PickerStatus;
     /**
      * Whether the field should display a clear button to clear the input value.
      */
@@ -101,31 +101,31 @@ interface IRangePickerInputProps extends IPickerInputBaseProps {
      * Callback function which triggers when one of the fields is getting clicked.
      * @param field - The field that was clicked.
      */
-    onClick: (field: TimePickerRangeFields) => void;
+    onClick: (field: PickerRangeFields) => void;
     /**
      * Callback function which triggers when one of the fields value is getting changed.
      * @param event
      * @param field
      */
-    onChange?: (event: ChangeEvent<HTMLInputElement>, field: TimePickerRangeFields) => void;
+    onChange?: (event: ChangeEvent<HTMLInputElement>, field: PickerRangeFields) => void;
     /**
      * Callback function which triggers when one of the fields is getting focused.
      * @param event
      * @param field
      */
-    onFocus?: (event: FocusEvent<HTMLInputElement>, field: TimePickerRangeFields) => void;
+    onFocus?: (event: FocusEvent<HTMLInputElement>, field: PickerRangeFields) => void;
     /**
      * Callback function which triggers when one of the fields is getting blurred.
      * @param event
      * @param field
      */
-    onBlur?: (event: FocusEvent<HTMLInputElement>, field: TimePickerRangeFields) => void;
+    onBlur?: (event: FocusEvent<HTMLInputElement>, field: PickerRangeFields) => void;
     /**
      * Callback function which triggers when a key is getting pressed.
      * @param event
      * @param field
      */
-    onKeyDown?: (event: KeyboardEvent<HTMLInputElement>, field: TimePickerRangeFields) => void;
+    onKeyDown?: (event: KeyboardEvent<HTMLInputElement>, field: PickerRangeFields) => void;
 }
 
 const RANGE_FIELDS = [PICKER_RANGE_FIELDS.START, PICKER_RANGE_FIELDS.END] as const;
@@ -154,6 +154,7 @@ const getSharedProps = (
         maskReplacement,
         maskTrack,
         inputMode,
+        inputSize,
         onClear,
         clearLabel,
         anchorProps,
@@ -192,6 +193,7 @@ const getSharedProps = (
         maskReplacement,
         maskTrack,
         inputMode,
+        inputSize,
         isExpanded,
         "aria-controls": popoverId,
         "aria-describedby": helperText ? helperTextId : undefined

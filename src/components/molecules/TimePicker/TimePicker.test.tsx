@@ -6,10 +6,11 @@ import { act } from "react-dom/test-utils";
 // Components
 import GeneUIProvider from "@components/providers/GeneUIProvider";
 
+import { createMaskTrack, INPUT_CHANGE_DEBOUNCE_MS } from "@internal/components/Picker";
+
 // Constants
 import {
     EMPTY_TIME_PARTS,
-    INPUT_CHANGE_DEBOUNCE_MS,
     MASK_SLOT_RULES_12H,
     MASK_SLOT_RULES_24H,
     TIME_PICKER_INPUT_MASK,
@@ -18,7 +19,6 @@ import {
 // Helpers
 import {
     composeTime,
-    createMaskTrack,
     getNearestAvailableTime,
     isPickerPartDisabled,
     parseTime,
@@ -798,15 +798,15 @@ describe("TimePicker", () => {
         it("moves the focus into the open popover on arrow down", () => {
             setup.find("input.pickerMaskedInput").simulate("focus");
             setup.update();
-            expect(setup.find("PickerPopover").prop("focusOnOpen")).toBe(false);
+            expect(setup.find("TimePickerPopover").prop("focusOnOpen")).toBe(false);
 
             setup.find("input.pickerMaskedInput").simulate("keydown", { key: "ArrowDown" });
             setup.update();
-            expect(setup.find("PickerPopover").prop("focusOnOpen")).toBe(true);
+            expect(setup.find("TimePickerPopover").prop("focusOnOpen")).toBe(true);
 
             setup.find("input.pickerMaskedInput").simulate("focus");
             setup.update();
-            expect(setup.find("PickerPopover").prop("focusOnOpen")).toBe(false);
+            expect(setup.find("TimePickerPopover").prop("focusOnOpen")).toBe(false);
         });
 
         it("hides the column scrollbars after opening on a value and shows them when the user scrolls", () => {
@@ -1502,11 +1502,11 @@ describe("Time range picker", () => {
 
     it("switches the active field on click and on focus", () => {
         openPopover(setup, 1);
-        expect(setup.find("PickerPopover").prop("activeField")).toBe("end");
+        expect(setup.find("TimePickerPopover").prop("activeField")).toBe("end");
 
         setup.find("input.pickerMaskedInput").at(0).simulate("focus");
         setup.update();
-        expect(setup.find("PickerPopover").prop("activeField")).toBe("start");
+        expect(setup.find("TimePickerPopover").prop("activeField")).toBe("start");
     });
 
     it("keeps the focus on the start field after a click and moves to the end field on Tab", () => {
@@ -1517,8 +1517,8 @@ describe("Time range picker", () => {
         setup.update();
 
         expect(setup.find(".timePicker__wrapper").exists()).toBeTruthy();
-        expect(setup.find("PickerPopover").prop("focusOnOpen")).toBe(false);
-        expect(setup.find("PickerPopover").prop("activeField")).toBe("start");
+        expect(setup.find("TimePickerPopover").prop("focusOnOpen")).toBe(false);
+        expect(setup.find("TimePickerPopover").prop("activeField")).toBe("start");
 
         inputs()
             .at(0)
@@ -1527,7 +1527,7 @@ describe("Time range picker", () => {
         setup.update();
 
         expect(setup.find(".timePicker__wrapper").exists()).toBeTruthy();
-        expect(setup.find("PickerPopover").prop("activeField")).toBe("end");
+        expect(setup.find("TimePickerPopover").prop("activeField")).toBe("end");
     });
 
     it("opens the popover on click on the separator", () => {
@@ -1541,11 +1541,11 @@ describe("Time range picker", () => {
         const range = mountRange({ defaultValue: { start: "11:00:00", end: "17:00:00" } });
 
         openPopover(range, 0);
-        expect(range.find("PickerPopover").prop("activeField")).toBe("start");
+        expect(range.find("TimePickerPopover").prop("activeField")).toBe("start");
 
         openPopover(range, 1);
         expect(range.find(".timePicker__wrapper").exists()).toBeTruthy();
-        expect(range.find("PickerPopover").prop("activeField")).toBe("end");
+        expect(range.find("TimePickerPopover").prop("activeField")).toBe("end");
 
         range.unmount();
     });

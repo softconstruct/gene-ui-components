@@ -11,7 +11,7 @@ import HelperText from "@components/atoms/HelperText";
 // Constants
 import { pickerShellIconSizeMap, textSizeMap } from "../../constants";
 // Types
-import { TimePickerSizes, TimePickerStatus } from "../../types";
+import { PickerSizes, PickerStatus } from "../../types";
 
 // Styles
 import "./PickerShell.scss";
@@ -67,12 +67,12 @@ interface IPickerShellProps {
      * The size of the field: sets its height, paddings and corner radius, and the sizes of the clear button
      * and the helper text.
      */
-    size: TimePickerSizes;
+    size: PickerSizes;
     /**
      * Validation state of the field: `rest`, `warning` or `error`. `error` colors the border, and the state
      * is passed to the helper text.
      */
-    status: TimePickerStatus;
+    status: PickerStatus;
     /**
      * The input or inputs rendered inside the field, before the clear button and `Icon`.
      */
