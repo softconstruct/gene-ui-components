@@ -30,6 +30,8 @@ export interface DataTableRowExpandChangePayload<TData> {
 
 export type DataTableRowExpandChangeHandler<TData> = (payload: DataTableRowExpandChangePayload<TData>) => void;
 
+export type DataTableColumnType = "text" | "number" | "boolean";
+
 export type DataTableCellValue<TData> = TData[keyof TData & string] | undefined;
 
 export type DataTableRenderCellArgs<TData, TValue> = {
@@ -77,6 +79,11 @@ export type DataTableColumn<TData> = {
      * Column width in px.
      */
     size?: number;
+    /**
+     * Decides which control the cell renders in edit mode.
+     * @default "text"
+     */
+    type?: DataTableColumnType;
     /**
      * Whether the column is visible by default.
      * @default true
@@ -253,8 +260,8 @@ export interface IDataTableCellChangePayload<TData> {
      */
     row: TData;
     /**
-     * The current value of the control, reported as the control provided it. The built-in control
-     * always reports a string.
+     * The current value of the control, reported as the control provided it. A built-in control reports
+     * a string for `text` and `number`, and a boolean for `boolean`.
      */
     value: unknown;
 }
