@@ -120,6 +120,7 @@ export {
     default as DataTable,
     DataTableCellValue,
     DataTableColumn,
+    DataTableColumnType,
     DataTableEditValues,
     DataTableGetRowStatus,
     DataTableRenderCellArgs,

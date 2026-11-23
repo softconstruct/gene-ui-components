@@ -8,12 +8,12 @@ import { ChevronDown, ChevronUp } from "@geneui/icons";
 import HelperText from "@components/atoms/HelperText";
 import Label from "@components/atoms/Label";
 
-// Styles
-import "./NumberField.scss";
-
 // Helpers
 import { NUMERIC_STRING_PATTERN } from "../../../constants";
 import { clampValue } from "../../../helpers";
+
+// Styles
+import "./NumberField.scss";
 
 interface INumberFieldProps {
     /**
