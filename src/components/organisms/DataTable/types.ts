@@ -80,7 +80,7 @@ export type DataTableColumn<TData> = {
      */
     size?: number;
     /**
-     * Decides how the value is displayed and which control the cell renders in edit mode.
+     * Decides which control the cell renders in edit mode.
      * @default "text"
      */
     type?: DataTableColumnType;
