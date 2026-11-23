@@ -96,7 +96,7 @@ describe("Filter", () => {
         openSave();
         typeName("My filter");
         render({ saveDisabled: true });
-        expect(setup.find(".filter__saveActions button").last().prop("disabled")).toBeTruthy();
+        expect(setup.find(".popover__footerActions button").last().prop("disabled")).toBeTruthy();
     });
 
     it("should call onClose when the close button is clicked", () => {
@@ -127,11 +127,19 @@ describe("Filter", () => {
     it("should keep the save confirm button disabled until a name is typed", () => {
         render();
         openSave();
-        expect(setup.find(".filter__saveActions button").last().prop("disabled")).toBeTruthy();
+        expect(setup.find(".popover__footerActions button").last().prop("disabled")).toBeTruthy();
         typeName("   ");
-        expect(setup.find(".filter__saveActions button").last().prop("disabled")).toBeTruthy();
+        expect(setup.find(".popover__footerActions button").last().prop("disabled")).toBeTruthy();
         typeName("My filter");
-        expect(setup.find(".filter__saveActions button").last().prop("disabled")).toBeFalsy();
+        expect(setup.find(".popover__footerActions button").last().prop("disabled")).toBeFalsy();
+    });
+
+    it("should keep the save popover buttons mounted while the name is typed", () => {
+        render();
+        openSave();
+        const cancel = setup.find(".popover__footerActions button").first().getDOMNode();
+        typeName("My filter");
+        expect(setup.find(".popover__footerActions button").first().getDOMNode()).toBe(cancel);
     });
 
     it("should call onSave with the trimmed name and close the save popover", () => {
@@ -139,7 +147,7 @@ describe("Filter", () => {
         render({ onSave });
         openSave();
         typeName("  My filter ");
-        setup.find(".filter__saveActions button").last().simulate("click");
+        setup.find(".popover__footerActions button").last().simulate("click");
         setup.update();
         expect(onSave).toHaveBeenCalledWith("My filter");
         expect(setup.find(".popover").exists()).toBeFalsy();
@@ -150,7 +158,7 @@ describe("Filter", () => {
         render({ onSave });
         openSave();
         typeName("My filter");
-        const cancel = setup.find(".filter__saveActions button").first();
+        const cancel = setup.find(".popover__footerActions button").first();
         expect(cancel.text()).toBe(texts.savePopoverCancelText);
         cancel.simulate("click");
         setup.update();

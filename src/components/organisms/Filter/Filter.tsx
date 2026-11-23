@@ -1,15 +1,12 @@
 import React, { FC, ReactNode, useEffect, useState } from "react";
 import classNames from "classnames";
+import { nanoid } from "nanoid/non-secure";
 
 // Components
 import Button from "@components/atoms/Button";
 import { Popover, PopoverBody, PopoverFooter } from "@components/atoms/Popover";
-import ButtonGroup from "@components/molecules/ButtonGroup";
 import Drawer from "@components/molecules/Drawer";
 import TextField from "@components/molecules/TextField";
-
-// Styles
-import "./Filter.scss";
 
 interface IFilterProps {
     /**
@@ -109,6 +106,8 @@ const Filter: FC<IFilterProps> = ({
     const [saveButtonProps, setSaveButtonProps] = useState({});
     const [isSaveOpen, setIsSaveOpen] = useState(false);
     const [saveName, setSaveName] = useState("");
+    // Stable ids: without them PopoverFooter generates new ones and remounts its buttons on every render
+    const [saveActionId] = useState(() => `filter-save-${nanoid()}`);
     const trimmedSaveName = saveName.trim();
 
     const closeSave = () => {
@@ -135,7 +134,6 @@ const Filter: FC<IFilterProps> = ({
             open={open}
             title={title}
             hasCloseButton
-            // Escape closes the save popover first, not the whole panel
             shouldCloseOnEscapePress={!isSaveOpen}
             onClose={onClose}
             actions={[
@@ -178,20 +176,22 @@ const Filter: FC<IFilterProps> = ({
                                     onChange={(event) => setSaveName(event.target.value)}
                                 />
                             </PopoverBody>
-                            <PopoverFooter>
-                                <ButtonGroup className="filter__saveActions" size="small">
-                                    {savePopoverCancelText && (
-                                        <Button appearance="secondary" layout="text" onClick={closeSave}>
-                                            {savePopoverCancelText}
-                                        </Button>
-                                    )}
-                                    {savePopoverSaveText && (
-                                        <Button disabled={saveDisabled || !trimmedSaveName} onClick={handleSave}>
-                                            {savePopoverSaveText}
-                                        </Button>
-                                    )}
-                                </ButtonGroup>
-                            </PopoverFooter>
+                            <PopoverFooter
+                                actions={[
+                                    {
+                                        id: `${saveActionId}-cancel`,
+                                        text: savePopoverCancelText,
+                                        appearance: "secondary",
+                                        onClick: closeSave
+                                    },
+                                    {
+                                        id: `${saveActionId}-save`,
+                                        text: savePopoverSaveText,
+                                        disabled: saveDisabled || !trimmedSaveName,
+                                        onClick: handleSave
+                                    }
+                                ]}
+                            />
                         </Popover>
                     </>
                 )
