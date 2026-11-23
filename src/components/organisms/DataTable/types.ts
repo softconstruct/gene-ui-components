@@ -260,8 +260,8 @@ export interface IDataTableCellChangePayload<TData> {
      */
     row: TData;
     /**
-     * The current value of the control, reported as the control provided it. The built-in control
-     * always reports a string.
+     * The current value of the control, reported as the control provided it. A built-in control reports
+     * a string for `text` and `number`, and a boolean for `boolean`.
      */
     value: unknown;
 }
