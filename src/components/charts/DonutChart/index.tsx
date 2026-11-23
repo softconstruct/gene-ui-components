@@ -1,1 +1,1 @@
-export { IDonutChartProps, default } from "./DonutChart";
+export { IDonutChartProps, IDonutChartSeries, default } from "./DonutChart";
