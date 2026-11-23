@@ -118,20 +118,20 @@ const Filter: FC<IFilterProps> = ({
     onClose
 }) => {
     const [saveButtonProps, setSaveButtonProps] = useState({});
-    const [isSaveOpen, setIsSaveOpen] = useState(false);
+    const [isSavePopoverOpen, setIsSavePopoverOpen] = useState(false);
     const [saveName, setSaveName] = useState("");
 
-    const closeSave = () => {
-        setIsSaveOpen(false);
+    const closeSavePopover = () => {
+        setIsSavePopoverOpen(false);
         setSaveName("");
     };
 
     useEffect(() => {
-        if (!open) {
-            closeSave();
+        if (!open && !saveConfig) {
+            closeSavePopover();
             setSaveButtonProps({});
         }
-    }, [open]);
+    }, [open, saveConfig]);
 
     const renderSaveSection = ({
         buttonText = "Save",
@@ -149,16 +149,16 @@ const Filter: FC<IFilterProps> = ({
                 appearance="secondary"
                 disabled={buttonDisabled}
                 loading={buttonLoading}
-                onClick={() => (isSaveOpen ? closeSave() : setIsSaveOpen(true))}
+                onClick={() => (isSavePopoverOpen ? closeSavePopover() : setIsSavePopoverOpen(true))}
             >
                 {buttonText}
             </Button>
             <Popover
-                open={isSaveOpen}
+                open={isSavePopoverOpen}
                 position={document.dir === "rtl" ? "top-right" : "top-left"}
                 withArrow={false}
                 setProps={setSaveButtonProps}
-                onClose={closeSave}
+                onClose={closeSavePopover}
                 mobileHeightMode="fit"
             >
                 <PopoverBody withScrollbar={false}>
@@ -178,7 +178,7 @@ const Filter: FC<IFilterProps> = ({
                             id: "filter-save-cancel",
                             text: popoverCancelText,
                             appearance: "secondary",
-                            onClick: closeSave
+                            onClick: closeSavePopover
                         },
                         {
                             id: "filter-save-submit",
@@ -186,7 +186,7 @@ const Filter: FC<IFilterProps> = ({
                             disabled: !saveName,
                             onClick: () => {
                                 onSave(saveName);
-                                closeSave();
+                                closeSavePopover();
                             }
                         }
                     ]}
@@ -201,7 +201,7 @@ const Filter: FC<IFilterProps> = ({
             open={open}
             title={title}
             hasCloseButton
-            shouldCloseOnEscapePress={!isSaveOpen}
+            shouldCloseOnEscapePress={!isSavePopoverOpen}
             onClose={onClose}
             actions={[
                 {

@@ -38,11 +38,11 @@ const meta: Meta<IFilterProps> = {
             popoverSaveText: "Save",
             popoverCancelText: "Cancel",
             popoverLabelText: "Filter Name",
-            enabled: true,
             buttonDisabled: false,
             buttonLoading: false,
             onSave: fn()
         },
+        open: true,
         onApply: fn(),
         onReset: fn(),
         onClose: fn()
@@ -62,7 +62,7 @@ const statusOptions = [
 ];
 
 const FilterTemplate: FC<IFilterProps> = ({ onApply, onReset, onClose, ...props }) => {
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(true);
     const [values, setValues] = useState(emptyValues);
 
     return (

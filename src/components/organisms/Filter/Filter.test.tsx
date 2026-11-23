@@ -25,7 +25,6 @@ describe("Filter", () => {
 
     const saveConfig = (config: Partial<IFilterSaveConfig> = {}): IFilterSaveConfig => ({
         ...saveTexts,
-        enabled: true,
         onSave: jest.fn(),
         ...config
     });
@@ -123,18 +122,11 @@ describe("Filter", () => {
     });
 
     it("should render saveConfig with the default texts", () => {
-        render({ saveConfig: { enabled: true, onSave: jest.fn() } });
+        render({ saveConfig: { onSave: jest.fn() } });
         expect(setup.find("button.filter__save").text()).toBe("Save");
         openSave();
         expect(popoverButtons().first().text()).toBe("Cancel");
         expect(popoverButtons().last().text()).toBe("Save");
-    });
-
-    it("should not render the Save button until saveConfig enabled is set", () => {
-        render({ saveConfig: { onSave: jest.fn() } });
-        expect(setup.find("button.filter__save").exists()).toBeFalsy();
-        render({ saveConfig: { enabled: true, onSave: jest.fn() } });
-        expect(setup.find("button.filter__save").exists()).toBeTruthy();
     });
 
     it("should render saveConfig buttonLoading correctly", () => {
@@ -151,11 +143,11 @@ describe("Filter", () => {
         expect(setup.find("button.filter__save").prop("disabled")).toBeTruthy();
     });
 
-    it("should remove the Save button and close the save popover when enabled is turned off", () => {
+    it("should remove the Save button and close the save popover when saveConfig is removed", () => {
         render();
         openSave();
         typeName("My filter");
-        render({ saveConfig: saveConfig({ enabled: false }) });
+        render({ saveConfig: undefined });
         expect(setup.find("button.filter__save").exists()).toBeFalsy();
         expect(setup.find(".popover").exists()).toBeFalsy();
         render({ saveConfig: saveConfig() });
