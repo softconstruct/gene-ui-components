@@ -194,6 +194,7 @@ const Filter: FC<IFilterProps> = ({
                             withArrow={false}
                             setProps={setSaveButtonProps}
                             onClose={closeSave}
+                            mobileHeightMode="fit"
                         >
                             <PopoverBody withScrollbar={false}>
                                 <TextField
