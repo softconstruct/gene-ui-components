@@ -127,7 +127,7 @@ const Filter: FC<IFilterProps> = ({
     };
 
     useEffect(() => {
-        if (!open && !saveConfig) {
+        if (!open || !saveConfig) {
             closeSavePopover();
             setSaveButtonProps({});
         }
