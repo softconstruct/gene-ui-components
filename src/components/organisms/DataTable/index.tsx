@@ -2,6 +2,7 @@ export { IDataTableProps, default } from "./DataTable";
 export {
     DataTableCellValue,
     DataTableColumn,
+    DataTableColumnType,
     DataTableEditValues,
     DataTableGetRowStatus,
     DataTableRenderCellArgs,
