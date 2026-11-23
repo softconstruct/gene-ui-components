@@ -137,6 +137,13 @@ describe("Filter", () => {
         expect(setup.find("button.filter__save").exists()).toBeTruthy();
     });
 
+    it("should render saveConfig buttonLoading correctly", () => {
+        render();
+        expect(setup.find("button.filter__save").hasClass("button_loading")).toBeFalsy();
+        render({ saveConfig: saveConfig({ buttonLoading: true }) });
+        expect(setup.find("button.filter__save").hasClass("button_loading")).toBeTruthy();
+    });
+
     it("should render saveConfig buttonDisabled correctly", () => {
         render();
         expect(setup.find("button.filter__save").prop("disabled")).toBeFalsy();

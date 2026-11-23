@@ -39,6 +39,11 @@ interface IFilterSaveConfig {
      */
     buttonDisabled?: boolean;
     /**
+     * Shows the loading state of the Save button.
+     * @default false
+     */
+    buttonLoading?: boolean;
+    /**
      * Callback fired when the save popover is confirmed. Receives the filter name as typed by the user;
      * storing the current filter values under that name is up to the consumer.
      */
@@ -121,6 +126,7 @@ const Filter: FC<IFilterProps> = ({
     const {
         buttonText: saveButtonText = "Save",
         buttonDisabled: saveButtonDisabled,
+        buttonLoading: saveButtonLoading,
         popoverSaveText: savePopoverSaveText = "Save",
         popoverCancelText: savePopoverCancelText = "Cancel",
         popoverLabelText: savePopoverLabelText,
@@ -177,6 +183,7 @@ const Filter: FC<IFilterProps> = ({
                             className="filter__save"
                             appearance="secondary"
                             disabled={saveButtonDisabled}
+                            loading={saveButtonLoading}
                             onClick={() => (isSaveOpen ? closeSave() : setIsSaveOpen(true))}
                         >
                             {saveButtonText}
