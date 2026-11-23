@@ -200,6 +200,7 @@ const Filter: FC<IFilterProps> = ({
                                     value={saveName}
                                     required
                                     autoFocus
+                                    autoComplete="off"
                                     onChange={(event) => setSaveName(event.target.value)}
                                 />
                             </PopoverBody>
