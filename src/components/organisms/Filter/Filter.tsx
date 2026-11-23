@@ -8,6 +8,43 @@ import { Popover, PopoverBody, PopoverFooter } from "@components/atoms/Popover";
 import Drawer from "@components/molecules/Drawer";
 import TextField from "@components/molecules/TextField";
 
+interface IFilterSaveConfig {
+    /**
+     * Text of the Save button.
+     * @default "Save"
+     */
+    buttonText?: string;
+    /**
+     * Text of the save (confirm) button in the save popover.
+     * @default "Save"
+     */
+    popoverSaveText?: string;
+    /**
+     * Text of the cancel button in the save popover.
+     * @default "Cancel"
+     */
+    popoverCancelText?: string;
+    /**
+     * Label of the filter name field in the save popover.
+     */
+    popoverLabelText?: string;
+    /**
+     * Turns saving on: renders the Save button with its save popover. Without it the panel has no saving.
+     * @default false
+     */
+    enabled?: boolean;
+    /**
+     * Disables the Save button.
+     * @default false
+     */
+    buttonDisabled?: boolean;
+    /**
+     * Callback fired when the save popover is confirmed. Receives the trimmed filter name typed by the user;
+     * storing the current filter values under that name is up to the consumer.
+     */
+    onSave: (name: string) => void;
+}
+
 interface IFilterProps {
     /**
      * Additional class for the parent element.
@@ -27,29 +64,15 @@ interface IFilterProps {
      */
     children?: ReactNode;
     /**
-     * Text of the Apply button. The button is not rendered without it.
+     * Text of the Apply button. The button is always rendered.
+     * @default "Apply"
      */
     applyText?: string;
     /**
-     * Text of the Reset button. The button is not rendered without it.
+     * Text of the Reset button. The button is always rendered.
+     * @default "Reset"
      */
     resetText?: string;
-    /**
-     * Text of the Save button. The button is not rendered without it.
-     */
-    saveText?: string;
-    /**
-     * Text of the save (confirm) button in the save popover. The button is not rendered without it.
-     */
-    savePopoverSaveText?: string;
-    /**
-     * Text of the cancel button in the save popover. The button is not rendered without it.
-     */
-    savePopoverCancelText?: string;
-    /**
-     * Label of the filter name field in the save popover.
-     */
-    savePopoverLabelText?: string;
     /**
      * Disables the Apply button.
      */
@@ -59,9 +82,11 @@ interface IFilterProps {
      */
     resetDisabled?: boolean;
     /**
-     * Disables the Save button and the confirm button in the save popover.
+     * Configuration object for saving the filters.
+     * Providing it with `enabled` set renders the Save button with its save popover;
+     * otherwise the panel has no saving.
      */
-    saveDisabled?: boolean;
+    saveConfig?: IFilterSaveConfig;
     /**
      * Callback fired when the Apply button is clicked.
      */
@@ -70,11 +95,6 @@ interface IFilterProps {
      * Callback fired when the Reset button is clicked.
      */
     onReset?: () => void;
-    /**
-     * Callback fired when the save popover is confirmed. Receives the trimmed filter name typed by the user;
-     * storing the current filter values under that name is up to the consumer.
-     */
-    onSave?: (name: string) => void;
     /**
      * Callback fired when the panel is requested to be closed (close button, Escape key or overlay click).
      */
@@ -89,20 +109,24 @@ const Filter: FC<IFilterProps> = ({
     open,
     title,
     children,
-    applyText,
-    resetText,
-    saveText,
-    savePopoverSaveText,
-    savePopoverCancelText,
-    savePopoverLabelText,
+    applyText = "Apply",
+    resetText = "Reset",
     applyDisabled,
     resetDisabled,
-    saveDisabled,
+    saveConfig,
     onApply,
     onReset,
-    onSave,
     onClose
 }) => {
+    const {
+        buttonText: saveButtonText = "Save",
+        buttonDisabled: saveButtonDisabled,
+        popoverSaveText: savePopoverSaveText = "Save",
+        popoverCancelText: savePopoverCancelText = "Cancel",
+        popoverLabelText: savePopoverLabelText,
+        enabled: saveEnabled,
+        onSave
+    }: Partial<IFilterSaveConfig> = saveConfig || {};
     const [saveButtonProps, setSaveButtonProps] = useState({});
     const [isSaveOpen, setIsSaveOpen] = useState(false);
     const [saveName, setSaveName] = useState("");
@@ -115,13 +139,12 @@ const Filter: FC<IFilterProps> = ({
         setSaveName("");
     };
 
-    // The save button and popover unmount with the panel, so their state must not survive until the next open
     useEffect(() => {
-        if (!open) {
+        if (!open || !saveEnabled) {
             closeSave();
             setSaveButtonProps({});
         }
-    }, [open]);
+    }, [open, saveEnabled]);
 
     const handleSave = () => {
         onSave?.(trimmedSaveName);
@@ -147,20 +170,20 @@ const Filter: FC<IFilterProps> = ({
                 { children: applyText, disabled: applyDisabled, onClick: onApply }
             ]}
             footerSwappable={
-                saveText && (
+                saveConfig &&
+                saveEnabled && (
                     <>
                         <Button
                             {...saveButtonProps}
                             className="filter__save"
                             appearance="secondary"
-                            disabled={saveDisabled}
+                            disabled={saveButtonDisabled}
                             onClick={() => (isSaveOpen ? closeSave() : setIsSaveOpen(true))}
                         >
-                            {saveText}
+                            {saveButtonText}
                         </Button>
                         <Popover
                             open={isSaveOpen}
-                            // `atoms/Popover` ignores RTL, so the side is picked here
                             position={document.dir === "rtl" ? "top-right" : "top-left"}
                             withArrow={false}
                             setProps={setSaveButtonProps}
@@ -187,7 +210,7 @@ const Filter: FC<IFilterProps> = ({
                                     {
                                         id: `${saveActionId}-save`,
                                         text: savePopoverSaveText,
-                                        disabled: saveDisabled || !trimmedSaveName,
+                                        disabled: !trimmedSaveName,
                                         onClick: handleSave
                                     }
                                 ]}
@@ -202,4 +225,4 @@ const Filter: FC<IFilterProps> = ({
     );
 };
 
-export { IFilterProps, Filter as default };
+export { IFilterProps, IFilterSaveConfig, Filter as default };

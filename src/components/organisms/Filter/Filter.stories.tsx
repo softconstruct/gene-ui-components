@@ -22,29 +22,28 @@ const meta: Meta<IFilterProps> = {
         children: args({ control: "false", ...propCategory.content }),
         applyText: args({ control: "text", ...propCategory.content }),
         resetText: args({ control: "text", ...propCategory.content }),
-        saveText: args({ control: "text", ...propCategory.content }),
-        savePopoverSaveText: args({ control: "text", ...propCategory.content }),
-        savePopoverCancelText: args({ control: "text", ...propCategory.content }),
-        savePopoverLabelText: args({ control: "text", ...propCategory.content }),
         applyDisabled: args({ control: "boolean", ...propCategory.states }),
         resetDisabled: args({ control: "boolean", ...propCategory.states }),
-        saveDisabled: args({ control: "boolean", ...propCategory.states }),
+        saveConfig: args({ control: "object", ...propCategory.functionality }),
         onApply: args({ control: "false", ...propCategory.action }),
         onReset: args({ control: "false", ...propCategory.action }),
-        onSave: args({ control: "false", ...propCategory.action }),
         onClose: args({ control: "false", ...propCategory.action })
     },
     args: {
         title: "Filters",
         applyText: "Apply",
         resetText: "Reset",
-        saveText: "Save",
-        savePopoverSaveText: "Save",
-        savePopoverCancelText: "Cancel",
-        savePopoverLabelText: "Filter Name",
+        saveConfig: {
+            buttonText: "Save",
+            popoverSaveText: "Save",
+            popoverCancelText: "Cancel",
+            popoverLabelText: "Filter Name",
+            enabled: true,
+            buttonDisabled: false,
+            onSave: fn()
+        },
         onApply: fn(),
         onReset: fn(),
-        onSave: fn(),
         onClose: fn()
     }
 };

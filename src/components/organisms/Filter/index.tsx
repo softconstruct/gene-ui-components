@@ -1,1 +1,1 @@
-export { IFilterProps, default } from "./Filter";
+export { IFilterProps, IFilterSaveConfig, default } from "./Filter";
