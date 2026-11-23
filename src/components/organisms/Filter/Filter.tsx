@@ -28,11 +28,6 @@ interface IFilterSaveConfig {
      */
     popoverLabelText?: string;
     /**
-     * Turns saving on: renders the Save button with its save popover. Without it the panel has no saving.
-     * @default false
-     */
-    enabled?: boolean;
-    /**
      * Disables the Save button.
      * @default false
      */
@@ -87,7 +82,7 @@ interface IFilterProps {
     resetDisabled?: boolean;
     /**
      * Configuration object for saving the filters.
-     * Providing it with `enabled` set renders the Save button with its save popover;
+     * Providing it renders the Save button with its save popover;
      * otherwise the panel has no saving.
      */
     saveConfig?: IFilterSaveConfig;
@@ -122,16 +117,6 @@ const Filter: FC<IFilterProps> = ({
     onReset,
     onClose
 }) => {
-    const {
-        buttonText: saveButtonText = "Save",
-        buttonDisabled: saveButtonDisabled,
-        buttonLoading: saveButtonLoading,
-        popoverSaveText: savePopoverSaveText = "Save",
-        popoverCancelText: savePopoverCancelText = "Cancel",
-        popoverLabelText: savePopoverLabelText,
-        enabled: saveEnabled,
-        onSave
-    }: Partial<IFilterSaveConfig> = saveConfig || {};
     const [saveButtonProps, setSaveButtonProps] = useState({});
     const [isSaveOpen, setIsSaveOpen] = useState(false);
     const [saveName, setSaveName] = useState("");
@@ -142,16 +127,73 @@ const Filter: FC<IFilterProps> = ({
     };
 
     useEffect(() => {
-        if (!open || !saveEnabled) {
+        if (!open) {
             closeSave();
             setSaveButtonProps({});
         }
-    }, [open, saveEnabled]);
+    }, [open]);
 
-    const handleSave = () => {
-        onSave?.(saveName);
-        closeSave();
-    };
+    const renderSaveSection = ({
+        buttonText = "Save",
+        buttonDisabled,
+        buttonLoading,
+        popoverSaveText = "Save",
+        popoverCancelText = "Cancel",
+        popoverLabelText,
+        onSave
+    }: IFilterSaveConfig) => (
+        <>
+            <Button
+                {...saveButtonProps}
+                className="filter__save"
+                appearance="secondary"
+                disabled={buttonDisabled}
+                loading={buttonLoading}
+                onClick={() => (isSaveOpen ? closeSave() : setIsSaveOpen(true))}
+            >
+                {buttonText}
+            </Button>
+            <Popover
+                open={isSaveOpen}
+                position={document.dir === "rtl" ? "top-right" : "top-left"}
+                withArrow={false}
+                setProps={setSaveButtonProps}
+                onClose={closeSave}
+                mobileHeightMode="fit"
+            >
+                <PopoverBody withScrollbar={false}>
+                    <TextField
+                        size="large"
+                        label={popoverLabelText}
+                        value={saveName}
+                        required
+                        autoFocus
+                        autoComplete="off"
+                        onChange={(event) => setSaveName(event.target.value)}
+                    />
+                </PopoverBody>
+                <PopoverFooter
+                    actions={[
+                        {
+                            id: "filter-save-cancel",
+                            text: popoverCancelText,
+                            appearance: "secondary",
+                            onClick: closeSave
+                        },
+                        {
+                            id: "filter-save-submit",
+                            text: popoverSaveText,
+                            disabled: !saveName,
+                            onClick: () => {
+                                onSave(saveName);
+                                closeSave();
+                            }
+                        }
+                    ]}
+                />
+            </Popover>
+        </>
+    );
 
     return (
         <Drawer
@@ -171,59 +213,7 @@ const Filter: FC<IFilterProps> = ({
                 },
                 { children: applyText, disabled: applyDisabled, onClick: onApply }
             ]}
-            footerSwappable={
-                saveConfig &&
-                saveEnabled && (
-                    <>
-                        <Button
-                            {...saveButtonProps}
-                            className="filter__save"
-                            appearance="secondary"
-                            disabled={saveButtonDisabled}
-                            loading={saveButtonLoading}
-                            onClick={() => (isSaveOpen ? closeSave() : setIsSaveOpen(true))}
-                        >
-                            {saveButtonText}
-                        </Button>
-                        <Popover
-                            open={isSaveOpen}
-                            position={document.dir === "rtl" ? "top-right" : "top-left"}
-                            withArrow={false}
-                            setProps={setSaveButtonProps}
-                            onClose={closeSave}
-                            mobileHeightMode="fit"
-                        >
-                            <PopoverBody withScrollbar={false}>
-                                <TextField
-                                    size="large"
-                                    label={savePopoverLabelText}
-                                    value={saveName}
-                                    required
-                                    autoFocus
-                                    autoComplete="off"
-                                    onChange={(event) => setSaveName(event.target.value)}
-                                />
-                            </PopoverBody>
-                            <PopoverFooter
-                                actions={[
-                                    {
-                                        id: "filter-save-cancel",
-                                        text: savePopoverCancelText,
-                                        appearance: "secondary",
-                                        onClick: closeSave
-                                    },
-                                    {
-                                        id: "filter-save-submit",
-                                        text: savePopoverSaveText,
-                                        disabled: !saveName,
-                                        onClick: handleSave
-                                    }
-                                ]}
-                            />
-                        </Popover>
-                    </>
-                )
-            }
+            footerSwappable={saveConfig && renderSaveSection(saveConfig)}
         >
             {children}
         </Drawer>
