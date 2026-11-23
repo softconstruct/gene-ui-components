@@ -160,8 +160,6 @@ describe("Filter", () => {
         render();
         openSave();
         expect(popoverButtons().last().prop("disabled")).toBeTruthy();
-        typeName("   ");
-        expect(popoverButtons().last().prop("disabled")).toBeTruthy();
         typeName("My filter");
         expect(popoverButtons().last().prop("disabled")).toBeFalsy();
     });
@@ -174,14 +172,14 @@ describe("Filter", () => {
         expect(popoverButtons().first().getDOMNode()).toBe(cancel);
     });
 
-    it("should call onSave with the trimmed name and close the save popover", () => {
+    it("should call onSave with the typed name and close the save popover", () => {
         const onSave = jest.fn();
         render({ saveConfig: saveConfig({ onSave }) });
         openSave();
         typeName("  My filter ");
         popoverButtons().last().simulate("click");
         setup.update();
-        expect(onSave).toHaveBeenCalledWith("My filter");
+        expect(onSave).toHaveBeenCalledWith("  My filter ");
         expect(setup.find(".popover").exists()).toBeFalsy();
     });
 

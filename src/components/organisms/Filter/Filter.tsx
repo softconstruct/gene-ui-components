@@ -39,7 +39,7 @@ interface IFilterSaveConfig {
      */
     buttonDisabled?: boolean;
     /**
-     * Callback fired when the save popover is confirmed. Receives the trimmed filter name typed by the user;
+     * Callback fired when the save popover is confirmed. Receives the filter name as typed by the user;
      * storing the current filter values under that name is up to the consumer.
      */
     onSave: (name: string) => void;
@@ -132,7 +132,6 @@ const Filter: FC<IFilterProps> = ({
     const [saveName, setSaveName] = useState("");
     // Stable ids: without them PopoverFooter generates new ones and remounts its buttons on every render
     const [saveActionId] = useState(() => `filter-save-${nanoid()}`);
-    const trimmedSaveName = saveName.trim();
 
     const closeSave = () => {
         setIsSaveOpen(false);
@@ -147,7 +146,7 @@ const Filter: FC<IFilterProps> = ({
     }, [open, saveEnabled]);
 
     const handleSave = () => {
-        onSave?.(trimmedSaveName);
+        onSave?.(saveName);
         closeSave();
     };
 
@@ -210,7 +209,7 @@ const Filter: FC<IFilterProps> = ({
                                     {
                                         id: `${saveActionId}-save`,
                                         text: savePopoverSaveText,
-                                        disabled: !trimmedSaveName,
+                                        disabled: !saveName,
                                         onClick: handleSave
                                     }
                                 ]}
