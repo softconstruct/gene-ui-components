@@ -1,6 +1,5 @@
 import React, { FC, ReactNode, useEffect, useState } from "react";
 import classNames from "classnames";
-import { nanoid } from "nanoid/non-secure";
 
 // Components
 import Button from "@components/atoms/Button";
@@ -136,8 +135,6 @@ const Filter: FC<IFilterProps> = ({
     const [saveButtonProps, setSaveButtonProps] = useState({});
     const [isSaveOpen, setIsSaveOpen] = useState(false);
     const [saveName, setSaveName] = useState("");
-    // Stable ids: without them PopoverFooter generates new ones and remounts its buttons on every render
-    const [saveActionId] = useState(() => `filter-save-${nanoid()}`);
 
     const closeSave = () => {
         setIsSaveOpen(false);
@@ -209,13 +206,13 @@ const Filter: FC<IFilterProps> = ({
                             <PopoverFooter
                                 actions={[
                                     {
-                                        id: `${saveActionId}-cancel`,
+                                        id: "filter-save-cancel",
                                         text: savePopoverCancelText,
                                         appearance: "secondary",
                                         onClick: closeSave
                                     },
                                     {
-                                        id: `${saveActionId}-save`,
+                                        id: "filter-save-submit",
                                         text: savePopoverSaveText,
                                         disabled: !saveName,
                                         onClick: handleSave
