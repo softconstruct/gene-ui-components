@@ -2,6 +2,7 @@ import React, { memo, ReactNode } from "react";
 import { Cell, ColumnDef, flexRender } from "@tanstack/react-table";
 import classNames from "classnames";
 
+import Copy from "@components/atoms/Copy";
 import { areCellsEqual, getCellContentStyle, getCellStyle } from "@components/organisms/DataTable/helper";
 
 import { EXPANDER_COLUMN_ID } from "../../constants";
@@ -72,6 +73,12 @@ export interface ITableBodyCellProps<TData, TValue> {
     // eslint-disable-next-line react/no-unused-prop-types -- consumed by the areCellsEqual memo comparator
     rowData: TData;
     /**
+     * Text this cell copies, resolved by the parent. Absent when the column is not `copyable` or has
+     * a custom `renderCell`, and empty when the column copies but this cell has nothing to copy; the
+     * copy control is not rendered for either.
+     */
+    copyValue?: string;
+    /**
      * Whether this cell renders an editor instead of its read-only content.
      */
     isCellEditing: boolean;
@@ -115,6 +122,7 @@ const TableBodyCell = <TData, TValue>({
     offset,
     width,
     dirMode,
+    copyValue,
     isCellEditing,
     isEditDisabled,
     editValue,
@@ -156,7 +164,17 @@ const TableBodyCell = <TData, TValue>({
                             })}
                         </div>
                     ) : (
-                        flexRender(renderer, cell.getContext())
+                        <>
+                            {flexRender(renderer, cell.getContext())}
+                            {copyValue && (
+                                <Copy
+                                    className="tableBodyCell__copy"
+                                    value={copyValue}
+                                    size="smallNudge"
+                                    appearance="secondary"
+                                />
+                            )}
+                        </>
                     )}
                 </div>
             </CellWidthContext.Provider>
