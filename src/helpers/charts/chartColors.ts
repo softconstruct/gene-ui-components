@@ -1,3 +1,5 @@
+import Highcharts from "highcharts";
+
 /**
  * Resolves a CSS color value via a probe element already mounted in the theme tree
  * (e.g. a hidden span ref inside the chart). Highcharts needs a concrete color value.
@@ -76,6 +78,18 @@ export const resolveChartSeriesColor = (probe: HTMLElement | null, color?: strin
     }
 
     return trimmed;
+};
+
+/**
+ * Converts a Highcharts color to a CSS color string.
+ * A gradient gives its first stop color, a pattern gives its own color.
+ */
+export const parseChartColor = (color?: Highcharts.ColorType): string | undefined => {
+    if (typeof color !== "object") {
+        return color;
+    }
+
+    return "stops" in color ? color.stops[0]?.[1] : color.pattern.color;
 };
 
 /**

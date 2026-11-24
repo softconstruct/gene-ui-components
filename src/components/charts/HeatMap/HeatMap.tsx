@@ -17,6 +17,7 @@ import {
     CHART_AXIS_TITLE_STYLE,
     DEFAULT_CHART_SERIES_COLOR_TOKEN,
     mergeChartOptions,
+    parseChartColor,
     resolveChartSeriesColor
 } from "../../../helpers/charts";
 
@@ -171,6 +172,7 @@ const HeatMap: FC<IHeatMapProps> = ({
             // Anchor at the top-center of the cell's on-screen rectangle.
             const cellRect = cellElement.getBoundingClientRect();
             const containerRect = chart.container.getBoundingClientRect();
+            const pointColor = parseChartColor(point.color);
 
             // Read the point before any setState: outside React events each setState re-renders synchronously.
             const nextTooltip = {
@@ -179,7 +181,7 @@ const HeatMap: FC<IHeatMapProps> = ({
                     {
                         name: series?.[point.y as number]?.name ?? "",
                         value: valueFormatter(point.value),
-                        color: colors.series
+                        color: pointColor ?? colors.series
                     }
                 ],
                 key: `${point.x}-${point.y}`

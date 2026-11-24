@@ -5,6 +5,7 @@ export {
     getDefaultChartSeriesColor,
     getDefaultGroupedChartSeriesColor,
     getDefaultGroupedChartSeriesColorToken,
+    parseChartColor,
     resolveChartSeriesColor,
     resolveCssColor,
     resolveGroupedChartSeriesColor
