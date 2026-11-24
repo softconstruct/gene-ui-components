@@ -256,11 +256,27 @@ describe("Drawer", () => {
             stopPropagation: jest.fn()
         } as unknown as React.MouseEvent<HTMLDivElement>;
 
+        const onMouseDown = drawerElement.prop("onMouseDown") as (event: React.MouseEvent<HTMLDivElement>) => void;
         const onClick = drawerElement.prop("onClick") as (event: React.MouseEvent<HTMLDivElement>) => void;
-        if (onClick) {
-            onClick(mockEvent);
-        }
+        onMouseDown(mockEvent);
+        onClick(mockEvent);
         expect(mockOnClose).toHaveBeenCalledTimes(1);
+    });
+
+    it("should not call onClose when the press starts inside the drawer and is released on the overlay", () => {
+        const wrapper = setup.setProps({
+            variant: "overlay",
+            onClose: mockOnClose,
+            shouldCloseOnOverlayClick: true
+        });
+
+        const drawerElement = wrapper.find(".drawer").first();
+        const wrapperElement = wrapper.find(".drawer__wrapper").first();
+
+        wrapperElement.simulate("mousedown");
+        drawerElement.simulate("click", { target: drawerElement.getDOMNode() });
+
+        expect(mockOnClose).not.toHaveBeenCalled();
     });
 
     it("should not call onClose on content click (event bubbling prevented)", () => {
