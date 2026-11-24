@@ -3,6 +3,7 @@ import { mount, ReactWrapper } from "enzyme";
 import { act } from "react-dom/test-utils";
 
 import Button from "@components/atoms/Button";
+import Copy from "@components/atoms/Copy";
 import Loader from "@components/atoms/Loader";
 import { Popover } from "@components/atoms/Popover";
 import Checkbox from "@components/molecules/Checkbox";
@@ -2079,5 +2080,149 @@ describe("Table Component - Column types", () => {
 
         setup.unmount();
         editMode.unmount();
+    });
+});
+
+describe("Table Component - Copyable cells", () => {
+    const copyData = mockData.slice(0, 3);
+
+    type CopyTableWrapper = ReactWrapper<IDataTableProps<MockDataType>>;
+
+    const writeText = jest.fn().mockResolvedValue(undefined);
+
+    beforeAll(() => {
+        Object.defineProperty(window.navigator, "clipboard", {
+            value: { writeText },
+            configurable: true
+        });
+    });
+
+    beforeEach(() => {
+        writeText.mockClear();
+    });
+
+    const mountTable = async (
+        columns: DataTableColumn<MockDataType>[],
+        props: Partial<IDataTableProps<MockDataType>> = {}
+    ) => {
+        let wrapper: CopyTableWrapper;
+
+        await act(async () => {
+            wrapper = mount(
+                <DataTable columns={columns} data={copyData} getRowId={(row) => String(row.Id)} {...props} />
+            );
+        });
+        wrapper!.update();
+
+        return wrapper!;
+    };
+
+    const copyControls = (wrapper: CopyTableWrapper) => wrapper.find("button.tableBodyCell__copy");
+
+    it("renders a copy control in every cell of a copyable column", async () => {
+        const setup = await mountTable([
+            { accessorKey: "Id", header: "Id", copyable: true },
+            { accessorKey: "FirstName", header: "First name" }
+        ]);
+
+        expect(copyControls(setup).length).toBe(copyData.length);
+
+        setup.unmount();
+    });
+
+    it("renders no copy control on a column that is not copyable", async () => {
+        const setup = await mountTable([{ accessorKey: "Id", header: "Id" }]);
+
+        expect(copyControls(setup).length).toBe(0);
+
+        setup.unmount();
+    });
+
+    it("puts the value of the cell as text on the clipboard", async () => {
+        const setup = await mountTable([{ accessorKey: "Id", header: "Id", copyable: true }]);
+
+        await act(async () => {
+            copyControls(setup).first().simulate("click");
+        });
+
+        expect(writeText).toHaveBeenCalledWith(String(copyData[0].Id));
+
+        setup.unmount();
+    });
+
+    it("copies what getCopyValue returns, called with the value, the row and the row id", async () => {
+        const getCopyValue = jest.fn(
+            ({ value, row }: DataTableRenderCellArgs<MockDataType, DataTableCellValue<MockDataType>>) =>
+                `${row.FirstName}:${String(value)}`
+        );
+        const setup = await mountTable([{ accessorKey: "Id", header: "Id", copyable: true, getCopyValue }]);
+
+        expect(getCopyValue).toHaveBeenCalledWith({
+            value: copyData[0].Id,
+            row: copyData[0],
+            rowId: String(copyData[0].Id)
+        });
+        expect(setup.find(Copy).first().prop("value")).toBe(`${copyData[0].FirstName}:${copyData[0].Id}`);
+
+        setup.unmount();
+    });
+
+    it("renders no copy control for a row whose getCopyValue returns an empty string", async () => {
+        const setup = await mountTable([
+            {
+                accessorKey: "Id",
+                header: "Id",
+                copyable: true,
+                getCopyValue: ({ row }) => (row.Id === copyData[0].Id ? "" : String(row.Id))
+            }
+        ]);
+
+        expect(copyControls(setup).length).toBe(copyData.length - 1);
+
+        setup.unmount();
+    });
+
+    it("renders no copy control on a column with a custom renderCell", async () => {
+        const setup = await mountTable([
+            {
+                accessorKey: "Id",
+                header: "Id",
+                copyable: true,
+                getCopyValue: () => "copied",
+                renderCell: ({ value }) => <b className="customCell">{String(value ?? "")}</b>
+            }
+        ]);
+
+        expect(setup.find("b.customCell").length).toBe(copyData.length);
+        expect(copyControls(setup).length).toBe(0);
+
+        setup.unmount();
+    });
+
+    it("renders no copy control while the cell is being edited", async () => {
+        const setup = await mountTable(
+            [{ accessorKey: "FirstName", header: "First name", copyable: true, editable: true }],
+            {
+                editConfig: {
+                    editing: true,
+                    onSave: jest.fn(),
+                    onCancel: jest.fn(),
+                    onEditStart: jest.fn()
+                }
+            }
+        );
+
+        expect(setup.find("input.textField__input").length).toBe(copyData.length);
+        expect(copyControls(setup).length).toBe(0);
+
+        setup.unmount();
+    });
+
+    it("renders no copy control on a copyable column that has no value to copy", async () => {
+        const setup = await mountTable([{ id: "empty", header: "Empty", copyable: true }]);
+
+        expect(copyControls(setup).length).toBe(0);
+
+        setup.unmount();
     });
 });
