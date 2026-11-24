@@ -17,8 +17,7 @@ import {
     CHART_AXIS_TITLE_STYLE,
     DEFAULT_CHART_SERIES_COLOR_TOKEN,
     mergeChartOptions,
-    resolveChartSeriesColor,
-    resolveCssColor
+    resolveChartSeriesColor
 } from "../../../helpers/charts";
 
 // Styles
@@ -114,7 +113,6 @@ interface IHeatMapProps {
 const defaultValueFormatter = (value: number) => `${value}`;
 
 const defaultSeriesColor = `var(${DEFAULT_CHART_SERIES_COLOR_TOKEN})`;
-const CELL_BORDER_COLOR_TOKEN = "--guit-sem-color-border-neutral-1";
 /** Opacity of the series color at the low end of the scale (Figma gradient start). */
 const MIN_COLOR_OPACITY = 0.1;
 
@@ -145,7 +143,7 @@ const HeatMap: FC<IHeatMapProps> = ({
     options
 }) => {
     const colorProbeRef = useRef<HTMLSpanElement>(null);
-    const [colors, setColors] = useState({ series: color || defaultSeriesColor, border: "" });
+    const [colors, setColors] = useState({ series: color || defaultSeriesColor });
     const [isTooltipOpen, setIsTooltipOpen] = useState(false);
     const [tooltip, setTooltip] = useState<{ title: string; items: IChartTooltipItem[]; key: string }>({
         title: "",
@@ -202,8 +200,7 @@ const HeatMap: FC<IHeatMapProps> = ({
 
         setColors({
             // Never blank the plot: keep a concrete color when possible, otherwise a token var / provided color.
-            series: resolveChartSeriesColor(probe, color) || color || defaultSeriesColor,
-            border: probe ? resolveCssColor(CELL_BORDER_COLOR_TOKEN, probe) : ""
+            series: resolveChartSeriesColor(probe, color) || color || defaultSeriesColor
         });
     }, [color]);
 
@@ -242,7 +239,7 @@ const HeatMap: FC<IHeatMapProps> = ({
                 reversed: isRtl,
                 minColor: Highcharts.color(colors.series).setOpacity(MIN_COLOR_OPACITY).get("rgba") as string,
                 maxColor: colors.series,
-                gridLineColor: colors.border,
+                gridLineColor: "var(--guit-sem-color-border-neutral-1)",
                 labels: {
                     style: CHART_AXIS_LABEL_STYLE,
                     formatter: (context: Highcharts.AxisLabelsFormatterContextObject) =>
@@ -273,7 +270,7 @@ const HeatMap: FC<IHeatMapProps> = ({
                 heatmap: {
                     animation: false,
                     borderWidth: 1,
-                    borderColor: colors.border,
+                    borderColor: "var(--guit-sem-color-border-neutral-1)",
                     nullColor: "transparent",
                     point: {
                         events: {
