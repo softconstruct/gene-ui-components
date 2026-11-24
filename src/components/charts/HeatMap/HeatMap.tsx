@@ -13,6 +13,8 @@ import ChartTooltip, { IChartTooltipItem } from "@internal/components/ChartToolt
 
 // Helpers
 import {
+    CHART_AXIS_LABEL_STYLE,
+    CHART_AXIS_TITLE_STYLE,
     DEFAULT_CHART_SERIES_COLOR_TOKEN,
     mergeChartOptions,
     resolveChartSeriesColor,
@@ -118,18 +120,6 @@ const MIN_COLOR_OPACITY = 0.1;
 
 // Stable reference: HighchartsReact re-runs `chart.update` (recreating the points) whenever this object changes.
 const plotContainerProps = { className: "heatMap__plot" };
-
-const axisTitleStyle = {
-    color: "var(--guit-sem-color-foreground-neutral-1)",
-    fontSize: "1.2rem",
-    fontWeight: "600"
-};
-
-const axisLabelStyle = {
-    color: "var(--guit-sem-color-foreground-neutral-2)",
-    fontSize: "1.2rem",
-    fontWeight: "500"
-};
 
 /**
  * Heat map chart built on Highcharts: a matrix of cells whose color intensity encodes the value.
@@ -254,7 +244,7 @@ const HeatMap: FC<IHeatMapProps> = ({
                 maxColor: colors.series,
                 gridLineColor: colors.border,
                 labels: {
-                    style: axisLabelStyle,
+                    style: CHART_AXIS_LABEL_STYLE,
                     formatter: (context: Highcharts.AxisLabelsFormatterContextObject) =>
                         valueFormatter(context.value as number)
                 }
@@ -262,8 +252,8 @@ const HeatMap: FC<IHeatMapProps> = ({
             xAxis: {
                 categories,
                 reversed: isRtl,
-                title: { text: xAxisTitle, style: axisTitleStyle },
-                labels: { style: axisLabelStyle },
+                title: { text: xAxisTitle, style: CHART_AXIS_TITLE_STYLE },
+                labels: { style: CHART_AXIS_LABEL_STYLE },
                 lineColor: "var(--guit-sem-color-border-neutral-2)",
                 tickColor: "var(--guit-sem-color-border-neutral-2)",
                 tickWidth: 1,
@@ -272,8 +262,8 @@ const HeatMap: FC<IHeatMapProps> = ({
             yAxis: {
                 categories: series.map(({ name }) => name),
                 opposite: isRtl,
-                title: { text: yAxisTitle, style: axisTitleStyle },
-                labels: { style: axisLabelStyle },
+                title: { text: yAxisTitle, style: CHART_AXIS_TITLE_STYLE },
+                labels: { style: CHART_AXIS_LABEL_STYLE },
                 gridLineWidth: 0
             },
             plotOptions: {
