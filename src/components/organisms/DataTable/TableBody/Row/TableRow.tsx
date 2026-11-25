@@ -7,6 +7,7 @@ import Button from "@components/atoms/Button";
 import Tooltip from "@components/molecules/Tooltip";
 
 import { useDirMode } from "../../context";
+import { resolveCopyValue } from "../../helper";
 import TableBodyCell from "../../TableBody/Cell/TableBodyCell";
 import {
     DataTableEditValues,
@@ -109,6 +110,7 @@ const TableRow = <TData,>({
                     const columnId = cell.column.id;
                     const value = cell.getValue();
                     const hasDraft = !!drafts && columnId in drafts;
+                    const copyValue = resolveCopyValue(cell, value);
 
                     return (
                         <TableBodyCell<TData, unknown>
@@ -122,6 +124,7 @@ const TableRow = <TData,>({
                             dirMode={dirMode}
                             value={value}
                             rowData={row.original}
+                            copyValue={copyValue}
                             isCellEditing={!!isEditing && !!cell.column.columnDef.meta?.editable}
                             isEditDisabled={isEditDisabled}
                             editValue={hasDraft ? drafts[columnId] : value}
