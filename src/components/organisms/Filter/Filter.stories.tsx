@@ -12,6 +12,8 @@ import TextField from "@components/molecules/TextField";
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 import Filter, { IFilterProps } from "./index";
 
+const saveCallbacks = { onSavedFiltersClick: fn(), onSave: fn() };
+
 const meta: Meta<IFilterProps> = {
     title: "Organisms/Filter",
     component: Filter,
@@ -42,8 +44,7 @@ const meta: Meta<IFilterProps> = {
             buttonDisabled: false,
             buttonLoading: false,
             savedFiltersText: "Saved Filters",
-            onSavedFiltersClick: fn(),
-            onSave: fn()
+            ...saveCallbacks
         },
         open: true,
         onApply: fn(),
@@ -64,7 +65,7 @@ const statusOptions = [
     { id: 3, label: "Blocked", value: "blocked" }
 ];
 
-const FilterTemplate: FC<IFilterProps> = ({ onApply, onReset, onClose, ...props }) => {
+const FilterTemplate: FC<IFilterProps> = ({ saveConfig, onApply, onReset, onClose, ...props }) => {
     const [open, setOpen] = useState(true);
     const [values, setValues] = useState(emptyValues);
 
@@ -74,6 +75,9 @@ const FilterTemplate: FC<IFilterProps> = ({ onApply, onReset, onClose, ...props 
             <Filter
                 {...props}
                 open={open}
+                saveConfig={
+                    typeof saveConfig === "function" ? saveConfig : saveConfig && { ...saveConfig, ...saveCallbacks }
+                }
                 onApply={() => {
                     onApply?.();
                     setOpen(false);
