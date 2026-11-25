@@ -436,6 +436,11 @@ export interface IDataTableBulkActionsConfig {
     texts?: IDataTableBulkActionsTexts;
 }
 
+/**
+ * State of the header checkbox, computed from the rows on the current page only.
+ */
+export type PageCheckboxState = "unchecked" | "indeterminate" | "checked";
+
 declare module "@tanstack/react-table" {
     // eslint-disable-next-line
     interface ColumnMeta<TData extends RowData, TValue> {

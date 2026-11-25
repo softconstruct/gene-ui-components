@@ -1,5 +1,5 @@
 import React, { CSSProperties, ReactNode, useRef } from "react";
-import { Cell, CellContext, ColumnDef } from "@tanstack/react-table";
+import { Cell, CellContext, ColumnDef, RowSelectionState } from "@tanstack/react-table";
 
 // Components
 import Text from "@components/atoms/Text";
@@ -19,7 +19,8 @@ import {
     DataTableColumn,
     DataTableColumnType,
     DataTableRenderEditCellArgs,
-    DataTableRowExpandChangeHandler
+    DataTableRowExpandChangeHandler,
+    PageCheckboxState
 } from "./types";
 
 /**
@@ -237,3 +238,46 @@ export const withExpanderColumn = <TData,>(
     },
     ...columns
 ];
+
+/**
+ * Handles a click on a row checkbox: selects the row, or unselects it if it is already selected.
+ */
+export const toggleRowSelection = (selectedRowIds: string[], rowId: string): string[] =>
+    selectedRowIds.includes(rowId) ? selectedRowIds.filter((id) => id !== rowId) : [...selectedRowIds, rowId];
+
+/**
+ * State of the header checkbox: how many of the current page's rows are selected.
+ * Rows selected on other pages don't count.
+ */
+export const getPageCheckboxState = (selectedRowIds: string[], pageRowIds: string[]): PageCheckboxState => {
+    if (pageRowIds.length === 0) return "unchecked";
+
+    const selected = new Set(selectedRowIds);
+    const selectedOnPage = pageRowIds.filter((id) => selected.has(id)).length;
+
+    if (selectedOnPage === 0) return "unchecked";
+    return selectedOnPage === pageRowIds.length ? "checked" : "indeterminate";
+};
+
+/**
+ * Handles a click on the header checkbox. It changes only the rows of the current page:
+ * - if all of them are selected, unselects them;
+ * - otherwise (none or some selected), selects the ones that aren't selected yet.
+ * Rows selected on other pages stay selected.
+ */
+export const togglePageSelection = (selectedRowIds: string[], pageRowIds: string[]): string[] => {
+    const pageIds = new Set(pageRowIds);
+
+    if (getPageCheckboxState(selectedRowIds, pageRowIds) === "checked") {
+        return selectedRowIds.filter((id) => !pageIds.has(id));
+    }
+
+    const selected = new Set(selectedRowIds);
+    return [...selectedRowIds, ...pageRowIds.filter((id) => !selected.has(id))];
+};
+
+/**
+ * Converts the selection to TanStack's `rowSelection` state, so `row.getIsSelected()` works.
+ */
+export const toRowSelectionState = (selectedRowIds: string[]): RowSelectionState =>
+    Object.fromEntries(selectedRowIds.map((id) => [id, true]));

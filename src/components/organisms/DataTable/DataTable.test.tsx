@@ -16,10 +16,12 @@ import {
     DataTableColumn,
     DataTableRenderCellArgs,
     DataTableRenderEditCellArgs,
-    IDataTableEditConfig
+    IDataTableEditConfig,
+    PageCheckboxState
 } from "@components/organisms/DataTable/types";
 
 import { mockColumns, mockData } from "../../../../stories/data/__dataTable";
+import { getPageCheckboxState, togglePageSelection, toggleRowSelection, toRowSelectionState } from "./helper";
 // Components
 import DataTable, { IDataTableProps } from "./index";
 
@@ -2079,5 +2081,96 @@ describe("Table Component - Column types", () => {
 
         setup.unmount();
         editMode.unmount();
+    });
+});
+
+describe("Table Component - row selection helpers", () => {
+    describe("toggleRowSelection", () => {
+        it("adds a row that is not selected", () => {
+            expect(toggleRowSelection(["1"], "2")).toEqual(["1", "2"]);
+        });
+
+        it("removes a row that is selected", () => {
+            expect(toggleRowSelection(["1", "2", "3"], "2")).toEqual(["1", "3"]);
+        });
+
+        it("adds a row to an empty selection", () => {
+            expect(toggleRowSelection([], "1")).toEqual(["1"]);
+        });
+
+        it("does not mutate the given selection", () => {
+            const selectedRowIds = ["1"];
+            toggleRowSelection(selectedRowIds, "2");
+            expect(selectedRowIds).toEqual(["1"]);
+        });
+    });
+
+    describe("getPageCheckboxState", () => {
+        it.each<[PageCheckboxState, string, string[], string[]]>([
+            ["unchecked", "nothing is selected", [], ["1", "2"]],
+            ["unchecked", "only rows of other pages are selected", ["9"], ["1", "2"]],
+            ["indeterminate", "some rows of the page are selected", ["1"], ["1", "2"]],
+            ["checked", "every row of the page is selected", ["1", "2"], ["1", "2"]],
+            ["checked", "every row of the page and rows of other pages are selected", ["9", "1", "2"], ["1", "2"]],
+            ["unchecked", "the page is empty", ["1"], []]
+        ])("should be %s when %s", (expected, _, selectedRowIds, pageRowIds) => {
+            expect(getPageCheckboxState(selectedRowIds, pageRowIds)).toBe(expected);
+        });
+
+        it("should be indeterminate after the page size grows past the selected rows", () => {
+            const selectedRowIds = Array.from({ length: 25 }, (_, i) => String(i));
+            const pageRowIds = Array.from({ length: 50 }, (_, i) => String(i));
+
+            expect(getPageCheckboxState(selectedRowIds, pageRowIds)).toBe("indeterminate");
+        });
+    });
+
+    describe("togglePageSelection", () => {
+        it("selects every row of the page when none is selected", () => {
+            expect(togglePageSelection([], ["1", "2"])).toEqual(["1", "2"]);
+        });
+
+        it("adds only the missing rows of the page when some are selected", () => {
+            expect(togglePageSelection(["2"], ["1", "2", "3"])).toEqual(["2", "1", "3"]);
+        });
+
+        it("clears the page's rows when every row of the page is selected", () => {
+            expect(togglePageSelection(["1", "2"], ["1", "2"])).toEqual([]);
+        });
+
+        it("keeps rows of other pages when selecting the page", () => {
+            expect(togglePageSelection(["9"], ["1", "2"])).toEqual(["9", "1", "2"]);
+        });
+
+        it("keeps rows of other pages when clearing the page", () => {
+            expect(togglePageSelection(["9", "1", "2"], ["1", "2"])).toEqual(["9"]);
+        });
+
+        it("selects the whole page after the page size grows past the selected rows", () => {
+            const selectedRowIds = Array.from({ length: 25 }, (_, i) => String(i));
+            const pageRowIds = Array.from({ length: 50 }, (_, i) => String(i));
+
+            expect(togglePageSelection(selectedRowIds, pageRowIds)).toEqual(pageRowIds);
+        });
+
+        it("returns the selection unchanged for an empty page", () => {
+            expect(togglePageSelection(["1"], [])).toEqual(["1"]);
+        });
+
+        it("does not mutate the given selection", () => {
+            const selectedRowIds = ["1"];
+            togglePageSelection(selectedRowIds, ["1", "2"]);
+            expect(selectedRowIds).toEqual(["1"]);
+        });
+    });
+
+    describe("toRowSelectionState", () => {
+        it("maps every selected id to true", () => {
+            expect(toRowSelectionState(["1", "2"])).toEqual({ "1": true, "2": true });
+        });
+
+        it("returns an empty state for an empty selection", () => {
+            expect(toRowSelectionState([])).toEqual({});
+        });
     });
 });
