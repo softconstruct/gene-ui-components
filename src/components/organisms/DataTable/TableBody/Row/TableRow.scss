@@ -65,6 +65,10 @@
             var(--guit-sem-color-border-neutral-1);
     }
 
+    &:last-child > &__actionsWrapper {
+        border-bottom: none;
+    }
+
     &__actions {
         position: absolute;
         inset-inline-end: 0;
