@@ -5,6 +5,8 @@ import { mount, ReactWrapper } from "enzyme";
 import Loader from "@components/atoms/Loader";
 import Popover from "@components/atoms/Popover/Popover";
 import { IMenuProps, Menu, MenuItem } from "@components/molecules/Menu";
+import MenuItemButton from "@components/molecules/Menu/MenuItemButton";
+import Tooltip from "@components/molecules/Tooltip";
 
 import GeneUIProvider from "../../providers/GeneUIProvider";
 
@@ -53,6 +55,33 @@ describe("Menu ", () => {
         const wrapper = setup.setProps({ swappable: true });
 
         expect(wrapper.find(".menu_swappable")).toBeTruthy();
+    });
+
+    it("should render the item title as truncatable text", () => {
+        expect(setup.find(".menu__item .ellipsis-text").text()).toBe("test");
+    });
+
+    it("should not wrap ComponentRender content as text", () => {
+        const wrapper = mount(
+            <Menu setPropsForPopover={() => {}} open>
+                <MenuItem id="custom" ComponentRender={() => <i className="customContent" />} />
+            </Menu>,
+            { wrappingComponent: GeneUIProvider }
+        );
+
+        expect(wrapper.find(".menu__item .customContent").exists()).toBeTruthy();
+        expect(wrapper.find(".menu__item .ellipsis-text").exists()).toBeFalsy();
+        wrapper.unmount();
+    });
+
+    it("should render the header title as truncatable text with tooltip", () => {
+        const wrapper = mount(<MenuItemButton type="header" onItemClickHandler={() => {}} title="Header title" />, {
+            wrappingComponent: GeneUIProvider
+        });
+
+        expect(wrapper.find(".menu__headerTitle.ellipsis-text").last().text()).toBe("Header title");
+        expect(wrapper.find(Tooltip).prop("text")).toBe("Header title");
+        wrapper.unmount();
     });
 
     it.each<IMenuProps["size"]>(["large", "medium", "small"])("should have %s size", (size) => {
