@@ -66,6 +66,8 @@ const MenuItemButton: FC<IMenuItemButtonProps> = ({
         return <></>;
     }, [type, selected, IconAfter, onItemClick, danger]);
 
+    const titleElement = title ? <span className={type === "header" ? "menu__headerTitle" : ""}>{title}</span> : null;
+
     return (
         <>
             <button
@@ -92,7 +94,7 @@ const MenuItemButton: FC<IMenuItemButtonProps> = ({
                             <ChevronLeft className="menu__icon" size={20} />
                         ))}
                     {IconBefore && <IconBefore className="menu__icon" size={20} />}
-                    {title ? <span className={type === "header" ? "menu__headerTitle" : ""}>{title}</span> : children}
+                    {children || titleElement}
                 </span>
                 {MemoizedIconAfter}
             </button>
