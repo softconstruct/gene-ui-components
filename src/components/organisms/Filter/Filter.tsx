@@ -30,6 +30,11 @@ interface IFilterSaveConfig {
      */
     popoverLabelText?: string;
     /**
+     * Shows the loading state of the save (confirm) button in the save popover.
+     * @default false
+     */
+    popoverSaveLoading?: boolean;
+    /**
      * Disables the Save button.
      * @default false
      */
@@ -54,6 +59,18 @@ interface IFilterSaveConfig {
      * storing the current filter values under that name is up to the consumer.
      */
     onSave: (name: string) => void;
+}
+
+interface IFilterSaveHelpers {
+    /**
+     * Closes the save popover.
+     */
+    closePopover: () => void;
+    /**
+     * Updates the save configuration, e.g. `update({ popoverSaveLoading: true })`.
+     * The passed values stay applied over the returned configuration until they are updated again.
+     */
+    update: (config: Partial<IFilterSaveConfig>) => void;
 }
 
 interface IFilterProps {
@@ -93,11 +110,22 @@ interface IFilterProps {
      */
     resetDisabled?: boolean;
     /**
-     * Configuration object for saving the filters.
+     * Configuration for saving the filters: a plain object, or a callback that receives the `closePopover` and `update`
+     * helpers and returns that object.
      * Providing it renders the Save button with its save popover, and the Saved Filters button
      * when `onSavedFiltersClick` is set; otherwise the panel has no saving.
+     * With a plain object the save popover closes on save; with a callback it stays open until `closePopover` is called.
+     * @example
+     * saveConfig={({ closePopover, update }) => ({
+     *   onSave: async (name) => {
+     *     update({ popoverSaveLoading: true });
+     *     await saveFilter(name);
+     *     update({ popoverSaveLoading: false });
+     *     closePopover();
+     *   }
+     * })}
      */
-    saveConfig?: IFilterSaveConfig;
+    saveConfig?: IFilterSaveConfig | ((helpers: IFilterSaveHelpers) => IFilterSaveConfig);
     /**
      * Callback fired when the Apply button is clicked.
      */
@@ -132,18 +160,29 @@ const Filter: FC<IFilterProps> = ({
     const [saveButtonProps, setSaveButtonProps] = useState({});
     const [isSavePopoverOpen, setIsSavePopoverOpen] = useState(false);
     const [saveName, setSaveName] = useState("");
+    const [saveConfigUpdates, setSaveConfigUpdates] = useState<Partial<IFilterSaveConfig>>({});
 
-    const closeSavePopover = () => {
-        setIsSavePopoverOpen(false);
-        setSaveName("");
-    };
+    const resolvedSaveConfig =
+        typeof saveConfig === "function"
+            ? {
+                  ...saveConfig({
+                      closePopover: () => setIsSavePopoverOpen(false),
+                      update: (config) => setSaveConfigUpdates((updates) => ({ ...updates, ...config }))
+                  }),
+                  ...saveConfigUpdates
+              }
+            : saveConfig;
 
     useEffect(() => {
         if (!open || !saveConfig) {
-            closeSavePopover();
+            setIsSavePopoverOpen(false);
             setSaveButtonProps({});
         }
     }, [open, saveConfig]);
+
+    useEffect(() => {
+        if (!isSavePopoverOpen) setSaveName("");
+    }, [isSavePopoverOpen]);
 
     const renderSavedFiltersButton = ({
         savedFiltersText = "Saved Filters",
@@ -168,6 +207,7 @@ const Filter: FC<IFilterProps> = ({
         popoverSaveText = "Save",
         popoverCancelText = "Cancel",
         popoverLabelText,
+        popoverSaveLoading,
         onSave
     }: Omit<IFilterSaveConfig, "savedFiltersText" | "onSavedFiltersClick">) => (
         <>
@@ -177,7 +217,7 @@ const Filter: FC<IFilterProps> = ({
                 appearance="secondary"
                 disabled={buttonDisabled}
                 loading={buttonLoading}
-                onClick={() => (isSavePopoverOpen ? closeSavePopover() : setIsSavePopoverOpen(true))}
+                onClick={() => setIsSavePopoverOpen(!isSavePopoverOpen)}
             >
                 {buttonText}
             </Button>
@@ -186,7 +226,7 @@ const Filter: FC<IFilterProps> = ({
                 position={document.dir === "rtl" ? "top-right" : "top-left"}
                 withArrow={false}
                 setProps={setSaveButtonProps}
-                onClose={closeSavePopover}
+                onClose={() => setIsSavePopoverOpen(false)}
                 mobileHeightMode="fit"
             >
                 <PopoverBody withScrollbar={false}>
@@ -206,15 +246,16 @@ const Filter: FC<IFilterProps> = ({
                             id: "filter-save-cancel",
                             text: popoverCancelText,
                             appearance: "secondary",
-                            onClick: closeSavePopover
+                            onClick: () => setIsSavePopoverOpen(false)
                         },
                         {
                             id: "filter-save-submit",
                             text: popoverSaveText,
                             disabled: !saveName,
+                            loading: popoverSaveLoading,
                             onClick: () => {
                                 onSave(saveName);
-                                closeSavePopover();
+                                if (typeof saveConfig !== "function") setIsSavePopoverOpen(false);
                             }
                         }
                     ]}
@@ -241,12 +282,12 @@ const Filter: FC<IFilterProps> = ({
                 },
                 { children: applyText, disabled: applyDisabled, onClick: onApply }
             ]}
-            headerSwappable={saveConfig && renderSavedFiltersButton(saveConfig)}
-            footerSwappable={saveConfig && renderSaveSection(saveConfig)}
+            headerSwappable={resolvedSaveConfig && renderSavedFiltersButton(resolvedSaveConfig)}
+            footerSwappable={resolvedSaveConfig && renderSaveSection(resolvedSaveConfig)}
         >
             {children}
         </Drawer>
     );
 };
 
-export { IFilterProps, IFilterSaveConfig, Filter as default };
+export { IFilterProps, IFilterSaveConfig, IFilterSaveHelpers, Filter as default };

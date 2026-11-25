@@ -1,11 +1,12 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
+import { act } from "react-dom/test-utils";
 
 // Components
 import Button from "@components/atoms/Button";
 import GeneUIProvider from "@components/providers/GeneUIProvider";
 
-import Filter, { IFilterProps, IFilterSaveConfig } from "./index";
+import Filter, { IFilterProps, IFilterSaveConfig, IFilterSaveHelpers } from "./index";
 
 const texts = {
     title: "Filters",
@@ -138,6 +139,15 @@ describe("Filter", () => {
         expect(setup.find("button.filter__save").hasClass("button_loading")).toBeTruthy();
     });
 
+    it("should render saveConfig popoverSaveLoading correctly", () => {
+        render();
+        openSave();
+        expect(popoverButtons().last().hasClass("button_loading")).toBeFalsy();
+        render({ saveConfig: saveConfig({ popoverSaveLoading: true }) });
+        expect(popoverButtons().last().hasClass("button_loading")).toBeTruthy();
+        expect(setup.find("button.filter__save").hasClass("button_loading")).toBeFalsy();
+    });
+
     it("should render saveConfig buttonDisabled correctly", () => {
         render();
         expect(setup.find("button.filter__save").prop("disabled")).toBeFalsy();
@@ -195,6 +205,29 @@ describe("Filter", () => {
         popoverButtons().last().simulate("click");
         setup.update();
         expect(onSave).toHaveBeenCalledWith("  My filter ");
+        expect(setup.find(".popover").exists()).toBeFalsy();
+    });
+
+    it("should keep the save popover open on save until closePopover of the saveConfig callback is called", () => {
+        const onSave = jest.fn();
+        let helpers: IFilterSaveHelpers;
+        render({
+            saveConfig: (saveHelpers) => {
+                helpers = saveHelpers;
+                return saveConfig({ onSave });
+            }
+        });
+        openSave();
+        typeName("My filter");
+        popoverButtons().last().simulate("click");
+        setup.update();
+        expect(onSave).toHaveBeenCalledWith("My filter");
+        expect(setup.find(".popover").exists()).toBeTruthy();
+        act(() => helpers.update({ popoverSaveLoading: true }));
+        setup.update();
+        expect(popoverButtons().last().hasClass("button_loading")).toBeTruthy();
+        act(() => helpers.closePopover());
+        setup.update();
         expect(setup.find(".popover").exists()).toBeFalsy();
     });
 

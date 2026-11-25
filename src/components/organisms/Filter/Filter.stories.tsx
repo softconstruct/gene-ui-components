@@ -38,6 +38,7 @@ const meta: Meta<IFilterProps> = {
             popoverSaveText: "Save",
             popoverCancelText: "Cancel",
             popoverLabelText: "Filter Name",
+            popoverSaveLoading: false,
             buttonDisabled: false,
             buttonLoading: false,
             savedFiltersText: "Saved Filters",
@@ -115,5 +116,24 @@ const FilterTemplate: FC<IFilterProps> = ({ onApply, onReset, onClose, ...props 
 };
 
 export const Default: Story = {
+    render: (props) => <FilterTemplate {...props} />
+};
+
+export const SaveCallback: Story = {
+    argTypes: {
+        saveConfig: args({ control: "false", ...propCategory.functionality })
+    },
+    args: {
+        saveConfig: ({ closePopover, update }) => ({
+            popoverLabelText: "Filter Name",
+            onSave: () => {
+                update({ popoverSaveLoading: true });
+                setTimeout(() => {
+                    update({ popoverSaveLoading: false });
+                    closePopover();
+                }, 1000);
+            }
+        })
+    },
     render: (props) => <FilterTemplate {...props} />
 };
