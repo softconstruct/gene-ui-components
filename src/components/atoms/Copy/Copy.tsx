@@ -80,7 +80,7 @@ const Copy: FC<ICopyProps> = ({
                     clearTimeout(id);
                 }, 2000);
             })
-            .catch((error) => console.error("Failed to copy:", error));
+            .catch(() => {});
     };
 
     return (
