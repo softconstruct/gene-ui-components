@@ -2088,19 +2088,6 @@ describe("Table Component - Copyable cells", () => {
 
     type CopyTableWrapper = ReactWrapper<IDataTableProps<MockDataType>>;
 
-    const writeText = jest.fn().mockResolvedValue(undefined);
-
-    beforeAll(() => {
-        Object.defineProperty(window.navigator, "clipboard", {
-            value: { writeText },
-            configurable: true
-        });
-    });
-
-    beforeEach(() => {
-        writeText.mockClear();
-    });
-
     const mountTable = async (
         columns: DataTableColumn<MockDataType>[],
         props: Partial<IDataTableProps<MockDataType>> = {}
@@ -2138,14 +2125,10 @@ describe("Table Component - Copyable cells", () => {
         setup.unmount();
     });
 
-    it("puts the value of the cell as text on the clipboard", async () => {
+    it("copies the value of the cell as text when getCopyValue is not provided", async () => {
         const setup = await mountTable([{ accessorKey: "Id", header: "Id", copyable: true }]);
 
-        await act(async () => {
-            copyControls(setup).first().simulate("click");
-        });
-
-        expect(writeText).toHaveBeenCalledWith(String(copyData[0].Id));
+        expect(setup.find(Copy).first().prop("value")).toBe(String(copyData[0].Id));
 
         setup.unmount();
     });
