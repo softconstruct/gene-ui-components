@@ -7,7 +7,7 @@ import { args, propCategory } from "../../../../stories/assets/storybook.globals
 import Copy, { ICopyProps } from "./index";
 
 const meta: Meta<ICopyProps> = {
-    title: "Molecules/Copy",
+    title: "Atoms/Copy",
     component: Copy,
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
@@ -49,7 +49,7 @@ export const Default: Story = {
     }
 };
 
-export const copyValue: Story = {
+export const CopyValue: Story = {
     render: (props) => {
         return <Copy {...props} />;
     },
