@@ -4,6 +4,7 @@ import classNames from "classnames";
 import { CheckMark, ChevronLeft, ChevronRight, IconProps } from "@geneui/icons";
 
 import Divider from "@components/atoms/Divider";
+import Text from "@components/atoms/Text";
 
 interface IMenuItemButtonProps {
     type: "header" | "parent" | "simple" | "custom";
@@ -66,7 +67,15 @@ const MenuItemButton: FC<IMenuItemButtonProps> = ({
         return <></>;
     }, [type, selected, IconAfter, onItemClick, danger]);
 
-    const titleElement = title ? <span className={type === "header" ? "menu__headerTitle" : ""}>{title}</span> : null;
+    const titleElement = title ? (
+        <Text
+            as="span"
+            variant={type === "header" ? "bodyMediumSemibold" : "bodyMediumMedium"}
+            className={type === "header" ? "menu__headerTitle ellipsis-text" : ""}
+        >
+            {title}
+        </Text>
+    ) : null;
 
     return (
         <>

@@ -20,6 +20,7 @@ import { IconProps } from "@geneui/icons";
 import Loader from "@components/atoms/Loader";
 import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
 import Scrollbar from "@components/atoms/Scrollbar";
+import Text from "@components/atoms/Text";
 import Empty from "@components/molecules/Empty";
 import MenuItemButton from "@components/molecules/Menu/MenuItemButton";
 import Tooltip from "@components/molecules/Tooltip";
@@ -239,9 +240,9 @@ const MenuItem: FC<IMenuItemProps> = (props) => {
 
     const itemLabel = shouldRenderTitleText ? (
         <Tooltip text={itemTitleText} isVisible={isTitleTextTruncated}>
-            <span className="ellipsis-text" ref={titleTextRef}>
+            <Text as="span" className="ellipsis-text" ref={titleTextRef}>
                 {itemTitleText}
-            </span>
+            </Text>
         </Tooltip>
     ) : (
         children
