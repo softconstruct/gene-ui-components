@@ -21,7 +21,8 @@ import {
     isCalendarPageOutOfBounds,
     isMonthOutOfBounds,
     isSameCalendarPage,
-    orderPanelDates
+    orderPanelDates,
+    toRange
 } from "../../helpers";
 // Types
 import {
@@ -59,7 +60,12 @@ interface ICalendarProps {
      */
     activeField?: DatePickerRangeFields;
     /**
-     * The days the edited field can take; the others are disabled.
+     * The only day a range picker holds, which the next picked day completes the range with; `null`
+     * while it holds no day or both. Left out by a single picker.
+     */
+    rangeAnchor?: CalendarDate | null;
+    /**
+     * The days that can be picked; the others are disabled.
      */
     bounds: DateBounds;
     /**
@@ -118,7 +124,7 @@ const getInitialDates = (
         return Array.from({ length: stateCount }, (_, index) => addMonths(date, index));
     }
 
-    // The months of a value are shown whatever the bounds of the edited field; without one, the bounds decide.
+    // The months of a value are shown whatever the bounds; without one, the bounds decide.
     const limits = start || end ? createBounds() : bounds;
     const isEmpty = (date: CalendarDate) => isCalendarPageOutOfBounds("days", date, limits);
     const first = start ?? (end ? addMonths(end, -1) : getNearestAvailableDate(today, bounds));
@@ -143,6 +149,7 @@ const Calendar: FC<ICalendarProps> = ({
     texts,
     selection,
     activeField,
+    rangeAnchor,
     bounds,
     presets,
     focusOnOpen,
@@ -179,17 +186,10 @@ const Calendar: FC<ICalendarProps> = ({
         return panelCount === 1 || isSameCalendarPage(view, nearest, date) ? nearest : date;
     });
 
-    const previewStart =
-        activeField === PICKER_RANGE_FIELDS.START && end && hoverDate && compareDates(hoverDate, end) <= 0;
-    const previewEnd =
-        activeField === PICKER_RANGE_FIELDS.END && start && hoverDate && compareDates(hoverDate, start) >= 0;
-    const rangeStart = previewStart ? hoverDate : start;
-    const rangeEnd = previewEnd ? hoverDate : end;
+    const previewRange = rangeAnchor && hoverDate ? toRange(rangeAnchor, hoverDate) : null;
     // A start typed past the end, or an end typed before the start, is not a range until the field is left.
-    const range =
-        isRange && rangeStart && rangeEnd && compareDates(rangeStart, rangeEnd) <= 0
-            ? { start: rangeStart, end: rangeEnd }
-            : null;
+    const selectedRange = start && end && compareDates(start, end) <= 0 ? { start, end } : null;
+    const range = isRange ? (previewRange ?? selectedRange) : null;
 
     const updatePanel = (index: number, changes: Partial<PanelState>, focusGrid = false) => {
         setPanels((current) => {
@@ -244,6 +244,9 @@ const Calendar: FC<ICalendarProps> = ({
         const previousKey = previous.field === PICKER_RANGE_FIELDS.END ? previous.end : previous.start;
 
         previousKeysRef.current = { field: activeField, start: startKey, end: endKey };
+
+        // A picked day moves the editing on to the other field, and leaves the months where they are.
+        if (previous.field !== activeField && (previous.start !== startKey || previous.end !== endKey)) return;
 
         // A range set at once, like by a preset, is shown from the month of its start, its end beside it.
         if (panelCount > 1 && start && end && previous.start !== startKey && previous.end !== endKey) {

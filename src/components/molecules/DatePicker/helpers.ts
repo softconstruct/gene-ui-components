@@ -10,6 +10,7 @@ import {
     CALENDAR_PAGE_MONTHS,
     DAYS_IN_WEEK,
     DEFAULT_FORMAT,
+    DEFAULT_LOCALE,
     DEFAULT_LOCALIZATION,
     FIRST_SUPPORTED_DATE,
     LAST_SUPPORTED_DATE,
@@ -56,6 +57,12 @@ export const compareDates = (a: CalendarDate, b: CalendarDate): number =>
 
 export const isSameDate = (a?: CalendarDate | null, b?: CalendarDate | null): boolean =>
     !!a && !!b && compareDates(a, b) === 0;
+
+/**
+ * The two days as a range, the earlier one as its start.
+ */
+export const toRange = (a: CalendarDate, b: CalendarDate): CalendarRange =>
+    compareDates(a, b) <= 0 ? { start: a, end: b } : { start: b, end: a };
 
 /**
  * Brings every part into its range: the year into the supported years, the month into `1`..`12`
@@ -159,10 +166,7 @@ const earliest = (date: CalendarDate, other?: CalendarDate | null): CalendarDate
  * Bounds from optional limits, always kept inside the supported days. Several limits on one side
  * combine into the tightest one.
  */
-export const createBounds = (
-    min: (CalendarDate | null | undefined)[] = [],
-    max: (CalendarDate | null | undefined)[] = []
-): DateBounds => ({
+export const createBounds = (min: (CalendarDate | null)[] = [], max: (CalendarDate | null)[] = []): DateBounds => ({
     min: min.reduce<CalendarDate>((result, limit) => latest(result, limit), FIRST_SUPPORTED_DATE),
     max: max.reduce<CalendarDate>((result, limit) => earliest(result, limit), LAST_SUPPORTED_DATE)
 });
@@ -381,7 +385,7 @@ export const resolveRangePreset = ({ value }: DatePickerRangePreset, today: Cale
 
     if (!start || !end) return null;
 
-    return compareDates(start, end) <= 0 ? { start, end } : { start: end, end: start };
+    return toRange(start, end);
 };
 
 /**
@@ -483,7 +487,7 @@ export const formatDate = ({ year, month, day }: CalendarDate, format: DatePicke
  * `30/04/2026`); anything that is not a complete date is `null`. The text after the last part may
  * be left out, as the input mask does while the date is typed.
  */
-export const parseDate = (text: string | null | undefined, format: DatePickerFormat): CalendarDate | null => {
+export const parseDate = (text: string | null, format: DatePickerFormat): CalendarDate | null => {
     const match = text ? getFormatPattern(format).exec(text) : null;
 
     if (!match) return null;
@@ -516,9 +520,15 @@ const getFormatter = (locale: string, options: Intl.DateTimeFormatOptions): Intl
     let formatter = formatters.get(key);
 
     if (!formatter) {
-        // Some locales default to another calendar (Persian for `fa-IR`, Buddhist for `th-TH`), which
-        // would put their day numbers and month names on the Gregorian grid.
-        formatter = new Intl.DateTimeFormat(locale, { ...options, timeZone: "UTC", calendar: "gregory" });
+        try {
+            // Some locales default to another calendar (Persian for `fa-IR`, Buddhist for `th-TH`), which
+            // would put their day numbers and month names on the Gregorian grid.
+            formatter = new Intl.DateTimeFormat(locale, { ...options, timeZone: "UTC", calendar: "gregory" });
+        } catch {
+            // A locale that is not a language tag, like `en_US` or an empty string, throws.
+            formatter = getFormatter(DEFAULT_LOCALE, options);
+        }
+
         formatters.set(key, formatter);
     }
 

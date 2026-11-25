@@ -88,7 +88,7 @@ const CalendarPresets: FC<ICalendarPresetsProps> = ({
         const [previousKey, nextKey] =
             isDocumentRTL() && orientation === "horizontal" ? [forward, backward] : [backward, forward];
         const index = tabStopKey ? enabledKeys.indexOf(tabStopKey) : -1;
-        const targets: Record<string, string | undefined> = {
+        const targets: Partial<Record<string, string>> = {
             [nextKey]: enabledKeys[Math.min(index + 1, enabledKeys.length - 1)],
             [previousKey]: enabledKeys[Math.max(index - 1, 0)],
             [KEYS.HOME]: enabledKeys[0],

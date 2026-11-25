@@ -19,7 +19,8 @@ import {
     parseDate,
     resolveRangePreset,
     resolveSinglePreset,
-    toISO
+    toISO,
+    toRange
 } from "../helpers";
 // Types
 import {
@@ -52,11 +53,7 @@ const getTypedDateValue = (text: string, format: DatePickerFormat, bounds: DateB
  * the typed text verbatim while the field is being typed into. The selected day is derived from
  * the text, never stored, so the calendar cannot drift from the input.
  */
-const useDateField = (
-    value: string | null | undefined,
-    defaultValue: string | null | undefined,
-    format: DatePickerFormat
-) => {
+const useDateField = (format: DatePickerFormat, value?: string | null, defaultValue?: string | null) => {
     const { committedValue, draftValue, isEditing, setValue, setDraftValue, setIsEditing } = usePickerFieldState(
         value,
         defaultValue
@@ -81,6 +78,7 @@ const useDateField = (
         text: draftValue ?? (committedDate ? formatDate(committedDate, format) : ""),
         value: draftValue !== null ? getDraftValue(draftValue) : committedValue,
         committedValue,
+        committedDate,
         isEditing,
         date: draftValue !== null ? draftDate : committedDate,
         lastValidValueRef,
@@ -180,7 +178,7 @@ export const useSingleDatePicker = ({
     onKeyDown,
     ...options
 }: IUseSingleDatePickerOptions) => {
-    const field = useDateField(value, defaultValue, format);
+    const field = useDateField(format, value, defaultValue);
     const inputRef = useRef<HTMLInputElement | null>(null);
     const limits = useLimits(min, max);
     const bounds = useMemo(() => createBounds([limits.min], [limits.max]), [limits]);
@@ -254,9 +252,10 @@ interface IUseRangeDatePickerOptions extends IDatePickerHookOptions {
 }
 
 /**
- * State and interaction of the range picker, as the props of its inputs, popover and calendar. Each
- * field is bounded by the other's value, so the start never passes the end. A day picked for the
- * start moves the editing on to the end.
+ * State and interaction of the range picker, as the props of its inputs, popover and calendar. A day
+ * picked in the calendar starts a new range in the edited field, and the next day completes the range,
+ * the earlier day as its start; each of them moves the editing on to the other field. A typed date
+ * stays bounded by the other field.
  */
 export const useRangeDatePicker = ({
     value,
@@ -268,8 +267,8 @@ export const useRangeDatePicker = ({
     ...options
 }: IUseRangeDatePickerOptions) => {
     const fields = {
-        start: useDateField(value ? value.start : undefined, defaultValue?.start, format),
-        end: useDateField(value ? value.end : undefined, defaultValue?.end, format)
+        start: useDateField(format, value?.start, defaultValue?.start),
+        end: useDateField(format, value?.end, defaultValue?.end)
     };
     const inputRefs = {
         start: useRef<HTMLInputElement | null>(null),
@@ -277,8 +276,12 @@ export const useRangeDatePicker = ({
     };
     const limits = useLimits(min, max);
     const limitBounds = useMemo(() => createBounds([limits.min], [limits.max]), [limits]);
+    // Typed text counts once the field holds it as its value.
+    const startDate = fields.start.committedDate;
+    const endDate = fields.end.committedDate;
+    const rangeAnchor = startDate && endDate ? null : (startDate ?? endDate);
 
-    const getBounds = (field: DatePickerRangeFields): DateBounds =>
+    const getTypedBounds = (field: DatePickerRangeFields): DateBounds =>
         field === PICKER_RANGE_FIELDS.END
             ? createBounds([limits.min, fields.start.date], [limits.max])
             : createBounds([limits.min], [limits.max, fields.end.date]);
@@ -288,22 +291,34 @@ export const useRangeDatePicker = ({
         fields,
         inputRefs,
         initialField: PICKER_RANGE_FIELDS.START,
-        getTypedValue: (field, text) => getTypedChange(fields[field], text, format, getBounds(field)),
-        resolveLeave: (field, isEditing) => resolveDateLeave(fields[field], isEditing, format, getBounds(field))
+        getTypedValue: (field, text) => getTypedChange(fields[field], text, format, getTypedBounds(field)),
+        resolveLeave: (field, isEditing) => resolveDateLeave(fields[field], isEditing, format, getTypedBounds(field))
     });
 
     const { activeField, getFieldHandlers } = core;
     const { focusOnOpen, onTabOut, ...popoverProps } = core.popoverProps;
 
     const handleSelect = (date: CalendarDate, event: SyntheticEvent) => {
-        core.commit(activeField, toISO(date), event);
+        const isStartEdited = activeField === PICKER_RANGE_FIELDS.START;
+        const nextField = isStartEdited ? PICKER_RANGE_FIELDS.END : PICKER_RANGE_FIELDS.START;
+        const picked = toISO(date);
 
-        if (activeField !== PICKER_RANGE_FIELDS.START) return;
+        if (rangeAnchor) {
+            const range = toRange(rangeAnchor, date);
 
-        core.setActiveField(PICKER_RANGE_FIELDS.END);
+            core.commitValues({ start: toISO(range.start), end: toISO(range.end) }, activeField, event);
+        } else {
+            core.commitValues(
+                isStartEdited ? { start: picked, end: null } : { start: null, end: picked },
+                activeField,
+                event
+            );
+        }
 
-        // A pick with the mouse leaves the focus in the start input; from the keyboard it stays in the calendar.
-        if (!core.isFocusInPopover()) core.moveFocusTo(PICKER_RANGE_FIELDS.END);
+        core.setActiveField(nextField);
+
+        // A pick with the mouse leaves the focus in the input; from the keyboard it stays in the calendar.
+        if (!core.isFocusInPopover()) core.moveFocusTo(nextField);
     };
 
     const getPresets = (): CalendarPresetState[] | undefined => {
@@ -348,14 +363,12 @@ export const useRangeDatePicker = ({
             onKeyDown: (event: KeyboardEvent<HTMLInputElement>, field: DatePickerRangeFields) =>
                 getFieldHandlers(field).onKeyDown(event)
         },
-        popoverProps: {
-            ...popoverProps,
-            position: core.getPopoverPosition(activeField === PICKER_RANGE_FIELDS.END ? "end" : "start")
-        },
+        popoverProps: { ...popoverProps, position: core.getPopoverPosition("start") },
         calendarProps: {
             selection: { start: fields.start.date, end: fields.end.date },
             activeField,
-            bounds: getBounds(activeField),
+            rangeAnchor,
+            bounds: limitBounds,
             presets: popoverProps.open ? getPresets() : undefined,
             focusOnOpen,
             onTabOut,

@@ -46,6 +46,7 @@ interface IDatePickerBaseProps {
     className?: string;
     /**
      * The size of the component.<br>
+     * Possible values: `small | medium | large`
      * @default "medium"
      */
     size?: DatePickerSizes;
@@ -110,7 +111,8 @@ interface IDatePickerBaseProps {
     format?: DatePickerFormat;
     /**
      * Language of the month and weekday names and of the accessible day labels, as a BCP 47 language
-     * tag (`en-US`, `hy-AM`, `ru-RU`, ...).
+     * tag (`en-US`, `hy-AM`, `ru-RU`, ...). A value that is not a language tag, like `en_US`, falls
+     * back to the default.
      * @default "en-US"
      */
     locale?: string;
@@ -230,12 +232,13 @@ interface IRangeDatePickerProps extends Omit<IDatePickerBaseProps, "onFocus" | "
     presets?: DatePickerRangePreset[];
     /**
      * Callback function that is triggered when one of the range values changes, under the same
-     * conditions as the single picker's `onChange`. A day picked for the start moves the editing on to
-     * the end; each field is limited by the other, so the start never passes the end.
+     * conditions as the single picker's `onChange`. A day picked in the calendar starts a new range in
+     * the edited field and clears the other one; the next day completes the range, the earlier day as
+     * its start. A typed date is limited by the other field.
      * @param event `event.target.value` is the ISO date of the changed field and `event.target.name`
      * the `name` of its input (`<name>-start` / `<name>-end`)
      * @param value both values as `{ start, end }` ISO dates, an empty string for an empty field
-     * @param field the field that changed; `start` when both fields were cleared
+     * @param field the edited field; `start` when both fields were cleared
      */
     onChange?: (
         event: ChangeEvent<HTMLInputElement>,

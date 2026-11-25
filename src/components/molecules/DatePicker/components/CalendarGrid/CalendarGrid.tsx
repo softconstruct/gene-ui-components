@@ -141,7 +141,7 @@ const CalendarGrid: FC<ICalendarGridProps> = ({
             aria-label={label}
             className={classNames("datePicker__grid", `datePicker__grid_view_${view}`)}
             onKeyDown={onKeyDown}
-            onMouseLeave={onCellHover && (() => onCellHover(null))}
+            onMouseLeave={() => onCellHover?.(null)}
         >
             {columnHeaders && (
                 <div role="row" className="datePicker__row">

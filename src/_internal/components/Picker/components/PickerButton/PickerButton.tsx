@@ -1,4 +1,4 @@
-import React, { FocusEvent, forwardRef, memo, MouseEvent, ReactNode } from "react";
+import React, { forwardRef, memo, MouseEvent } from "react";
 import classNames from "classnames";
 
 // Types
@@ -51,7 +51,7 @@ interface IPickerButtonProps {
     /**
      * The content of the button.
      */
-    children?: ReactNode;
+    children?: string;
     /**
      * Callback function which triggers when the button is clicked or activated with the keyboard.
      */
@@ -59,11 +59,11 @@ interface IPickerButtonProps {
     /**
      * Callback function which triggers when the pointer enters the button.
      */
-    onMouseEnter?: (value: string, event: MouseEvent<HTMLButtonElement>) => void;
+    onMouseEnter?: (value: string) => void;
     /**
      * Callback function which triggers when the button receives focus.
      */
-    onFocus?: (value: string, event: FocusEvent<HTMLButtonElement>) => void;
+    onFocus?: (value: string) => void;
 }
 
 /**
@@ -103,15 +103,13 @@ const PickerButton = forwardRef<HTMLButtonElement, IPickerButtonProps>(
                 pickerButton_selected: selected,
                 pickerButton_disabled: disabled
             })}
-            onClick={onClick && ((event) => onClick(value, event))}
-            onMouseEnter={onMouseEnter && ((event) => onMouseEnter(value, event))}
-            onFocus={onFocus && ((event) => onFocus(value, event))}
+            onClick={(event) => onClick?.(value, event)}
+            onMouseEnter={() => onMouseEnter?.(value)}
+            onFocus={() => onFocus?.(value)}
         >
             {children}
         </button>
     )
 );
-
-export { IPickerButtonProps };
 
 export default memo(PickerButton);

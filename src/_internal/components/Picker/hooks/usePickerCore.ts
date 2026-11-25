@@ -27,7 +27,7 @@ type InputRef = MutableRefObject<HTMLInputElement | null>;
 /**
  * One input of a picker, as the core reads and updates it.
  */
-export interface IPickerField {
+interface IPickerField {
     /**
      * Text in the input: the typed draft while the field is edited, the formatted value otherwise.
      */

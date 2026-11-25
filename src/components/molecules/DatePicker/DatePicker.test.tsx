@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { InputMask } from "@react-input/mask";
 import { mount, ReactWrapper } from "enzyme";
 import { act } from "react-dom/test-utils";
@@ -363,6 +363,13 @@ describe("DatePicker helpers", () => {
             expect(formatDay(day, "cs-CZ")).toBe("9");
             expect(formatYear(2026, "ja-JP")).toBe("2026");
             expect(formatYear(2026, "lv-LV")).toBe("2026");
+        });
+
+        it.each(["", "en_US", "de-"])("names them in the default locale when %p is not a language tag", (locale) => {
+            const day = date("2026-11-09");
+
+            expect(formatFullDate(day, locale)).toBe("Monday, November 9, 2026");
+            expect(getWeekdayNames(locale)[0].long).toBe("Monday");
         });
 
         it("pages the years by decade, with the year before and the year after it", () => {
@@ -959,6 +966,14 @@ describe("DatePicker", () => {
                     .slice(0, 7)
                     .map((cell) => cell.text())
             ).toEqual(["23", "24", "25", "26", "27", "28", "1"]);
+        });
+
+        it.each(["", "en_US"])("opens in the default locale when the locale %p is not a language tag", (locale) => {
+            setup.setProps({ value: "2026-03-05", locale });
+            openPopover(setup);
+
+            expect(heading(setup)).toBe("March 2026");
+            expect(setup.find('[role="columnheader"]').first().prop("aria-label")).toBe("Monday");
         });
 
         it("pages through the months and the years with the header arrows", () => {
@@ -1665,7 +1680,26 @@ describe("Date range picker", () => {
         setWindowWidth(initialInnerWidth);
     });
 
-    it("moves on to the end after a picked start and reports both values", () => {
+    it("keeps the month in place on a phone when the second day is picked in another one", () => {
+        window.scrollTo = jest.fn();
+        setWindowWidth(500);
+
+        const range = mountRange();
+
+        openPopover(range, 0);
+        click(range, "Tuesday, November 10, 2026");
+        click(range, "November, choose month");
+        click(range, "December 2026");
+        click(range, "Thursday, December 3, 2026");
+
+        expect(inputs(range).map((input) => input.prop("value"))).toEqual(["10/11/2026", "03/12/2026"]);
+        expect(headings(range)).toEqual(["December 2026"]);
+
+        range.unmount();
+        setWindowWidth(initialInnerWidth);
+    });
+
+    it("moves on to the end after a picked start, and back to the start once the range is complete", () => {
         const onChange = jest.fn();
 
         setup.setProps({ onChange });
@@ -1675,12 +1709,345 @@ describe("Date range picker", () => {
         expect(onChange.mock.calls[0][1]).toEqual({ start: "2026-11-10", end: "" });
         expect(onChange.mock.calls[0][2]).toBe("start");
         expect(setup.find("Calendar").prop("activeField")).toBe("end");
-        expect(button(setup, "Monday, November 9, 2026").prop("disabled")).toBe(true);
 
         click(setup, "Friday, November 13, 2026");
         expect(onChange.mock.calls[1][1]).toEqual({ start: "2026-11-10", end: "2026-11-13" });
         expect(onChange.mock.calls[1][2]).toBe("end");
-        expect(setup.find(".datePicker__calendar").exists()).toBeTruthy();
+        expect(setup.find("Calendar").prop("activeField")).toBe("start");
+    });
+
+    it("stays open once the range is complete, and closes on a press outside the field and the calendar", () => {
+        const onOpenChange = jest.fn();
+        const container = document.createElement("div");
+
+        document.body.appendChild(container);
+
+        const range = mount(<DatePicker.Range onOpenChange={onOpenChange} />, {
+            wrappingComponent: GeneUIProvider,
+            attachTo: container
+        });
+        const press = (element: Element) => {
+            act(() => {
+                element.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+            });
+            range.update();
+        };
+
+        openPopover(range, 0);
+        click(range, "Tuesday, November 10, 2026");
+        click(range, "Friday, November 13, 2026");
+        press(button(range, "Friday, November 13, 2026").getDOMNode());
+        press(inputs(range).at(0).getDOMNode());
+
+        expect(range.find(".datePicker__calendar").exists()).toBeTruthy();
+        expect(onOpenChange.mock.calls).toEqual([[true]]);
+
+        press(document.body);
+
+        expect(range.find(".datePicker__calendar").exists()).toBeFalsy();
+        expect(onOpenChange.mock.calls).toEqual([[true], [false]]);
+
+        range.unmount();
+        container.remove();
+    });
+
+    it("starts the next range in the field the first one started in", () => {
+        const onChange = jest.fn();
+
+        setup.setProps({ onChange });
+        openPopover(setup, 0);
+        click(setup, "Tuesday, November 10, 2026");
+        click(setup, "Friday, November 13, 2026");
+        click(setup, "Friday, November 20, 2026");
+
+        expect(onChange.mock.calls[2][1]).toEqual({ start: "2026-11-20", end: "" });
+        expect(onChange.mock.calls[2][2]).toBe("start");
+        expect(inputs(setup).map((input) => input.prop("value"))).toEqual(["20/11/2026", ""]);
+        expect(setup.find("Calendar").prop("activeField")).toBe("end");
+    });
+
+    it("puts a second day picked before the first one at the start of the range", () => {
+        const onChange = jest.fn();
+
+        setup.setProps({ onChange });
+        openPopover(setup, 0);
+        click(setup, "Friday, November 27, 2026");
+        expect(button(setup, "Friday, November 20, 2026").prop("disabled")).toBe(false);
+
+        click(setup, "Friday, November 20, 2026");
+
+        expect(onChange).toHaveBeenCalledTimes(2);
+        expect(onChange.mock.calls[1][1]).toEqual({ start: "2026-11-20", end: "2026-11-27" });
+        expect(inputs(setup).at(0).prop("value")).toBe("20/11/2026");
+        expect(inputs(setup).at(1).prop("value")).toBe("27/11/2026");
+        expect(button(setup, "Friday, November 20, 2026").hasClass("datePicker__cell_bandStart")).toBeTruthy();
+        expect(button(setup, "Friday, November 27, 2026").hasClass("datePicker__cell_bandEnd")).toBeTruthy();
+    });
+
+    it("starts the range from the end field, and puts a second day picked after it at the end", () => {
+        const onChange = jest.fn();
+
+        setup.setProps({ onChange });
+        openPopover(setup, 1);
+        click(setup, "Tuesday, November 10, 2026");
+
+        expect(onChange.mock.calls[0][0].target.value).toBe("2026-11-10");
+        expect(onChange.mock.calls[0][1]).toEqual({ start: "", end: "2026-11-10" });
+        expect(onChange.mock.calls[0][2]).toBe("end");
+        expect(setup.find("Calendar").prop("activeField")).toBe("start");
+        expect(button(setup, "Friday, November 13, 2026").prop("disabled")).toBe(false);
+
+        click(setup, "Friday, November 13, 2026");
+
+        expect(onChange.mock.calls[1][1]).toEqual({ start: "2026-11-10", end: "2026-11-13" });
+        expect(inputs(setup).at(0).prop("value")).toBe("10/11/2026");
+        expect(inputs(setup).at(1).prop("value")).toBe("13/11/2026");
+        expect(setup.find("Calendar").prop("activeField")).toBe("end");
+    });
+
+    it("picks one day twice as a range of that day", () => {
+        const onChange = jest.fn();
+
+        setup.setProps({ onChange });
+        openPopover(setup, 0);
+        click(setup, "Tuesday, November 10, 2026");
+        click(setup, "Tuesday, November 10, 2026");
+
+        expect(onChange.mock.calls[1][1]).toEqual({ start: "2026-11-10", end: "2026-11-10" });
+    });
+
+    it("starts a new range in the edited field while both days are picked", () => {
+        const onChange = jest.fn();
+        const range = mountRange({ defaultValue: { start: "2026-11-10", end: "2026-11-13" }, onChange });
+
+        openPopover(range, 0);
+        click(range, "Friday, November 20, 2026");
+
+        expect(onChange.mock.calls[0][1]).toEqual({ start: "2026-11-20", end: "" });
+        expect(onChange.mock.calls[0][2]).toBe("start");
+        expect(inputs(range).at(1).prop("value")).toBe("");
+        expect(range.find("button.datePicker__cell_band").exists()).toBeFalsy();
+
+        click(range, "Monday, November 16, 2026");
+        expect(onChange.mock.calls[1][1]).toEqual({ start: "2026-11-16", end: "2026-11-20" });
+
+        openPopover(range, 1);
+        click(range, "Monday, November 2, 2026");
+
+        expect(onChange.mock.calls[2][1]).toEqual({ start: "", end: "2026-11-02" });
+        expect(onChange.mock.calls[2][2]).toBe("end");
+        expect(inputs(range).at(0).prop("value")).toBe("");
+        expect(range.find("Calendar").prop("activeField")).toBe("start");
+
+        range.unmount();
+    });
+
+    it("completes a range that has only one of its days with the next picked day", () => {
+        const onChange = jest.fn();
+        const range = mountRange({ defaultValue: { start: null, end: "2026-11-13" }, onChange });
+
+        openPopover(range, 1);
+        click(range, "Friday, November 20, 2026");
+
+        expect(onChange).toHaveBeenCalledTimes(1);
+        expect(onChange.mock.calls[0][1]).toEqual({ start: "2026-11-13", end: "2026-11-20" });
+
+        range.unmount();
+    });
+
+    it("completes the range with a day picked after a typed one", () => {
+        const onChange = jest.fn();
+
+        setup.setProps({ onChange });
+        openPopover(setup, 0);
+        typeInto(setup, "27/11/2026", 0);
+        click(setup, "Friday, November 20, 2026");
+
+        expect(onChange.mock.calls.slice(-1)[0][1]).toEqual({ start: "2026-11-20", end: "2026-11-27" });
+        expect(inputs(setup).at(0).prop("value")).toBe("20/11/2026");
+        expect(inputs(setup).at(1).prop("value")).toBe("27/11/2026");
+    });
+
+    it("completes the range with the day the other field holds while typed text is not accepted", () => {
+        const onChange = jest.fn();
+        const range = mountRange({ defaultValue: { start: "2026-11-10", end: null }, onChange });
+
+        openPopover(range, 1);
+        typeInto(range, "02/11/2026", 1);
+        button(range, "Monday, November 16, 2026").simulate("mouseenter");
+        range.update();
+        expect(range.find("button.datePicker__cell_band").map((cell) => cell.text())).toEqual([
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16"
+        ]);
+
+        click(range, "Monday, November 16, 2026");
+
+        expect(onChange).toHaveBeenCalledTimes(1);
+        expect(onChange.mock.calls[0][1]).toEqual({ start: "2026-11-10", end: "2026-11-16" });
+        expect(inputs(range).map((input) => input.prop("value"))).toEqual(["10/11/2026", "16/11/2026"]);
+
+        range.unmount();
+    });
+
+    it("starts the range with the picked day while the typed one is outside min and max", () => {
+        const onChange = jest.fn();
+        const range = mountRange({ min: "2026-11-05", onChange });
+
+        openPopover(range, 0);
+        typeInto(range, "01/11/2026", 0);
+        button(range, "Friday, November 20, 2026").simulate("mouseenter");
+        range.update();
+        expect(range.find("button.datePicker__cell_band").exists()).toBeFalsy();
+
+        click(range, "Friday, November 20, 2026");
+
+        expect(onChange).toHaveBeenCalledTimes(1);
+        expect(onChange.mock.calls[0][1]).toEqual({ start: "2026-11-20", end: "" });
+        expect(inputs(range).map((input) => input.prop("value"))).toEqual(["20/11/2026", ""]);
+        expect(range.find(".datePicker__calendar").exists()).toBeTruthy();
+
+        range.unmount();
+    });
+
+    it("orders the range of a controlled picker", () => {
+        const Controlled = () => {
+            const [value, setValue] = useState<IRangeDatePickerProps["value"]>({ start: null, end: null });
+
+            return <DatePicker.Range value={value} onChange={(_event, nextValue) => setValue(nextValue)} />;
+        };
+        const range = mount(<Controlled />, { wrappingComponent: GeneUIProvider });
+
+        openPopover(range, 0);
+        click(range, "Friday, November 27, 2026");
+        expect(inputs(range).map((input) => input.prop("value"))).toEqual(["27/11/2026", ""]);
+
+        click(range, "Friday, November 20, 2026");
+        expect(inputs(range).map((input) => input.prop("value"))).toEqual(["20/11/2026", "27/11/2026"]);
+
+        openPopover(range, 1);
+        click(range, "Monday, November 2, 2026");
+        expect(inputs(range).map((input) => input.prop("value"))).toEqual(["", "02/11/2026"]);
+
+        range.unmount();
+    });
+
+    it("reports a new range of a controlled picker without changing the fields", () => {
+        const onChange = jest.fn();
+        const range = mountRange({ value: { start: "2026-11-10", end: "2026-11-13" }, onChange });
+
+        openPopover(range, 0);
+        click(range, "Friday, November 20, 2026");
+
+        expect(onChange.mock.calls[0][1]).toEqual({ start: "2026-11-20", end: "" });
+        expect(inputs(range).map((input) => input.prop("value"))).toEqual(["10/11/2026", "13/11/2026"]);
+
+        range.unmount();
+    });
+
+    it("disables only the days outside min and max, whatever the other field holds", () => {
+        const range = mountRange({
+            defaultValue: { start: "2026-11-10", end: null },
+            min: "2026-11-05",
+            max: "2026-11-20"
+        });
+        const disabled = (label: string) => button(range, label).prop("disabled");
+
+        openPopover(range, 1);
+
+        expect(disabled("Wednesday, November 4, 2026")).toBe(true);
+        expect(disabled("Thursday, November 5, 2026")).toBe(false);
+        expect(disabled("Monday, November 9, 2026")).toBe(false);
+        expect(disabled("Friday, November 20, 2026")).toBe(false);
+        expect(disabled("Saturday, November 21, 2026")).toBe(true);
+
+        range.unmount();
+    });
+
+    it("keeps one popover for both fields, on the side of the start", () => {
+        const range = mountRange({ defaultValue: { start: "2026-11-10", end: "2026-11-13" } });
+        const disabledDays = () => range.find('button[role="gridcell"]').filterWhere((cell) => !!cell.prop("disabled"));
+
+        openPopover(range, 0);
+        expect(range.find("PickerPopover").prop("position")).toBe("bottom-left");
+        expect(disabledDays()).toHaveLength(0);
+
+        openPopover(range, 1);
+        expect(range.find("PickerPopover").prop("position")).toBe("bottom-left");
+        expect(disabledDays()).toHaveLength(0);
+        expect(headings(range)).toEqual(["November 2026", "December 2026"]);
+
+        range.unmount();
+    });
+
+    it("keeps the popover on the side of the start in RTL mode", () => {
+        document.dir = "rtl";
+
+        const rtl = mountRange();
+
+        openPopover(rtl, 0);
+        expect(rtl.find("PickerPopover").prop("position")).toBe("bottom-right");
+
+        openPopover(rtl, 1);
+        expect(rtl.find("PickerPopover").prop("position")).toBe("bottom-right");
+
+        rtl.unmount();
+        document.dir = "";
+    });
+
+    it("moves the focus on to the other field with every picked day", () => {
+        const container = document.createElement("div");
+
+        document.body.appendChild(container);
+
+        const range = mount(<DatePicker.Range />, { wrappingComponent: GeneUIProvider, attachTo: container });
+        const input = (index: number) => inputs(range).at(index).getDOMNode<HTMLInputElement>();
+
+        input(1).focus();
+        openPopover(range, 1);
+        click(range, "Tuesday, November 10, 2026");
+        expect(document.activeElement).toBe(input(0));
+
+        click(range, "Friday, November 13, 2026");
+        expect(document.activeElement).toBe(input(1));
+
+        click(range, "Monday, November 16, 2026");
+        expect(document.activeElement).toBe(input(0));
+        expect(inputs(range).map((item) => item.prop("value"))).toEqual(["", "16/11/2026"]);
+
+        range.unmount();
+        container.remove();
+    });
+
+    it("keeps the focus in the calendar while the days are picked from the keyboard", () => {
+        const container = document.createElement("div");
+
+        document.body.appendChild(container);
+
+        const range = mount(<DatePicker.Range />, { wrappingComponent: GeneUIProvider, attachTo: container });
+        const focused = () => document.activeElement?.getAttribute("aria-label");
+
+        inputs(range).at(0).simulate("keydown", { key: "ArrowDown" });
+        range.update();
+        expect(focused()).toBe("Monday, November 9, 2026");
+
+        click(range, "Monday, November 9, 2026");
+        expect(focused()).toBe("Monday, November 9, 2026");
+
+        pressInGrid(range, "ArrowLeft");
+        click(range, "Sunday, November 8, 2026");
+
+        expect(focused()).toBe("Sunday, November 8, 2026");
+        expect(range.find(".datePicker__calendar").exists()).toBeTruthy();
+        expect(inputs(range).map((item) => item.prop("value"))).toEqual(["08/11/2026", "09/11/2026"]);
+
+        range.unmount();
+        container.remove();
     });
 
     it("highlights the days between start and end", () => {
@@ -1695,22 +2062,44 @@ describe("Date range picker", () => {
         range.unmount();
     });
 
-    it("previews the range under the pointer while the end is edited", () => {
+    it("previews the range between the picked day and the day under the pointer, on either side of it", () => {
         const range = mountRange({ defaultValue: { start: "2026-11-10", end: null } });
+        const hasClass = (label: string, modifier: string) =>
+            button(range, label).hasClass(`datePicker__cell_${modifier}`);
 
         openPopover(range, 1);
         button(range, "Monday, November 16, 2026").simulate("mouseenter");
         range.update();
 
-        expect(button(range, "Thursday, November 12, 2026").hasClass("datePicker__cell_inRange")).toBeTruthy();
-        expect(button(range, "Sunday, November 15, 2026").hasClass("datePicker__cell_inRange")).toBeTruthy();
-        expect(button(range, "Monday, November 16, 2026").hasClass("datePicker__cell_inRange")).toBeFalsy();
-        expect(button(range, "Monday, November 16, 2026").hasClass("datePicker__cell_bandEnd")).toBeTruthy();
+        expect(hasClass("Tuesday, November 10, 2026", "bandStart")).toBeTruthy();
+        expect(hasClass("Thursday, November 12, 2026", "inRange")).toBeTruthy();
+        expect(hasClass("Sunday, November 15, 2026", "inRange")).toBeTruthy();
+        expect(hasClass("Monday, November 16, 2026", "inRange")).toBeFalsy();
+        expect(hasClass("Monday, November 16, 2026", "bandEnd")).toBeTruthy();
+
+        button(range, "Thursday, November 5, 2026").simulate("mouseenter");
+        range.update();
+
+        expect(hasClass("Thursday, November 5, 2026", "bandStart")).toBeTruthy();
+        expect(hasClass("Saturday, November 7, 2026", "inRange")).toBeTruthy();
+        expect(hasClass("Tuesday, November 10, 2026", "bandEnd")).toBeTruthy();
+        expect(hasClass("Thursday, November 12, 2026", "inRange")).toBeFalsy();
 
         range.find('[role="grid"]').first().simulate("mouseleave");
         range.update();
-        expect(button(range, "Thursday, November 12, 2026").hasClass("datePicker__cell_inRange")).toBeFalsy();
         expect(range.find("button.datePicker__cell_band").exists()).toBeFalsy();
+
+        range.unmount();
+    });
+
+    it("previews no range while both days are picked", () => {
+        const range = mountRange({ defaultValue: { start: "2026-11-10", end: "2026-11-13" } });
+
+        openPopover(range, 1);
+        button(range, "Friday, November 20, 2026").simulate("mouseenter");
+        range.update();
+
+        expect(range.find("button.datePicker__cell_band").map((cell) => cell.text())).toEqual(["10", "11", "12", "13"]);
 
         range.unmount();
     });
@@ -1874,6 +2263,28 @@ describe("Date range picker", () => {
             expect(headings(setup)).toEqual(["November 2026", "December 2026"]);
         });
 
+        it("keeps the months in place when two days of the second one are picked backwards", () => {
+            openPopover(setup, 0);
+            click(setup, "Thursday, December 10, 2026");
+            click(setup, "Thursday, December 3, 2026");
+
+            expect(inputs(setup).map((input) => input.prop("value"))).toEqual(["03/12/2026", "10/12/2026"]);
+            expect(headings(setup)).toEqual(["November 2026", "December 2026"]);
+        });
+
+        it("keeps the months in place when the second day is picked after paging away from the first", () => {
+            openPopover(setup, 0);
+            click(setup, "Tuesday, November 10, 2026");
+            click(setup, "Next month", 0);
+            click(setup, "Next month", 0);
+            expect(headings(setup)).toEqual(["January 2027", "February 2027"]);
+
+            click(setup, "Friday, February 5, 2027");
+
+            expect(inputs(setup).map((input) => input.prop("value"))).toEqual(["10/11/2026", "05/02/2027"]);
+            expect(headings(setup)).toEqual(["January 2027", "February 2027"]);
+        });
+
         it("follows a typed date to the month of its field", () => {
             openPopover(setup, 0);
             typeInto(setup, "15/03/2027", 0);
@@ -1909,7 +2320,7 @@ describe("Date range picker", () => {
         });
 
         it("goes back to the field on Tab from the header of a last month with nothing to pick", () => {
-            const range = mountRange({ defaultValue: { start: "2026-11-10", end: "2026-11-13" } });
+            const range = mountRange({ defaultValue: { start: "2026-11-10", end: "2026-11-13" }, max: "2026-11-30" });
 
             openPopover(range, 0);
             expect(tabStop(range).map((cell) => cell.prop("disabled"))).toEqual([false, true]);

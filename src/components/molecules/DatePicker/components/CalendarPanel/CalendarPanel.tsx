@@ -98,7 +98,7 @@ interface ICalendarPanelProps {
      */
     range: CalendarRange | null;
     /**
-     * The days the edited field can take; the others are disabled.
+     * The days that can be picked; the others are disabled.
      */
     bounds: DateBounds;
     /**
@@ -509,7 +509,7 @@ const CalendarPanel: FC<ICalendarPanelProps> = ({
                 onKeyDown={handleGridKeyDown}
                 onCellClick={handleCellClick}
                 onCellFocus={handleCellFocus}
-                onCellHover={onHover && view === "days" ? (key) => onHover(key ? keyToDate(key) : null) : undefined}
+                onCellHover={view === "days" ? (key) => onHover?.(key ? keyToDate(key) : null) : undefined}
             />
         </div>
     );

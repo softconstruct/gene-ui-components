@@ -111,4 +111,4 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
     );
 };
 
-export { IPickerPopoverProps, PickerPopover as default };
+export default PickerPopover;
