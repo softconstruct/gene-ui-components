@@ -24,6 +24,10 @@
         pointer-events: none;
     }
 
+    &:nth-last-child(1 of .tableBodyCell)::after {
+        display: none;
+    }
+
     &_expander {
         padding: 0;
     }
