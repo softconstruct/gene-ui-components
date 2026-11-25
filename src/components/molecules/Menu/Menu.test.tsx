@@ -55,6 +55,23 @@ describe("Menu ", () => {
         expect(wrapper.find(".menu_swappable")).toBeTruthy();
     });
 
+    it("should render the item title as truncatable text", () => {
+        expect(setup.find(".menu__item .ellipsis-text").text()).toBe("test");
+    });
+
+    it("should not wrap ComponentRender content as text", () => {
+        const wrapper = mount(
+            <Menu setPropsForPopover={() => {}} open>
+                <MenuItem id="custom" ComponentRender={() => <i className="customContent" />} />
+            </Menu>,
+            { wrappingComponent: GeneUIProvider }
+        );
+
+        expect(wrapper.find(".menu__item .customContent").exists()).toBeTruthy();
+        expect(wrapper.find(".menu__item .ellipsis-text").exists()).toBeFalsy();
+        wrapper.unmount();
+    });
+
     it.each<IMenuProps["size"]>(["large", "medium", "small"])("should have %s size", (size) => {
         const wrapper = setup.setProps({ size });
         expect(wrapper.find(`menu__body_size_${size}`)).toBeTruthy();

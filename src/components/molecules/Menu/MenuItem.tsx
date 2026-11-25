@@ -22,6 +22,10 @@ import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Empty from "@components/molecules/Empty";
 import MenuItemButton from "@components/molecules/Menu/MenuItemButton";
+import Tooltip from "@components/molecules/Tooltip";
+
+// Hooks
+import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
 // Helpers
 import { isActiveElementInside } from "./helper";
@@ -115,6 +119,11 @@ const MenuItem: FC<IMenuItemProps> = (props) => {
         loadingText,
         render
     } = props;
+
+    const itemTitleText = title || (typeof children === "string" ? children : undefined);
+    const shouldRenderTitleText = !!itemTitleText;
+    const titleTextRef = useRef<HTMLSpanElement | null>(null);
+    const isTitleTextTruncated = useEllipsisDetection(titleTextRef, [itemTitleText]);
 
     const [propsForPopover, setPropsForPopover] = useState({});
     const parentRef = useRef<HTMLDivElement | null>(null);
@@ -228,6 +237,16 @@ const MenuItem: FC<IMenuItemProps> = (props) => {
         return <div className="menu__content">{children}</div>;
     }, [children, emptyText, loading, loadingText, swappable, isActiveSwappableContent]);
 
+    const itemLabel = shouldRenderTitleText ? (
+        <Tooltip text={itemTitleText} isVisible={isTitleTextTruncated}>
+            <span className="ellipsis-text" ref={titleTextRef}>
+                {itemTitleText}
+            </span>
+        </Tooltip>
+    ) : (
+        children
+    );
+
     const renderMenuItem = (type: "parent" | "simple" | "custom" | "header") => {
         if (render && type === "simple") {
             const renderedElement = render({ id, title: children as string });
@@ -250,7 +269,7 @@ const MenuItem: FC<IMenuItemProps> = (props) => {
                     disabled
                 };
 
-                return cloneElement(renderedElement, propsToApply, children);
+                return cloneElement(renderedElement, propsToApply, itemLabel);
             }
         }
 
@@ -272,7 +291,7 @@ const MenuItem: FC<IMenuItemProps> = (props) => {
                 divider={divider}
                 selected={selected}
             >
-                {children}
+                {itemLabel}
             </MenuItemButton>
         );
     };
