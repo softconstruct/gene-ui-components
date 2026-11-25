@@ -1,10 +1,13 @@
-import React, { FC, ReactNode, useMemo } from "react";
+import React, { FC, ReactNode, useMemo, useRef } from "react";
 import classNames from "classnames";
 
 import { CheckMark, ChevronLeft, ChevronRight, IconProps } from "@geneui/icons";
 
 import Divider from "@components/atoms/Divider";
 import Text from "@components/atoms/Text";
+import Tooltip from "@components/molecules/Tooltip";
+
+import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
 interface IMenuItemButtonProps {
     type: "header" | "parent" | "simple" | "custom";
@@ -35,6 +38,9 @@ const MenuItemButton: FC<IMenuItemButtonProps> = ({
     active,
     divider
 }) => {
+    const titleRef = useRef<HTMLSpanElement | null>(null);
+    const isTitleTruncated = useEllipsisDetection(titleRef, [title]);
+
     const isRTLMode = document.dir === "rtl";
     const onItemClick = () => {
         switch (type) {
@@ -68,13 +74,11 @@ const MenuItemButton: FC<IMenuItemButtonProps> = ({
     }, [type, selected, IconAfter, onItemClick, danger]);
 
     const titleElement = title ? (
-        <Text
-            as="span"
-            variant={type === "header" ? "bodyMediumSemibold" : "bodyMediumMedium"}
-            className={type === "header" ? "menu__headerTitle ellipsis-text" : ""}
-        >
-            {title}
-        </Text>
+        <Tooltip text={title} isVisible={isTitleTruncated}>
+            <Text as="span" variant="bodyMediumSemibold" className="menu__headerTitle ellipsis-text" ref={titleRef}>
+                {title}
+            </Text>
+        </Tooltip>
     ) : null;
 
     return (
