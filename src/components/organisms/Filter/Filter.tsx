@@ -1,7 +1,7 @@
 import React, { FC, ReactNode, useEffect, useState } from "react";
 import classNames from "classnames";
 
-import { Archive } from "@geneui/icons";
+import { Save } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
@@ -190,7 +190,7 @@ const Filter: FC<IFilterProps> = ({
     }: Pick<IFilterSaveConfig, "savedFiltersText" | "onSavedFiltersClick">) =>
         onSavedFiltersClick && (
             <Button
-                Icon={Archive}
+                Icon={Save}
                 iconPosition="before"
                 appearance="secondary"
                 layout="text"
