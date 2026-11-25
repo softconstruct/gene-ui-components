@@ -18,7 +18,7 @@
     }
 
     &:nth-last-child(1 of :not(&_actions))::after {
-        content: none;
+        display: none;
     }
 
     &_expander {

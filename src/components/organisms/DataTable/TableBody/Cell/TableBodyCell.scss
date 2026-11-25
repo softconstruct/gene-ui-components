@@ -25,10 +25,10 @@
     }
 
     &:nth-last-child(1 of .tableBodyCell)::after {
-        content: none;
+        display: none;
     }
 
-    tr:last-child > & {
+    .tableRow:last-child > & {
         box-shadow: none;
     }
 
