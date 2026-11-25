@@ -1,6 +1,5 @@
 import React, { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-    CellContext,
     ColumnOrderState,
     ColumnPinningState,
     ExpandedState,
@@ -19,7 +18,7 @@ import Pagination, { IPaginationProps } from "@components/molecules/Pagination";
 // Constants, context & helpers
 import { EXPANDER_COLUMN_ID, INITIAL_PAGE_SIZE } from "./constants";
 import { DataTableProvider, DirModeContext, IDataTableContext } from "./context";
-import { adaptColumns, DefaultCellComponent, withExpanderColumn } from "./helper";
+import { adaptColumns, withExpanderColumn } from "./helper";
 // Hooks
 import { useTablePagination } from "./hooks/useTablePagination";
 // Sub-components
@@ -45,12 +44,6 @@ import {
 
 // Styles
 import "./DataTable.scss";
-
-const defaultColumn = {
-    cell: <TData, TValue>({ getValue }: CellContext<TData, TValue>) => (
-        <DefaultCellComponent value={String(getValue() ?? "")} />
-    )
-};
 
 interface IDataTableProps<TData> {
     /**
@@ -422,7 +415,6 @@ const DataTable = <TData,>({
     const table = useReactTable({
         data: data ?? EMPTY_DATA,
         columns: tableColumns,
-        defaultColumn,
         getCoreRowModel: getCoreRowModel(),
         ...(manualPagination ? {} : { getPaginationRowModel: getPaginationRowModel() }),
         manualPagination,

@@ -3,6 +3,9 @@ import { Cell, CellContext, ColumnDef } from "@tanstack/react-table";
 
 // Components
 import Text from "@components/atoms/Text";
+import Checkbox from "@components/molecules/Checkbox";
+import NumberField from "@components/molecules/NumberField";
+import TextField from "@components/molecules/TextField";
 import Tooltip from "@components/molecules/Tooltip";
 
 // hooks
@@ -11,7 +14,13 @@ import useEllipsisDetection from "@hooks/useEllipsisDetection";
 import { EXPANDER_COLUMN_ID, EXPANDER_COLUMN_SIZE } from "./constants";
 import { useCellWidth } from "./context";
 import ExpanderCell from "./TableBody/ExpanderCell/ExpanderCell";
-import { DataTableColumn, DataTableRowExpandChangeHandler } from "./types";
+import {
+    DataTableCellValue,
+    DataTableColumn,
+    DataTableColumnType,
+    DataTableRenderEditCellArgs,
+    DataTableRowExpandChangeHandler
+} from "./types";
 
 /**
  * Props for the TableBodyCell component, defined here to be used by areCellsEqual.
@@ -46,12 +55,17 @@ export interface ICellProps<TData, TValue> {
     /**
      * Whether the editor of this cell is interactive.
      */
-    isEditDisabled: boolean;
+    isEditDisabled?: boolean;
     /**
      * Value the editor shows: the draft from `editValues` when the cell has one, the value from
      * `data` otherwise.
      */
-    editValue: string;
+    editValue: unknown;
+    /**
+     * Snapshot of `column.columnDef.meta.renderEditCell` — the renderer reference. Catches
+     * consumers updating the `columns` prop with a new renderer closure.
+     */
+    renderEditCell?: (args: DataTableRenderEditCellArgs<TData, unknown>) => ReactNode;
 }
 
 /**
@@ -93,7 +107,8 @@ export const areCellsEqual = <TData, TValue>(prev: ICellProps<TData, TValue>, ne
     prev.rowData === next.rowData &&
     prev.isCellEditing === next.isCellEditing &&
     prev.isEditDisabled === next.isEditDisabled &&
-    prev.editValue === next.editValue;
+    prev.editValue === next.editValue &&
+    prev.renderEditCell === next.renderEditCell;
 
 export const DefaultCellComponent = ({ value }: { value: string }) => {
     const textRef = useRef<HTMLSpanElement | null>(null);
@@ -109,14 +124,71 @@ export const DefaultCellComponent = ({ value }: { value: string }) => {
     );
 };
 
+export type DataTableColumnTypeDefinition = {
+    renderValue: (value: unknown) => ReactNode;
+    renderEditControl: (args: DataTableRenderEditCellArgs<unknown, unknown>) => ReactNode;
+};
+
+export const DEFAULT_COLUMN_TYPE: DataTableColumnType = "text";
+
+export const columnTypes: Record<DataTableColumnType, DataTableColumnTypeDefinition> = {
+    text: {
+        renderValue: (value) => <DefaultCellComponent value={String(value ?? "")} />,
+        renderEditControl: ({ value, disabled, onChange }) => (
+            <TextField
+                size="small"
+                value={String(value ?? "")}
+                disabled={disabled}
+                onChange={(event) => onChange(event.target.value)}
+            />
+        )
+    },
+    number: {
+        renderValue: (value) => <DefaultCellComponent value={String(value ?? "")} />,
+        renderEditControl: ({ value, disabled, onChange }) => (
+            <NumberField
+                size="small"
+                value={typeof value === "number" || typeof value === "string" ? value : ""}
+                disabled={disabled}
+                onChange={(nextValue) => onChange(nextValue)}
+            />
+        )
+    },
+    boolean: {
+        renderValue: (value) => <DefaultCellComponent value={typeof value === "boolean" ? String(value) : ""} />,
+        renderEditControl: ({ value, disabled, onChange }) => (
+            <Checkbox
+                checked={Boolean(value)}
+                disabled={disabled}
+                onChange={(event) => onChange(event.target.checked)}
+            />
+        )
+    }
+};
+
+export const resolveColumnType = (type?: DataTableColumnType): DataTableColumnTypeDefinition =>
+    columnTypes[type as DataTableColumnType] ?? columnTypes[DEFAULT_COLUMN_TYPE];
+
 /**
  * Normalizes the public {@link DataTableColumn} shape into TanStack `ColumnDef[]`.
  * Pure transformation: does not inject any non-data columns.
  */
 export const adaptColumns = <TData,>(columns: DataTableColumn<TData>[]): ColumnDef<TData, ReactNode>[] =>
     columns.map((col, index) => {
-        const { accessorKey, id, header, size, renderCell, defaultVisible, defaultPinned, editable } = col;
+        const {
+            accessorKey,
+            id,
+            header,
+            size,
+            type,
+            renderCell,
+            renderEditCell,
+            defaultVisible,
+            defaultPinned,
+            editable
+        } = col;
         const isAccessorColumn = Boolean(accessorKey);
+        const typeDefaults = resolveColumnType(type);
 
         const base: ColumnDef<TData> = {
             id: id ?? accessorKey ?? `display_${index}`,
@@ -126,21 +198,22 @@ export const adaptColumns = <TData,>(columns: DataTableColumn<TData>[]): ColumnD
                 explicitSize: size,
                 defaultVisible,
                 defaultPinned,
-                editable
+                editable,
+                renderEditCell: editable ? (renderEditCell ?? typeDefaults.renderEditControl) : undefined
             },
             ...(isAccessorColumn ? { accessorKey } : {})
         };
 
-        if (!renderCell) return base;
-
         return {
             ...base,
-            cell: (ctx: CellContext<TData, ReactNode>) =>
-                renderCell({
-                    value: isAccessorColumn ? ctx.getValue() : undefined,
-                    row: ctx.row.original,
-                    rowId: ctx.row.id
-                })
+            cell: renderCell
+                ? (ctx: CellContext<TData, ReactNode>) =>
+                      renderCell({
+                          value: (isAccessorColumn ? ctx.getValue() : undefined) as DataTableCellValue<TData>,
+                          row: ctx.row.original,
+                          rowId: ctx.row.id
+                      })
+                : (ctx: CellContext<TData, ReactNode>) => typeDefaults.renderValue(ctx.getValue())
         };
     });
 

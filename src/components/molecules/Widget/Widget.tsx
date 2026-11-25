@@ -1,10 +1,7 @@
-import React, { FC, JSX, MouseEvent, useContext } from "react";
+import React, { FC, MouseEvent, ReactNode, useContext } from "react";
 import classNames from "classnames";
 
 import { ArrowBounceDown, ArrowBounceUp, ArrowRight, IconProps } from "@geneui/icons";
-
-// Styles
-import "./Widget.scss";
 
 import {
     Button,
@@ -15,6 +12,9 @@ import {
     SegmentedControlButton,
     Text
 } from "../../../index";
+
+// Styles
+import "./Widget.scss";
 
 type WidgetTrend = "up" | "down";
 
@@ -47,7 +47,7 @@ interface IWidgetProps {
      * Swappable content to be displayed in the widget body swap area.
      * When provided, this content will be rendered alongside the widget info section.
      */
-    swappableElement?: JSX.Element;
+    swappableElement?: ReactNode;
     /**
      * Primary metric value displayed in the widget body.
      * When provided, it is rendered as the main heading value above the percentage change.
@@ -178,7 +178,7 @@ const Widget: FC<IWidgetProps> = ({
                         </div>
                     </div>
                 </div>
-                {swappableElement && <div className="widget__swap">{swappableElement}</div>}
+                {swappableElement && <div className="widget__swappable">{swappableElement}</div>}
             </div>
         </div>
     );

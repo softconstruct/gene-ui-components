@@ -22,7 +22,7 @@ import {
 // Components
 import GlobalHeader, { IGlobalHeaderProps } from "./index";
 
-const LeftContent = () => {
+const StartSwappable = () => {
     return (
         <div style={{ display: "flex", flexDirection: "column" }}>
             <div style={{ display: "flex", alignItems: "center", columnGap: 10, color: "#fff" }}>
@@ -67,7 +67,7 @@ const meta: Meta<IGlobalHeaderProps> = {
         partnersLoading: args({ control: "boolean", ...propCategory.states }),
         partnersDisabled: args({ control: "boolean", ...propCategory.states }),
         logoAs: args({ control: "false", ...propCategory.content }),
-        leftContent: args({ control: "false", ...propCategory.content }),
+        startSwappable: args({ control: "false", ...propCategory.content }),
         partners: args({ control: "false", ...propCategory.content }),
         partnersLoadingText: args({ control: "text", ...propCategory.content }),
         partnersSearchPlaceholder: args({ control: "text", ...propCategory.content }),
@@ -225,7 +225,7 @@ const Template = (props) => {
                 onCurrencySelect={onCurrencySelect}
                 activity={activityData}
                 onActivitySelect={onActivitiesSelect}
-                leftContent={<LeftContent />}
+                startSwappable={<StartSwappable />}
                 actions={actions}
             />
         </div>

@@ -1,4 +1,4 @@
-import React, { FC, JSX } from "react";
+import React, { FC, ReactNode } from "react";
 import classNames from "classnames";
 
 import { IconProps } from "@geneui/icons";
@@ -16,7 +16,7 @@ interface IDividerProps {
      * Divider content <br/>
      * The prop accepts a JSX element that will be displayed alongside the divider
      */
-    swappableElement?: JSX.Element;
+    swappableElement?: ReactNode;
     /**
      * Divider direction <br/>
      * Possible values: `vertical | horizontal`
@@ -74,7 +74,7 @@ const Divider: FC<IDividerProps> = ({
         >
             {direction === "horizontal" && (
                 <>
-                    {swappableElement && <div className="divider__element">{swappableElement}</div>}
+                    {swappableElement && <div className="divider__swappable">{swappableElement}</div>}
                     {(text || Icon) && (
                         <div className="divider__label">
                             {text && <span className="divider__text ellipsis-text">{text}</span>}

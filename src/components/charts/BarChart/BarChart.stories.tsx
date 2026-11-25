@@ -36,6 +36,8 @@ const meta: Meta<IBarChartProps> = {
         loadingText: args({ control: "text", ...propCategory.content }),
         emptyTitle: args({ control: "text", ...propCategory.content }),
         emptyDescription: args({ control: "text", ...propCategory.content }),
+        legendShowMoreText: args({ control: "text", ...propCategory.content }),
+        legendShowLessText: args({ control: "text", ...propCategory.content }),
         options: args({ control: "object", ...propCategory.others }),
         valueFormatter: args({ control: "false", ...propCategory.functionality })
     },
@@ -52,6 +54,8 @@ const meta: Meta<IBarChartProps> = {
         loadingText: "Loading Info",
         emptyTitle: "No Data Available",
         emptyDescription: "No data is available for display at this moment.",
+        legendShowMoreText: (hiddenCount) => `Show ${hiddenCount} more`,
+        legendShowLessText: "Show less",
         valueFormatter: (value) => `${value}`
     },
     parameters: {

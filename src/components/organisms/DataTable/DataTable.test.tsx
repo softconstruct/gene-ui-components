@@ -1,4 +1,4 @@
-import React, { MouseEvent, ReactNode } from "react";
+import React, { MouseEvent } from "react";
 import { mount, ReactWrapper } from "enzyme";
 import { act } from "react-dom/test-utils";
 
@@ -11,7 +11,13 @@ import Pagination from "@components/molecules/Pagination";
 import TextField from "@components/molecules/TextField";
 import { INITIAL_PAGE_SIZE } from "@components/organisms/DataTable/constants";
 import Toolbar from "@components/organisms/DataTable/Toolbar/Toolbar";
-import { DataTableColumn, DataTableRenderCellArgs, IDataTableEditConfig } from "@components/organisms/DataTable/types";
+import {
+    DataTableCellValue,
+    DataTableColumn,
+    DataTableRenderCellArgs,
+    DataTableRenderEditCellArgs,
+    IDataTableEditConfig
+} from "@components/organisms/DataTable/types";
 
 import { mockColumns, mockData } from "../../../../stories/data/__dataTable";
 // Components
@@ -386,9 +392,11 @@ describe("Table Component - body cell memoization", () => {
     const visibleData = mockData.slice(0, 3);
 
     const buildSpyColumns = () => {
-        const renderSpy = jest.fn(({ value }: DataTableRenderCellArgs<MockDataType, ReactNode>) => (
-            <span>{String(value ?? "")}</span>
-        ));
+        const renderSpy = jest.fn(
+            ({ value }: DataTableRenderCellArgs<MockDataType, DataTableCellValue<MockDataType>>) => (
+                <span>{String(value ?? "")}</span>
+            )
+        );
         const columns: DataTableColumn<MockDataType>[] = [
             { accessorKey: "Id", header: "Id", renderCell: renderSpy },
             { accessorKey: "Email", header: "Email", renderCell: renderSpy }
@@ -1551,7 +1559,7 @@ describe("Table Component - Edit Mode", () => {
     const buttonWithText = (wrapper: EditTableWrapper, text: string) =>
         wrapper.find(Button).filterWhere((button) => button.text().includes(text));
 
-    const editors = (wrapper: EditTableWrapper) => wrapper.find(".tableBodyCell__textField").find("input");
+    const editors = (wrapper: EditTableWrapper) => wrapper.find("input.textField__input");
 
     it("does not render the edit button when editConfig is omitted", async () => {
         const setup = await mountTable({ manageColumnsConfig: { visible: true } });
@@ -1706,5 +1714,370 @@ describe("Table Component - Edit Mode", () => {
         expect(editors(setup).first().prop("value")).toBe(editData[0].FirstName);
 
         setup.unmount();
+    });
+});
+
+describe("Table Component - Edit Mode custom cell renderer", () => {
+    const editData = mockData.slice(0, 3);
+
+    const renderEmailEditCell = ({ value, disabled, onChange }: DataTableRenderEditCellArgs<MockDataType, unknown>) => (
+        <input
+            className="customEditor"
+            value={String(value ?? "")}
+            disabled={disabled}
+            onChange={(event) => onChange(event.target.value)}
+        />
+    );
+
+    const customEditColumns: DataTableColumn<MockDataType>[] = [
+        { accessorKey: "Id", header: "Id" },
+        { accessorKey: "FirstName", header: "First name", editable: true },
+        {
+            accessorKey: "Email",
+            header: "Email",
+            editable: true,
+            renderCell: ({ value }) => <b className="emailRenderer">{String(value ?? "")}</b>,
+            renderEditCell: renderEmailEditCell
+        }
+    ];
+
+    const buildEditConfig = (overrides: Partial<IDataTableEditConfig<MockDataType>> = {}) => ({
+        editing: false,
+        onSave: jest.fn(),
+        onCancel: jest.fn(),
+        onEditStart: jest.fn(),
+        ...overrides
+    });
+
+    type EditTableWrapper = ReactWrapper<IDataTableProps<MockDataType>>;
+
+    const mountTable = async (props: Partial<IDataTableProps<MockDataType>> = {}) => {
+        let wrapper: EditTableWrapper;
+
+        await act(async () => {
+            wrapper = mount(
+                <DataTable columns={customEditColumns} data={editData} getRowId={(row) => String(row.Id)} {...props} />
+            );
+        });
+        wrapper!.update();
+
+        return wrapper!;
+    };
+
+    const buttonWithText = (wrapper: EditTableWrapper, text: string) =>
+        wrapper.find(Button).filterWhere((button) => button.text().includes(text));
+
+    const customEditors = (wrapper: EditTableWrapper) => wrapper.find("input.customEditor");
+    const builtInEditors = (wrapper: EditTableWrapper) => wrapper.find("input.textField__input");
+
+    it("renders the custom control for its column and the built-in one for the others", async () => {
+        const setup = await mountTable({ editConfig: buildEditConfig({ editing: true }) });
+
+        expect(customEditors(setup).length).toBe(editData.length);
+        expect(builtInEditors(setup).length).toBe(editData.length);
+
+        setup.unmount();
+    });
+
+    it("passes the value from data to the custom control", async () => {
+        const setup = await mountTable({ editConfig: buildEditConfig({ editing: true }) });
+
+        expect(customEditors(setup).first().prop("value")).toBe(editData[0].Email);
+
+        setup.unmount();
+    });
+
+    it("passes the draft from editValues to the custom control", async () => {
+        const setup = await mountTable({
+            editConfig: buildEditConfig({ editing: true, onCellChange: jest.fn() }),
+            editValues: { [String(editData[0].Id)]: { Email: "draft@mail.com" } }
+        });
+
+        expect(customEditors(setup).first().prop("value")).toBe("draft@mail.com");
+
+        setup.unmount();
+    });
+
+    it("disables the custom control while the edit config is loading", async () => {
+        const setup = await mountTable({ editConfig: buildEditConfig({ editing: true, loading: true }) });
+
+        expect(customEditors(setup).first().prop("disabled")).toBe(true);
+
+        setup.unmount();
+    });
+
+    it("reports changes made in the custom control with the row id, column id and row data", async () => {
+        const onCellChange = jest.fn();
+        const setup = await mountTable({
+            editConfig: buildEditConfig({ editing: true, onCellChange }),
+            editValues: {}
+        });
+
+        await act(async () => {
+            customEditors(setup)
+                .first()
+                .simulate("change", { target: { value: "changed@mail.com" } });
+        });
+
+        expect(onCellChange).toHaveBeenCalledWith({
+            rowId: String(editData[0].Id),
+            columnId: "Email",
+            row: editData[0],
+            value: "changed@mail.com"
+        });
+
+        setup.unmount();
+    });
+
+    it("records changes made in the custom control in the internal drafts", async () => {
+        const editConfig = buildEditConfig({ editing: true });
+        const setup = await mountTable({ editConfig });
+
+        await act(async () => {
+            customEditors(setup)
+                .first()
+                .simulate("change", { target: { value: "uncontrolled@mail.com" } });
+        });
+        setup.update();
+
+        expect(customEditors(setup).first().prop("value")).toBe("uncontrolled@mail.com");
+
+        await act(async () => {
+            buttonWithText(setup, "Save").first().simulate("click");
+        });
+
+        expect(editConfig.onSave).toHaveBeenCalledWith({
+            [String(editData[0].Id)]: { Email: "uncontrolled@mail.com" }
+        });
+
+        setup.unmount();
+    });
+
+    it("keeps the read renderer outside edit mode", async () => {
+        const setup = await mountTable({ editConfig: buildEditConfig() });
+
+        expect(customEditors(setup).length).toBe(0);
+        expect(setup.find(".emailRenderer").length).toBe(editData.length);
+
+        setup.unmount();
+    });
+
+    it("ignores the custom control on a column that is not editable", async () => {
+        const columns: DataTableColumn<MockDataType>[] = [
+            { accessorKey: "Id", header: "Id" },
+            { accessorKey: "Email", header: "Email", renderEditCell: renderEmailEditCell }
+        ];
+        const setup = await mountTable({ columns, editConfig: buildEditConfig({ editing: true }) });
+
+        expect(customEditors(setup).length).toBe(0);
+
+        setup.unmount();
+    });
+});
+
+describe("Table Component - Column types", () => {
+    const typedData = mockData.slice(0, 3);
+
+    type TypedTableWrapper = ReactWrapper<IDataTableProps<MockDataType>>;
+
+    const buildEditConfig = (overrides: Partial<IDataTableEditConfig<MockDataType>> = {}) => ({
+        editing: true,
+        onSave: jest.fn(),
+        onCancel: jest.fn(),
+        onEditStart: jest.fn(),
+        ...overrides
+    });
+
+    const mountTable = async (
+        columns: DataTableColumn<MockDataType>[],
+        props: Partial<IDataTableProps<MockDataType>> = {}
+    ) => {
+        let wrapper: TypedTableWrapper;
+
+        await act(async () => {
+            wrapper = mount(
+                <DataTable columns={columns} data={typedData} getRowId={(row) => String(row.Id)} {...props} />
+            );
+        });
+        wrapper!.update();
+
+        return wrapper!;
+    };
+
+    const cellTexts = (wrapper: TypedTableWrapper) =>
+        wrapper.find(".tableBodyCell__text").map((cellText) => cellText.text());
+
+    it("renders a text column as text and edits it with a text field", async () => {
+        const columns: DataTableColumn<MockDataType>[] = [
+            { accessorKey: "FirstName", header: "First name", type: "text", editable: true }
+        ];
+
+        const readMode = await mountTable(columns);
+        expect(cellTexts(readMode)).toEqual(typedData.map((row) => row.FirstName));
+        readMode.unmount();
+
+        const editMode = await mountTable(columns, { editConfig: buildEditConfig() });
+        expect(editMode.find("input.textField__input").length).toBe(typedData.length);
+        expect(editMode.find("input.textField__input").first().prop("value")).toBe(typedData[0].FirstName);
+        editMode.unmount();
+    });
+
+    it("falls back to the text type when no type is given", async () => {
+        const setup = await mountTable([{ accessorKey: "FirstName", header: "First name", editable: true }], {
+            editConfig: buildEditConfig()
+        });
+
+        expect(setup.find("input.textField__input").length).toBe(typedData.length);
+
+        setup.unmount();
+    });
+
+    it("falls back to the text type when the type is not a known one", async () => {
+        const columns = [
+            { accessorKey: "FirstName", header: "First name", type: "integer", editable: true }
+        ] as unknown as DataTableColumn<MockDataType>[];
+        const setup = await mountTable(columns, { editConfig: buildEditConfig() });
+
+        expect(setup.find("input.textField__input").length).toBe(typedData.length);
+
+        setup.unmount();
+    });
+
+    it("renders a number column as text and edits it with a number field", async () => {
+        const columns: DataTableColumn<MockDataType>[] = [
+            { accessorKey: "DayOffs", header: "Day offs", type: "number", editable: true }
+        ];
+
+        const readMode = await mountTable(columns);
+        expect(cellTexts(readMode)).toEqual(typedData.map((row) => String(row.DayOffs)));
+        readMode.unmount();
+
+        const editMode = await mountTable(columns, { editConfig: buildEditConfig() });
+        expect(editMode.find("input.numberField__input").length).toBe(typedData.length);
+        expect(editMode.find("input.textField__input").length).toBe(0);
+        editMode.unmount();
+    });
+
+    it("reports the value of a number field as the field provides it", async () => {
+        const onCellChange = jest.fn();
+        const setup = await mountTable(
+            [{ accessorKey: "DayOffs", header: "Day offs", type: "number", editable: true }],
+            { editConfig: buildEditConfig({ onCellChange }) }
+        );
+
+        await act(async () => {
+            setup
+                .find("input.numberField__input")
+                .first()
+                .simulate("change", { target: { value: "1." } });
+        });
+
+        expect(onCellChange).toHaveBeenCalledWith(
+            expect.objectContaining({ columnId: "DayOffs", rowId: String(typedData[0].Id), value: "1." })
+        );
+
+        setup.unmount();
+    });
+
+    it("renders a boolean column as true and false", async () => {
+        const setup = await mountTable([{ accessorKey: "IsVerified", header: "Verified", type: "boolean" }]);
+
+        expect(cellTexts(setup)).toEqual(typedData.map((row) => String(row.IsVerified)));
+
+        setup.unmount();
+    });
+
+    it("renders an empty cell when a boolean column holds a value that is not a boolean", async () => {
+        const setup = await mountTable([{ accessorKey: "DayOffs", header: "Day offs", type: "boolean" }]);
+
+        expect(cellTexts(setup)).toEqual(typedData.map(() => ""));
+
+        setup.unmount();
+    });
+
+    it("edits a boolean column with a checkbox and reports a boolean", async () => {
+        const onCellChange = jest.fn();
+        const setup = await mountTable(
+            [{ accessorKey: "IsVerified", header: "Verified", type: "boolean", editable: true }],
+            { editConfig: buildEditConfig({ onCellChange }) }
+        );
+
+        const checkboxes = setup.find("input.checkbox__input");
+        expect(checkboxes.length).toBe(typedData.length);
+        expect(checkboxes.first().prop("checked")).toBe(typedData[0].IsVerified);
+
+        await act(async () => {
+            checkboxes.first().simulate("change", { target: { checked: true } });
+        });
+
+        expect(onCellChange).toHaveBeenCalledWith(
+            expect.objectContaining({ columnId: "IsVerified", rowId: String(typedData[0].Id), value: true })
+        );
+
+        setup.unmount();
+    });
+
+    it("checks the checkbox of a boolean column for a truthy value that is not a boolean", async () => {
+        const onCellChange = jest.fn();
+        const setup = await mountTable(
+            [{ accessorKey: "DayOffs", header: "Day offs", type: "boolean", editable: true }],
+            { editConfig: buildEditConfig({ onCellChange }) }
+        );
+
+        const checkboxes = setup.find("input.checkbox__input");
+        expect(checkboxes.map((checkbox) => checkbox.prop("checked"))).toEqual(
+            typedData.map((row) => Boolean(row.DayOffs))
+        );
+
+        await act(async () => {
+            checkboxes.at(1).simulate("change", { target: { checked: true } });
+        });
+
+        expect(onCellChange).toHaveBeenCalledWith(
+            expect.objectContaining({ columnId: "DayOffs", rowId: String(typedData[1].Id), value: true })
+        );
+
+        setup.unmount();
+    });
+
+    it("lets renderCell and renderEditCell take over a typed column", async () => {
+        const setup = await mountTable(
+            [
+                {
+                    accessorKey: "DayOffs",
+                    header: "Day offs",
+                    type: "number",
+                    editable: true,
+                    renderCell: ({ value }) => <b className="customCell">{String(value ?? "")}</b>,
+                    renderEditCell: ({ value }) => (
+                        <input className="customEditor" readOnly value={String(value ?? "")} />
+                    )
+                }
+            ],
+            { editConfig: buildEditConfig({ editing: false }) }
+        );
+
+        expect(setup.find("b.customCell").length).toBe(typedData.length);
+
+        const editMode = await mountTable(
+            [
+                {
+                    accessorKey: "DayOffs",
+                    header: "Day offs",
+                    type: "number",
+                    editable: true,
+                    renderEditCell: ({ value }) => (
+                        <input className="customEditor" readOnly value={String(value ?? "")} />
+                    )
+                }
+            ],
+            { editConfig: buildEditConfig() }
+        );
+
+        expect(editMode.find("input.numberField__input").length).toBe(0);
+        expect(editMode.find("input.customEditor").length).toBe(typedData.length);
+
+        setup.unmount();
+        editMode.unmount();
     });
 });

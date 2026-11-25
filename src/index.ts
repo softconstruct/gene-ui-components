@@ -128,8 +128,13 @@ export {
 // Organisms
 export {
     default as DataTable,
+    DataTableCellValue,
+    DataTableColumn,
+    DataTableColumnType,
     DataTableEditValues,
     DataTableGetRowStatus,
+    DataTableRenderCellArgs,
+    DataTableRenderEditCellArgs,
     DataTableRenderExpandedRow,
     DataTableRowExpandChangeHandler,
     DataTableRowExpandChangePayload,
@@ -161,6 +166,7 @@ export {
     IUploaderUploadPayload
 } from "./components/organisms/Uploader";
 export { default as Editor, IEditorProps, IEditorFooterAction } from "./components/organisms/Editor";
+export { default as Filter, IFilterProps, IFilterSaveConfig } from "./components/organisms/Filter";
 
 // Charts
 export { default as BarChart, IBarChartProps, IBarChartSeries } from "./components/charts/BarChart";
@@ -176,6 +182,7 @@ export {
 } from "./components/charts/StackedBarChart";
 export { default as AreaChart, IAreaChartProps, IAreaChartSeries } from "./components/charts/AreaChart";
 export { default as DualAxisChart, IDualAxisChartProps, IDualAxisChartSeries } from "./components/charts/DualAxisChart";
+export { default as PieChart, IPieChartProps, IPieChartSeries } from "./components/charts/PieChart";
 
 // Providers
 export {

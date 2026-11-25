@@ -33,7 +33,7 @@ const meta: Meta<typeof Modal> = {
         title: args({ control: "text", ...propCategory.content }),
         position: args({ control: "select", ...propCategory.appearance }),
         children: args({ control: "text", ...propCategory.content }),
-        footerContent: args({ control: "text", ...propCategory.content }),
+        footerSwappable: args({ control: "text", ...propCategory.content }),
         status: args({ control: "select", ...propCategory.states }),
         actions: args({ control: "false", ...propCategory.functionality }),
         lockBodyScroll: args({ control: "boolean", ...propCategory.functionality })
@@ -112,7 +112,7 @@ const ModalWithContent = (props) => {
                 {...props}
                 onClose={closeHandler}
                 open={isOpen}
-                footerContent={<Pill appearance="success" text="Footer Content" Icon={Globe} filled />}
+                footerSwappable={<Pill appearance="success" text="Footer Content" Icon={Globe} filled />}
             >
                 <div
                     style={{
