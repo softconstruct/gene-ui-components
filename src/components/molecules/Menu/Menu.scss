@@ -106,12 +106,7 @@
 
     &__headerTitle {
         flex: 1;
-        font-family: var(--guit-sem-font-body-medium-default-semibold-font-family);
-        font-size: var(--guit-sem-font-body-medium-default-semibold-font-size);
-        font-weight: var(--guit-sem-font-body-medium-default-semibold-font-weight);
-        line-height: var(--guit-sem-font-body-medium-default-semibold-line-height);
         color: inherit;
-        text-align: start;
     }
 
     &__scrollbar {
