@@ -32,6 +32,7 @@ describe("Filter", () => {
     const render = (props: IFilterProps = {}) => setup.setProps(props).update();
     const button = (text: string) => setup.find(Button).filterWhere((item) => item.text() === text);
     const popoverButtons = () => setup.find(".popover__footerActions button");
+    const savedFiltersButton = () => setup.find(".drawer__headerSwappable button");
     const openSave = () => {
         setup.find("button.filter__save").simulate("click");
         setup.update();
@@ -124,7 +125,7 @@ describe("Filter", () => {
     it("should render saveConfig with the default texts", () => {
         render({ saveConfig: { onSave: jest.fn(), onSavedFiltersClick: jest.fn() } });
         expect(setup.find("button.filter__save").text()).toBe("Save");
-        expect(setup.find("button.filter__savedFilters").text()).toBe("Saved Filters");
+        expect(savedFiltersButton().text()).toBe("Saved Filters");
         openSave();
         expect(popoverButtons().first().text()).toBe("Cancel");
         expect(popoverButtons().last().text()).toBe("Save");
@@ -146,16 +147,15 @@ describe("Filter", () => {
 
     it("should not render the Saved Filters button without onSavedFiltersClick", () => {
         render();
-        expect(setup.find("button.filter__savedFilters").exists()).toBeFalsy();
+        expect(savedFiltersButton().exists()).toBeFalsy();
     });
 
     it("should render the Saved Filters button and call onSavedFiltersClick on click", () => {
         const onSavedFiltersClick = jest.fn();
         render({ saveConfig: saveConfig({ savedFiltersText: "Saved Filters", onSavedFiltersClick }) });
-        const savedFilters = setup.find(".drawer__headerSwappable button.filter__savedFilters");
-        expect(savedFilters.text()).toBe("Saved Filters");
-        expect(savedFilters.find("svg").exists()).toBeTruthy();
-        savedFilters.simulate("click");
+        expect(savedFiltersButton().text()).toBe("Saved Filters");
+        expect(savedFiltersButton().find("svg").exists()).toBeTruthy();
+        savedFiltersButton().simulate("click");
         expect(onSavedFiltersClick).toHaveBeenCalledTimes(1);
     });
 
