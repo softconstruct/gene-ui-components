@@ -1,9 +1,13 @@
-import React, { FC, ReactNode, useMemo } from "react";
+import React, { FC, ReactNode, useMemo, useRef } from "react";
 import classNames from "classnames";
 
 import { CheckMark, ChevronLeft, ChevronRight, IconProps } from "@geneui/icons";
 
 import Divider from "@components/atoms/Divider";
+import Text from "@components/atoms/Text";
+import Tooltip from "@components/molecules/Tooltip";
+
+import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
 interface IMenuItemButtonProps {
     type: "header" | "parent" | "simple" | "custom";
@@ -34,6 +38,9 @@ const MenuItemButton: FC<IMenuItemButtonProps> = ({
     active,
     divider
 }) => {
+    const titleRef = useRef<HTMLSpanElement | null>(null);
+    const isTitleTruncated = useEllipsisDetection(titleRef, [title]);
+
     const isRTLMode = document.dir === "rtl";
     const onItemClick = () => {
         switch (type) {
@@ -66,6 +73,14 @@ const MenuItemButton: FC<IMenuItemButtonProps> = ({
         return <></>;
     }, [type, selected, IconAfter, onItemClick, danger]);
 
+    const titleElement = title ? (
+        <Tooltip text={title} isVisible={isTitleTruncated}>
+            <Text as="span" variant="bodyMediumSemibold" className="menu__headerTitle ellipsis-text" ref={titleRef}>
+                {title}
+            </Text>
+        </Tooltip>
+    ) : null;
+
     return (
         <>
             <button
@@ -92,7 +107,7 @@ const MenuItemButton: FC<IMenuItemButtonProps> = ({
                             <ChevronLeft className="menu__icon" size={20} />
                         ))}
                     {IconBefore && <IconBefore className="menu__icon" size={20} />}
-                    {title ? <span className={type === "header" ? "menu__headerTitle" : ""}>{title}</span> : children}
+                    {children || titleElement}
                 </span>
                 {MemoizedIconAfter}
             </button>
