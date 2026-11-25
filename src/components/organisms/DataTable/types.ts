@@ -349,6 +349,93 @@ export type ResolvedDataTableEditConfig<TData> = Omit<
         onSave: () => void;
     };
 
+/**
+ * Payload reported by `onSelectionChange` whenever the user changes the selection.
+ */
+export interface IDataTableRowSelectionChangePayload {
+    /**
+     * Ids (from `getRowId`) of the selected rows after the change, on every page.
+     */
+    selectedRowIds: string[];
+}
+
+/**
+ * Payload passed to a bulk action's `onClick`.
+ */
+export interface IDataTableBulkActionPayload {
+    /**
+     * Ids (from `getRowId`) of the rows the action applies to, on every page.
+     */
+    selectedRowIds: string[];
+}
+
+/**
+ * An item of the Bulk Actions dropdown.
+ */
+export interface IDataTableBulkAction {
+    /**
+     * Label of the menu item.
+     */
+    title: string;
+    /**
+     * Click handler: receives the current selection and the originating mouse event.
+     */
+    onClick: (payload: IDataTableBulkActionPayload, e: MouseEvent) => void;
+}
+
+/**
+ * Texts and labels of the bulk actions UI.
+ */
+export interface IDataTableBulkActionsTexts {
+    /**
+     * Label showing how many rows are selected, on every page.
+     * @default (count) => `${count} selected`
+     */
+    selectedCount?: (count: number) => string;
+    /**
+     * Text of the button that clears the selection on every page.
+     * @default "Deselect"
+     */
+    deselect?: string;
+    /**
+     * Label of the dropdown button that opens the bulk actions menu.
+     * @default "Bulk Actions"
+     */
+    bulkActionsButton?: string;
+    /**
+     * `aria-label` of the header checkbox, which selects the rows on the current page.
+     * @default "Select all rows on this page"
+     */
+    selectPageAriaLabel?: string;
+    /**
+     * `aria-label` of a row checkbox.
+     * @default (rowId) => `Select row ${rowId}`
+     */
+    selectRowAriaLabel?: (rowId: string) => string;
+}
+
+/**
+ * Configuration object for row selection and bulk actions.
+ */
+export interface IDataTableBulkActionsConfig {
+    /**
+     * Ids (from `getRowId`) of the selected rows, on every page.
+     */
+    selectedRowIds: string[];
+    /**
+     * Called with the new selection whenever the user changes it.
+     */
+    onSelectionChange: (payload: IDataTableRowSelectionChangePayload) => void;
+    /**
+     * Items of the Bulk Actions dropdown, which is always visible when the config is set.
+     */
+    actions: IDataTableBulkAction[];
+    /**
+     * Texts and labels of the bulk actions UI.
+     */
+    texts?: IDataTableBulkActionsTexts;
+}
+
 declare module "@tanstack/react-table" {
     // eslint-disable-next-line
     interface ColumnMeta<TData extends RowData, TValue> {

@@ -11,8 +11,13 @@ export {
     DataTableRowExpandChangeHandler,
     DataTableRowExpandChangePayload,
     DataTableRowStatus,
+    IDataTableBulkAction,
+    IDataTableBulkActionPayload,
+    IDataTableBulkActionsConfig,
+    IDataTableBulkActionsTexts,
     IDataTableCellChangePayload,
     IDataTableEditConfig,
     IDataTableEditTexts,
-    IDataTableRowAction
+    IDataTableRowAction,
+    IDataTableRowSelectionChangePayload
 } from "./types";
