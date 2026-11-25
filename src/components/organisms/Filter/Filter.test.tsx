@@ -122,8 +122,9 @@ describe("Filter", () => {
     });
 
     it("should render saveConfig with the default texts", () => {
-        render({ saveConfig: { onSave: jest.fn() } });
+        render({ saveConfig: { onSave: jest.fn(), onSavedFiltersClick: jest.fn() } });
         expect(setup.find("button.filter__save").text()).toBe("Save");
+        expect(setup.find("button.filter__savedFilters").text()).toBe("Saved Filters");
         openSave();
         expect(popoverButtons().first().text()).toBe("Cancel");
         expect(popoverButtons().last().text()).toBe("Save");
@@ -141,6 +142,21 @@ describe("Filter", () => {
         expect(setup.find("button.filter__save").prop("disabled")).toBeFalsy();
         render({ saveConfig: saveConfig({ buttonDisabled: true }) });
         expect(setup.find("button.filter__save").prop("disabled")).toBeTruthy();
+    });
+
+    it("should not render the Saved Filters button without onSavedFiltersClick", () => {
+        render();
+        expect(setup.find("button.filter__savedFilters").exists()).toBeFalsy();
+    });
+
+    it("should render the Saved Filters button and call onSavedFiltersClick on click", () => {
+        const onSavedFiltersClick = jest.fn();
+        render({ saveConfig: saveConfig({ savedFiltersText: "Saved Filters", onSavedFiltersClick }) });
+        const savedFilters = setup.find(".drawer__headerSwappable button.filter__savedFilters");
+        expect(savedFilters.text()).toBe("Saved Filters");
+        expect(savedFilters.find("svg").exists()).toBeTruthy();
+        savedFilters.simulate("click");
+        expect(onSavedFiltersClick).toHaveBeenCalledTimes(1);
     });
 
     it("should remove the Save button and close the save popover when saveConfig is removed", () => {

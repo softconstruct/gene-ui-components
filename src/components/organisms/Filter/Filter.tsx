@@ -1,6 +1,8 @@
 import React, { FC, ReactNode, useEffect, useState } from "react";
 import classNames from "classnames";
 
+import { Archive } from "@geneui/icons";
+
 // Components
 import Button from "@components/atoms/Button";
 import { Popover, PopoverBody, PopoverFooter } from "@components/atoms/Popover";
@@ -37,6 +39,16 @@ interface IFilterSaveConfig {
      * @default false
      */
     buttonLoading?: boolean;
+    /**
+     * Text of the Saved Filters button in the panel header.
+     * @default "Saved Filters"
+     */
+    savedFiltersText?: string;
+    /**
+     * Callback fired when the Saved Filters button is clicked. Providing it renders the button in the panel header;
+     * showing the saved filters is up to the consumer.
+     */
+    onSavedFiltersClick?: () => void;
     /**
      * Callback fired when the save popover is confirmed. Receives the filter name as typed by the user;
      * storing the current filter values under that name is up to the consumer.
@@ -82,8 +94,8 @@ interface IFilterProps {
     resetDisabled?: boolean;
     /**
      * Configuration object for saving the filters.
-     * Providing it renders the Save button with its save popover;
-     * otherwise the panel has no saving.
+     * Providing it renders the Save button with its save popover, and the Saved Filters button
+     * when `onSavedFiltersClick` is set; otherwise the panel has no saving.
      */
     saveConfig?: IFilterSaveConfig;
     /**
@@ -133,6 +145,22 @@ const Filter: FC<IFilterProps> = ({
         }
     }, [open, saveConfig]);
 
+    const renderSavedFiltersButton = ({
+        savedFiltersText = "Saved Filters",
+        onSavedFiltersClick
+    }: Pick<IFilterSaveConfig, "savedFiltersText" | "onSavedFiltersClick">) =>
+        onSavedFiltersClick && (
+            <Button
+                Icon={Archive}
+                iconPosition="before"
+                appearance="secondary"
+                layout="text"
+                onClick={onSavedFiltersClick}
+            >
+                {savedFiltersText}
+            </Button>
+        );
+
     const renderSaveSection = ({
         buttonText = "Save",
         buttonDisabled,
@@ -141,7 +169,7 @@ const Filter: FC<IFilterProps> = ({
         popoverCancelText = "Cancel",
         popoverLabelText,
         onSave
-    }: IFilterSaveConfig) => (
+    }: Omit<IFilterSaveConfig, "savedFiltersText" | "onSavedFiltersClick">) => (
         <>
             <Button
                 {...saveButtonProps}
@@ -213,6 +241,7 @@ const Filter: FC<IFilterProps> = ({
                 },
                 { children: applyText, disabled: applyDisabled, onClick: onApply }
             ]}
+            headerSwappable={saveConfig && renderSavedFiltersButton(saveConfig)}
             footerSwappable={saveConfig && renderSaveSection(saveConfig)}
         >
             {children}

@@ -40,6 +40,8 @@ const meta: Meta<IFilterProps> = {
             popoverLabelText: "Filter Name",
             buttonDisabled: false,
             buttonLoading: false,
+            savedFiltersText: "Saved Filters",
+            onSavedFiltersClick: fn(),
             onSave: fn()
         },
         open: true,
