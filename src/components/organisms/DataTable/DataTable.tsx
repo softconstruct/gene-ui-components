@@ -231,6 +231,7 @@ interface IDataTableProps<TData> {
      * Configuration object for row selection and bulk actions.
      * Providing it adds a checkbox column and the bulk actions to the toolbar.
      * The selection is controlled through `selectedRowIds` and `onSelectionChange`.
+     * Memoize the config (e.g. with `useMemo`) in large tables, so the table doesn't re-render on every parent render.
      *
      * @example
      * ```tsx

@@ -398,7 +398,7 @@ const BulkActionsTableWrapper = (props: IDataTableProps<MockRowType>) => {
             bulkActionsConfig={{
                 selectedRowIds,
                 onSelectionChange: ({ selectedRowIds: nextSelectedRowIds }) => setSelectedRowIds(nextSelectedRowIds),
-                actions: [{ id: "delete", title: "Delete", onClick: () => setSelectedRowIds([]) }]
+                actions: [{ id: "delete", title: "Delete", onClick: () => {} }]
             }}
         />
     );

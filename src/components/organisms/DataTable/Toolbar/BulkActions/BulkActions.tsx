@@ -43,7 +43,7 @@ const BulkActions = <TData,>() => {
                 Icon={CaretDownFilled}
                 iconPosition="after"
                 disabled={isDisabled || actions.length === 0}
-                {...(!isDisabled && propsForPopover)}
+                {...propsForPopover}
             >
                 {texts.bulkActionsButton}
             </Button>
