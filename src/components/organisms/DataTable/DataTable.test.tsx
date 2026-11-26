@@ -9,6 +9,7 @@ import Loader from "@components/atoms/Loader";
 import { Popover } from "@components/atoms/Popover";
 import Checkbox from "@components/molecules/Checkbox";
 import Empty from "@components/molecules/Empty";
+import { IMenuItemProps, Menu } from "@components/molecules/Menu";
 import Pagination from "@components/molecules/Pagination";
 import TextField from "@components/molecules/TextField";
 import { INITIAL_PAGE_SIZE } from "@components/organisms/DataTable/constants";
@@ -2656,6 +2657,107 @@ describe("Table Component - selection column pinning and Manage columns", () => 
             { label: "Email", isPinned: true },
             { label: "Name", isPinned: false }
         ]);
+        wrapper.unmount();
+    });
+});
+
+describe("Table Component - bulk actions toolbar", () => {
+    type ToolbarRow = { id: string; name: string };
+
+    const toolbarData: ToolbarRow[] = ["a", "b", "c"].map((id) => ({ id, name: `Row ${id}` }));
+    const toolbarColumns: DataTableColumn<ToolbarRow>[] = [{ accessorKey: "name", header: "Name" }];
+
+    const createConfig = (
+        selectedRowIds: string[],
+        overrides: Partial<IDataTableBulkActionsConfig> = {}
+    ): IDataTableBulkActionsConfig => ({
+        selectedRowIds,
+        onSelectionChange: jest.fn(),
+        actions: [
+            { id: "export", title: "Export", onClick: jest.fn() },
+            { id: "delete", title: "Delete", onClick: jest.fn() }
+        ],
+        ...overrides
+    });
+
+    const mountToolbarTable = (props: Partial<IDataTableProps<ToolbarRow>>) =>
+        mount(<DataTable data={toolbarData} columns={toolbarColumns} getRowId={(row) => row.id} {...props} />);
+
+    const getButton = (wrapper: ReactWrapper, text: string) =>
+        wrapper
+            .find(".bulkActions")
+            .find(Button)
+            .filterWhere((button) => button.text() === text);
+
+    it("renders Deselect and Bulk Actions disabled while nothing is selected", () => {
+        const wrapper = mountToolbarTable({ bulkActionsConfig: createConfig([]) });
+
+        expect(wrapper.find(".bulkActions__count").first().text()).toBe("0 selected");
+        expect(getButton(wrapper, "Deselect").prop("disabled")).toBe(true);
+        expect(getButton(wrapper, "Bulk Actions").prop("disabled")).toBe(true);
+        wrapper.unmount();
+    });
+
+    it("renders the selected count and enables the buttons when rows are selected", () => {
+        const wrapper = mountToolbarTable({ bulkActionsConfig: createConfig(["a", "b"]) });
+
+        expect(wrapper.find(".bulkActions__count").first().text()).toBe("2 selected");
+        expect(getButton(wrapper, "Deselect").prop("disabled")).toBe(false);
+        expect(getButton(wrapper, "Bulk Actions").prop("disabled")).toBe(false);
+        wrapper.unmount();
+    });
+
+    it("renders texts prop correctly", () => {
+        const wrapper = mountToolbarTable({
+            bulkActionsConfig: createConfig(["a"], {
+                texts: { selectedCount: (count) => `${count} rows`, deselect: "Clear", bulkActionsButton: "Actions" }
+            })
+        });
+
+        expect(wrapper.find(".bulkActions__count").first().text()).toBe("1 rows");
+        expect(getButton(wrapper, "Clear").exists()).toBe(true);
+        expect(getButton(wrapper, "Actions").exists()).toBe(true);
+        wrapper.unmount();
+    });
+
+    it("clears the selection on every page on Deselect click", () => {
+        const config = createConfig(["a", "x"]);
+        const wrapper = mountToolbarTable({ bulkActionsConfig: config });
+
+        getButton(wrapper, "Deselect").simulate("click");
+
+        expect(config.onSelectionChange).toHaveBeenLastCalledWith({ selectedRowIds: [] });
+        wrapper.unmount();
+    });
+
+    it("calls the chosen action with the selected row ids", () => {
+        const config = createConfig(["a", "x"]);
+        const wrapper = mountToolbarTable({ bulkActionsConfig: config });
+
+        const onMenuChange = wrapper.find(".bulkActions").find(Menu).prop("onChange") as (item: IMenuItemProps) => void;
+        act(() => onMenuChange({ id: "delete" } as IMenuItemProps));
+
+        expect(config.actions[1].onClick).toHaveBeenCalledWith({ selectedRowIds: ["a", "x"] });
+        expect(config.actions[0].onClick).not.toHaveBeenCalled();
+        wrapper.unmount();
+    });
+
+    it("disables Bulk Actions when there are no actions", () => {
+        const wrapper = mountToolbarTable({ bulkActionsConfig: createConfig(["a"], { actions: [] }) });
+
+        expect(getButton(wrapper, "Bulk Actions").prop("disabled")).toBe(true);
+        expect(wrapper.find(".bulkActions").find(Menu).exists()).toBe(false);
+        wrapper.unmount();
+    });
+
+    it("disables Deselect and Bulk Actions in edit mode", () => {
+        const wrapper = mountToolbarTable({
+            bulkActionsConfig: createConfig(["a"]),
+            editConfig: { editing: true, onEditStart: jest.fn(), onSave: jest.fn(), onCancel: jest.fn() }
+        });
+
+        expect(getButton(wrapper, "Deselect").prop("disabled")).toBe(true);
+        expect(getButton(wrapper, "Bulk Actions").prop("disabled")).toBe(true);
         wrapper.unmount();
     });
 });

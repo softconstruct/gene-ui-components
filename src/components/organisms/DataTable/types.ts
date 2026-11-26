@@ -389,13 +389,17 @@ export interface IDataTableBulkActionPayload {
  */
 export interface IDataTableBulkAction {
     /**
+     * Unique id of the action.
+     */
+    id: string;
+    /**
      * Label of the menu item.
      */
     title: string;
     /**
-     * Click handler: receives the current selection and the originating mouse event.
+     * Click handler: receives the current selection.
      */
-    onClick: (payload: IDataTableBulkActionPayload, e: MouseEvent) => void;
+    onClick: (payload: IDataTableBulkActionPayload) => void;
 }
 
 /**

@@ -7,6 +7,7 @@ import Button from "@components/atoms/Button";
 
 // Context
 import { useDataTableContext } from "../context";
+import BulkActions from "./BulkActions/BulkActions";
 import ManageColumns from "./ManageColumns/ManageColumns";
 
 // Styles
@@ -20,10 +21,10 @@ interface IToolbarProps {
 }
 
 const Toolbar = <TData,>({ isTableLoading }: IToolbarProps) => {
-    const { table, manageColumnsConfig, editConfig } = useDataTableContext<TData>();
+    const { table, manageColumnsConfig, editConfig, bulkActionsConfig } = useDataTableContext<TData>();
     const { visible: isManageColumnsVisible } = manageColumnsConfig;
 
-    if (!isManageColumnsVisible && !editConfig) return null;
+    if (!isManageColumnsVisible && !editConfig && !bulkActionsConfig) return null;
 
     const isEditing = editConfig?.editing;
     const isSaveDisabled = editConfig?.loading || editConfig?.saveDisabled;
@@ -31,6 +32,7 @@ const Toolbar = <TData,>({ isTableLoading }: IToolbarProps) => {
 
     return (
         <div className="tableToolbar">
+            {bulkActionsConfig && <BulkActions />}
             <div className="tableToolbar__actions">
                 {editConfig &&
                     (isEditing ? (

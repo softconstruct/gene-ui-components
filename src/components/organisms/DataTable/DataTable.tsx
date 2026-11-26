@@ -240,7 +240,7 @@ interface IDataTableProps<TData> {
      *   bulkActionsConfig={{
      *     selectedRowIds,
      *     onSelectionChange: ({ selectedRowIds }) => setSelectedRowIds(selectedRowIds),
-     *     actions: [{ title: "Delete", onClick: ({ selectedRowIds }) => api.delete(selectedRowIds) }]
+     *     actions: [{ id: "delete", title: "Delete", onClick: ({ selectedRowIds }) => api.delete(selectedRowIds) }]
      *   }}
      * />
      * ```
