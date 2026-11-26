@@ -103,6 +103,7 @@ const TableRow = <TData,>({
                 className={classNames(`tableRow`, {
                     [`tableRow_status_${rowStatus}`]: rowStatus
                 })}
+                aria-selected={row.getCanSelect() ? row.getIsSelected() : undefined}
             >
                 {row.getVisibleCells().map((cell) => {
                     const isPinned = !!cell.column.getIsPinned();
