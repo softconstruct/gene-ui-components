@@ -17,6 +17,10 @@
         background-color: var(--guit-sem-color-background-neutral-1);
     }
 
+    &:last-child > .tableBodyCell {
+        box-shadow: none;
+    }
+
     &_status {
         &_default:not(:active, :hover) {
             background-color: var(--guit-sem-color-background-neutral-1);
@@ -65,6 +69,10 @@
             var(--guit-sem-color-border-neutral-1);
     }
 
+    &:last-child > &__actionsWrapper {
+        border-bottom: none;
+    }
+
     &__actions {
         position: absolute;
         inset-inline-end: 0;
@@ -81,6 +89,7 @@
             inset-block: 0;
             width: 0.4rem;
             pointer-events: none;
+            opacity: 0.4;
         }
 
         [dir="ltr"] &::after {

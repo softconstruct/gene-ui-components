@@ -3,6 +3,9 @@ import { Cell, CellContext, ColumnDef } from "@tanstack/react-table";
 
 // Components
 import Text from "@components/atoms/Text";
+import Checkbox from "@components/molecules/Checkbox";
+import NumberField from "@components/molecules/NumberField";
+import TextField from "@components/molecules/TextField";
 import Tooltip from "@components/molecules/Tooltip";
 
 // hooks
@@ -14,6 +17,7 @@ import ExpanderCell from "./TableBody/ExpanderCell/ExpanderCell";
 import {
     DataTableCellValue,
     DataTableColumn,
+    DataTableColumnType,
     DataTableRenderEditCellArgs,
     DataTableRowExpandChangeHandler
 } from "./types";
@@ -44,6 +48,12 @@ export interface ICellProps<TData, TValue> {
      */
     rowData: TData;
     /**
+     * Text this cell copies, resolved by the parent. Absent when the column is not `copyable` or has
+     * a custom `renderCell`, and empty when the column copies but this cell has nothing to copy; the
+     * copy control is not rendered for either.
+     */
+    copyValue?: string;
+    /**
      * Whether this cell renders an editor instead of its read-only content, that is whether the table
      * is in edit mode and the column is `editable`.
      */
@@ -51,7 +61,7 @@ export interface ICellProps<TData, TValue> {
     /**
      * Whether the editor of this cell is interactive.
      */
-    isEditDisabled: boolean;
+    isEditDisabled?: boolean;
     /**
      * Value the editor shows: the draft from `editValues` when the cell has one, the value from
      * `data` otherwise.
@@ -91,6 +101,29 @@ export const getCellStyle = (
 export const getCellContentStyle = (explicitSize: number | undefined): CSSProperties | undefined =>
     explicitSize !== undefined ? { width: `${explicitSize}px`, maxWidth: "none" } : undefined;
 
+/**
+ * Text the copy control of a cell puts on the clipboard: `getCopyValue` when the column defines one,
+ * the cell's value as text otherwise. `undefined` on a column that is not `copyable`, and an empty
+ * string when the column is but this cell has nothing to copy; the control is rendered for neither.
+ */
+export const resolveCopyValue = <TData,>(cell: Cell<TData, unknown>, value: unknown): string | undefined => {
+    const { copyable, getCopyValue } = cell.column.columnDef.meta ?? {};
+
+    if (!copyable) {
+        return undefined;
+    }
+
+    if (!getCopyValue) {
+        return String(value ?? "");
+    }
+
+    return getCopyValue({
+        value: value as DataTableCellValue<TData>,
+        row: cell.row.original,
+        rowId: cell.row.id
+    });
+};
+
 export const areCellsEqual = <TData, TValue>(prev: ICellProps<TData, TValue>, next: ICellProps<TData, TValue>) =>
     prev.cell.id === next.cell.id &&
     prev.isExpanded === next.isExpanded &&
@@ -101,6 +134,7 @@ export const areCellsEqual = <TData, TValue>(prev: ICellProps<TData, TValue>, ne
     prev.dirMode === next.dirMode &&
     prev.value === next.value &&
     prev.rowData === next.rowData &&
+    prev.copyValue === next.copyValue &&
     prev.isCellEditing === next.isCellEditing &&
     prev.isEditDisabled === next.isEditDisabled &&
     prev.editValue === next.editValue &&
@@ -120,15 +154,74 @@ export const DefaultCellComponent = ({ value }: { value: string }) => {
     );
 };
 
+export type DataTableColumnTypeDefinition = {
+    renderValue: (value: unknown) => ReactNode;
+    renderEditControl: (args: DataTableRenderEditCellArgs<unknown, unknown>) => ReactNode;
+};
+
+export const DEFAULT_COLUMN_TYPE: DataTableColumnType = "text";
+
+export const columnTypes: Record<DataTableColumnType, DataTableColumnTypeDefinition> = {
+    text: {
+        renderValue: (value) => <DefaultCellComponent value={String(value ?? "")} />,
+        renderEditControl: ({ value, disabled, onChange }) => (
+            <TextField
+                size="small"
+                value={String(value ?? "")}
+                disabled={disabled}
+                onChange={(event) => onChange(event.target.value)}
+            />
+        )
+    },
+    number: {
+        renderValue: (value) => <DefaultCellComponent value={String(value ?? "")} />,
+        renderEditControl: ({ value, disabled, onChange }) => (
+            <NumberField
+                size="small"
+                value={typeof value === "number" || typeof value === "string" ? value : ""}
+                disabled={disabled}
+                onChange={(nextValue) => onChange(nextValue)}
+            />
+        )
+    },
+    boolean: {
+        renderValue: (value) => <DefaultCellComponent value={typeof value === "boolean" ? String(value) : ""} />,
+        renderEditControl: ({ value, disabled, onChange }) => (
+            <Checkbox
+                checked={Boolean(value)}
+                disabled={disabled}
+                onChange={(event) => onChange(event.target.checked)}
+            />
+        )
+    }
+};
+
+export const resolveColumnType = (type?: DataTableColumnType): DataTableColumnTypeDefinition =>
+    columnTypes[type as DataTableColumnType] ?? columnTypes[DEFAULT_COLUMN_TYPE];
+
 /**
  * Normalizes the public {@link DataTableColumn} shape into TanStack `ColumnDef[]`.
  * Pure transformation: does not inject any non-data columns.
  */
 export const adaptColumns = <TData,>(columns: DataTableColumn<TData>[]): ColumnDef<TData, ReactNode>[] =>
     columns.map((col, index) => {
-        const { accessorKey, id, header, size, renderCell, renderEditCell, defaultVisible, defaultPinned, editable } =
-            col;
+        const {
+            accessorKey,
+            id,
+            header,
+            size,
+            type,
+            copyable,
+            getCopyValue,
+            renderCell,
+            renderEditCell,
+            defaultVisible,
+            defaultPinned,
+            editable
+        } = col;
         const isAccessorColumn = Boolean(accessorKey);
+        const typeDefaults = resolveColumnType(type);
+        const isCopyable = copyable && !renderCell;
 
         const base: ColumnDef<TData> = {
             id: id ?? accessorKey ?? `display_${index}`,
@@ -139,21 +232,23 @@ export const adaptColumns = <TData,>(columns: DataTableColumn<TData>[]): ColumnD
                 defaultVisible,
                 defaultPinned,
                 editable,
-                renderEditCell
+                copyable: isCopyable,
+                getCopyValue: isCopyable ? getCopyValue : undefined,
+                renderEditCell: editable ? (renderEditCell ?? typeDefaults.renderEditControl) : undefined
             },
             ...(isAccessorColumn ? { accessorKey } : {})
         };
 
-        if (!renderCell) return base;
-
         return {
             ...base,
-            cell: (ctx: CellContext<TData, ReactNode>) =>
-                renderCell({
-                    value: (isAccessorColumn ? ctx.getValue() : undefined) as DataTableCellValue<TData>,
-                    row: ctx.row.original,
-                    rowId: ctx.row.id
-                })
+            cell: renderCell
+                ? (ctx: CellContext<TData, ReactNode>) =>
+                      renderCell({
+                          value: (isAccessorColumn ? ctx.getValue() : undefined) as DataTableCellValue<TData>,
+                          row: ctx.row.original,
+                          rowId: ctx.row.id
+                      })
+                : (ctx: CellContext<TData, ReactNode>) => typeDefaults.renderValue(ctx.getValue())
         };
     });
 

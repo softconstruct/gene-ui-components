@@ -91,6 +91,10 @@ interface INavigationProps {
      * Text for the mobile create button. If not provided, only the Plus icon will be shown.
      */
     createButtonText?: string;
+    /**
+     * Title shown in the header of the mobile navigation, next to the close button. If not provided, only the close button will be shown.
+     */
+    mobileTitle?: string;
 }
 
 export const findPath = (
@@ -172,7 +176,8 @@ const Navigation: FC<INavigationProps> = ({
     moreMenuTitle = "More",
     render,
     compact = false,
-    createButtonText
+    createButtonText,
+    mobileTitle
 }) => {
     const [currentDataIndex, setCurrentDataIndex] = useState<number | null>(null);
     const [hoverDataIndex, setHoverDataIndex] = useState<number | null>(null);
@@ -345,6 +350,7 @@ const Navigation: FC<INavigationProps> = ({
                     render={render}
                     activePathIndex={activePathIndex}
                     createButtonText={createButtonText}
+                    mobileTitle={mobileTitle}
                 />
             ) : (
                 <>

@@ -30,6 +30,8 @@ export interface DataTableRowExpandChangePayload<TData> {
 
 export type DataTableRowExpandChangeHandler<TData> = (payload: DataTableRowExpandChangePayload<TData>) => void;
 
+export type DataTableColumnType = "text" | "number" | "boolean";
+
 export type DataTableCellValue<TData> = TData[keyof TData & string] | undefined;
 
 export type DataTableRenderCellArgs<TData, TValue> = {
@@ -78,6 +80,11 @@ export type DataTableColumn<TData> = {
      */
     size?: number;
     /**
+     * Decides which control the cell renders in edit mode.
+     * @default "text"
+     */
+    type?: DataTableColumnType;
+    /**
      * Whether the column is visible by default.
      * @default true
      */
@@ -94,6 +101,21 @@ export type DataTableColumn<TData> = {
      * @default false
      */
     editable?: boolean;
+    /**
+     * Whether the cell shows a control that copies its value. The control is not added to a column
+     * with a custom `renderCell`, which owns its whole cell, and is never shown while the cell is
+     * being edited.
+     * @default false
+     */
+    copyable?: boolean;
+    /**
+     * The text put on the clipboard. Defaults to the cell's value as text.
+     * Has no effect on a column that is not `copyable`. Return an empty string to leave a row
+     * without the control.
+     * IMPORTANT: For optimal performance on large tables, ensure this function is memoized
+     * (e.g., using `useCallback` or defined outside the component) to avoid unnecessary cell re-renders.
+     */
+    getCopyValue?: (args: DataTableRenderCellArgs<TData, DataTableCellValue<TData>>) => string;
     /**
      * Lean cell renderer (no TanStack CellContext exposure).
      * IMPORTANT: For optimal performance on large tables, ensure this function is memoized
@@ -253,8 +275,8 @@ export interface IDataTableCellChangePayload<TData> {
      */
     row: TData;
     /**
-     * The current value of the control, reported as the control provided it. The built-in control
-     * always reports a string.
+     * The current value of the control, reported as the control provided it. A built-in control reports
+     * a string for `text` and `number`, and a boolean for `boolean`.
      */
     value: unknown;
 }
@@ -349,6 +371,8 @@ declare module "@tanstack/react-table" {
         defaultVisible?: boolean;
         defaultPinned?: boolean;
         editable?: boolean;
+        copyable?: boolean;
+        getCopyValue?: (args: DataTableRenderCellArgs<TData, DataTableCellValue<TData>>) => string;
         renderEditCell?: (args: DataTableRenderEditCellArgs<TData, unknown>) => ReactNode;
     }
 }

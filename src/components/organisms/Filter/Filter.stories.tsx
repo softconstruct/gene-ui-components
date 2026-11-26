@@ -1,0 +1,152 @@
+import React, { FC, useState } from "react";
+import { Meta, StoryObj } from "@storybook/react";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { fn } from "@storybook/test";
+
+// Components
+import Button from "@components/atoms/Button";
+import Dropdown from "@components/molecules/Dropdown";
+import TextField from "@components/molecules/TextField";
+
+// Helpers
+import { args, propCategory } from "../../../../stories/assets/storybook.globals";
+import Filter, { IFilterProps } from "./index";
+
+const saveCallbacks = { onSavedFiltersClick: fn(), onPopoverOpenChange: fn(), onSave: fn() };
+
+const meta: Meta<IFilterProps> = {
+    title: "Organisms/Filter",
+    component: Filter,
+    argTypes: {
+        className: args({ control: "false", ...propCategory.appearance }),
+        open: args({ control: "false", ...propCategory.states }),
+        title: args({ control: "text", ...propCategory.content }),
+        children: args({ control: "false", ...propCategory.content }),
+        applyText: args({ control: "text", ...propCategory.content }),
+        resetText: args({ control: "text", ...propCategory.content }),
+        applyDisabled: args({ control: "boolean", ...propCategory.states }),
+        resetDisabled: args({ control: "boolean", ...propCategory.states }),
+        saveConfig: args({ control: "object", ...propCategory.functionality }),
+        onApply: args({ control: "false", ...propCategory.action }),
+        onReset: args({ control: "false", ...propCategory.action }),
+        onClose: args({ control: "false", ...propCategory.action })
+    },
+    args: {
+        title: "Filters",
+        applyText: "Apply",
+        resetText: "Reset",
+        saveConfig: {
+            buttonText: "Save",
+            popoverSaveText: "Save",
+            popoverCancelText: "Cancel",
+            popoverLabelText: "Filter Name",
+            buttonDisabled: false,
+            buttonLoading: false,
+            popoverOpen: false,
+            popoverSaveLoading: false,
+            savedFiltersText: "Saved Filters",
+            ...saveCallbacks
+        },
+        open: true,
+        onApply: fn(),
+        onReset: fn(),
+        onClose: fn()
+    }
+};
+
+export default meta;
+
+type Story = StoryObj<IFilterProps>;
+
+const emptyValues: { name: string; email: string; status: string | null } = { name: "", email: "", status: null };
+
+const statusOptions = [
+    { id: 1, label: "Active", value: "active" },
+    { id: 2, label: "Pending", value: "pending" },
+    { id: 3, label: "Blocked", value: "blocked" }
+];
+
+// Stands for the request that stores the filter on the server
+const saveFilterRequest = () =>
+    new Promise<void>((resolve) => {
+        setTimeout(resolve, 1000);
+    });
+
+const FilterTemplate: FC<IFilterProps> = ({ saveConfig, onApply, onReset, onClose, ...props }) => {
+    const [isSaveOpen, setIsSaveOpen] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+    const [open, setOpen] = useState(true);
+    const [values, setValues] = useState(emptyValues);
+
+    return (
+        <>
+            <Button onClick={() => setOpen(true)}>Open Filter</Button>
+            <Filter
+                {...props}
+                open={open}
+                saveConfig={
+                    saveConfig && {
+                        ...saveConfig,
+                        ...saveCallbacks,
+                        popoverOpen: isSaveOpen,
+                        popoverSaveLoading: isSaving,
+                        onPopoverOpenChange: (isOpen) => {
+                            saveCallbacks.onPopoverOpenChange(isOpen);
+                            setIsSaveOpen(isOpen);
+                        },
+                        onSave: async (name) => {
+                            saveCallbacks.onSave(name);
+                            setIsSaving(true);
+                            try {
+                                await saveFilterRequest();
+                                setIsSaveOpen(false);
+                            } finally {
+                                setIsSaving(false);
+                            }
+                        }
+                    }
+                }
+                onApply={() => {
+                    onApply?.();
+                    setOpen(false);
+                }}
+                onReset={() => {
+                    onReset?.();
+                    setValues(emptyValues);
+                }}
+                onClose={() => {
+                    onClose?.();
+                    setOpen(false);
+                }}
+            >
+                <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                    <TextField
+                        label="Name"
+                        placeholder="Search by name"
+                        value={values.name}
+                        onChange={(event) => setValues({ ...values, name: event.target.value })}
+                    />
+                    <TextField
+                        label="Email"
+                        placeholder="Search by email"
+                        value={values.email}
+                        onChange={(event) => setValues({ ...values, email: event.target.value })}
+                    />
+                    <Dropdown
+                        label="Status"
+                        placeholder="Select status"
+                        options={statusOptions}
+                        value={values.status}
+                        onChange={(option) =>
+                            setValues({ ...values, status: option && !Array.isArray(option) ? option.value : null })
+                        }
+                    />
+                </div>
+            </Filter>
+        </>
+    );
+};
+
+export const Default: Story = {
+    render: (props) => <FilterTemplate {...props} />
+};

@@ -140,6 +140,7 @@ const Drawer: FC<IDrawerProps> = ({
     const showCloseButton = hasCloseButton || isMobileOverlay;
     const titleRef = useRef<HTMLHeadingElement | null>(null);
     const isTruncated: boolean = useEllipsisDetection(titleRef);
+    const isOverlayPointerDownRef = useRef(false);
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -163,10 +164,21 @@ const Drawer: FC<IDrawerProps> = ({
         };
     }, [open, shouldCloseOnEscapePress, onClose]);
 
+    const handleOverlayMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+        isOverlayPointerDownRef.current = event.target === event.currentTarget;
+    };
+
     const handleOverlayClick = (event: React.MouseEvent<HTMLDivElement>) => {
-        if (shouldCloseOnOverlayClick && event.target === event.currentTarget && variant === "overlay") {
+        if (
+            shouldCloseOnOverlayClick &&
+            isOverlayPointerDownRef.current &&
+            event.target === event.currentTarget &&
+            variant === "overlay"
+        ) {
             onClose?.();
         }
+
+        isOverlayPointerDownRef.current = false;
     };
 
     const drawerContent = (
@@ -180,6 +192,7 @@ const Drawer: FC<IDrawerProps> = ({
                 },
                 className
             )}
+            onMouseDown={handleOverlayMouseDown}
             onClick={handleOverlayClick}
             role="presentation"
         >
