@@ -26,7 +26,8 @@ const meta: Meta<INavigationProps> = {
         moreMenuTitle: args({ control: "text", ...propCategory.content }),
         render: args({ control: "false", ...propCategory.content }),
         compact: args({ control: "boolean", ...propCategory.appearance }),
-        createButtonText: args({ control: "text", ...propCategory.content })
+        createButtonText: args({ control: "text", ...propCategory.content }),
+        mobileTitle: args({ control: "text", ...propCategory.content })
     }
 };
 
@@ -67,7 +68,8 @@ type Story = StoryObj<INavigationProps>;
 export const Default: Story = {
     render: (props) => <NavigationStoryComponent {...props} />,
     args: {
-        createButtonText: "Create"
+        createButtonText: "Create",
+        mobileTitle: "Navigation"
     }
 };
 

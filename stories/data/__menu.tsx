@@ -201,5 +201,19 @@ export const data = [
                 ]
             }
         ]
+    },
+    {
+        title: "Notification preferences for all members",
+        selected: false,
+        id: "notification-preferences",
+        value: "notificationPreferences",
+        children: [
+            {
+                title: "Weekly summary of unread mentions",
+                selected: false,
+                id: "notification-weekly-summary",
+                value: "weeklySummary"
+            }
+        ]
     }
 ];
