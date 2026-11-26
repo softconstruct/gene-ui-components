@@ -13,6 +13,8 @@ import ChartTooltip, { IChartTooltipItem } from "@internal/components/ChartToolt
 
 // Helpers
 import {
+    CHART_AXIS_LABEL_STYLE,
+    CHART_AXIS_TITLE_STYLE,
     getDefaultGroupedChartSeriesColorToken,
     mergeChartOptions,
     resolveGroupedChartSeriesColor
@@ -271,18 +273,10 @@ const GroupedBarChart: FC<IGroupedBarChartProps> = ({
                 categories,
                 title: {
                     text: xAxisTitle,
-                    style: {
-                        color: "var(--guit-sem-color-foreground-neutral-2)",
-                        fontSize: "1.2rem",
-                        fontWeight: "500"
-                    }
+                    style: CHART_AXIS_TITLE_STYLE
                 },
                 labels: {
-                    style: {
-                        color: "var(--guit-sem-color-foreground-neutral-2)",
-                        fontSize: "1.2rem",
-                        fontWeight: "600"
-                    }
+                    style: CHART_AXIS_LABEL_STYLE
                 },
                 lineColor: "var(--guit-sem-color-border-neutral-2)",
                 tickColor: "var(--guit-sem-color-border-neutral-2)",
@@ -295,18 +289,10 @@ const GroupedBarChart: FC<IGroupedBarChartProps> = ({
                 opposite: isRtl,
                 title: {
                     text: yAxisTitle,
-                    style: {
-                        color: "var(--guit-sem-color-foreground-neutral-2)",
-                        fontSize: "1.2rem",
-                        fontWeight: "500"
-                    }
+                    style: CHART_AXIS_TITLE_STYLE
                 },
                 labels: {
-                    style: {
-                        color: "var(--guit-sem-color-foreground-neutral-2)",
-                        fontSize: "1.2rem",
-                        fontWeight: "600"
-                    },
+                    style: CHART_AXIS_LABEL_STYLE,
                     align: isRtl ? "left" : "right"
                 },
                 gridLineDashStyle: "Dot",

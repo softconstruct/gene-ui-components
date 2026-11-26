@@ -13,6 +13,8 @@ import ChartTooltip, { IChartTooltipItem } from "@internal/components/ChartToolt
 
 // Helpers
 import {
+    CHART_AXIS_LABEL_STYLE,
+    CHART_AXIS_TITLE_STYLE,
     getDefaultGroupedChartSeriesColorToken,
     mergeChartOptions,
     resolveGroupedChartSeriesColor
@@ -153,18 +155,6 @@ const closedTooltip: IDualAxisChartTooltipState = { open: false, items: [], poin
 
 const PRIMARY_Y_AXIS_INDEX = 0;
 const SECONDARY_Y_AXIS_INDEX = 1;
-
-const axisTitleStyle: Highcharts.CSSObject = {
-    color: "var(--guit-sem-color-foreground-neutral-2)",
-    fontSize: "1.2rem",
-    fontWeight: "500"
-};
-
-const axisLabelStyle: Highcharts.CSSObject = {
-    color: "var(--guit-sem-color-foreground-neutral-2)",
-    fontSize: "1.2rem",
-    fontWeight: "600"
-};
 
 /**
  * Dual axis chart built on Highcharts. Renders a column series and a smooth line series over shared categories, each on its own Y axis, to compare two measures with different scales; hovering a column or line point shows a tooltip for that point. Chart animations are disabled by default.
@@ -352,10 +342,10 @@ const DualAxisChart: FC<IDualAxisChartProps> = ({
                 categories,
                 title: {
                     text: xAxisTitle,
-                    style: axisTitleStyle
+                    style: CHART_AXIS_TITLE_STYLE
                 },
                 labels: {
-                    style: axisLabelStyle
+                    style: CHART_AXIS_LABEL_STYLE
                 },
                 lineColor: "var(--guit-sem-color-border-neutral-2)",
                 tickColor: "var(--guit-sem-color-border-neutral-2)",
@@ -369,10 +359,10 @@ const DualAxisChart: FC<IDualAxisChartProps> = ({
                     opposite: isRtl,
                     title: {
                         text: yAxisTitle,
-                        style: axisTitleStyle
+                        style: CHART_AXIS_TITLE_STYLE
                     },
                     labels: {
-                        style: axisLabelStyle,
+                        style: CHART_AXIS_LABEL_STYLE,
                         align: isRtl ? "left" : "right"
                     },
                     gridLineDashStyle: "Dot",
@@ -389,10 +379,10 @@ const DualAxisChart: FC<IDualAxisChartProps> = ({
                     showEmpty: false,
                     title: {
                         text: secondaryYAxisTitle,
-                        style: axisTitleStyle
+                        style: CHART_AXIS_TITLE_STYLE
                     },
                     labels: {
-                        style: axisLabelStyle,
+                        style: CHART_AXIS_LABEL_STYLE,
                         align: isRtl ? "right" : "left"
                     },
                     lineWidth: 0

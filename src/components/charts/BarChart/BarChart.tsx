@@ -12,7 +12,13 @@ import ChartSubtitle from "@internal/components/ChartSubtitle";
 import ChartTooltip, { IChartTooltipItem } from "@internal/components/ChartTooltip";
 
 // Helpers
-import { DEFAULT_CHART_SERIES_COLOR_TOKEN, mergeChartOptions, resolveChartSeriesColor } from "../../../helpers/charts";
+import {
+    CHART_AXIS_LABEL_STYLE,
+    CHART_AXIS_TITLE_STYLE,
+    DEFAULT_CHART_SERIES_COLOR_TOKEN,
+    mergeChartOptions,
+    resolveChartSeriesColor
+} from "../../../helpers/charts";
 
 // Styles
 import "./BarChart.scss";
@@ -288,18 +294,10 @@ const BarChart: FC<IBarChartProps> = ({
                 categories,
                 title: {
                     text: xAxisTitle,
-                    style: {
-                        color: "var(--guit-sem-color-foreground-neutral-2)",
-                        fontSize: "1.2rem",
-                        fontWeight: "500"
-                    }
+                    style: CHART_AXIS_TITLE_STYLE
                 },
                 labels: {
-                    style: {
-                        color: "var(--guit-sem-color-foreground-neutral-2)",
-                        fontSize: "1.2rem",
-                        fontWeight: "600"
-                    }
+                    style: CHART_AXIS_LABEL_STYLE
                 },
                 lineColor: "var(--guit-sem-color-border-neutral-2)",
                 tickColor: "var(--guit-sem-color-border-neutral-2)",
@@ -314,18 +312,10 @@ const BarChart: FC<IBarChartProps> = ({
                 reversed: valueAxisReversed,
                 title: {
                     text: yAxisTitle,
-                    style: {
-                        color: "var(--guit-sem-color-foreground-neutral-2)",
-                        fontSize: "1.2rem",
-                        fontWeight: "500"
-                    }
+                    style: CHART_AXIS_TITLE_STYLE
                 },
                 labels: {
-                    style: {
-                        color: "var(--guit-sem-color-foreground-neutral-2)",
-                        fontSize: "1.2rem",
-                        fontWeight: "600"
-                    },
+                    style: CHART_AXIS_LABEL_STYLE,
                     align: valueAxisLabelAlign
                 },
                 gridLineDashStyle: "Dot",
