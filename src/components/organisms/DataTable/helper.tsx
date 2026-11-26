@@ -49,6 +49,12 @@ export interface ICellProps<TData, TValue> {
      */
     rowData: TData;
     /**
+     * Text this cell copies, resolved by the parent. Absent when the column is not `copyable` or has
+     * a custom `renderCell`, and empty when the column copies but this cell has nothing to copy; the
+     * copy control is not rendered for either.
+     */
+    copyValue?: string;
+    /**
      * Whether this cell renders an editor instead of its read-only content, that is whether the table
      * is in edit mode and the column is `editable`.
      */
@@ -96,6 +102,29 @@ export const getCellStyle = (
 export const getCellContentStyle = (explicitSize: number | undefined): CSSProperties | undefined =>
     explicitSize !== undefined ? { width: `${explicitSize}px`, maxWidth: "none" } : undefined;
 
+/**
+ * Text the copy control of a cell puts on the clipboard: `getCopyValue` when the column defines one,
+ * the cell's value as text otherwise. `undefined` on a column that is not `copyable`, and an empty
+ * string when the column is but this cell has nothing to copy; the control is rendered for neither.
+ */
+export const resolveCopyValue = <TData,>(cell: Cell<TData, unknown>, value: unknown): string | undefined => {
+    const { copyable, getCopyValue } = cell.column.columnDef.meta ?? {};
+
+    if (!copyable) {
+        return undefined;
+    }
+
+    if (!getCopyValue) {
+        return String(value ?? "");
+    }
+
+    return getCopyValue({
+        value: value as DataTableCellValue<TData>,
+        row: cell.row.original,
+        rowId: cell.row.id
+    });
+};
+
 export const areCellsEqual = <TData, TValue>(prev: ICellProps<TData, TValue>, next: ICellProps<TData, TValue>) =>
     prev.cell.id === next.cell.id &&
     prev.isExpanded === next.isExpanded &&
@@ -106,6 +135,7 @@ export const areCellsEqual = <TData, TValue>(prev: ICellProps<TData, TValue>, ne
     prev.dirMode === next.dirMode &&
     prev.value === next.value &&
     prev.rowData === next.rowData &&
+    prev.copyValue === next.copyValue &&
     prev.isCellEditing === next.isCellEditing &&
     prev.isEditDisabled === next.isEditDisabled &&
     prev.editValue === next.editValue &&
@@ -182,6 +212,8 @@ export const adaptColumns = <TData,>(columns: DataTableColumn<TData>[]): ColumnD
             header,
             size,
             type,
+            copyable,
+            getCopyValue,
             renderCell,
             renderEditCell,
             defaultVisible,
@@ -190,6 +222,7 @@ export const adaptColumns = <TData,>(columns: DataTableColumn<TData>[]): ColumnD
         } = col;
         const isAccessorColumn = Boolean(accessorKey);
         const typeDefaults = resolveColumnType(type);
+        const isCopyable = copyable && !renderCell;
 
         const base: ColumnDef<TData> = {
             id: id ?? accessorKey ?? `display_${index}`,
@@ -200,6 +233,8 @@ export const adaptColumns = <TData,>(columns: DataTableColumn<TData>[]): ColumnD
                 defaultVisible,
                 defaultPinned,
                 editable,
+                copyable: isCopyable,
+                getCopyValue: isCopyable ? getCopyValue : undefined,
                 renderEditCell: editable ? (renderEditCell ?? typeDefaults.renderEditControl) : undefined
             },
             ...(isAccessorColumn ? { accessorKey } : {})

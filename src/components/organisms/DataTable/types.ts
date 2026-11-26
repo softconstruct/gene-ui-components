@@ -102,6 +102,21 @@ export type DataTableColumn<TData> = {
      */
     editable?: boolean;
     /**
+     * Whether the cell shows a control that copies its value. The control is not added to a column
+     * with a custom `renderCell`, which owns its whole cell, and is never shown while the cell is
+     * being edited.
+     * @default false
+     */
+    copyable?: boolean;
+    /**
+     * The text put on the clipboard. Defaults to the cell's value as text.
+     * Has no effect on a column that is not `copyable`. Return an empty string to leave a row
+     * without the control.
+     * IMPORTANT: For optimal performance on large tables, ensure this function is memoized
+     * (e.g., using `useCallback` or defined outside the component) to avoid unnecessary cell re-renders.
+     */
+    getCopyValue?: (args: DataTableRenderCellArgs<TData, DataTableCellValue<TData>>) => string;
+    /**
      * Lean cell renderer (no TanStack CellContext exposure).
      * IMPORTANT: For optimal performance on large tables, ensure this function is memoized
      * (e.g., using `useCallback` or defined outside the component) to avoid unnecessary cell re-renders.
@@ -475,6 +490,8 @@ declare module "@tanstack/react-table" {
         defaultVisible?: boolean;
         defaultPinned?: boolean;
         editable?: boolean;
+        copyable?: boolean;
+        getCopyValue?: (args: DataTableRenderCellArgs<TData, DataTableCellValue<TData>>) => string;
         renderEditCell?: (args: DataTableRenderEditCellArgs<TData, unknown>) => ReactNode;
     }
 }

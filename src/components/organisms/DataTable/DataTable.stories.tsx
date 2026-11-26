@@ -248,9 +248,15 @@ const statusOptions: IDropdownOption[] = [
 ];
 
 const editableColumns: IDataTableProps<MockRowType>["columns"] = [
-    { accessorKey: "Id", header: "Id" },
+    { accessorKey: "Id", header: "Id", copyable: true },
     { accessorKey: "FirstName", header: "First name", type: "text", editable: true },
     { accessorKey: "LastName", header: "Last name", editable: true },
+    {
+        accessorKey: "Email",
+        header: "Email",
+        copyable: true,
+        getCopyValue: ({ value, row }) => `${row.FirstName} ${row.LastName} <${String(value ?? "")}>`
+    },
     { accessorKey: "DayOffs", header: "Day offs", type: "number", editable: true },
     {
         accessorKey: "Status",
