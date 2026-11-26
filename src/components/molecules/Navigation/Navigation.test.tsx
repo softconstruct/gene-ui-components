@@ -161,6 +161,15 @@ describe("Navigation", () => {
             it("renders navigation items", () => {
                 expect(mobileSetup.find(".navigationMobile__list").exists()).toBeTruthy();
             });
+
+            it("should render mobileTitle prop correctly", () => {
+                const wrapper = mobileSetup.setProps({ mobileTitle: "Navigation" });
+                expect(wrapper.find("h3.navigationMobile__title").text()).toBe("Navigation");
+            });
+
+            it("should not render title without mobileTitle prop", () => {
+                expect(mobileSetup.find(".navigationMobile__title").exists()).toBeFalsy();
+            });
         });
 
         describe("Close Functionality", () => {

@@ -17,6 +17,10 @@
         background-color: var(--guit-sem-color-background-neutral-1);
     }
 
+    &:last-child > .tableBodyCell {
+        box-shadow: none;
+    }
+
     &_status {
         &_default:not(:active, :hover) {
             background-color: var(--guit-sem-color-background-neutral-1);
@@ -63,6 +67,10 @@
         pointer-events: none;
         border-bottom: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
             var(--guit-sem-color-border-neutral-1);
+    }
+
+    &:last-child > &__actionsWrapper {
+        border-bottom: none;
     }
 
     &__actions {

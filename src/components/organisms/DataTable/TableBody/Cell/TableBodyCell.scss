@@ -24,6 +24,10 @@
         pointer-events: none;
     }
 
+    &:nth-last-child(1 of .tableBodyCell)::after {
+        display: none;
+    }
+
     &_expander {
         padding: 0;
     }
@@ -44,6 +48,11 @@
 
     &_expander &__content {
         padding-inline: var(--guit-ref-spacing-small);
+    }
+
+    &__copy {
+        flex: 0 0 auto;
+        margin-inline-start: auto;
     }
 
     &__editControl {
