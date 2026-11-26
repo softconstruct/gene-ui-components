@@ -18,8 +18,9 @@ import Pagination, { IPaginationProps } from "@components/molecules/Pagination";
 // Constants, context & helpers
 import { EXPANDER_COLUMN_ID, INITIAL_PAGE_SIZE } from "./constants";
 import { DataTableProvider, DirModeContext, IDataTableContext } from "./context";
-import { adaptColumns, withExpanderColumn } from "./helper";
+import { adaptColumns, toRowSelectionState, withExpanderColumn } from "./helper";
 // Hooks
+import { useBulkSelection } from "./hooks/useBulkSelection";
 import { useTablePagination } from "./hooks/useTablePagination";
 // Sub-components
 import TableBody from "./TableBody/TableBody";
@@ -28,12 +29,14 @@ import Toolbar from "./Toolbar/Toolbar";
 // Types
 import {
     ColumnVisibilityState,
+    DataTableBulkActionsDefaults,
     DataTableColumn,
     DataTableEditDefaults,
     DataTableEditValues,
     DataTableGetRowStatus,
     DataTableRenderExpandedRow,
     DataTableRowExpandChangeHandler,
+    IDataTableBulkActionsConfig,
     IDataTableCellChangePayload,
     IDataTableEditConfig,
     IDataTableRowAction,
@@ -224,8 +227,27 @@ interface IDataTableProps<TData> {
      */
     editValues?: DataTableEditValues<TData>;
     /**
+     * Configuration object for row selection and bulk actions.
+     * Providing it adds a checkbox column and the bulk actions to the toolbar.
+     * The selection is controlled through `selectedRowIds` and `onSelectionChange`.
+     *
+     * @example
+     * ```tsx
+     * const [selectedRowIds, setSelectedRowIds] = useState<string[]>([]);
+     *
+     * <DataTable
+     *   bulkActionsConfig={{
+     *     selectedRowIds,
+     *     onSelectionChange: ({ selectedRowIds }) => setSelectedRowIds(selectedRowIds),
+     *     actions: [{ title: "Delete", onClick: ({ selectedRowIds }) => api.delete(selectedRowIds) }]
+     *   }}
+     * />
+     * ```
+     */
+    bulkActionsConfig?: IDataTableBulkActionsConfig;
+    /**
      * Resolves a stable, unique id for a row from its data.
-     * Every row-bound state is keyed by it: expanded rows and the edit mode drafts.
+     * Every row-bound state is keyed by it: expanded rows, the edit mode drafts and the selected rows.
      *
      * @example
      * ```tsx
@@ -261,6 +283,16 @@ const DEFAULT_EDIT_CONFIG = {
     }
 } satisfies DataTableEditDefaults;
 
+const DEFAULT_BULK_ACTIONS_CONFIG = {
+    texts: {
+        selectedCount: (count: number) => `${count} selected`,
+        deselect: "Deselect",
+        bulkActionsButton: "Bulk Actions",
+        selectPageAriaLabel: "Select all rows on this page",
+        selectRowAriaLabel: (rowId: string) => `Select row ${rowId}`
+    }
+} satisfies DataTableBulkActionsDefaults;
+
 /**
  * Data Table used to display structured information in a grid format, making it easy to organize, view, and interact with large datasets.
  * Data tables are essential for presenting information such as reports, inventories, or user data in a clear,
@@ -288,6 +320,7 @@ const DataTable = <TData,>({
     manageColumnsConfig = DEFAULT_MANAGE_COLUMNS_CONFIG,
     editConfig,
     editValues,
+    bulkActionsConfig,
     getRowId
 }: IDataTableProps<TData>): ReactElement => {
     const [expanded, setExpanded] = useState<ExpandedState>({});
@@ -412,6 +445,10 @@ const DataTable = <TData,>({
         [resolveColumnPinning]
     );
 
+    const isSelectionDisabled = isTableLoading || isEditing;
+    const selectedRowIds = bulkActionsConfig?.selectedRowIds;
+    const rowSelection = useMemo(() => toRowSelectionState(selectedRowIds ?? EMPTY_DATA), [selectedRowIds]);
+
     const table = useReactTable({
         data: data ?? EMPTY_DATA,
         columns: tableColumns,
@@ -424,6 +461,7 @@ const DataTable = <TData,>({
         onColumnVisibilityChange: handleColumnVisibilityChange,
         onColumnPinningChange: handleColumnPinningChange,
         onColumnOrderChange: setColumnOrder,
+        enableRowSelection: Boolean(bulkActionsConfig),
         initialState: {
             ...(pagination && {
                 pagination: { pageSize: initialPageSize }
@@ -433,9 +471,12 @@ const DataTable = <TData,>({
             expanded,
             columnVisibility,
             columnPinning,
-            columnOrder
+            columnOrder,
+            rowSelection
         }
     });
+
+    const { onToggleRow, onTogglePage, onDeselect } = useBulkSelection(table, bulkActionsConfig, isSelectionDisabled);
 
     const pageCount = table.getPageCount();
     const { pageIndex } = table.getState().pagination;
@@ -492,10 +533,33 @@ const DataTable = <TData,>({
                       onSave: handleEditSave
                   }
                 : null,
+            bulkActionsConfig: bulkActionsConfig
+                ? {
+                      ...DEFAULT_BULK_ACTIONS_CONFIG,
+                      ...bulkActionsConfig,
+                      texts: { ...DEFAULT_BULK_ACTIONS_CONFIG.texts, ...bulkActionsConfig.texts },
+                      isSelectionDisabled,
+                      onToggleRow,
+                      onTogglePage,
+                      onDeselect
+                  }
+                : null,
             initialColumnVisibility,
             initialColumnPinning
         }),
-        [table, manageColumnsConfig, editConfig, handleEditSave, initialColumnVisibility, initialColumnPinning]
+        [
+            table,
+            manageColumnsConfig,
+            editConfig,
+            handleEditSave,
+            bulkActionsConfig,
+            isSelectionDisabled,
+            onToggleRow,
+            onTogglePage,
+            onDeselect,
+            initialColumnVisibility,
+            initialColumnPinning
+        ]
     );
 
     return (

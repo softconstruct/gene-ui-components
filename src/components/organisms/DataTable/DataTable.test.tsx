@@ -1,4 +1,5 @@
 import React, { MouseEvent } from "react";
+import { getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
 import { mount, ReactWrapper } from "enzyme";
 import { act } from "react-dom/test-utils";
 
@@ -16,12 +17,14 @@ import {
     DataTableColumn,
     DataTableRenderCellArgs,
     DataTableRenderEditCellArgs,
+    IDataTableBulkActionsConfig,
     IDataTableEditConfig,
     PageCheckboxState
 } from "@components/organisms/DataTable/types";
 
 import { mockColumns, mockData } from "../../../../stories/data/__dataTable";
 import { getPageCheckboxState, togglePageSelection, toggleRowSelection, toRowSelectionState } from "./helper";
+import { useBulkSelection } from "./hooks/useBulkSelection";
 // Components
 import DataTable, { IDataTableProps } from "./index";
 
@@ -2172,5 +2175,142 @@ describe("Table Component - row selection helpers", () => {
         it("returns an empty state for an empty selection", () => {
             expect(toRowSelectionState([])).toEqual({});
         });
+    });
+});
+
+describe("Table Component - row selection state", () => {
+    type SelectionRow = { id: string; name: string };
+    type SelectionHandlers = ReturnType<typeof useBulkSelection>;
+
+    const selectionData: SelectionRow[] = ["a", "b", "c", "d"].map((id) => ({ id, name: `Row ${id}` }));
+
+    interface ITestComponentProps {
+        config?: IDataTableBulkActionsConfig;
+        isSelectionDisabled?: boolean;
+        pageIndex?: number;
+        onRender: (handlers: SelectionHandlers) => void;
+    }
+
+    const TestComponent = ({ config, isSelectionDisabled = false, pageIndex = 0, onRender }: ITestComponentProps) => {
+        const table = useReactTable({
+            data: selectionData,
+            columns: [{ id: "name", accessorKey: "name" }],
+            getCoreRowModel: getCoreRowModel(),
+            getPaginationRowModel: getPaginationRowModel(),
+            getRowId: (row) => row.id,
+            state: { pagination: { pageIndex, pageSize: 2 } }
+        });
+        onRender(useBulkSelection(table, config, isSelectionDisabled));
+        return null;
+    };
+
+    const createConfig = (selectedRowIds: string[]): IDataTableBulkActionsConfig => ({
+        selectedRowIds,
+        onSelectionChange: jest.fn(),
+        actions: []
+    });
+
+    const renderTestComponent = (props: Omit<ITestComponentProps, "onRender">) => {
+        let handlers = {} as SelectionHandlers;
+        const wrapper = mount(
+            <TestComponent
+                {...props}
+                onRender={(nextHandlers) => {
+                    handlers = nextHandlers;
+                }}
+            />
+        );
+        return { wrapper, getHandlers: () => handlers };
+    };
+
+    it("renders without crashing with bulkActionsConfig", () => {
+        const wrapper = mount(
+            <DataTable
+                data={selectionData}
+                columns={[{ accessorKey: "name", header: "Name" }]}
+                getRowId={(row) => row.id}
+                bulkActionsConfig={createConfig(["a"])}
+            />
+        );
+        expect(wrapper.exists()).toBe(true);
+        wrapper.unmount();
+    });
+
+    it("reports the toggled row through onSelectionChange", () => {
+        const config = createConfig(["a"]);
+        const { wrapper, getHandlers } = renderTestComponent({ config });
+
+        getHandlers().onToggleRow("b");
+        expect(config.onSelectionChange).toHaveBeenLastCalledWith({ selectedRowIds: ["a", "b"] });
+
+        getHandlers().onToggleRow("a");
+        expect(config.onSelectionChange).toHaveBeenLastCalledWith({ selectedRowIds: [] });
+        wrapper.unmount();
+    });
+
+    it("uses the rows of the page shown at click time", () => {
+        const config = createConfig([]);
+        const { wrapper, getHandlers } = renderTestComponent({ config, pageIndex: 1 });
+
+        getHandlers().onTogglePage();
+        expect(config.onSelectionChange).toHaveBeenLastCalledWith({ selectedRowIds: ["c", "d"] });
+        wrapper.unmount();
+    });
+
+    it("clears the selection on every page on deselect", () => {
+        const config = createConfig(["a", "c"]);
+        const { wrapper, getHandlers } = renderTestComponent({ config });
+
+        getHandlers().onDeselect();
+        expect(config.onSelectionChange).toHaveBeenLastCalledWith({ selectedRowIds: [] });
+        wrapper.unmount();
+    });
+
+    it("computes the next selection from the latest selectedRowIds", () => {
+        const onSelectionChange = jest.fn();
+        const { wrapper, getHandlers } = renderTestComponent({
+            config: { selectedRowIds: [], onSelectionChange, actions: [] }
+        });
+
+        wrapper.setProps({ config: { selectedRowIds: ["a"], onSelectionChange, actions: [] } });
+        getHandlers().onToggleRow("b");
+
+        expect(onSelectionChange).toHaveBeenLastCalledWith({ selectedRowIds: ["a", "b"] });
+        wrapper.unmount();
+    });
+
+    it("keeps the handlers stable across renders", () => {
+        const { wrapper, getHandlers } = renderTestComponent({ config: createConfig([]) });
+        const firstHandlers = getHandlers();
+
+        wrapper.setProps({ config: createConfig(["a"]) });
+
+        expect(getHandlers().onToggleRow).toBe(firstHandlers.onToggleRow);
+        expect(getHandlers().onTogglePage).toBe(firstHandlers.onTogglePage);
+        expect(getHandlers().onDeselect).toBe(firstHandlers.onDeselect);
+        wrapper.unmount();
+    });
+
+    it("does not report changes while selection is disabled", () => {
+        const config = createConfig(["a"]);
+        const { wrapper, getHandlers } = renderTestComponent({ config, isSelectionDisabled: true });
+
+        getHandlers().onToggleRow("b");
+        getHandlers().onTogglePage();
+        getHandlers().onDeselect();
+
+        expect(config.onSelectionChange).not.toHaveBeenCalled();
+        wrapper.unmount();
+    });
+
+    it("does nothing without bulkActionsConfig", () => {
+        const { wrapper, getHandlers } = renderTestComponent({});
+
+        expect(() => {
+            getHandlers().onToggleRow("a");
+            getHandlers().onTogglePage();
+            getHandlers().onDeselect();
+        }).not.toThrow();
+        wrapper.unmount();
     });
 });
