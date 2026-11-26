@@ -15,7 +15,7 @@
         display: flex;
         align-items: center;
         justify-content: flex-end;
-        gap: var(--guit-ref-spacing-2xsmall);
+        gap: 1rem;
         padding: var(--guit-ref-spacing-small) var(--guit-ref-spacing-medium);
         border-bottom: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
             var(--guit-sem-color-border-neutral-2);
@@ -23,8 +23,6 @@
     }
 
     &__title {
-        flex: 1;
-        min-width: 0;
         color: var(--guit-sem-color-foreground-neutral-2);
     }
 
