@@ -417,16 +417,6 @@ export interface IDataTableBulkActionsTexts {
      * @default "Bulk Actions"
      */
     bulkActionsButton?: string;
-    /**
-     * `aria-label` of the header checkbox, which selects the rows on the current page.
-     * @default "Select all rows on this page"
-     */
-    selectPageAriaLabel?: string;
-    /**
-     * `aria-label` of a row checkbox.
-     * @default (rowId) => `Select row ${rowId}`
-     */
-    selectRowAriaLabel?: (rowId: string) => string;
 }
 
 /**

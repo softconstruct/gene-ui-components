@@ -5,7 +5,7 @@ import classNames from "classnames";
 import Copy from "@components/atoms/Copy";
 import { areCellsEqual, getCellContentStyle, getCellStyle } from "@components/organisms/DataTable/helper";
 
-import { EXPANDER_COLUMN_ID } from "../../constants";
+import { EXPANDER_COLUMN_ID, SELECTION_COLUMN_ID } from "../../constants";
 import { CellWidthContext } from "../../context";
 import { DataTableRenderEditCellArgs, IDataTableCellChangePayload } from "../../types";
 
@@ -130,6 +130,7 @@ const TableBodyCell = <TData, TValue>({
     onCellChange
 }: ITableBodyCellProps<TData, TValue>) => {
     const isExpanderCell = cell.column.id === EXPANDER_COLUMN_ID;
+    const isSelectionCell = cell.column.id === SELECTION_COLUMN_ID;
     const isRTL = dirMode === "rtl";
     const explicitSize = cell.column.columnDef.meta?.explicitSize;
 
@@ -146,6 +147,7 @@ const TableBodyCell = <TData, TValue>({
             className={classNames("tableBodyCell", {
                 tableBodyCell_expander: isExpanderCell,
                 tableBodyCell_expander_expanded: isExpanded,
+                tableBodyCell_selection: isSelectionCell,
                 tableBodyCell_pinned: isPinned,
                 tableBodyCell_editing: isCellEditing
             })}

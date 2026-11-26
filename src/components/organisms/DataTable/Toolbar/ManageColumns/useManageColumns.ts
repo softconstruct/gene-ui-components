@@ -1,7 +1,7 @@
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { Column, ColumnOrderState, ColumnPinningState, Table } from "@tanstack/react-table";
 
-import { EXPANDER_COLUMN_ID } from "../../constants";
+import { EXPANDER_COLUMN_ID, SELECTION_COLUMN_ID } from "../../constants";
 // Types
 import { ColumnVisibilityState, IManageColumnsDiffPayload, ManageColumnsConfig } from "../../types";
 
@@ -20,13 +20,15 @@ const sameMembers = (a: string[], b: string[]) => {
 };
 
 /**
- * The expander is an internal, permanently pinned column (enforced by DataTable).
- * It must never appear in the manage-columns state, otherwise it can be hidden,
+ * The expander and the selection column are internal columns, positioned and pinned by DataTable.
+ * They must never appear in the manage-columns state, otherwise they can be hidden,
  * reordered, or counted by the select-all logic.
  */
-const stripExpanderPinning = (pinning: ColumnPinningState): ColumnPinningState => ({
-    left: (pinning.left || []).filter((id) => id !== EXPANDER_COLUMN_ID),
-    right: (pinning.right || []).filter((id) => id !== EXPANDER_COLUMN_ID)
+const isBuiltInColumn = (id: string) => id === EXPANDER_COLUMN_ID || id === SELECTION_COLUMN_ID;
+
+const stripBuiltInPinning = (pinning: ColumnPinningState): ColumnPinningState => ({
+    left: (pinning.left || []).filter((id) => !isBuiltInColumn(id)),
+    right: (pinning.right || []).filter((id) => !isBuiltInColumn(id))
 });
 
 /**
@@ -73,12 +75,12 @@ export const useManageColumns = <TData>({
 }: IUseManageColumnsParams<TData>) => {
     const allFlatColumns = table.getAllFlatColumns();
     const columns = useMemo(
-        () => allFlatColumns.filter((column) => column.columns.length === 0 && column.id !== EXPANDER_COLUMN_ID),
+        () => allFlatColumns.filter((column) => column.columns.length === 0 && !isBuiltInColumn(column.id)),
         [allFlatColumns]
     );
 
     const { columnVisibility, columnPinning: tableColumnPinning, columnOrder } = table.getState();
-    const columnPinning = useMemo(() => stripExpanderPinning(tableColumnPinning), [tableColumnPinning]);
+    const columnPinning = useMemo(() => stripBuiltInPinning(tableColumnPinning), [tableColumnPinning]);
 
     const definitionOrder = useMemo(() => columns.map((c) => c.id), [columns]);
     const defaultColumnOrder = useMemo(

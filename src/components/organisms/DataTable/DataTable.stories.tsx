@@ -70,6 +70,7 @@ const meta: Meta<IDataTableProps<MockRowType>> = {
         manageColumnsConfig: args({ control: "object", ...propCategory.functionality }),
         editConfig: args({ control: "object", ...propCategory.functionality }),
         editValues: args({ control: "false", ...propCategory.content }),
+        bulkActionsConfig: args({ control: "false", ...propCategory.functionality }),
         getRowId: args({ control: "false", ...propCategory.functionality })
     },
     args: {
@@ -383,6 +384,32 @@ export const WithEditMode: Story = {
     render: (props) => <EditModeTableWrapper {...props} />,
     args: {
         columns: editableColumns,
+        pagination: { pageSize: 10, rowsPerPageOptions: [2, 10, 20, 50, 100], showInputPageField: true },
+        manageColumnsConfig: { visible: true }
+    }
+};
+
+const BulkActionsTableWrapper = (props: IDataTableProps<MockRowType>) => {
+    const [selectedRowIds, setSelectedRowIds] = useState<string[]>([String(mockData[1].Id)]);
+
+    return (
+        <DataTable
+            {...props}
+            bulkActionsConfig={{
+                selectedRowIds,
+                onSelectionChange: ({ selectedRowIds: nextSelectedRowIds }) => setSelectedRowIds(nextSelectedRowIds),
+                actions: [{ title: "Delete", onClick: () => setSelectedRowIds([]) }]
+            }}
+        />
+    );
+};
+
+export const WithBulkActions: Story = {
+    render: (props) => <BulkActionsTableWrapper {...props} />,
+    args: {
+        columns: mockColumns,
+        data: mockData,
+        renderExpandedRow: (row) => renderMockExpandedRow(row),
         pagination: { pageSize: 10, rowsPerPageOptions: [2, 10, 20, 50, 100], showInputPageField: true },
         manageColumnsConfig: { visible: true }
     }

@@ -1,5 +1,6 @@
-import React, { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { ReactElement, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
+    ColumnDef,
     ColumnOrderState,
     ColumnPinningState,
     ExpandedState,
@@ -16,9 +17,9 @@ import Scrollbar from "@components/atoms/Scrollbar";
 import Pagination, { IPaginationProps } from "@components/molecules/Pagination";
 
 // Constants, context & helpers
-import { EXPANDER_COLUMN_ID, INITIAL_PAGE_SIZE } from "./constants";
+import { EXPANDER_COLUMN_ID, INITIAL_PAGE_SIZE, SELECTION_COLUMN_ID } from "./constants";
 import { DataTableProvider, DirModeContext, IDataTableContext } from "./context";
-import { adaptColumns, toRowSelectionState, withExpanderColumn } from "./helper";
+import { adaptColumns, getExpanderColumn, getSelectionColumn, toRowSelectionState } from "./helper";
 // Hooks
 import { useBulkSelection } from "./hooks/useBulkSelection";
 import { useTablePagination } from "./hooks/useTablePagination";
@@ -287,9 +288,7 @@ const DEFAULT_BULK_ACTIONS_CONFIG = {
     texts: {
         selectedCount: (count: number) => `${count} selected`,
         deselect: "Deselect",
-        bulkActionsButton: "Bulk Actions",
-        selectPageAriaLabel: "Select all rows on this page",
-        selectRowAriaLabel: (rowId: string) => `Select row ${rowId}`
+        bulkActionsButton: "Bulk Actions"
     }
 } satisfies DataTableBulkActionsDefaults;
 
@@ -366,10 +365,21 @@ const DataTable = <TData,>({
         []
     );
 
+    const hasBulkActions = Boolean(bulkActionsConfig);
+
     const tableColumns = useMemo(() => {
-        const adapted = adaptColumns(columns);
-        return isExpandable ? withExpanderColumn(adapted, stableOnRowExpandChange) : adapted;
-    }, [columns, isExpandable, stableOnRowExpandChange]);
+        const builtInColumns: ColumnDef<TData, ReactNode>[] = [];
+
+        if (isExpandable) {
+            builtInColumns.push(getExpanderColumn(stableOnRowExpandChange));
+        }
+
+        if (hasBulkActions) {
+            builtInColumns.push(getSelectionColumn<TData>());
+        }
+
+        return [...builtInColumns, ...adaptColumns(columns)];
+    }, [columns, isExpandable, stableOnRowExpandChange, hasBulkActions]);
 
     const initialPageSize =
         typeof pagination === "object" && (pagination.pageSize || pagination.rowsPerPageOptions?.length)
@@ -406,14 +416,17 @@ const DataTable = <TData,>({
     const resolveColumnPinning = useCallback(
         (pinning: ColumnPinningState | null): ColumnPinningState => {
             const { left = [], right = [] } = pinning ?? initialColumnPinning;
-            const leftWithoutExpander = left.filter((id) => id !== EXPANDER_COLUMN_ID);
+            const userPinned = left.filter((id) => id !== EXPANDER_COLUMN_ID && id !== SELECTION_COLUMN_ID);
             return {
-                // The expander is always the first pinned column
-                left: isExpandable ? [EXPANDER_COLUMN_ID, ...leftWithoutExpander] : leftWithoutExpander,
+                left: [
+                    ...(isExpandable ? [EXPANDER_COLUMN_ID] : []),
+                    ...(hasBulkActions && userPinned.length > 0 ? [SELECTION_COLUMN_ID] : []),
+                    ...userPinned
+                ],
                 right
             };
         },
-        [initialColumnPinning, isExpandable]
+        [initialColumnPinning, isExpandable, hasBulkActions]
     );
 
     const columnPinning = useMemo(
@@ -439,7 +452,7 @@ const DataTable = <TData,>({
                     typeof updaterOrValue === "function"
                         ? updaterOrValue(resolveColumnPinning(prevPinning))
                         : updaterOrValue;
-                return { left: left.filter((id) => id !== EXPANDER_COLUMN_ID), right };
+                return { left: left.filter((id) => id !== EXPANDER_COLUMN_ID && id !== SELECTION_COLUMN_ID), right };
             });
         },
         [resolveColumnPinning]
@@ -448,6 +461,14 @@ const DataTable = <TData,>({
     const isSelectionDisabled = isTableLoading || isEditing;
     const selectedRowIds = bulkActionsConfig?.selectedRowIds;
     const rowSelection = useMemo(() => toRowSelectionState(selectedRowIds ?? EMPTY_DATA), [selectedRowIds]);
+
+    const resolvedColumnOrder = useMemo(
+        () =>
+            hasBulkActions && columnOrder.length > 0
+                ? [SELECTION_COLUMN_ID, ...columnOrder.filter((id) => id !== SELECTION_COLUMN_ID)]
+                : columnOrder,
+        [columnOrder, hasBulkActions]
+    );
 
     const table = useReactTable({
         data: data ?? EMPTY_DATA,
@@ -461,7 +482,7 @@ const DataTable = <TData,>({
         onColumnVisibilityChange: handleColumnVisibilityChange,
         onColumnPinningChange: handleColumnPinningChange,
         onColumnOrderChange: setColumnOrder,
-        enableRowSelection: Boolean(bulkActionsConfig),
+        enableRowSelection: hasBulkActions,
         initialState: {
             ...(pagination && {
                 pagination: { pageSize: initialPageSize }
@@ -471,7 +492,7 @@ const DataTable = <TData,>({
             expanded,
             columnVisibility,
             columnPinning,
-            columnOrder,
+            columnOrder: resolvedColumnOrder,
             rowSelection
         }
     });

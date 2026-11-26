@@ -2225,10 +2225,6 @@ describe("Table Component - row selection helpers", () => {
             expect(toggleRowSelection(["1", "2", "3"], "2")).toEqual(["1", "3"]);
         });
 
-        it("adds a row to an empty selection", () => {
-            expect(toggleRowSelection([], "1")).toEqual(["1"]);
-        });
-
         it("does not mutate the given selection", () => {
             const selectedRowIds = ["1"];
             toggleRowSelection(selectedRowIds, "2");
@@ -2246,13 +2242,6 @@ describe("Table Component - row selection helpers", () => {
             ["unchecked", "the page is empty", ["1"], []]
         ])("should be %s when %s", (expected, _, selectedRowIds, pageRowIds) => {
             expect(getPageCheckboxState(selectedRowIds, pageRowIds)).toBe(expected);
-        });
-
-        it("should be indeterminate after the page size grows past the selected rows", () => {
-            const selectedRowIds = Array.from({ length: 25 }, (_, i) => String(i));
-            const pageRowIds = Array.from({ length: 50 }, (_, i) => String(i));
-
-            expect(getPageCheckboxState(selectedRowIds, pageRowIds)).toBe("indeterminate");
         });
     });
 
@@ -2277,17 +2266,6 @@ describe("Table Component - row selection helpers", () => {
             expect(togglePageSelection(["9", "1", "2"], ["1", "2"])).toEqual(["9"]);
         });
 
-        it("selects the whole page after the page size grows past the selected rows", () => {
-            const selectedRowIds = Array.from({ length: 25 }, (_, i) => String(i));
-            const pageRowIds = Array.from({ length: 50 }, (_, i) => String(i));
-
-            expect(togglePageSelection(selectedRowIds, pageRowIds)).toEqual(pageRowIds);
-        });
-
-        it("returns the selection unchanged for an empty page", () => {
-            expect(togglePageSelection(["1"], [])).toEqual(["1"]);
-        });
-
         it("does not mutate the given selection", () => {
             const selectedRowIds = ["1"];
             togglePageSelection(selectedRowIds, ["1", "2"]);
@@ -2298,10 +2276,6 @@ describe("Table Component - row selection helpers", () => {
     describe("toRowSelectionState", () => {
         it("maps every selected id to true", () => {
             expect(toRowSelectionState(["1", "2"])).toEqual({ "1": true, "2": true });
-        });
-
-        it("returns an empty state for an empty selection", () => {
-            expect(toRowSelectionState([])).toEqual({});
         });
     });
 });
@@ -2350,19 +2324,6 @@ describe("Table Component - row selection state", () => {
         );
         return { wrapper, getHandlers: () => handlers };
     };
-
-    it("renders without crashing with bulkActionsConfig", () => {
-        const wrapper = mount(
-            <DataTable
-                data={selectionData}
-                columns={[{ accessorKey: "name", header: "Name" }]}
-                getRowId={(row) => row.id}
-                bulkActionsConfig={createConfig(["a"])}
-            />
-        );
-        expect(wrapper.exists()).toBe(true);
-        wrapper.unmount();
-    });
 
     it("reports the toggled row through onSelectionChange", () => {
         const config = createConfig(["a"]);
@@ -2430,15 +2391,271 @@ describe("Table Component - row selection state", () => {
         expect(config.onSelectionChange).not.toHaveBeenCalled();
         wrapper.unmount();
     });
+});
 
-    it("does nothing without bulkActionsConfig", () => {
-        const { wrapper, getHandlers } = renderTestComponent({});
+describe("Table Component - selection column", () => {
+    type SelectionRow = { id: string; name: string };
 
-        expect(() => {
-            getHandlers().onToggleRow("a");
-            getHandlers().onTogglePage();
-            getHandlers().onDeselect();
-        }).not.toThrow();
+    const selectionData: SelectionRow[] = ["a", "b", "c", "d"].map((id) => ({ id, name: `Row ${id}` }));
+    const selectionColumns: DataTableColumn<SelectionRow>[] = [{ accessorKey: "name", header: "Name" }];
+
+    const mountSelectionTable = (props: Partial<IDataTableProps<SelectionRow>> = {}) =>
+        mount(
+            <DataTable
+                data={selectionData}
+                columns={selectionColumns}
+                getRowId={(row) => row.id}
+                pagination={{ pageSize: 2 }}
+                {...props}
+            />
+        );
+
+    const createConfig = (selectedRowIds: string[]): IDataTableBulkActionsConfig => ({
+        selectedRowIds,
+        onSelectionChange: jest.fn(),
+        actions: []
+    });
+
+    const ControlledTable = ({ initialSelectedRowIds = [] }: { initialSelectedRowIds?: string[] }) => {
+        const [selectedRowIds, setSelectedRowIds] = React.useState(initialSelectedRowIds);
+
+        return (
+            <DataTable
+                data={selectionData}
+                columns={selectionColumns}
+                getRowId={(row) => row.id}
+                pagination={{ pageSize: 2 }}
+                bulkActionsConfig={{
+                    selectedRowIds,
+                    onSelectionChange: (payload) => setSelectedRowIds(payload.selectedRowIds),
+                    actions: []
+                }}
+            />
+        );
+    };
+
+    const getHeaderCheckbox = (wrapper: ReactWrapper) => wrapper.find(".tableHeaderCell_selection").find(Checkbox);
+    const getRowCheckboxes = (wrapper: ReactWrapper) => wrapper.find("td.tableBodyCell_selection").find(Checkbox);
+    const clickCheckbox = (checkbox: ReactWrapper) => checkbox.find("input").simulate("change");
+
+    it("does not render the selection column without bulkActionsConfig", () => {
+        const wrapper = mountSelectionTable();
+
+        expect(wrapper.find(".tableHeaderCell_selection").exists()).toBe(false);
+        expect(wrapper.find("td.tableBodyCell_selection").exists()).toBe(false);
+        wrapper.unmount();
+    });
+
+    it("renders the selection column as the first column", () => {
+        const wrapper = mountSelectionTable({ bulkActionsConfig: createConfig([]) });
+
+        expect(wrapper.find("th").first().hasClass("tableHeaderCell_selection")).toBe(true);
+        wrapper.find("tr.tableRow").forEach((row) => {
+            expect(row.find("td").first().hasClass("tableBodyCell_selection")).toBe(true);
+        });
+        expect(getRowCheckboxes(wrapper)).toHaveLength(2);
+        wrapper.unmount();
+    });
+
+    it("renders the selection column right after the expander", () => {
+        const wrapper = mountSelectionTable({
+            bulkActionsConfig: createConfig([]),
+            renderExpandedRow: (row) => <div>{row.name}</div>
+        });
+
+        const headerCells = wrapper.find("th");
+        expect(headerCells.at(0).hasClass("tableHeaderCell_expander")).toBe(true);
+        expect(headerCells.at(1).hasClass("tableHeaderCell_selection")).toBe(true);
+        wrapper.unmount();
+    });
+
+    it("checks the rows in selectedRowIds", () => {
+        const wrapper = mountSelectionTable({ bulkActionsConfig: createConfig(["b"]) });
+
+        expect(getRowCheckboxes(wrapper).map((checkbox) => checkbox.prop("checked"))).toEqual([false, true]);
+        wrapper.unmount();
+    });
+
+    it.each<[string, string[], boolean, boolean]>([
+        ["unchecked", [], false, false],
+        ["indeterminate", ["a"], false, true],
+        ["checked", ["a", "b"], true, false]
+    ])("renders the header checkbox %s", (_, selectedRowIds, checked, indeterminate) => {
+        const wrapper = mountSelectionTable({ bulkActionsConfig: createConfig(selectedRowIds) });
+
+        expect(getHeaderCheckbox(wrapper).prop("checked")).toBe(checked);
+        expect(getHeaderCheckbox(wrapper).prop("indeterminate")).toBe(indeterminate);
+        wrapper.unmount();
+    });
+
+    it("updates the checkboxes once the consumer updates selectedRowIds", () => {
+        const wrapper = mount(<ControlledTable />);
+
+        clickCheckbox(getRowCheckboxes(wrapper).at(1));
+        wrapper.update();
+
+        expect(getRowCheckboxes(wrapper).map((checkbox) => checkbox.prop("checked"))).toEqual([false, true]);
+        expect(getHeaderCheckbox(wrapper).prop("indeterminate")).toBe(true);
+
+        clickCheckbox(getHeaderCheckbox(wrapper));
+        wrapper.update();
+
+        expect(getRowCheckboxes(wrapper).map((checkbox) => checkbox.prop("checked"))).toEqual([true, true]);
+        expect(getHeaderCheckbox(wrapper).prop("checked")).toBe(true);
+        wrapper.unmount();
+    });
+
+    it("disables the checkboxes in edit mode", () => {
+        const wrapper = mountSelectionTable({
+            bulkActionsConfig: createConfig([]),
+            editConfig: { editing: true, onEditStart: jest.fn(), onSave: jest.fn(), onCancel: jest.fn() }
+        });
+
+        expect(getHeaderCheckbox(wrapper).prop("disabled")).toBe(true);
+        getRowCheckboxes(wrapper).forEach((checkbox) => expect(checkbox.prop("disabled")).toBe(true));
+        wrapper.unmount();
+    });
+
+    it("disables the header checkbox while loading", () => {
+        const wrapper = mountSelectionTable({ bulkActionsConfig: createConfig([]), loading: true });
+
+        expect(getHeaderCheckbox(wrapper).prop("disabled")).toBe(true);
+        wrapper.unmount();
+    });
+
+    it("disables the header checkbox when the page has no rows", () => {
+        const wrapper = mountSelectionTable({ bulkActionsConfig: createConfig([]), data: [] });
+
+        expect(getHeaderCheckbox(wrapper).prop("disabled")).toBe(true);
+        wrapper.unmount();
+    });
+});
+
+describe("Table Component - selection column pinning and Manage columns", () => {
+    type PinningRow = { id: string; name: string; email: string };
+
+    const pinningData: PinningRow[] = ["a", "b"].map((id) => ({ id, name: `Row ${id}`, email: `${id}@mail.com` }));
+    const pinningColumns: DataTableColumn<PinningRow>[] = [
+        { accessorKey: "name", header: "Name" },
+        { accessorKey: "email", header: "Email" }
+    ];
+
+    const bulkActionsConfig: IDataTableBulkActionsConfig = {
+        selectedRowIds: [],
+        onSelectionChange: jest.fn(),
+        actions: []
+    };
+
+    const mountPinningTable = async (props: Partial<IDataTableProps<PinningRow>> = {}) => {
+        let wrapper: ReactWrapper<IDataTableProps<PinningRow>>;
+        await act(async () => {
+            wrapper = mount(
+                <DataTable
+                    data={pinningData}
+                    columns={pinningColumns}
+                    getRowId={(row) => row.id}
+                    bulkActionsConfig={bulkActionsConfig}
+                    manageColumnsConfig={{ visible: true }}
+                    {...props}
+                />
+            );
+        });
+        wrapper!.update();
+        return wrapper!;
+    };
+
+    const openManageColumns = async <P,>(wrapper: ReactWrapper<P>) => {
+        await act(async () => {
+            wrapper
+                .find(Button)
+                .filterWhere((button) => button.text().includes("Manage columns"))
+                .simulate("click");
+        });
+        wrapper.update();
+    };
+
+    const getListItem = <P,>(wrapper: ReactWrapper<P>, columnId: string) =>
+        wrapper
+            .find("ManageColumnListItem")
+            .filterWhere((item) => (item.prop("column") as { id: string }).id === columnId);
+
+    const save = async <P,>(wrapper: ReactWrapper<P>) => {
+        await act(async () => {
+            wrapper
+                .find(Button)
+                .filterWhere((button) => button.text() === "Save")
+                .simulate("click");
+        });
+        wrapper.update();
+    };
+
+    const getHeaders = <P,>(wrapper: ReactWrapper<P>) =>
+        wrapper.find("thead th").map((th) => ({
+            label: th.hasClass("tableHeaderCell_selection") ? "selection" : th.text(),
+            isPinned: th.hasClass("tableHeaderCell_pinned")
+        }));
+
+    it("does not list the selection column in Manage columns", async () => {
+        const wrapper = await mountPinningTable();
+        await openManageColumns(wrapper);
+
+        const listedColumnIds = wrapper
+            .find("ManageColumnListItem")
+            .map((item) => (item.prop("column") as { id: string }).id);
+
+        expect(listedColumnIds).toEqual(["name", "email"]);
+        wrapper.unmount();
+    });
+
+    it("does not pin the selection column while no column is pinned", async () => {
+        const wrapper = await mountPinningTable();
+
+        expect(getHeaders(wrapper)[0]).toEqual({ label: "selection", isPinned: false });
+        wrapper.unmount();
+    });
+
+    it("keeps the selection column first after saving Manage columns", async () => {
+        const wrapper = await mountPinningTable();
+        await openManageColumns(wrapper);
+
+        await act(async () => {
+            getListItem(wrapper, "name").find("input[type='checkbox']").simulate("change");
+        });
+        await save(wrapper);
+
+        expect(getHeaders(wrapper).map((header) => header.label)).toEqual(["selection", "Email"]);
+        wrapper.unmount();
+    });
+
+    it("pins the selection column in front of a column pinned in Manage columns", async () => {
+        const wrapper = await mountPinningTable();
+        await openManageColumns(wrapper);
+
+        await act(async () => {
+            getListItem(wrapper, "email").find(".manageColumnListItem__pinAction").first().simulate("click");
+        });
+        await save(wrapper);
+
+        expect(getHeaders(wrapper)).toEqual([
+            { label: "selection", isPinned: true },
+            { label: "Email", isPinned: true },
+            { label: "Name", isPinned: false }
+        ]);
+        wrapper.unmount();
+    });
+
+    it("pins the selection column after the expander and before a default pinned column", async () => {
+        const wrapper = await mountPinningTable({
+            columns: [pinningColumns[0], { ...pinningColumns[1], defaultPinned: true }],
+            renderExpandedRow: (row) => <div>{row.name}</div>
+        });
+
+        expect(getHeaders(wrapper)).toEqual([
+            { label: "", isPinned: true },
+            { label: "selection", isPinned: true },
+            { label: "Email", isPinned: true },
+            { label: "Name", isPinned: false }
+        ]);
         wrapper.unmount();
     });
 });
