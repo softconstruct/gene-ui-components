@@ -1,12 +1,11 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
-import { act } from "react-dom/test-utils";
 
 // Components
 import Button from "@components/atoms/Button";
 import GeneUIProvider from "@components/providers/GeneUIProvider";
 
-import Filter, { IFilterProps, IFilterSaveConfig, IFilterSaveHelpers } from "./index";
+import Filter, { IFilterProps, IFilterSaveConfig } from "./index";
 
 const texts = {
     title: "Filters",
@@ -26,6 +25,8 @@ describe("Filter", () => {
 
     const saveConfig = (config: Partial<IFilterSaveConfig> = {}): IFilterSaveConfig => ({
         ...saveTexts,
+        popoverOpen: false,
+        onPopoverOpenChange: jest.fn(),
         onSave: jest.fn(),
         ...config
     });
@@ -34,10 +35,8 @@ describe("Filter", () => {
     const button = (text: string) => setup.find(Button).filterWhere((item) => item.text() === text);
     const popoverButtons = () => setup.find(".popover__footerActions button");
     const savedFiltersButton = () => setup.find(".drawer__headerSwappable button");
-    const openSave = () => {
-        setup.find("button.filter__save").simulate("click");
-        setup.update();
-    };
+    const openSave = (config: Partial<IFilterSaveConfig> = {}) =>
+        render({ saveConfig: saveConfig({ popoverOpen: true, ...config }) });
     const typeName = (value: string) => {
         setup.find(".popover input").simulate("change", { target: { value } });
         setup.update();
@@ -116,7 +115,6 @@ describe("Filter", () => {
     it("should render saveConfig texts correctly", () => {
         render();
         expect(setup.find("button.filter__save").text()).toBe(saveTexts.buttonText);
-        expect(setup.find(".popover").exists()).toBeFalsy();
         openSave();
         expect(setup.find(".popover .textField__label").first().text()).toContain(saveTexts.popoverLabelText);
         expect(popoverButtons().first().text()).toBe(saveTexts.popoverCancelText);
@@ -124,10 +122,16 @@ describe("Filter", () => {
     });
 
     it("should render saveConfig with the default texts", () => {
-        render({ saveConfig: { onSave: jest.fn(), onSavedFiltersClick: jest.fn() } });
+        render({
+            saveConfig: {
+                popoverOpen: true,
+                onPopoverOpenChange: jest.fn(),
+                onSave: jest.fn(),
+                onSavedFiltersClick: jest.fn()
+            }
+        });
         expect(setup.find("button.filter__save").text()).toBe("Save");
         expect(savedFiltersButton().text()).toBe("Saved Filters");
-        openSave();
         expect(popoverButtons().first().text()).toBe("Cancel");
         expect(popoverButtons().last().text()).toBe("Save");
     });
@@ -137,15 +141,6 @@ describe("Filter", () => {
         expect(setup.find("button.filter__save").hasClass("button_loading")).toBeFalsy();
         render({ saveConfig: saveConfig({ buttonLoading: true }) });
         expect(setup.find("button.filter__save").hasClass("button_loading")).toBeTruthy();
-    });
-
-    it("should render saveConfig popoverSaveLoading correctly", () => {
-        render();
-        openSave();
-        expect(popoverButtons().last().hasClass("button_loading")).toBeFalsy();
-        render({ saveConfig: saveConfig({ popoverSaveLoading: true }) });
-        expect(popoverButtons().last().hasClass("button_loading")).toBeTruthy();
-        expect(setup.find("button.filter__save").hasClass("button_loading")).toBeFalsy();
     });
 
     it("should render saveConfig buttonDisabled correctly", () => {
@@ -169,8 +164,111 @@ describe("Filter", () => {
         expect(onSavedFiltersClick).toHaveBeenCalledTimes(1);
     });
 
-    it("should remove the Save button and close the save popover when saveConfig is removed", () => {
+    it("should render saveConfig popoverOpen correctly", () => {
         render();
+        expect(setup.find(".popover").exists()).toBeFalsy();
+        openSave();
+        expect(setup.find(".popover").exists()).toBeTruthy();
+    });
+
+    it.each([false, true])(
+        "should call onPopoverOpenChange with the opposite of popoverOpen %s on the Save button click",
+        (popoverOpen) => {
+            const onPopoverOpenChange = jest.fn();
+            render({ saveConfig: saveConfig({ popoverOpen, onPopoverOpenChange }) });
+            setup.find("button.filter__save").simulate("click");
+            expect(onPopoverOpenChange).toHaveBeenLastCalledWith(!popoverOpen);
+        }
+    );
+
+    it("should not open the save popover by itself on the Save button click", () => {
+        render();
+        setup.find("button.filter__save").simulate("click");
+        setup.update();
+        expect(setup.find(".popover").exists()).toBeFalsy();
+    });
+
+    it("should call onPopoverOpenChange with false on the cancel button click without calling onSave", () => {
+        const onSave = jest.fn();
+        const onPopoverOpenChange = jest.fn();
+        openSave({ onSave, onPopoverOpenChange });
+        typeName("My filter");
+        popoverButtons().first().simulate("click");
+        expect(onPopoverOpenChange).toHaveBeenCalledWith(false);
+        expect(onSave).not.toHaveBeenCalled();
+    });
+
+    it("should keep the save confirm button disabled until a name is typed", () => {
+        openSave();
+        expect(popoverButtons().last().prop("disabled")).toBeTruthy();
+        typeName("My filter");
+        expect(popoverButtons().last().prop("disabled")).toBeFalsy();
+    });
+
+    it("should keep the save popover buttons mounted while the name is typed", () => {
+        openSave();
+        const cancel = popoverButtons().first().getDOMNode();
+        typeName("My filter");
+        expect(popoverButtons().first().getDOMNode()).toBe(cancel);
+    });
+
+    it("should call onSave with the typed name and leave closing the save popover to the consumer", () => {
+        const onSave = jest.fn();
+        const onPopoverOpenChange = jest.fn();
+        openSave({ onSave, onPopoverOpenChange });
+        typeName("  My filter ");
+        popoverButtons().last().simulate("click");
+        setup.update();
+        expect(onSave).toHaveBeenCalledWith("  My filter ");
+        expect(onPopoverOpenChange).not.toHaveBeenCalled();
+        expect(setup.find(".popover").exists()).toBeTruthy();
+    });
+
+    it("should render saveConfig popoverSaveLoading correctly", () => {
+        openSave();
+        typeName("My filter");
+        expect(popoverButtons().last().hasClass("button_loading")).toBeFalsy();
+        expect(popoverButtons().first().prop("disabled")).toBeFalsy();
+        expect(setup.find(".popover input").prop("disabled")).toBeFalsy();
+        openSave({ popoverSaveLoading: true });
+        expect(popoverButtons().last().hasClass("button_loading")).toBeTruthy();
+        expect(popoverButtons().first().prop("disabled")).toBeTruthy();
+        expect(setup.find(".popover input").prop("disabled")).toBeTruthy();
+    });
+
+    it("should not call onSave while popoverSaveLoading is true", () => {
+        const onSave = jest.fn();
+        openSave({ onSave });
+        typeName("My filter");
+        openSave({ onSave, popoverSaveLoading: true });
+        popoverButtons().last().simulate("click");
+        expect(onSave).not.toHaveBeenCalled();
+    });
+
+    it("should keep the typed name while the save popover stays open", () => {
+        openSave();
+        typeName("My filter");
+        openSave({ popoverSaveLoading: true });
+        openSave({ popoverSaveLoading: false });
+        expect(setup.find(".popover input").prop("value")).toBe("My filter");
+    });
+
+    it("should clear the typed name when the save popover is closed", () => {
+        openSave();
+        typeName("My filter");
+        render({ saveConfig: saveConfig({ popoverOpen: false }) });
+        openSave();
+        expect(setup.find(".popover input").prop("value")).toBe("");
+    });
+
+    it("should call onPopoverOpenChange with false when the panel is closed with the save popover open", () => {
+        const onPopoverOpenChange = jest.fn();
+        openSave({ onPopoverOpenChange });
+        render({ open: false });
+        expect(onPopoverOpenChange).toHaveBeenCalledWith(false);
+    });
+
+    it("should remove the Save button and the save popover when saveConfig is removed", () => {
         openSave();
         typeName("My filter");
         render({ saveConfig: undefined });
@@ -181,73 +279,11 @@ describe("Filter", () => {
         expect(setup.find(".popover").exists()).toBeFalsy();
     });
 
-    it("should keep the save confirm button disabled until a name is typed", () => {
-        render();
-        openSave();
-        expect(popoverButtons().last().prop("disabled")).toBeTruthy();
-        typeName("My filter");
-        expect(popoverButtons().last().prop("disabled")).toBeFalsy();
-    });
-
-    it("should keep the save popover buttons mounted while the name is typed", () => {
-        render();
-        openSave();
-        const cancel = popoverButtons().first().getDOMNode();
-        typeName("My filter");
-        expect(popoverButtons().first().getDOMNode()).toBe(cancel);
-    });
-
-    it("should call onSave with the typed name and close the save popover", () => {
-        const onSave = jest.fn();
-        render({ saveConfig: saveConfig({ onSave }) });
-        openSave();
-        typeName("  My filter ");
-        popoverButtons().last().simulate("click");
-        setup.update();
-        expect(onSave).toHaveBeenCalledWith("  My filter ");
-        expect(setup.find(".popover").exists()).toBeFalsy();
-    });
-
-    it("should keep the save popover open on save until closePopover of the saveConfig callback is called", () => {
-        const onSave = jest.fn();
-        let helpers: IFilterSaveHelpers;
-        render({
-            saveConfig: (saveHelpers) => {
-                helpers = saveHelpers;
-                return saveConfig({ onSave });
-            }
-        });
-        openSave();
-        typeName("My filter");
-        popoverButtons().last().simulate("click");
-        setup.update();
-        expect(onSave).toHaveBeenCalledWith("My filter");
-        expect(setup.find(".popover").exists()).toBeTruthy();
-        act(() => helpers.update({ popoverSaveLoading: true }));
-        setup.update();
-        expect(popoverButtons().last().hasClass("button_loading")).toBeTruthy();
-        act(() => helpers.closePopover());
-        setup.update();
-        expect(setup.find(".popover").exists()).toBeFalsy();
-    });
-
-    it("should close the save popover on the cancel button click without calling onSave", () => {
-        const onSave = jest.fn();
-        render({ saveConfig: saveConfig({ onSave }) });
-        openSave();
-        typeName("My filter");
-        popoverButtons().first().simulate("click");
-        setup.update();
-        expect(onSave).not.toHaveBeenCalled();
-        expect(setup.find(".popover").exists()).toBeFalsy();
-    });
-
     it("should reset the save popover when the panel is closed and opened again", () => {
         const consoleError = jest.spyOn(console, "error").mockImplementation(() => {});
-        render();
         openSave();
         typeName("My filter");
-        render({ open: false });
+        render({ open: false, saveConfig: saveConfig({ popoverOpen: false }) });
         render({ open: true });
         expect(setup.find(".popover").exists()).toBeFalsy();
         openSave();

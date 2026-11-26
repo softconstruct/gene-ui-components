@@ -12,7 +12,7 @@ import TextField from "@components/molecules/TextField";
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 import Filter, { IFilterProps } from "./index";
 
-const saveCallbacks = { onSavedFiltersClick: fn(), onSave: fn() };
+const saveCallbacks = { onSavedFiltersClick: fn(), onPopoverOpenChange: fn(), onSave: fn() };
 
 const meta: Meta<IFilterProps> = {
     title: "Organisms/Filter",
@@ -40,9 +40,10 @@ const meta: Meta<IFilterProps> = {
             popoverSaveText: "Save",
             popoverCancelText: "Cancel",
             popoverLabelText: "Filter Name",
-            popoverSaveLoading: false,
             buttonDisabled: false,
             buttonLoading: false,
+            popoverOpen: false,
+            popoverSaveLoading: false,
             savedFiltersText: "Saved Filters",
             ...saveCallbacks
         },
@@ -65,7 +66,15 @@ const statusOptions = [
     { id: 3, label: "Blocked", value: "blocked" }
 ];
 
+// Stands for the request that stores the filter on the server
+const saveFilterRequest = () =>
+    new Promise<void>((resolve) => {
+        setTimeout(resolve, 1000);
+    });
+
 const FilterTemplate: FC<IFilterProps> = ({ saveConfig, onApply, onReset, onClose, ...props }) => {
+    const [isSaveOpen, setIsSaveOpen] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
     const [open, setOpen] = useState(true);
     const [values, setValues] = useState(emptyValues);
 
@@ -76,7 +85,26 @@ const FilterTemplate: FC<IFilterProps> = ({ saveConfig, onApply, onReset, onClos
                 {...props}
                 open={open}
                 saveConfig={
-                    typeof saveConfig === "function" ? saveConfig : saveConfig && { ...saveConfig, ...saveCallbacks }
+                    saveConfig && {
+                        ...saveConfig,
+                        ...saveCallbacks,
+                        popoverOpen: isSaveOpen,
+                        popoverSaveLoading: isSaving,
+                        onPopoverOpenChange: (isOpen) => {
+                            saveCallbacks.onPopoverOpenChange(isOpen);
+                            setIsSaveOpen(isOpen);
+                        },
+                        onSave: async (name) => {
+                            saveCallbacks.onSave(name);
+                            setIsSaving(true);
+                            try {
+                                await saveFilterRequest();
+                                setIsSaveOpen(false);
+                            } finally {
+                                setIsSaving(false);
+                            }
+                        }
+                    }
                 }
                 onApply={() => {
                     onApply?.();
@@ -120,24 +148,5 @@ const FilterTemplate: FC<IFilterProps> = ({ saveConfig, onApply, onReset, onClos
 };
 
 export const Default: Story = {
-    render: (props) => <FilterTemplate {...props} />
-};
-
-export const SaveCallback: Story = {
-    argTypes: {
-        saveConfig: args({ control: "false", ...propCategory.functionality })
-    },
-    args: {
-        saveConfig: ({ closePopover, update }) => ({
-            popoverLabelText: "Filter Name",
-            onSave: () => {
-                update({ popoverSaveLoading: true });
-                setTimeout(() => {
-                    update({ popoverSaveLoading: false });
-                    closePopover();
-                }, 1000);
-            }
-        })
-    },
     render: (props) => <FilterTemplate {...props} />
 };
