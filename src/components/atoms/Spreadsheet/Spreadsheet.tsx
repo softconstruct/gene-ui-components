@@ -37,10 +37,11 @@ interface ISpreadsheetProps {
     /**
      * Controls the height behavior of the Spreadsheet body.<br/>
      * `full` — fixed height of 80vh (default).<br/>
-     * `fit` — shrinks to fit content, capped at 80vh.
+     * `fit` — shrinks to fit content, capped at 80vh.<br/>
+     * `compact` — fixed height of 50vh, content that exceeds it is accessible via vertical scroll.
      * @default "full"
      */
-    heightMode?: "full" | "fit";
+    heightMode?: "full" | "fit" | "compact";
     /**
      * The content to render inside the Spreadsheet.
      * Typically includes form elements, info panels, or custom UI blocks.
