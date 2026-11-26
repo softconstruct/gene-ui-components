@@ -173,7 +173,7 @@ export {
 export { default as AreaChart, IAreaChartProps, IAreaChartSeries } from "./components/charts/AreaChart";
 export { default as DualAxisChart, IDualAxisChartProps, IDualAxisChartSeries } from "./components/charts/DualAxisChart";
 export { default as PieChart, IPieChartProps, IPieChartSeries } from "./components/charts/PieChart";
-export { default as TreeMap } from "./components/charts/TreeMap";
+export { default as TreeMap, ITreeMapProps, ITreeMapSeries, ITreeMapSubChannel } from "./components/charts/TreeMap";
 
 // Providers
 export {

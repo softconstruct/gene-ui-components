@@ -62,7 +62,14 @@ export default {
             exports: "named"
         }
     ],
-    external: ["react", "react-dom", "prop-types", "highcharts", "highcharts-react-official"],
+    external: [
+        "react",
+        "react-dom",
+        "prop-types",
+        "highcharts",
+        "highcharts/modules/treemap",
+        "highcharts-react-official"
+    ],
     plugins: [
         // peerDepsExternal({
         //     packageJsonPath: resolvePath(__dirname, '../package.json'),

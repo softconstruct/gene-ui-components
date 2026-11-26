@@ -1,1 +1,1 @@
-export { ITreeMapProps, default } from "./TreeMap";
+export { ITreeMapProps, ITreeMapSeries, ITreeMapSubChannel, default } from "./TreeMap";
