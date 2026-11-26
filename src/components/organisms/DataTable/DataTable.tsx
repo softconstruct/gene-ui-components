@@ -17,9 +17,9 @@ import Scrollbar from "@components/atoms/Scrollbar";
 import Pagination, { IPaginationProps } from "@components/molecules/Pagination";
 
 // Constants, context & helpers
-import { EXPANDER_COLUMN_ID, INITIAL_PAGE_SIZE, SELECTION_COLUMN_ID } from "./constants";
+import { EXPANDER_COLUMN_ID, INITIAL_PAGE_SIZE } from "./constants";
 import { DataTableProvider, DirModeContext, IDataTableContext } from "./context";
-import { adaptColumns, getExpanderColumn, getSelectionColumn, toRowSelectionState } from "./helper";
+import { adaptColumns, getExpanderColumn, getSelectionColumn, isBuiltInColumn, toRowSelectionState } from "./helper";
 // Hooks
 import { useBulkSelection } from "./hooks/useBulkSelection";
 import { useTablePagination } from "./hooks/useTablePagination";
@@ -413,20 +413,20 @@ const DataTable = <TData,>({
         [initialColumnVisibility, columnVisibilityOverrides]
     );
 
+    const builtInColumnIds = useMemo(
+        () => tableColumns.map((column) => column.id).filter((id): id is string => !!id && isBuiltInColumn(id)),
+        [tableColumns]
+    );
+
     const resolveColumnPinning = useCallback(
         (pinning: ColumnPinningState | null): ColumnPinningState => {
             const { left = [], right = [] } = pinning ?? initialColumnPinning;
-            const userPinned = left.filter((id) => id !== EXPANDER_COLUMN_ID && id !== SELECTION_COLUMN_ID);
-            return {
-                left: [
-                    ...(isExpandable ? [EXPANDER_COLUMN_ID] : []),
-                    ...(hasBulkActions && userPinned.length > 0 ? [SELECTION_COLUMN_ID] : []),
-                    ...userPinned
-                ],
-                right
-            };
+            const userPinned = left.filter((id) => !isBuiltInColumn(id));
+            const pinnedBuiltIns = builtInColumnIds.filter((id) => id === EXPANDER_COLUMN_ID || userPinned.length > 0);
+
+            return { left: [...pinnedBuiltIns, ...userPinned], right };
         },
-        [initialColumnPinning, isExpandable, hasBulkActions]
+        [initialColumnPinning, builtInColumnIds]
     );
 
     const columnPinning = useMemo(
@@ -452,7 +452,7 @@ const DataTable = <TData,>({
                     typeof updaterOrValue === "function"
                         ? updaterOrValue(resolveColumnPinning(prevPinning))
                         : updaterOrValue;
-                return { left: left.filter((id) => id !== EXPANDER_COLUMN_ID && id !== SELECTION_COLUMN_ID), right };
+                return { left: left.filter((id) => !isBuiltInColumn(id)), right };
             });
         },
         [resolveColumnPinning]
@@ -464,10 +464,10 @@ const DataTable = <TData,>({
 
     const resolvedColumnOrder = useMemo(
         () =>
-            hasBulkActions && columnOrder.length > 0
-                ? [SELECTION_COLUMN_ID, ...columnOrder.filter((id) => id !== SELECTION_COLUMN_ID)]
+            columnOrder.length > 0
+                ? [...builtInColumnIds, ...columnOrder.filter((id) => !isBuiltInColumn(id))]
                 : columnOrder,
-        [columnOrder, hasBulkActions]
+        [columnOrder, builtInColumnIds]
     );
 
     const table = useReactTable({

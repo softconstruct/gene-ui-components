@@ -1,7 +1,7 @@
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { Column, ColumnOrderState, ColumnPinningState, Table } from "@tanstack/react-table";
 
-import { EXPANDER_COLUMN_ID, SELECTION_COLUMN_ID } from "../../constants";
+import { isBuiltInColumn } from "../../helper";
 // Types
 import { ColumnVisibilityState, IManageColumnsDiffPayload, ManageColumnsConfig } from "../../types";
 
@@ -20,12 +20,9 @@ const sameMembers = (a: string[], b: string[]) => {
 };
 
 /**
- * The expander and the selection column are internal columns, positioned and pinned by DataTable.
- * They must never appear in the manage-columns state, otherwise they can be hidden,
+ * The built-in columns must never appear in the manage-columns state, otherwise they can be hidden,
  * reordered, or counted by the select-all logic.
  */
-const isBuiltInColumn = (id: string) => id === EXPANDER_COLUMN_ID || id === SELECTION_COLUMN_ID;
-
 const stripBuiltInPinning = (pinning: ColumnPinningState): ColumnPinningState => ({
     left: (pinning.left || []).filter((id) => !isBuiltInColumn(id)),
     right: (pinning.right || []).filter((id) => !isBuiltInColumn(id))

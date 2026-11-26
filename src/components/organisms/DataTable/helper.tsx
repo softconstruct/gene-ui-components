@@ -255,6 +255,11 @@ export const adaptColumns = <TData,>(columns: DataTableColumn<TData>[]): ColumnD
     });
 
 /**
+ * Whether the column is one the table adds itself (expander, selection), positioned and pinned by DataTable.
+ */
+export const isBuiltInColumn = (id: string) => id === EXPANDER_COLUMN_ID || id === SELECTION_COLUMN_ID;
+
+/**
  * A fixed-width column the table adds itself, without a header label (expander, selection, …).
  */
 const createBuiltInColumn = <TData,>(
