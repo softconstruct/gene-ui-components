@@ -101,11 +101,6 @@ describe("DataCard ", () => {
         expect(setup.find(Button)).toHaveLength(1); // Only Actions button (no Show More for short data)
     });
 
-    it("renders actions menu with compact mobileHeightMode", () => {
-        setup = createWrapper({ actions: basicActions });
-        expect(setup.find(Menu).prop("mobileHeightMode")).toBe("compact");
-    });
-
     it("does not render actions menu when actions prop is not provided", () => {
         expect(setup.find(Menu)).toHaveLength(0);
     });

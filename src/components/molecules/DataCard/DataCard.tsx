@@ -182,11 +182,7 @@ const DataCard: FC<IDataCardProps> = ({
                         <Button appearance="secondary" size="large" fullWidth {...propsForPopover}>
                             {actionsText}
                         </Button>
-                        <Menu
-                            onChange={handleMenuChange}
-                            setPropsForPopover={setPropsForPopover}
-                            mobileHeightMode="compact"
-                        >
+                        <Menu onChange={handleMenuChange} setPropsForPopover={setPropsForPopover}>
                             {menuElements}
                         </Menu>
                     </>

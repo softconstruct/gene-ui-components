@@ -89,18 +89,6 @@ describe("Menu ", () => {
         expect(wrapper.find(`menu__body_size_${size}`)).toBeTruthy();
     });
 
-    it("should have full mobileHeightMode by default", () => {
-        expect(setup.find(Popover).props().mobileHeightMode).toBe("full");
-    });
-
-    it.each<IMenuProps["mobileHeightMode"]>(["full", "fit", "compact"])(
-        "should have %s mobileHeightMode",
-        (mobileHeightMode) => {
-            const wrapper = setup.setProps({ mobileHeightMode });
-            expect(wrapper.find(Popover).props().mobileHeightMode).toBe(mobileHeightMode);
-        }
-    );
-
     it.each<IMenuProps["position"]>([
         "bottom-center",
         "bottom-left",

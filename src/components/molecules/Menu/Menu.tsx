@@ -102,12 +102,6 @@ interface IMenuProps {
      */
     position?: IPopoverProps["position"];
     /**
-     * Controls the height behavior of the Menu on mobile view, for more info see the Popover component mobileHeightMode.<br/>
-     * Possible values: `full | fit | compact`
-     * @default "full"
-     */
-    mobileHeightMode?: IPopoverProps["mobileHeightMode"];
-    /**
      * Controls the open state for menu, for more info see the Popover component open state.
      */
     open?: boolean;
@@ -163,7 +157,6 @@ const Menu: FC<IMenuProps> = ({
     setPropsForPopover,
     size = "small",
     position = "bottom-left",
-    mobileHeightMode = "full",
     open = false,
     openSelectedPath = false,
     onOpenChange
@@ -375,7 +368,6 @@ const Menu: FC<IMenuProps> = ({
                 setProps={setReferenceProps}
                 size={popoverSizeMapping[size]}
                 position={position}
-                mobileHeightMode={mobileHeightMode}
                 withArrow={false}
                 open={isOpenState}
                 ref={popoverRef}
