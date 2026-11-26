@@ -192,12 +192,7 @@ const DataCard: FC<IDataCardProps> = ({
                     </>
                 )}
             </div>
-            <Spreadsheet
-                heightMode="compact"
-                open={open}
-                className="dataCard__spreadsheet dataCard"
-                onClose={onShowMoreToggle}
-            >
+            <Spreadsheet heightMode="compact" open={open} className="dataCard__spreadsheet" onClose={onShowMoreToggle}>
                 <DataList data={cardData} />
             </Spreadsheet>
         </div>

@@ -11,10 +11,10 @@ import Text from "@components/atoms/Text";
 import { IMenuItemProps } from "@components/molecules/Menu";
 import NavigationItem from "@components/molecules/Navigation/NavigationItem";
 
+import { INavigationCreateData, INavigationData, INavigationProps } from "../Navigation";
+
 // Styles
 import "./NavigationMobile.scss";
-
-import { INavigationCreateData, INavigationData, INavigationProps } from "../Navigation";
 
 const getChildActivePathIndex = (activePathIndex: number[] | null | undefined, index: number): number[] | null => {
     if (activePathIndex && index === activePathIndex[0]) {
@@ -60,6 +60,10 @@ interface INavigationMobileProps {
      * Text for the create button. If not provided, only the icon will be shown.
      */
     createButtonText?: string;
+    /**
+     * Title shown in the header, next to the close button.
+     */
+    mobileTitle?: string;
 }
 
 interface INavMenuContentMobileProps {
@@ -117,7 +121,8 @@ const NavigationMobile: FC<INavigationMobileProps> = ({
     onNavigationCreateDataClick,
     render,
     activePathIndex,
-    createButtonText
+    createButtonText,
+    mobileTitle
 }) => {
     const [isCreateMenuOpen, setIsCreateMenuOpen] = useState(false);
     const [scrollToTop, setScrollToTop] = useState<number | undefined>(undefined);
@@ -190,6 +195,15 @@ const NavigationMobile: FC<INavigationMobileProps> = ({
             <Spreadsheet open={open} onClose={handleMainClose} inset={false} className="navigationMobile">
                 <div className="navigationMobile__container">
                     <div className="navigationMobile__header">
+                        {mobileTitle && (
+                            <Text
+                                as="h3"
+                                variant="bodyMediumSemibold"
+                                className="navigationMobile__title ellipsis-text"
+                            >
+                                {mobileTitle}
+                            </Text>
+                        )}
                         <Button
                             Icon={X}
                             size="medium"
