@@ -18,7 +18,7 @@ const SelectionCell = <TData, TValue>({ row }: CellContext<TData, TValue>) => {
         <Checkbox
             checked={row.getIsSelected()}
             disabled={bulkActionsConfig.isSelectionDisabled}
-            onChange={() => bulkActionsConfig.onToggleRow(row.id)}
+            onChange={() => row.toggleSelected()}
         />
     );
 };

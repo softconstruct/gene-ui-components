@@ -1,5 +1,4 @@
 import React, { MouseEvent } from "react";
-import { getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
 import { mount, ReactWrapper } from "enzyme";
 import { act } from "react-dom/test-utils";
 
@@ -20,13 +19,11 @@ import {
     DataTableRenderCellArgs,
     DataTableRenderEditCellArgs,
     IDataTableBulkActionsConfig,
-    IDataTableEditConfig,
-    PageCheckboxState
+    IDataTableEditConfig
 } from "@components/organisms/DataTable/types";
 
 import { mockColumns, mockData } from "../../../../stories/data/__dataTable";
-import { getPageCheckboxState, togglePageSelection, toggleRowSelection, toRowSelectionState } from "./helper";
-import { useBulkSelection } from "./hooks/useBulkSelection";
+import { toRowSelectionState, toSelectedRowIds } from "./helper";
 // Components
 import DataTable, { IDataTableProps } from "./index";
 
@@ -2217,180 +2214,20 @@ describe("Table Component - Copyable cells", () => {
 });
 
 describe("Table Component - row selection helpers", () => {
-    describe("toggleRowSelection", () => {
-        it("adds a row that is not selected", () => {
-            expect(toggleRowSelection(["1"], "2")).toEqual(["1", "2"]);
-        });
-
-        it("removes a row that is selected", () => {
-            expect(toggleRowSelection(["1", "2", "3"], "2")).toEqual(["1", "3"]);
-        });
-
-        it("does not mutate the given selection", () => {
-            const selectedRowIds = ["1"];
-            toggleRowSelection(selectedRowIds, "2");
-            expect(selectedRowIds).toEqual(["1"]);
-        });
-    });
-
-    describe("getPageCheckboxState", () => {
-        it.each<[PageCheckboxState, string, string[], string[]]>([
-            ["unchecked", "nothing is selected", [], ["1", "2"]],
-            ["unchecked", "only rows of other pages are selected", ["9"], ["1", "2"]],
-            ["indeterminate", "some rows of the page are selected", ["1"], ["1", "2"]],
-            ["checked", "every row of the page is selected", ["1", "2"], ["1", "2"]],
-            ["checked", "every row of the page and rows of other pages are selected", ["9", "1", "2"], ["1", "2"]],
-            ["unchecked", "the page is empty", ["1"], []]
-        ])("should be %s when %s", (expected, _, selectedRowIds, pageRowIds) => {
-            expect(getPageCheckboxState(selectedRowIds, pageRowIds)).toBe(expected);
-        });
-    });
-
-    describe("togglePageSelection", () => {
-        it("selects every row of the page when none is selected", () => {
-            expect(togglePageSelection([], ["1", "2"])).toEqual(["1", "2"]);
-        });
-
-        it("adds only the missing rows of the page when some are selected", () => {
-            expect(togglePageSelection(["2"], ["1", "2", "3"])).toEqual(["2", "1", "3"]);
-        });
-
-        it("clears the page's rows when every row of the page is selected", () => {
-            expect(togglePageSelection(["1", "2"], ["1", "2"])).toEqual([]);
-        });
-
-        it("keeps rows of other pages when selecting the page", () => {
-            expect(togglePageSelection(["9"], ["1", "2"])).toEqual(["9", "1", "2"]);
-        });
-
-        it("keeps rows of other pages when clearing the page", () => {
-            expect(togglePageSelection(["9", "1", "2"], ["1", "2"])).toEqual(["9"]);
-        });
-
-        it("does not mutate the given selection", () => {
-            const selectedRowIds = ["1"];
-            togglePageSelection(selectedRowIds, ["1", "2"]);
-            expect(selectedRowIds).toEqual(["1"]);
-        });
-    });
-
     describe("toRowSelectionState", () => {
         it("maps every selected id to true", () => {
             expect(toRowSelectionState(["1", "2"])).toEqual({ "1": true, "2": true });
         });
     });
-});
 
-describe("Table Component - row selection state", () => {
-    type SelectionRow = { id: string; name: string };
-    type SelectionHandlers = ReturnType<typeof useBulkSelection>;
-
-    const selectionData: SelectionRow[] = ["a", "b", "c", "d"].map((id) => ({ id, name: `Row ${id}` }));
-
-    interface ITestComponentProps {
-        config?: IDataTableBulkActionsConfig;
-        isSelectionDisabled?: boolean;
-        pageIndex?: number;
-        onRender: (handlers: SelectionHandlers) => void;
-    }
-
-    const TestComponent = ({ config, isSelectionDisabled = false, pageIndex = 0, onRender }: ITestComponentProps) => {
-        const table = useReactTable({
-            data: selectionData,
-            columns: [{ id: "name", accessorKey: "name" }],
-            getCoreRowModel: getCoreRowModel(),
-            getPaginationRowModel: getPaginationRowModel(),
-            getRowId: (row) => row.id,
-            state: { pagination: { pageIndex, pageSize: 2 } }
+    describe("toSelectedRowIds", () => {
+        it("keeps the order of the ids still selected and adds new ones last", () => {
+            expect(toSelectedRowIds(["3", "1", "2"], { "1": true, "2": false, "3": true, "5": true })).toEqual([
+                "3",
+                "1",
+                "5"
+            ]);
         });
-        onRender(useBulkSelection(table, config, isSelectionDisabled));
-        return null;
-    };
-
-    const createConfig = (selectedRowIds: string[]): IDataTableBulkActionsConfig => ({
-        selectedRowIds,
-        onSelectionChange: jest.fn(),
-        actions: []
-    });
-
-    const renderTestComponent = (props: Omit<ITestComponentProps, "onRender">) => {
-        let handlers = {} as SelectionHandlers;
-        const wrapper = mount(
-            <TestComponent
-                {...props}
-                onRender={(nextHandlers) => {
-                    handlers = nextHandlers;
-                }}
-            />
-        );
-        return { wrapper, getHandlers: () => handlers };
-    };
-
-    it("reports the toggled row through onSelectionChange", () => {
-        const config = createConfig(["a"]);
-        const { wrapper, getHandlers } = renderTestComponent({ config });
-
-        getHandlers().onToggleRow("b");
-        expect(config.onSelectionChange).toHaveBeenLastCalledWith({ selectedRowIds: ["a", "b"] });
-
-        getHandlers().onToggleRow("a");
-        expect(config.onSelectionChange).toHaveBeenLastCalledWith({ selectedRowIds: [] });
-        wrapper.unmount();
-    });
-
-    it("uses the rows of the page shown at click time", () => {
-        const config = createConfig([]);
-        const { wrapper, getHandlers } = renderTestComponent({ config, pageIndex: 1 });
-
-        getHandlers().onTogglePage();
-        expect(config.onSelectionChange).toHaveBeenLastCalledWith({ selectedRowIds: ["c", "d"] });
-        wrapper.unmount();
-    });
-
-    it("clears the selection on every page on deselect", () => {
-        const config = createConfig(["a", "c"]);
-        const { wrapper, getHandlers } = renderTestComponent({ config });
-
-        getHandlers().onDeselect();
-        expect(config.onSelectionChange).toHaveBeenLastCalledWith({ selectedRowIds: [] });
-        wrapper.unmount();
-    });
-
-    it("computes the next selection from the latest selectedRowIds", () => {
-        const onSelectionChange = jest.fn();
-        const { wrapper, getHandlers } = renderTestComponent({
-            config: { selectedRowIds: [], onSelectionChange, actions: [] }
-        });
-
-        wrapper.setProps({ config: { selectedRowIds: ["a"], onSelectionChange, actions: [] } });
-        getHandlers().onToggleRow("b");
-
-        expect(onSelectionChange).toHaveBeenLastCalledWith({ selectedRowIds: ["a", "b"] });
-        wrapper.unmount();
-    });
-
-    it("keeps the handlers stable across renders", () => {
-        const { wrapper, getHandlers } = renderTestComponent({ config: createConfig([]) });
-        const firstHandlers = getHandlers();
-
-        wrapper.setProps({ config: createConfig(["a"]) });
-
-        expect(getHandlers().onToggleRow).toBe(firstHandlers.onToggleRow);
-        expect(getHandlers().onTogglePage).toBe(firstHandlers.onTogglePage);
-        expect(getHandlers().onDeselect).toBe(firstHandlers.onDeselect);
-        wrapper.unmount();
-    });
-
-    it("does not report changes while selection is disabled", () => {
-        const config = createConfig(["a"]);
-        const { wrapper, getHandlers } = renderTestComponent({ config, isSelectionDisabled: true });
-
-        getHandlers().onToggleRow("b");
-        getHandlers().onTogglePage();
-        getHandlers().onDeselect();
-
-        expect(config.onSelectionChange).not.toHaveBeenCalled();
-        wrapper.unmount();
     });
 });
 
@@ -2486,6 +2323,49 @@ describe("Table Component - selection column", () => {
 
         expect(getHeaderCheckbox(wrapper).prop("checked")).toBe(checked);
         expect(getHeaderCheckbox(wrapper).prop("indeterminate")).toBe(indeterminate);
+        wrapper.unmount();
+    });
+
+    it("reports the toggled row through onSelectionChange", () => {
+        const config = createConfig(["a"]);
+        const wrapper = mountSelectionTable({ bulkActionsConfig: config });
+
+        clickCheckbox(getRowCheckboxes(wrapper).at(1));
+        expect(config.onSelectionChange).toHaveBeenLastCalledWith({ selectedRowIds: ["a", "b"] });
+
+        clickCheckbox(getRowCheckboxes(wrapper).at(0));
+        expect(config.onSelectionChange).toHaveBeenLastCalledWith({ selectedRowIds: [] });
+        wrapper.unmount();
+    });
+
+    it("selects the rows of the current page and keeps rows of other pages", () => {
+        const config = createConfig(["c"]);
+        const wrapper = mountSelectionTable({ bulkActionsConfig: config });
+
+        clickCheckbox(getHeaderCheckbox(wrapper));
+        expect(config.onSelectionChange).toHaveBeenLastCalledWith({ selectedRowIds: ["c", "a", "b"] });
+        wrapper.unmount();
+    });
+
+    it("unselects the rows of the current page when all of them are selected", () => {
+        const config = createConfig(["a", "b", "c"]);
+        const wrapper = mountSelectionTable({ bulkActionsConfig: config });
+
+        clickCheckbox(getHeaderCheckbox(wrapper));
+        expect(config.onSelectionChange).toHaveBeenLastCalledWith({ selectedRowIds: ["c"] });
+        wrapper.unmount();
+    });
+
+    it("does not report changes in edit mode", () => {
+        const config = createConfig(["a"]);
+        const wrapper = mountSelectionTable({
+            bulkActionsConfig: config,
+            editConfig: { editing: true, onEditStart: jest.fn(), onSave: jest.fn(), onCancel: jest.fn() }
+        });
+
+        clickCheckbox(getRowCheckboxes(wrapper).at(1));
+        clickCheckbox(getHeaderCheckbox(wrapper));
+        expect(config.onSelectionChange).not.toHaveBeenCalled();
         wrapper.unmount();
     });
 

@@ -20,8 +20,7 @@ import {
     DataTableColumn,
     DataTableColumnType,
     DataTableRenderEditCellArgs,
-    DataTableRowExpandChangeHandler,
-    PageCheckboxState
+    DataTableRowExpandChangeHandler
 } from "./types";
 
 /**
@@ -291,42 +290,17 @@ export const getSelectionColumn = <TData,>() =>
     ));
 
 /**
- * Handles a click on a row checkbox: selects the row, or unselects it if it is already selected.
- */
-export const toggleRowSelection = (selectedRowIds: string[], rowId: string): string[] =>
-    selectedRowIds.includes(rowId) ? selectedRowIds.filter((id) => id !== rowId) : [...selectedRowIds, rowId];
-
-/**
- * State of the header checkbox: how many of the current page's rows are selected.
- * Rows selected on other pages don't count.
- */
-export const getPageCheckboxState = (selectedRowIds: string[], pageRowIds: string[]): PageCheckboxState => {
-    const selected = new Set(selectedRowIds);
-    const selectedOnPage = pageRowIds.filter((id) => selected.has(id)).length;
-
-    if (selectedOnPage === 0) return "unchecked";
-    return selectedOnPage === pageRowIds.length ? "checked" : "indeterminate";
-};
-
-/**
- * Handles a click on the header checkbox. It changes only the rows of the current page:
- * - if all of them are selected, unselects them;
- * - otherwise (none or some selected), selects the ones that aren't selected yet.
- * Rows selected on other pages stay selected.
- */
-export const togglePageSelection = (selectedRowIds: string[], pageRowIds: string[]): string[] => {
-    const pageIds = new Set(pageRowIds);
-
-    if (getPageCheckboxState(selectedRowIds, pageRowIds) === "checked") {
-        return selectedRowIds.filter((id) => !pageIds.has(id));
-    }
-
-    const selected = new Set(selectedRowIds);
-    return [...selectedRowIds, ...pageRowIds.filter((id) => !selected.has(id))];
-};
-
-/**
  * Converts the selection to TanStack's `rowSelection` state, so `row.getIsSelected()` works.
  */
 export const toRowSelectionState = (selectedRowIds: string[]): RowSelectionState =>
     Object.fromEntries(selectedRowIds.map((id) => [id, true]));
+
+/**
+ * Converts TanStack's `rowSelection` state back to ids: the ids still selected keep their order, new ones go last.
+ */
+export const toSelectedRowIds = (selectedRowIds: string[], rowSelection: RowSelectionState): string[] => {
+    const current = new Set(selectedRowIds);
+    const newIds = Object.keys(rowSelection).filter((id) => rowSelection[id] && !current.has(id));
+
+    return [...selectedRowIds.filter((id) => rowSelection[id]), ...newIds];
+};

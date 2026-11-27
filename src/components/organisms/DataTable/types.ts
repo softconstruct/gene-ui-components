@@ -450,7 +450,7 @@ export type DataTableBulkActionsDefaults = {
 };
 
 /**
- * `IDataTableBulkActionsConfig` merged with its defaults, plus the selection handlers.
+ * `IDataTableBulkActionsConfig` merged with its defaults, plus `isSelectionDisabled` computed by the table.
  */
 export type ResolvedDataTableBulkActionsConfig = Omit<IDataTableBulkActionsConfig, "texts"> &
     DataTableBulkActionsDefaults & {
@@ -458,24 +458,7 @@ export type ResolvedDataTableBulkActionsConfig = Omit<IDataTableBulkActionsConfi
          * Whether the checkboxes, Deselect and Bulk Actions are disabled (table loading or in edit mode).
          */
         isSelectionDisabled: boolean;
-        /**
-         * Selects the row, or unselects it if it is already selected.
-         */
-        onToggleRow: (rowId: string) => void;
-        /**
-         * Header checkbox click: selects or unselects the rows of the current page.
-         */
-        onTogglePage: () => void;
-        /**
-         * Unselects every row, on every page.
-         */
-        onDeselect: () => void;
     };
-
-/**
- * State of the header checkbox, computed from the rows on the current page only.
- */
-export type PageCheckboxState = "unchecked" | "indeterminate" | "checked";
 
 declare module "@tanstack/react-table" {
     // eslint-disable-next-line

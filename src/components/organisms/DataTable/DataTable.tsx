@@ -7,6 +7,8 @@ import {
     getCoreRowModel,
     getExpandedRowModel,
     getPaginationRowModel,
+    OnChangeFn,
+    RowSelectionState,
     useReactTable
 } from "@tanstack/react-table";
 import classNames from "classnames";
@@ -19,9 +21,15 @@ import Pagination, { IPaginationProps } from "@components/molecules/Pagination";
 // Constants, context & helpers
 import { EXPANDER_COLUMN_ID, INITIAL_PAGE_SIZE } from "./constants";
 import { DataTableProvider, DirModeContext, IDataTableContext } from "./context";
-import { adaptColumns, getExpanderColumn, getSelectionColumn, isBuiltInColumn, toRowSelectionState } from "./helper";
+import {
+    adaptColumns,
+    getExpanderColumn,
+    getSelectionColumn,
+    isBuiltInColumn,
+    toRowSelectionState,
+    toSelectedRowIds
+} from "./helper";
 // Hooks
-import { useBulkSelection } from "./hooks/useBulkSelection";
 import { useTablePagination } from "./hooks/useTablePagination";
 // Sub-components
 import TableBody from "./TableBody/TableBody";
@@ -463,6 +471,18 @@ const DataTable = <TData,>({
     const selectedRowIds = bulkActionsConfig?.selectedRowIds;
     const rowSelection = useMemo(() => toRowSelectionState(selectedRowIds ?? EMPTY_DATA), [selectedRowIds]);
 
+    const handleRowSelectionChange = useCallback<OnChangeFn<RowSelectionState>>(
+        (updater) => {
+            if (!bulkActionsConfig || isSelectionDisabled) return;
+
+            const nextRowSelection = typeof updater === "function" ? updater(rowSelection) : updater;
+            bulkActionsConfig.onSelectionChange({
+                selectedRowIds: toSelectedRowIds(bulkActionsConfig.selectedRowIds, nextRowSelection)
+            });
+        },
+        [bulkActionsConfig, isSelectionDisabled, rowSelection]
+    );
+
     const resolvedColumnOrder = useMemo(
         () =>
             columnOrder.length > 0
@@ -483,6 +503,7 @@ const DataTable = <TData,>({
         onColumnVisibilityChange: handleColumnVisibilityChange,
         onColumnPinningChange: handleColumnPinningChange,
         onColumnOrderChange: setColumnOrder,
+        onRowSelectionChange: handleRowSelectionChange,
         enableRowSelection: hasBulkActions,
         initialState: {
             ...(pagination && {
@@ -497,8 +518,6 @@ const DataTable = <TData,>({
             rowSelection
         }
     });
-
-    const { onToggleRow, onTogglePage, onDeselect } = useBulkSelection(table, bulkActionsConfig, isSelectionDisabled);
 
     const pageCount = table.getPageCount();
     const { pageIndex } = table.getState().pagination;
@@ -560,10 +579,7 @@ const DataTable = <TData,>({
                       ...DEFAULT_BULK_ACTIONS_CONFIG,
                       ...bulkActionsConfig,
                       texts: { ...DEFAULT_BULK_ACTIONS_CONFIG.texts, ...bulkActionsConfig.texts },
-                      isSelectionDisabled,
-                      onToggleRow,
-                      onTogglePage,
-                      onDeselect
+                      isSelectionDisabled
                   }
                 : null,
             initialColumnVisibility,
@@ -576,9 +592,6 @@ const DataTable = <TData,>({
             handleEditSave,
             bulkActionsConfig,
             isSelectionDisabled,
-            onToggleRow,
-            onTogglePage,
-            onDeselect,
             initialColumnVisibility,
             initialColumnPinning
         ]

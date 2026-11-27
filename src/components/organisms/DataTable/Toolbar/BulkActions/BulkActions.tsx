@@ -18,12 +18,12 @@ import "./BulkActions.scss";
  * Selection controls of the toolbar: the selected count, Deselect and the Bulk Actions dropdown.
  */
 const BulkActions = <TData,>() => {
-    const { bulkActionsConfig } = useDataTableContext<TData>();
+    const { table, bulkActionsConfig } = useDataTableContext<TData>();
     const [propsForPopover, setPropsForPopover] = useState({});
 
     if (!bulkActionsConfig) return null;
 
-    const { selectedRowIds, actions, texts, isSelectionDisabled, onDeselect } = bulkActionsConfig;
+    const { selectedRowIds, actions, texts, isSelectionDisabled } = bulkActionsConfig;
     const selectedCount = selectedRowIds.length;
     const isDisabled = isSelectionDisabled || selectedCount === 0;
 
@@ -33,7 +33,13 @@ const BulkActions = <TData,>() => {
                 {texts.selectedCount(selectedCount)}
             </Text>
             <Divider direction="vertical" className="bulkActions__divider" />
-            <Button appearance="primary" layout="text" size="medium" disabled={isDisabled} onClick={onDeselect}>
+            <Button
+                appearance="primary"
+                layout="text"
+                size="medium"
+                disabled={isDisabled}
+                onClick={() => table.resetRowSelection(true)}
+            >
                 {texts.deselect}
             </Button>
             <Button

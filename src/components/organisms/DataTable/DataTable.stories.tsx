@@ -70,7 +70,7 @@ const meta: Meta<IDataTableProps<MockRowType>> = {
         manageColumnsConfig: args({ control: "object", ...propCategory.functionality }),
         editConfig: args({ control: "object", ...propCategory.functionality }),
         editValues: args({ control: "false", ...propCategory.content }),
-        bulkActionsConfig: args({ control: "false", ...propCategory.functionality }),
+        bulkActionsConfig: args({ control: "object", ...propCategory.functionality }),
         getRowId: args({ control: "false", ...propCategory.functionality })
     },
     args: {
