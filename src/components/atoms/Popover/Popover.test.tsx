@@ -81,6 +81,27 @@ describe("Popover", () => {
         wrapper.unmount();
     });
 
+    it("renders compact Spreadsheet on mobile when mobileHeightMode is compact", () => {
+        Object.defineProperty(window, "innerWidth", {
+            configurable: true,
+            writable: true,
+            value: 320
+        });
+        window.dispatchEvent(new Event("resize"));
+
+        const wrapper = mount(
+            <Popover size="small" margin={0} setProps={() => {}} open mobileHeightMode="compact">
+                <PopoverBody>
+                    <div className="swapComponent" />
+                </PopoverBody>
+            </Popover>,
+            { wrappingComponent: GeneUIProvider }
+        );
+
+        expect(wrapper.getWrappingComponent().find(".spreadsheet__body_height_compact").exists()).toBeTruthy();
+        wrapper.unmount();
+    });
+
     it("keeps regular popover on mobile when disableMobileSpreadsheet is true", () => {
         Object.defineProperty(window, "innerWidth", {
             configurable: true,

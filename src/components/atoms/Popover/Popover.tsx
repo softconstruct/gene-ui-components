@@ -43,11 +43,11 @@ import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider"
 // Hooks
 import useClickOutside from "@hooks/useClickOutside";
 
-// Styles
-import "./Popover.scss";
-
 // Helper
 import { calculateOverlap, getPositionRect } from "./Helper";
+
+// Styles
+import "./Popover.scss";
 
 const positions: Placement[] = [
     "top",
@@ -207,10 +207,11 @@ export interface IPopoverProps {
     /**
      * Controls the height behavior of the Spreadsheet overlay on mobile view.<br/>
      * `full` — fixed height of 80vh (default).<br/>
-     * `fit` — shrinks to fit content, capped at 80vh.
+     * `fit` — shrinks to fit content, capped at 80vh.<br/>
+     * `compact` — fixed height of 50vh, content that exceeds it is accessible via vertical scroll.
      * @default "full"
      */
-    mobileHeightMode?: "full" | "fit";
+    mobileHeightMode?: "full" | "fit" | "compact";
     /**
      * Forces the regular popover rendering on mobile devices instead of Spreadsheet.
      * Useful when mobile behavior should stay consistent with desktop.
