@@ -301,8 +301,6 @@ export const toggleRowSelection = (selectedRowIds: string[], rowId: string): str
  * Rows selected on other pages don't count.
  */
 export const getPageCheckboxState = (selectedRowIds: string[], pageRowIds: string[]): PageCheckboxState => {
-    if (pageRowIds.length === 0) return "unchecked";
-
     const selected = new Set(selectedRowIds);
     const selectedOnPage = pageRowIds.filter((id) => selected.has(id)).length;
 
