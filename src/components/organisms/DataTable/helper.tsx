@@ -1,5 +1,5 @@
 import React, { CSSProperties, ReactNode, useRef } from "react";
-import { Cell, CellContext, ColumnDef } from "@tanstack/react-table";
+import { Cell, CellContext, ColumnDef, RowSelectionState } from "@tanstack/react-table";
 
 // Components
 import Text from "@components/atoms/Text";
@@ -11,9 +11,10 @@ import Tooltip from "@components/molecules/Tooltip";
 // hooks
 import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
-import { EXPANDER_COLUMN_ID, EXPANDER_COLUMN_SIZE } from "./constants";
+import { EXPANDER_COLUMN_ID, EXPANDER_COLUMN_SIZE, SELECTION_COLUMN_ID, SELECTION_COLUMN_SIZE } from "./constants";
 import { useCellWidth } from "./context";
 import ExpanderCell from "./TableBody/ExpanderCell/ExpanderCell";
+import SelectionCell from "./TableBody/SelectionCell/SelectionCell";
 import {
     DataTableCellValue,
     DataTableColumn,
@@ -253,22 +254,53 @@ export const adaptColumns = <TData,>(columns: DataTableColumn<TData>[]): ColumnD
     });
 
 /**
- * Composes a leading "expander" column onto an already adapted column list.
- * Kept separate from {@link adaptColumns} so other special columns (selection,
- * drag-handle, …) can be composed the same way without further branching.
+ * Whether the column is one the table adds itself (expander, selection), positioned and pinned by DataTable.
  */
-export const withExpanderColumn = <TData,>(
-    columns: ColumnDef<TData, ReactNode>[],
-    onRowExpandChange?: DataTableRowExpandChangeHandler<TData>
-): ColumnDef<TData, ReactNode>[] => [
-    {
-        id: EXPANDER_COLUMN_ID,
-        header: "",
-        size: EXPANDER_COLUMN_SIZE,
-        meta: {
-            explicitSize: EXPANDER_COLUMN_SIZE
-        },
-        cell: (ctx: CellContext<TData, ReactNode>) => <ExpanderCell {...ctx} onRowExpandChange={onRowExpandChange} />
-    },
-    ...columns
-];
+export const isBuiltInColumn = (id: string) => id === EXPANDER_COLUMN_ID || id === SELECTION_COLUMN_ID;
+
+/**
+ * A fixed-width column the table adds itself, without a header label (expander, selection, …).
+ */
+const createBuiltInColumn = <TData,>(
+    id: string,
+    size: number,
+    cell: ColumnDef<TData, ReactNode>["cell"]
+): ColumnDef<TData, ReactNode> => ({
+    id,
+    header: "",
+    size,
+    meta: { explicitSize: size },
+    cell
+});
+
+/**
+ * The expander column of expandable rows.
+ */
+export const getExpanderColumn = <TData,>(onRowExpandChange?: DataTableRowExpandChangeHandler<TData>) =>
+    createBuiltInColumn<TData>(EXPANDER_COLUMN_ID, EXPANDER_COLUMN_SIZE, (ctx: CellContext<TData, ReactNode>) => (
+        <ExpanderCell {...ctx} onRowExpandChange={onRowExpandChange} />
+    ));
+
+/**
+ * The checkbox column of the row selection.
+ */
+export const getSelectionColumn = <TData,>() =>
+    createBuiltInColumn<TData>(SELECTION_COLUMN_ID, SELECTION_COLUMN_SIZE, (ctx: CellContext<TData, ReactNode>) => (
+        <SelectionCell {...ctx} />
+    ));
+
+/**
+ * Converts the selection to TanStack's `rowSelection` state, so `row.getIsSelected()` works.
+ */
+export const toRowSelectionState = (selectedRowIds: string[]): RowSelectionState =>
+    Object.fromEntries(selectedRowIds.map((id) => [id, true]));
+
+/**
+ * Converts TanStack's `rowSelection` state back to ids: the ids still selected keep their order, new ones go last.
+ */
+export const toSelectedRowIds = (selectedRowIds: string[], rowSelection: RowSelectionState): string[] => {
+    const current = new Set(selectedRowIds);
+    const newIds = Object.keys(rowSelection).filter((id) => rowSelection[id] && !current.has(id));
+
+    return [...selectedRowIds.filter((id) => rowSelection[id]), ...newIds];
+};

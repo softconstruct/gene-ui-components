@@ -10,9 +10,10 @@ import Tooltip from "@components/molecules/Tooltip";
 // Hooks
 import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
-import { EXPANDER_COLUMN_ID } from "../../constants";
+import { EXPANDER_COLUMN_ID, SELECTION_COLUMN_ID } from "../../constants";
 import { useDirMode } from "../../context";
 import { getCellContentStyle, getCellStyle } from "../../helper";
+import SelectionHeaderCell from "../SelectionHeaderCell/SelectionHeaderCell";
 
 // Styles
 import "./TableHeaderCell.scss";
@@ -48,6 +49,7 @@ const TableHeaderCell = <TData, TValue>({ header, offset }: ITableHeaderCellProp
     const dirMode = useDirMode();
     const { column } = header;
     const isExpanderHeader = column.id === EXPANDER_COLUMN_ID;
+    const isSelectionHeader = column.id === SELECTION_COLUMN_ID;
     const isPinned = column.getIsPinned();
     const isRTL = dirMode === "rtl";
     const explicitSize = column.columnDef.meta?.explicitSize;
@@ -63,11 +65,17 @@ const TableHeaderCell = <TData, TValue>({ header, offset }: ITableHeaderCellProp
             data-column-id={explicitSize === undefined ? column.id : undefined}
             className={classNames("tableHeaderCell", {
                 tableHeaderCell_expander: isExpanderHeader,
+                tableHeaderCell_selection: isSelectionHeader,
                 tableHeaderCell_pinned: isPinned
             })}
             style={getCellStyle(explicitSize, offset, isPinned, isRTL)}
         >
-            {!isExpanderHeader ? (
+            {isSelectionHeader && (
+                <div className="tableHeaderCell__content" style={getCellContentStyle(explicitSize)}>
+                    <SelectionHeaderCell />
+                </div>
+            )}
+            {!isExpanderHeader && !isSelectionHeader ? (
                 <div className="tableHeaderCell__content" style={getCellContentStyle(explicitSize)}>
                     <Tooltip text={label} isVisible={isTruncated}>
                         <Text ref={labelRef} className="tableHeaderCell__text" as="span" variant="labelMediumSemibold">

@@ -8,6 +8,7 @@ import Loader from "@components/atoms/Loader";
 import { Popover } from "@components/atoms/Popover";
 import Checkbox from "@components/molecules/Checkbox";
 import Empty from "@components/molecules/Empty";
+import { IMenuItemProps, Menu } from "@components/molecules/Menu";
 import Pagination from "@components/molecules/Pagination";
 import TextField from "@components/molecules/TextField";
 import { INITIAL_PAGE_SIZE } from "@components/organisms/DataTable/constants";
@@ -17,10 +18,12 @@ import {
     DataTableColumn,
     DataTableRenderCellArgs,
     DataTableRenderEditCellArgs,
+    IDataTableBulkActionsConfig,
     IDataTableEditConfig
 } from "@components/organisms/DataTable/types";
 
 import { mockColumns, mockData } from "../../../../stories/data/__dataTable";
+import { toRowSelectionState, toSelectedRowIds } from "./helper";
 // Components
 import DataTable, { IDataTableProps } from "./index";
 
@@ -2207,5 +2210,434 @@ describe("Table Component - Copyable cells", () => {
         expect(copyControls(setup).length).toBe(0);
 
         setup.unmount();
+    });
+});
+
+describe("Table Component - row selection helpers", () => {
+    describe("toRowSelectionState", () => {
+        it("maps every selected id to true", () => {
+            expect(toRowSelectionState(["1", "2"])).toEqual({ "1": true, "2": true });
+        });
+    });
+
+    describe("toSelectedRowIds", () => {
+        it("keeps the order of the ids still selected and adds new ones last", () => {
+            expect(toSelectedRowIds(["3", "1", "2"], { "1": true, "2": false, "3": true, "5": true })).toEqual([
+                "3",
+                "1",
+                "5"
+            ]);
+        });
+    });
+});
+
+describe("Table Component - selection column", () => {
+    type SelectionRow = { id: string; name: string };
+
+    const selectionData: SelectionRow[] = ["a", "b", "c", "d"].map((id) => ({ id, name: `Row ${id}` }));
+    const selectionColumns: DataTableColumn<SelectionRow>[] = [{ accessorKey: "name", header: "Name" }];
+
+    const mountSelectionTable = (props: Partial<IDataTableProps<SelectionRow>> = {}) =>
+        mount(
+            <DataTable
+                data={selectionData}
+                columns={selectionColumns}
+                getRowId={(row) => row.id}
+                pagination={{ pageSize: 2 }}
+                {...props}
+            />
+        );
+
+    const createConfig = (selectedRowIds: string[]): IDataTableBulkActionsConfig => ({
+        selectedRowIds,
+        onSelectionChange: jest.fn(),
+        actions: []
+    });
+
+    const ControlledTable = ({ initialSelectedRowIds = [] }: { initialSelectedRowIds?: string[] }) => {
+        const [selectedRowIds, setSelectedRowIds] = React.useState(initialSelectedRowIds);
+
+        return (
+            <DataTable
+                data={selectionData}
+                columns={selectionColumns}
+                getRowId={(row) => row.id}
+                pagination={{ pageSize: 2 }}
+                bulkActionsConfig={{
+                    selectedRowIds,
+                    onSelectionChange: (payload) => setSelectedRowIds(payload.selectedRowIds),
+                    actions: []
+                }}
+            />
+        );
+    };
+
+    const getHeaderCheckbox = (wrapper: ReactWrapper) => wrapper.find(".tableHeaderCell_selection").find(Checkbox);
+    const getRowCheckboxes = (wrapper: ReactWrapper) => wrapper.find("td.tableBodyCell_selection").find(Checkbox);
+    const clickCheckbox = (checkbox: ReactWrapper) => checkbox.find("input").simulate("change");
+
+    it("does not render the selection column without bulkActionsConfig", () => {
+        const wrapper = mountSelectionTable();
+
+        expect(wrapper.find(".tableHeaderCell_selection").exists()).toBe(false);
+        expect(wrapper.find("td.tableBodyCell_selection").exists()).toBe(false);
+        wrapper.unmount();
+    });
+
+    it("renders the selection column as the first column", () => {
+        const wrapper = mountSelectionTable({ bulkActionsConfig: createConfig([]) });
+
+        expect(wrapper.find("th").first().hasClass("tableHeaderCell_selection")).toBe(true);
+        wrapper.find("tr.tableRow").forEach((row) => {
+            expect(row.find("td").first().hasClass("tableBodyCell_selection")).toBe(true);
+        });
+        expect(getRowCheckboxes(wrapper)).toHaveLength(2);
+        wrapper.unmount();
+    });
+
+    it("renders the selection column right after the expander", () => {
+        const wrapper = mountSelectionTable({
+            bulkActionsConfig: createConfig([]),
+            renderExpandedRow: (row) => <div>{row.name}</div>
+        });
+
+        const headerCells = wrapper.find("th");
+        expect(headerCells.at(0).hasClass("tableHeaderCell_expander")).toBe(true);
+        expect(headerCells.at(1).hasClass("tableHeaderCell_selection")).toBe(true);
+        wrapper.unmount();
+    });
+
+    it("checks the rows in selectedRowIds", () => {
+        const wrapper = mountSelectionTable({ bulkActionsConfig: createConfig(["b"]) });
+
+        expect(getRowCheckboxes(wrapper).map((checkbox) => checkbox.prop("checked"))).toEqual([false, true]);
+        wrapper.unmount();
+    });
+
+    it.each<[string, string[], boolean, boolean]>([
+        ["unchecked", [], false, false],
+        ["indeterminate", ["a"], false, true],
+        ["checked", ["a", "b"], true, false]
+    ])("renders the header checkbox %s", (_, selectedRowIds, checked, indeterminate) => {
+        const wrapper = mountSelectionTable({ bulkActionsConfig: createConfig(selectedRowIds) });
+
+        expect(getHeaderCheckbox(wrapper).prop("checked")).toBe(checked);
+        expect(getHeaderCheckbox(wrapper).prop("indeterminate")).toBe(indeterminate);
+        wrapper.unmount();
+    });
+
+    it("reports the toggled row through onSelectionChange", () => {
+        const config = createConfig(["a"]);
+        const wrapper = mountSelectionTable({ bulkActionsConfig: config });
+
+        clickCheckbox(getRowCheckboxes(wrapper).at(1));
+        expect(config.onSelectionChange).toHaveBeenLastCalledWith({ selectedRowIds: ["a", "b"] });
+
+        clickCheckbox(getRowCheckboxes(wrapper).at(0));
+        expect(config.onSelectionChange).toHaveBeenLastCalledWith({ selectedRowIds: [] });
+        wrapper.unmount();
+    });
+
+    it("selects the rows of the current page and keeps rows of other pages", () => {
+        const config = createConfig(["c"]);
+        const wrapper = mountSelectionTable({ bulkActionsConfig: config });
+
+        clickCheckbox(getHeaderCheckbox(wrapper));
+        expect(config.onSelectionChange).toHaveBeenLastCalledWith({ selectedRowIds: ["c", "a", "b"] });
+        wrapper.unmount();
+    });
+
+    it("unselects the rows of the current page when all of them are selected", () => {
+        const config = createConfig(["a", "b", "c"]);
+        const wrapper = mountSelectionTable({ bulkActionsConfig: config });
+
+        clickCheckbox(getHeaderCheckbox(wrapper));
+        expect(config.onSelectionChange).toHaveBeenLastCalledWith({ selectedRowIds: ["c"] });
+        wrapper.unmount();
+    });
+
+    it("does not report changes in edit mode", () => {
+        const config = createConfig(["a"]);
+        const wrapper = mountSelectionTable({
+            bulkActionsConfig: config,
+            editConfig: { editing: true, onEditStart: jest.fn(), onSave: jest.fn(), onCancel: jest.fn() }
+        });
+
+        clickCheckbox(getRowCheckboxes(wrapper).at(1));
+        clickCheckbox(getHeaderCheckbox(wrapper));
+        expect(config.onSelectionChange).not.toHaveBeenCalled();
+        wrapper.unmount();
+    });
+
+    it("updates the checkboxes once the consumer updates selectedRowIds", () => {
+        const wrapper = mount(<ControlledTable />);
+
+        clickCheckbox(getRowCheckboxes(wrapper).at(1));
+        wrapper.update();
+
+        expect(getRowCheckboxes(wrapper).map((checkbox) => checkbox.prop("checked"))).toEqual([false, true]);
+        expect(getHeaderCheckbox(wrapper).prop("indeterminate")).toBe(true);
+
+        clickCheckbox(getHeaderCheckbox(wrapper));
+        wrapper.update();
+
+        expect(getRowCheckboxes(wrapper).map((checkbox) => checkbox.prop("checked"))).toEqual([true, true]);
+        expect(getHeaderCheckbox(wrapper).prop("checked")).toBe(true);
+        wrapper.unmount();
+    });
+
+    it("disables the checkboxes in edit mode", () => {
+        const wrapper = mountSelectionTable({
+            bulkActionsConfig: createConfig([]),
+            editConfig: { editing: true, onEditStart: jest.fn(), onSave: jest.fn(), onCancel: jest.fn() }
+        });
+
+        expect(getHeaderCheckbox(wrapper).prop("disabled")).toBe(true);
+        getRowCheckboxes(wrapper).forEach((checkbox) => expect(checkbox.prop("disabled")).toBe(true));
+        wrapper.unmount();
+    });
+
+    it("disables the header checkbox while loading", () => {
+        const wrapper = mountSelectionTable({ bulkActionsConfig: createConfig([]), loading: true });
+
+        expect(getHeaderCheckbox(wrapper).prop("disabled")).toBe(true);
+        wrapper.unmount();
+    });
+
+    it("disables the header checkbox when the page has no rows", () => {
+        const wrapper = mountSelectionTable({ bulkActionsConfig: createConfig([]), data: [] });
+
+        expect(getHeaderCheckbox(wrapper).prop("disabled")).toBe(true);
+        wrapper.unmount();
+    });
+});
+
+describe("Table Component - selection column pinning and Manage columns", () => {
+    type PinningRow = { id: string; name: string; email: string };
+
+    const pinningData: PinningRow[] = ["a", "b"].map((id) => ({ id, name: `Row ${id}`, email: `${id}@mail.com` }));
+    const pinningColumns: DataTableColumn<PinningRow>[] = [
+        { accessorKey: "name", header: "Name" },
+        { accessorKey: "email", header: "Email" }
+    ];
+
+    const bulkActionsConfig: IDataTableBulkActionsConfig = {
+        selectedRowIds: [],
+        onSelectionChange: jest.fn(),
+        actions: []
+    };
+
+    const mountPinningTable = async (props: Partial<IDataTableProps<PinningRow>> = {}) => {
+        let wrapper: ReactWrapper<IDataTableProps<PinningRow>>;
+        await act(async () => {
+            wrapper = mount(
+                <DataTable
+                    data={pinningData}
+                    columns={pinningColumns}
+                    getRowId={(row) => row.id}
+                    bulkActionsConfig={bulkActionsConfig}
+                    manageColumnsConfig={{ visible: true }}
+                    {...props}
+                />
+            );
+        });
+        wrapper!.update();
+        return wrapper!;
+    };
+
+    const openManageColumns = async <P,>(wrapper: ReactWrapper<P>) => {
+        await act(async () => {
+            wrapper
+                .find(Button)
+                .filterWhere((button) => button.text().includes("Manage columns"))
+                .simulate("click");
+        });
+        wrapper.update();
+    };
+
+    const getListItem = <P,>(wrapper: ReactWrapper<P>, columnId: string) =>
+        wrapper
+            .find("ManageColumnListItem")
+            .filterWhere((item) => (item.prop("column") as { id: string }).id === columnId);
+
+    const save = async <P,>(wrapper: ReactWrapper<P>) => {
+        await act(async () => {
+            wrapper
+                .find(Button)
+                .filterWhere((button) => button.text() === "Save")
+                .simulate("click");
+        });
+        wrapper.update();
+    };
+
+    const getHeaders = <P,>(wrapper: ReactWrapper<P>) =>
+        wrapper.find("thead th").map((th) => ({
+            label: th.hasClass("tableHeaderCell_selection") ? "selection" : th.text(),
+            isPinned: th.hasClass("tableHeaderCell_pinned")
+        }));
+
+    it("does not list the selection column in Manage columns", async () => {
+        const wrapper = await mountPinningTable();
+        await openManageColumns(wrapper);
+
+        const listedColumnIds = wrapper
+            .find("ManageColumnListItem")
+            .map((item) => (item.prop("column") as { id: string }).id);
+
+        expect(listedColumnIds).toEqual(["name", "email"]);
+        wrapper.unmount();
+    });
+
+    it("does not pin the selection column while no column is pinned", async () => {
+        const wrapper = await mountPinningTable();
+
+        expect(getHeaders(wrapper)[0]).toEqual({ label: "selection", isPinned: false });
+        wrapper.unmount();
+    });
+
+    it("keeps the selection column first after saving Manage columns", async () => {
+        const wrapper = await mountPinningTable();
+        await openManageColumns(wrapper);
+
+        await act(async () => {
+            getListItem(wrapper, "name").find("input[type='checkbox']").simulate("change");
+        });
+        await save(wrapper);
+
+        expect(getHeaders(wrapper).map((header) => header.label)).toEqual(["selection", "Email"]);
+        wrapper.unmount();
+    });
+
+    it("pins the selection column in front of a column pinned in Manage columns", async () => {
+        const wrapper = await mountPinningTable();
+        await openManageColumns(wrapper);
+
+        await act(async () => {
+            getListItem(wrapper, "email").find(".manageColumnListItem__pinAction").first().simulate("click");
+        });
+        await save(wrapper);
+
+        expect(getHeaders(wrapper)).toEqual([
+            { label: "selection", isPinned: true },
+            { label: "Email", isPinned: true },
+            { label: "Name", isPinned: false }
+        ]);
+        wrapper.unmount();
+    });
+
+    it("pins the selection column after the expander and before a default pinned column", async () => {
+        const wrapper = await mountPinningTable({
+            columns: [pinningColumns[0], { ...pinningColumns[1], defaultPinned: true }],
+            renderExpandedRow: (row) => <div>{row.name}</div>
+        });
+
+        expect(getHeaders(wrapper)).toEqual([
+            { label: "", isPinned: true },
+            { label: "selection", isPinned: true },
+            { label: "Email", isPinned: true },
+            { label: "Name", isPinned: false }
+        ]);
+        wrapper.unmount();
+    });
+});
+
+describe("Table Component - bulk actions toolbar", () => {
+    type ToolbarRow = { id: string; name: string };
+
+    const toolbarData: ToolbarRow[] = ["a", "b", "c"].map((id) => ({ id, name: `Row ${id}` }));
+    const toolbarColumns: DataTableColumn<ToolbarRow>[] = [{ accessorKey: "name", header: "Name" }];
+
+    const createConfig = (
+        selectedRowIds: string[],
+        overrides: Partial<IDataTableBulkActionsConfig> = {}
+    ): IDataTableBulkActionsConfig => ({
+        selectedRowIds,
+        onSelectionChange: jest.fn(),
+        actions: [
+            { id: "export", title: "Export", onClick: jest.fn() },
+            { id: "delete", title: "Delete", onClick: jest.fn() }
+        ],
+        ...overrides
+    });
+
+    const mountToolbarTable = (props: Partial<IDataTableProps<ToolbarRow>>) =>
+        mount(<DataTable data={toolbarData} columns={toolbarColumns} getRowId={(row) => row.id} {...props} />);
+
+    const getButton = (wrapper: ReactWrapper, text: string) =>
+        wrapper
+            .find(".bulkActions")
+            .find(Button)
+            .filterWhere((button) => button.text() === text);
+
+    it("renders Deselect and Bulk Actions disabled while nothing is selected", () => {
+        const wrapper = mountToolbarTable({ bulkActionsConfig: createConfig([]) });
+
+        expect(wrapper.find(".bulkActions__count").first().text()).toBe("0 selected");
+        expect(getButton(wrapper, "Deselect").prop("disabled")).toBe(true);
+        expect(getButton(wrapper, "Bulk Actions").prop("disabled")).toBe(true);
+        wrapper.unmount();
+    });
+
+    it("renders the selected count and enables the buttons when rows are selected", () => {
+        const wrapper = mountToolbarTable({ bulkActionsConfig: createConfig(["a", "b"]) });
+
+        expect(wrapper.find(".bulkActions__count").first().text()).toBe("2 selected");
+        expect(getButton(wrapper, "Deselect").prop("disabled")).toBe(false);
+        expect(getButton(wrapper, "Bulk Actions").prop("disabled")).toBe(false);
+        wrapper.unmount();
+    });
+
+    it("renders texts prop correctly", () => {
+        const wrapper = mountToolbarTable({
+            bulkActionsConfig: createConfig(["a"], {
+                texts: { selectedCount: (count) => `${count} rows`, deselect: "Clear", bulkActionsButton: "Actions" }
+            })
+        });
+
+        expect(wrapper.find(".bulkActions__count").first().text()).toBe("1 rows");
+        expect(getButton(wrapper, "Clear").exists()).toBe(true);
+        expect(getButton(wrapper, "Actions").exists()).toBe(true);
+        wrapper.unmount();
+    });
+
+    it("clears the selection on every page on Deselect click", () => {
+        const config = createConfig(["a", "x"]);
+        const wrapper = mountToolbarTable({ bulkActionsConfig: config });
+
+        getButton(wrapper, "Deselect").simulate("click");
+
+        expect(config.onSelectionChange).toHaveBeenLastCalledWith({ selectedRowIds: [] });
+        wrapper.unmount();
+    });
+
+    it("calls the chosen action with the selected row ids", () => {
+        const config = createConfig(["a", "x"]);
+        const wrapper = mountToolbarTable({ bulkActionsConfig: config });
+
+        const onMenuChange = wrapper.find(".bulkActions").find(Menu).prop("onChange") as (item: IMenuItemProps) => void;
+        act(() => onMenuChange({ id: "delete" } as IMenuItemProps));
+
+        expect(config.actions[1].onClick).toHaveBeenCalledWith({ selectedRowIds: ["a", "x"] });
+        expect(config.actions[0].onClick).not.toHaveBeenCalled();
+        wrapper.unmount();
+    });
+
+    it("disables Bulk Actions when there are no actions", () => {
+        const wrapper = mountToolbarTable({ bulkActionsConfig: createConfig(["a"], { actions: [] }) });
+
+        expect(getButton(wrapper, "Bulk Actions").prop("disabled")).toBe(true);
+        expect(wrapper.find(".bulkActions").find(Menu).exists()).toBe(false);
+        wrapper.unmount();
+    });
+
+    it("disables Deselect and Bulk Actions in edit mode", () => {
+        const wrapper = mountToolbarTable({
+            bulkActionsConfig: createConfig(["a"]),
+            editConfig: { editing: true, onEditStart: jest.fn(), onSave: jest.fn(), onCancel: jest.fn() }
+        });
+
+        expect(getButton(wrapper, "Deselect").prop("disabled")).toBe(true);
+        expect(getButton(wrapper, "Bulk Actions").prop("disabled")).toBe(true);
+        wrapper.unmount();
     });
 });

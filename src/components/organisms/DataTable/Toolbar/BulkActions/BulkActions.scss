@@ -1,0 +1,15 @@
+.bulkActions {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    gap: var(--guit-ref-spacing-xsmall);
+
+    &__count {
+        color: var(--guit-sem-color-foreground-neutral-1);
+    }
+
+    &__divider {
+        flex-shrink: 0;
+        min-height: var(--guit-sem-dimension-height-medium);
+    }
+}

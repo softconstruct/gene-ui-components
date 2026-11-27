@@ -70,6 +70,7 @@ const meta: Meta<IDataTableProps<MockRowType>> = {
         manageColumnsConfig: args({ control: "object", ...propCategory.functionality }),
         editConfig: args({ control: "object", ...propCategory.functionality }),
         editValues: args({ control: "false", ...propCategory.content }),
+        bulkActionsConfig: args({ control: "object", ...propCategory.functionality }),
         getRowId: args({ control: "false", ...propCategory.functionality })
     },
     args: {
@@ -300,6 +301,7 @@ const EditModeTableWrapper = (props: IDataTableProps<MockRowType>) => {
     const [rows, setRows] = useState<MockRowType[]>(mockData);
     const [drafts, setDrafts] = useState<DataTableEditValues<MockRowType>>({});
     const [isEditing, setIsEditing] = useState(false);
+    const [selectedRowIds, setSelectedRowIds] = useState<string[]>([String(mockData[1].Id)]);
 
     const editConfig = useMemo<IDataTableEditConfig<MockRowType>>(
         () => ({
@@ -334,6 +336,11 @@ const EditModeTableWrapper = (props: IDataTableProps<MockRowType>) => {
             getRowId={(row) => String(row.Id)}
             editConfig={editConfig}
             editValues={drafts}
+            bulkActionsConfig={{
+                selectedRowIds,
+                onSelectionChange: ({ selectedRowIds: nextSelectedRowIds }) => setSelectedRowIds(nextSelectedRowIds),
+                actions: [{ id: "delete", title: "Delete", onClick: () => {} }]
+            }}
         />
     );
 };

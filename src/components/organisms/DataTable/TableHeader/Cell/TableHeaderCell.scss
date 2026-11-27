@@ -25,6 +25,10 @@
         padding: 0;
     }
 
+    &_selection {
+        padding: 0;
+    }
+
     &__content {
         display: flex;
         align-items: center;
@@ -32,6 +36,11 @@
         min-width: 100%;
         max-width: 18rem;
         padding-inline: var(--guit-ref-spacing-large);
+    }
+
+    &_selection &__content {
+        justify-content: center;
+        padding-inline: 0;
     }
 
     &__text {

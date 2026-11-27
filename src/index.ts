@@ -129,11 +129,16 @@ export {
     DataTableRowExpandChangeHandler,
     DataTableRowExpandChangePayload,
     DataTableRowStatus,
+    IDataTableBulkAction,
+    IDataTableBulkActionPayload,
+    IDataTableBulkActionsConfig,
+    IDataTableBulkActionsTexts,
     IDataTableCellChangePayload,
     IDataTableEditConfig,
     IDataTableEditTexts,
     IDataTableProps,
-    IDataTableRowAction
+    IDataTableRowAction,
+    IDataTableRowSelectionChangePayload
 } from "@components/organisms/DataTable";
 export {
     default as GlobalHeader,

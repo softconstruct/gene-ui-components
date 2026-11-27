@@ -1,11 +1,14 @@
-import React, { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { ReactElement, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
+    ColumnDef,
     ColumnOrderState,
     ColumnPinningState,
     ExpandedState,
     getCoreRowModel,
     getExpandedRowModel,
     getPaginationRowModel,
+    OnChangeFn,
+    RowSelectionState,
     useReactTable
 } from "@tanstack/react-table";
 import classNames from "classnames";
@@ -18,7 +21,14 @@ import Pagination, { IPaginationProps } from "@components/molecules/Pagination";
 // Constants, context & helpers
 import { EXPANDER_COLUMN_ID, INITIAL_PAGE_SIZE } from "./constants";
 import { DataTableProvider, DirModeContext, IDataTableContext } from "./context";
-import { adaptColumns, withExpanderColumn } from "./helper";
+import {
+    adaptColumns,
+    getExpanderColumn,
+    getSelectionColumn,
+    isBuiltInColumn,
+    toRowSelectionState,
+    toSelectedRowIds
+} from "./helper";
 // Hooks
 import { useTablePagination } from "./hooks/useTablePagination";
 // Sub-components
@@ -28,12 +38,14 @@ import Toolbar from "./Toolbar/Toolbar";
 // Types
 import {
     ColumnVisibilityState,
+    DataTableBulkActionsDefaults,
     DataTableColumn,
     DataTableEditDefaults,
     DataTableEditValues,
     DataTableGetRowStatus,
     DataTableRenderExpandedRow,
     DataTableRowExpandChangeHandler,
+    IDataTableBulkActionsConfig,
     IDataTableCellChangePayload,
     IDataTableEditConfig,
     IDataTableRowAction,
@@ -224,8 +236,28 @@ interface IDataTableProps<TData> {
      */
     editValues?: DataTableEditValues<TData>;
     /**
+     * Configuration object for row selection and bulk actions.
+     * Providing it adds a checkbox column and the bulk actions to the toolbar.
+     * The selection is controlled through `selectedRowIds` and `onSelectionChange`.
+     * Memoize the config (e.g. with `useMemo`) in large tables, so the table doesn't re-render on every parent render.
+     *
+     * @example
+     * ```tsx
+     * const [selectedRowIds, setSelectedRowIds] = useState<string[]>([]);
+     *
+     * <DataTable
+     *   bulkActionsConfig={{
+     *     selectedRowIds,
+     *     onSelectionChange: ({ selectedRowIds }) => setSelectedRowIds(selectedRowIds),
+     *     actions: [{ id: "delete", title: "Delete", onClick: ({ selectedRowIds }) => api.delete(selectedRowIds) }]
+     *   }}
+     * />
+     * ```
+     */
+    bulkActionsConfig?: IDataTableBulkActionsConfig;
+    /**
      * Resolves a stable, unique id for a row from its data.
-     * Every row-bound state is keyed by it: expanded rows and the edit mode drafts.
+     * Every row-bound state is keyed by it: expanded rows, the edit mode drafts and the selected rows.
      *
      * @example
      * ```tsx
@@ -261,6 +293,14 @@ const DEFAULT_EDIT_CONFIG = {
     }
 } satisfies DataTableEditDefaults;
 
+const DEFAULT_BULK_ACTIONS_CONFIG = {
+    texts: {
+        selectedCount: (count: number) => `${count} selected`,
+        deselect: "Deselect",
+        bulkActionsButton: "Bulk Actions"
+    }
+} satisfies DataTableBulkActionsDefaults;
+
 /**
  * Data Table used to display structured information in a grid format, making it easy to organize, view, and interact with large datasets.
  * Data tables are essential for presenting information such as reports, inventories, or user data in a clear,
@@ -288,6 +328,7 @@ const DataTable = <TData,>({
     manageColumnsConfig = DEFAULT_MANAGE_COLUMNS_CONFIG,
     editConfig,
     editValues,
+    bulkActionsConfig,
     getRowId
 }: IDataTableProps<TData>): ReactElement => {
     const [expanded, setExpanded] = useState<ExpandedState>({});
@@ -333,10 +374,21 @@ const DataTable = <TData,>({
         []
     );
 
+    const hasBulkActions = Boolean(bulkActionsConfig);
+
     const tableColumns = useMemo(() => {
-        const adapted = adaptColumns(columns);
-        return isExpandable ? withExpanderColumn(adapted, stableOnRowExpandChange) : adapted;
-    }, [columns, isExpandable, stableOnRowExpandChange]);
+        const builtInColumns: ColumnDef<TData, ReactNode>[] = [];
+
+        if (isExpandable) {
+            builtInColumns.push(getExpanderColumn(stableOnRowExpandChange));
+        }
+
+        if (hasBulkActions) {
+            builtInColumns.push(getSelectionColumn<TData>());
+        }
+
+        return [...builtInColumns, ...adaptColumns(columns)];
+    }, [columns, isExpandable, stableOnRowExpandChange, hasBulkActions]);
 
     const initialPageSize =
         typeof pagination === "object" && (pagination.pageSize || pagination.rowsPerPageOptions?.length)
@@ -370,17 +422,20 @@ const DataTable = <TData,>({
         [initialColumnVisibility, columnVisibilityOverrides]
     );
 
+    const builtInColumnIds = useMemo(
+        () => tableColumns.map((column) => column.id).filter((id): id is string => !!id && isBuiltInColumn(id)),
+        [tableColumns]
+    );
+
     const resolveColumnPinning = useCallback(
         (pinning: ColumnPinningState | null): ColumnPinningState => {
             const { left = [], right = [] } = pinning ?? initialColumnPinning;
-            const leftWithoutExpander = left.filter((id) => id !== EXPANDER_COLUMN_ID);
-            return {
-                // The expander is always the first pinned column
-                left: isExpandable ? [EXPANDER_COLUMN_ID, ...leftWithoutExpander] : leftWithoutExpander,
-                right
-            };
+            const userPinned = left.filter((id) => !isBuiltInColumn(id));
+            const pinnedBuiltIns = builtInColumnIds.filter((id) => id === EXPANDER_COLUMN_ID || userPinned.length > 0);
+
+            return { left: [...pinnedBuiltIns, ...userPinned], right };
         },
-        [initialColumnPinning, isExpandable]
+        [initialColumnPinning, builtInColumnIds]
     );
 
     const columnPinning = useMemo(
@@ -406,10 +461,34 @@ const DataTable = <TData,>({
                     typeof updaterOrValue === "function"
                         ? updaterOrValue(resolveColumnPinning(prevPinning))
                         : updaterOrValue;
-                return { left: left.filter((id) => id !== EXPANDER_COLUMN_ID), right };
+                return { left: left.filter((id) => !isBuiltInColumn(id)), right };
             });
         },
         [resolveColumnPinning]
+    );
+
+    const isSelectionDisabled = isTableLoading || isEditing;
+    const selectedRowIds = bulkActionsConfig?.selectedRowIds;
+    const rowSelection = useMemo(() => toRowSelectionState(selectedRowIds ?? EMPTY_DATA), [selectedRowIds]);
+
+    const handleRowSelectionChange = useCallback<OnChangeFn<RowSelectionState>>(
+        (updater) => {
+            if (!bulkActionsConfig || isSelectionDisabled) return;
+
+            const nextRowSelection = typeof updater === "function" ? updater(rowSelection) : updater;
+            bulkActionsConfig.onSelectionChange({
+                selectedRowIds: toSelectedRowIds(bulkActionsConfig.selectedRowIds, nextRowSelection)
+            });
+        },
+        [bulkActionsConfig, isSelectionDisabled, rowSelection]
+    );
+
+    const resolvedColumnOrder = useMemo(
+        () =>
+            columnOrder.length > 0
+                ? [...builtInColumnIds, ...columnOrder.filter((id) => !isBuiltInColumn(id))]
+                : columnOrder,
+        [columnOrder, builtInColumnIds]
     );
 
     const table = useReactTable({
@@ -424,6 +503,8 @@ const DataTable = <TData,>({
         onColumnVisibilityChange: handleColumnVisibilityChange,
         onColumnPinningChange: handleColumnPinningChange,
         onColumnOrderChange: setColumnOrder,
+        onRowSelectionChange: handleRowSelectionChange,
+        enableRowSelection: hasBulkActions,
         initialState: {
             ...(pagination && {
                 pagination: { pageSize: initialPageSize }
@@ -433,7 +514,8 @@ const DataTable = <TData,>({
             expanded,
             columnVisibility,
             columnPinning,
-            columnOrder
+            columnOrder: resolvedColumnOrder,
+            rowSelection
         }
     });
 
@@ -492,10 +574,27 @@ const DataTable = <TData,>({
                       onSave: handleEditSave
                   }
                 : null,
+            bulkActionsConfig: bulkActionsConfig
+                ? {
+                      ...DEFAULT_BULK_ACTIONS_CONFIG,
+                      ...bulkActionsConfig,
+                      texts: { ...DEFAULT_BULK_ACTIONS_CONFIG.texts, ...bulkActionsConfig.texts },
+                      isSelectionDisabled
+                  }
+                : null,
             initialColumnVisibility,
             initialColumnPinning
         }),
-        [table, manageColumnsConfig, editConfig, handleEditSave, initialColumnVisibility, initialColumnPinning]
+        [
+            table,
+            manageColumnsConfig,
+            editConfig,
+            handleEditSave,
+            bulkActionsConfig,
+            isSelectionDisabled,
+            initialColumnVisibility,
+            initialColumnPinning
+        ]
     );
 
     return (
