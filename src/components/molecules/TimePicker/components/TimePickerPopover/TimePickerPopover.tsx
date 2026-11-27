@@ -97,7 +97,7 @@ interface ITimePickerPopoverProps {
     /**
      * Controls the popover height mode on mobile.
      */
-    mobileHeightMode?: "fit" | "full";
+    mobileHeightMode?: "fit" | "full" | "compact";
     /**
      * Size of the popover and its items.
      */

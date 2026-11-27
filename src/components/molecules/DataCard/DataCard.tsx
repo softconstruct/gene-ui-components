@@ -182,13 +182,17 @@ const DataCard: FC<IDataCardProps> = ({
                         <Button appearance="secondary" size="large" fullWidth {...propsForPopover}>
                             {actionsText}
                         </Button>
-                        <Menu onChange={handleMenuChange} setPropsForPopover={setPropsForPopover}>
+                        <Menu
+                            onChange={handleMenuChange}
+                            setPropsForPopover={setPropsForPopover}
+                            mobileHeightMode="compact"
+                        >
                             {menuElements}
                         </Menu>
                     </>
                 )}
             </div>
-            <Spreadsheet open={open} className="dataCard__spreadsheet dataCard" onClose={onShowMoreToggle}>
+            <Spreadsheet heightMode="compact" open={open} className="dataCard__spreadsheet" onClose={onShowMoreToggle}>
                 <DataList data={cardData} />
             </Spreadsheet>
         </div>

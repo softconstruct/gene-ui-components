@@ -41,6 +41,10 @@ export interface IPopoverFooterActionProps {
      * Whether the button is disabled.
      */
     disabled?: boolean;
+    /**
+     * Shows the loading spinner in the button.
+     */
+    loading?: boolean;
 }
 
 export interface IPopoverFooterProps {
