@@ -30,13 +30,13 @@ import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider"
 // Hooks
 import { useClickOutside } from "@hooks/index";
 
-// Styles
-import "./Menu.scss";
-
 // Helpers
 import { findPathOfSelected, isActiveElementInside } from "./helper";
 // Types
 import { IMenuItemProps } from "./MenuItem";
+
+// Styles
+import "./Menu.scss";
 
 const MENU_GAP_FROM_TARGET = 4;
 
@@ -113,6 +113,15 @@ interface IMenuProps {
      * Called when the open state is changed.
      */
     onOpenChange?: (isOpen: boolean) => void;
+    /**
+     * Controls the height behavior of the Spreadsheet overlay on mobile view.<br/>
+     * `full` — fixed height of 80vh.<br/>
+     * `fit` — shrinks to fit content, capped at 80vh.<br/>
+     * `compact` — fixed height of 50vh, content that exceeds it is accessible via vertical scroll.<br/>
+     * Possible values: `full | fit | compact`
+     * @default "full"
+     */
+    mobileHeightMode?: IPopoverProps["mobileHeightMode"];
 }
 
 const cloneChildrenRecursive = (
@@ -159,7 +168,8 @@ const Menu: FC<IMenuProps> = ({
     position = "bottom-left",
     open = false,
     openSelectedPath = false,
-    onOpenChange
+    onOpenChange,
+    mobileHeightMode = "full"
 }) => {
     const [isOpenState, setIsOpenState] = useState<boolean>(true);
     const [paths, setPaths] = useState<string[]>([]);
@@ -373,6 +383,7 @@ const Menu: FC<IMenuProps> = ({
                 ref={popoverRef}
                 onClose={onCloseHandler}
                 margin={MENU_GAP_FROM_TARGET}
+                mobileHeightMode={mobileHeightMode}
             >
                 <PopoverBody
                     withPadding={false}

@@ -24,6 +24,11 @@ const meta: Meta<typeof Menu> = {
         open: args({ control: "boolean", ...propCategory.states }),
         size: args({ control: "select", ...propCategory.appearance }),
         openSelectedPath: args({ control: "boolean", ...propCategory.appearance }),
+        mobileHeightMode: args({
+            control: "select",
+            options: ["full", "fit", "compact"],
+            ...propCategory.appearance
+        }),
         position: args({
             control: "select",
             ...propCategory.appearance,

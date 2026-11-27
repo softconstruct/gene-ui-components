@@ -80,6 +80,42 @@ describe("Spreadsheet", () => {
         expect(provider().find(".spreadsheet__body_inset").exists()).toBeFalsy();
     });
 
+    it("should render full height class by default", () => {
+        setup.setProps({ open: true });
+        expect(provider().find(".spreadsheet__body_height_full").exists()).toBeTruthy();
+    });
+
+    it("should render fit height class when heightMode is fit", () => {
+        setup.setProps({
+            open: true,
+            heightMode: "fit",
+            children: (
+                <Spreadsheet open heightMode="fit">
+                    <div className="spreadsheet-content">Test Content</div>
+                </Spreadsheet>
+            )
+        });
+        const wrapper = provider();
+        expect(wrapper.find(".spreadsheet__body_height_fit").exists()).toBeTruthy();
+        expect(wrapper.find(".scrollbar_height_auto").exists()).toBeTruthy();
+    });
+
+    it("should render compact height class with scrollable content when heightMode is compact", () => {
+        setup.setProps({
+            open: true,
+            heightMode: "compact",
+            children: (
+                <Spreadsheet open heightMode="compact">
+                    <div className="spreadsheet-content">Test Content</div>
+                </Spreadsheet>
+            )
+        });
+        const wrapper = provider();
+        expect(wrapper.find(".spreadsheet__body_height_compact").exists()).toBeTruthy();
+        expect(wrapper.find(".spreadsheet__body_height_full").exists()).toBeFalsy();
+        expect(wrapper.find(".scrollbar_height_full").exists()).toBeTruthy();
+    });
+
     it("should not render when open is false", () => {
         setup.setProps({
             open: false,
