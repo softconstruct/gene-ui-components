@@ -417,7 +417,7 @@ const CalendarPanel: FC<ICalendarPanelProps> = ({
     );
 
     const renderHeaderText = (text: string) => (
-        <Text as="span" variant={headerTextVariantMap[size]}>
+        <Text as="span" variant={headerTextVariantMap[size]} className="datePicker__headerText">
             {text}
         </Text>
     );

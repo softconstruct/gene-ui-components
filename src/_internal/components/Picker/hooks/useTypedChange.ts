@@ -11,13 +11,17 @@ import { INPUT_CHANGE_DEBOUNCE_MS } from "../constants";
  */
 const useTypedChange = <TPayload>(emit: (payload: TPayload) => void) => {
     const pendingRef = useRef<TPayload | null>(null);
+    // The delayed report runs from the render the text was typed in; it calls the handler of the latest one.
+    const emitRef = useRef(emit);
+
+    emitRef.current = emit;
 
     const emitPending = () => {
         const pending = pendingRef.current;
         pendingRef.current = null;
 
         if (pending) {
-            emit(pending);
+            emitRef.current(pending);
         }
     };
 

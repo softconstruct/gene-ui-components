@@ -1168,6 +1168,45 @@ describe("DatePicker", () => {
             expect(onChange).toHaveBeenCalledTimes(1);
         });
 
+        it("settles the field on Enter like leaving it does: a corrected date, or the last one for incomplete text", () => {
+            const onChange = jest.fn();
+            const picker = mountSingle({ defaultValue: "2026-03-15", max: "2026-12-31", onChange });
+            const pressEnter = () => {
+                inputs(picker).simulate("keydown", { key: "Enter" });
+                picker.update();
+            };
+
+            typeWithoutPause(picker, "31/04/2026");
+            pressEnter();
+            expect(inputs(picker).prop("value")).toBe("30/04/2026");
+
+            typeWithoutPause(picker, "15/03/2027");
+            pressEnter();
+            expect(inputs(picker).prop("value")).toBe("31/12/2026");
+
+            typeWithoutPause(picker, "15/03/20");
+            pressEnter();
+            expect(inputs(picker).prop("value")).toBe("31/12/2026");
+            expect(changedValues(onChange)).toEqual(["2026-04-30", "2026-12-31"]);
+
+            picker.unmount();
+        });
+
+        it("reports a typed date to the `onChange` of the latest render", () => {
+            const first = jest.fn();
+            const latest = jest.fn();
+
+            setup.setProps({ onChange: first });
+            typeWithoutPause(setup, "15/03/2026");
+            setup.setProps({ onChange: latest });
+
+            act(() => {
+                jest.advanceTimersByTime(INPUT_CHANGE_DEBOUNCE_MS);
+            });
+            expect(first).not.toHaveBeenCalled();
+            expect(changedValues(latest)).toEqual(["2026-03-15"]);
+        });
+
         it("reports an emptied field", () => {
             const onChange = jest.fn();
             const picker = mountSingle({ defaultValue: "2026-03-15", onChange });

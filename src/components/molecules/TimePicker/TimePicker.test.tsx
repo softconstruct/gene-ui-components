@@ -536,6 +536,24 @@ describe("TimePicker", () => {
             expect(preventDefault).toHaveBeenCalled();
         });
 
+        it("settles the typed value on Enter, before the key reaches `onKeyDown`", () => {
+            const calls: string[] = [];
+            const picker = mountSingle({
+                format: "12h",
+                onChange: (event) => calls.push(event.target.value),
+                onKeyDown: () => calls.push("keydown")
+            });
+
+            typeWithoutPause(picker, "13:30");
+            picker.find("input.pickerMaskedInput").simulate("keydown", { key: "Enter" });
+            picker.update();
+
+            expect(calls).toEqual(["13:30", "01:30:00 PM", "keydown"]);
+            expect(picker.find("input.pickerMaskedInput").prop("value")).toBe("01:30:00 PM");
+
+            picker.unmount();
+        });
+
         it("does not swallow Space", () => {
             const preventDefault = jest.fn();
 

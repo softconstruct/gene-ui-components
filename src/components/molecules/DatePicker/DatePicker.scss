@@ -157,6 +157,8 @@
         display: flex;
         align-items: center;
         gap: var(--date-picker-gap);
+        width: 0;
+        min-width: 100%;
         padding: var(--guit-ref-spacing-xsmall) var(--guit-ref-spacing-3xsmall) var(--guit-ref-spacing-3xsmall);
     }
 
@@ -173,12 +175,17 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
+        min-width: 0;
         height: var(--date-picker-control-size);
         padding-inline: var(--guit-ref-spacing-2xsmall);
         border-radius: var(--date-picker-radius);
         background-color: var(--guit-sem-color-background-neutral-1);
         color: inherit;
         white-space: nowrap;
+
+        &:last-child {
+            flex-shrink: 0;
+        }
 
         &:not(#{$this}__headerItem_readOnly) {
             cursor: pointer;
@@ -193,6 +200,12 @@
                 background-color: var(--guit-sem-color-background-neutral-1-pressed);
             }
         }
+    }
+
+    &__headerText {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     &__grid {

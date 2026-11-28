@@ -98,7 +98,7 @@ interface ITimePickerBaseProps {
      * Clock format of both the input and the popover: `24h` reads and writes `HH:mm:ss`
      * (`18:45:00`), `12h` reads and writes `hh:mm:ss AM|PM` (`06:45:00 PM`) and adds the AM/PM column.
      * A 24-hour time typed in the 12-hour format (`19:30:00`) is converted (`07:30:00 PM`) when the
-     * field is left. An existing value is converted when the format changes.
+     * field is left or `Enter` is pressed. An existing value is converted when the format changes.
      * @default "24h"
      */
     format?: TimePickerFormat;
@@ -155,8 +155,8 @@ interface ISingleTimePickerProps extends ITimePickerBaseProps {
     /**
      * Callback function that is triggered when the time picker value changes: while the user types
      * (the text as typed, which can be incomplete), on a pick from the popover, on clear and when the
-     * field is left with typed text that had to be completed or corrected. `onBlur` reports the
-     * final value once the user is done.
+     * field is left, or `Enter` is pressed, with typed text that had to be completed or corrected.
+     * `onBlur` reports the final value once the user is done.
      * @param event `event.target.value` is the time string (an empty string when the value was
      * cleared) and `event.target.name` the `name` of the input. Typing reports the input's own
      * change event; a pick, a clear and the blur commit have none, so the click, key or blur event

@@ -45,22 +45,49 @@ interface IPickerField {
      * Whether the field has been typed into since it was last left, picked from or cleared.
      */
     isEditing: boolean;
+    /**
+     * Sets the committed value; a controlled field keeps its `value` prop.
+     */
     setValue: (value: string | null) => void;
+    /**
+     * Stores the text typed into the input.
+     */
     setTypedText: (text: string) => void;
+    /**
+     * Starts or ends the editing; ending it drops the typed text.
+     */
     setIsEditing: (editing: boolean) => void;
 }
 
 /**
- * The value a field settles on when it is left; `commit` reports it through `onChange`.
+ * The value a field settles on when it is left or `Enter` is pressed; `commit` reports it through `onChange`.
  */
 export type PickerLeaveResult = { value: string | null; commit: boolean };
 
 export interface IUsePickerCoreOptions<F extends string> {
+    /**
+     * The inputs of the picker by name: one for a single picker, `start` and `end` for a range.
+     */
     fields: Record<F, IPickerField>;
+    /**
+     * References to the input elements of the fields.
+     */
     inputRefs: Record<F, InputRef>;
+    /**
+     * The field that is edited first, and the one a clear is reported for.
+     */
     initialField: F;
+    /**
+     * Whether the clear button clears the value.
+     */
     clearable?: boolean;
+    /**
+     * Whether the picker is disabled.
+     */
     disabled?: boolean;
+    /**
+     * Whether the picker is read-only.
+     */
     readOnly?: boolean;
     /**
      * The value typed text stands for, reported with a change event of its own; `undefined` while
@@ -69,14 +96,33 @@ export interface IUsePickerCoreOptions<F extends string> {
      */
     getTypedValue?: (field: F, text: string) => string | null | undefined;
     /**
-     * The value a field settles on when it is left. `isEditing` tells whether it was typed into.
+     * The value a field settles on when it is left or `Enter` is pressed. `isEditing` tells whether
+     * it was typed into.
      */
     resolveLeave: (field: F, isEditing: boolean) => PickerLeaveResult;
+    /**
+     * Reports a change of `field` with the values of all fields.
+     */
     onChange?: (event: ChangeEvent<HTMLInputElement>, values: Record<F, string>, field: F) => void;
+    /**
+     * Reports a press of the clear button.
+     */
     onClear?: () => void;
+    /**
+     * Reports the popover opening or closing.
+     */
     onOpenChange?: (open: boolean) => void;
+    /**
+     * Reports the focus entering the input of `field`.
+     */
     onFocus?: (event: FocusEvent<HTMLInputElement>, field: F) => void;
+    /**
+     * Reports `field` being left, with the values of all fields.
+     */
     onBlur?: (values: Record<F, string>, event: FocusEvent<HTMLElement>, field: F) => void;
+    /**
+     * Reports a key pressed in the input of `field`.
+     */
     onKeyDown?: (event: KeyboardEvent<HTMLInputElement>, field: F) => void;
 }
 
@@ -191,10 +237,10 @@ const usePickerCore = <F extends string>({
     }, [fieldToFocus]);
 
     /**
-     * Ends the editing of a field: flushes the pending typed report, commits the value the field
-     * settles on through `onChange`, then reports `onBlur`.
+     * Ends the editing of a field: flushes the pending typed report and commits the value the field
+     * settles on through `onChange`. Returns that value, an empty string for an empty field.
      */
-    const leaveField = (field: F, event: FocusEvent<HTMLElement>) => {
+    const settleField = (field: F, event: SyntheticEvent): string => {
         const current = fields[field];
         const isCommitting = isInteractive && current.isEditing;
 
@@ -209,6 +255,15 @@ const usePickerCore = <F extends string>({
             current.setValue(value);
             onChange?.(toChangeEvent(event, inputRefs[field].current, finalValue), getValues(field, finalValue), field);
         }
+
+        return finalValue;
+    };
+
+    /**
+     * Settles a field that is left, then reports `onBlur`.
+     */
+    const leaveField = (field: F, event: FocusEvent<HTMLElement>) => {
+        const finalValue = settleField(field, event);
 
         onBlur?.(getValues(field, finalValue), event, field);
     };
@@ -268,8 +323,8 @@ const usePickerCore = <F extends string>({
                 leaveField(field, event);
             },
             onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => {
-                // Enter reports the typed text at once, so `onKeyDown` and a submitting form get the new value.
-                if (event.key === KEYS.ENTER) typedChange.flush();
+                // Enter settles the field like leaving it does, so `onKeyDown` and a submitting form get the value shown.
+                if (event.key === KEYS.ENTER) settleField(field, event);
 
                 onKeyDown?.(event, field);
 

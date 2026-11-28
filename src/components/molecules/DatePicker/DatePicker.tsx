@@ -119,12 +119,12 @@ interface IDatePickerBaseProps {
     locale?: string;
     /**
      * The earliest selectable date, as an ISO date (`YYYY-MM-DD`). Earlier days are disabled in the
-     * calendar, and an earlier typed date is moved up to it when the field is left.
+     * calendar, and an earlier typed date is moved up to it when the field is left or `Enter` is pressed.
      */
     min?: string;
     /**
      * The latest selectable date, as an ISO date (`YYYY-MM-DD`). Later days are disabled in the
-     * calendar, and a later typed date is moved back to it when the field is left.
+     * calendar, and a later typed date is moved back to it when the field is left or `Enter` is pressed.
      */
     max?: string;
     /**
@@ -189,8 +189,8 @@ interface ISingleDatePickerProps extends IDatePickerBaseProps {
     /**
      * Callback function that is triggered when the date changes: once typed text is a complete date
      * that exists and is allowed (after a pause in typing), on a pick from the calendar, on clear,
-     * when the text is emptied, and when the field is left with a typed date that had to be corrected.
-     * `onBlur` reports the final value once the user is done.
+     * when the text is emptied, and when the field is left, or `Enter` is pressed, with a typed date
+     * that had to be corrected. `onBlur` reports the final value once the user is done.
      * @param event `event.target.value` is the ISO date (an empty string when the value was cleared)
      * and `event.target.name` the `name` of the input. The reported event is a copy of the event that
      * caused the change (the typing, the click, the key or the blur), with the input as its `target`.
