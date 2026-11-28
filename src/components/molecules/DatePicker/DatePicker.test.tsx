@@ -723,6 +723,7 @@ describe("DatePicker", () => {
 
     it("uses the numeric keyboard and sizes the input for the format", () => {
         expect(inputs(setup).prop("inputMode")).toBe("numeric");
+        expect(inputs(setup).hasClass("pickerMaskedInput_keyboardHidden")).toBeFalsy();
         expect(inputs(setup).prop("size")).toBe(11);
     });
 
@@ -1150,6 +1151,23 @@ describe("DatePicker", () => {
             expect(changedValues(onChange)).toEqual(["2026-03-15"]);
         });
 
+        it("reports a typed date at once on Enter, before the key reaches `onKeyDown` or a form", () => {
+            const calls: string[] = [];
+            const onChange = jest.fn((event: ChangeEvent<HTMLInputElement>) => calls.push(event.target.value));
+            const onKeyDown = jest.fn(() => calls.push("keydown"));
+
+            setup.setProps({ onChange, onKeyDown });
+            typeWithoutPause(setup, "15/03/2026");
+            inputs(setup).simulate("keydown", { key: "Enter" });
+
+            expect(calls).toEqual(["2026-03-15", "keydown"]);
+
+            act(() => {
+                jest.advanceTimersByTime(INPUT_CHANGE_DEBOUNCE_MS);
+            });
+            expect(onChange).toHaveBeenCalledTimes(1);
+        });
+
         it("reports an emptied field", () => {
             const onChange = jest.fn();
             const picker = mountSingle({ defaultValue: "2026-03-15", onChange });
@@ -1574,6 +1592,17 @@ describe("DatePicker", () => {
     describe("on a phone", () => {
         afterEach(() => setWindowWidth(initialInnerWidth));
 
+        it("keeps the virtual keyboard closed and hides the caret, since the calendar opens where it would appear", () => {
+            setWindowWidth(500);
+
+            const picker = mountSingle();
+
+            expect(inputs(picker).prop("inputMode")).toBe("none");
+            expect(inputs(picker).hasClass("pickerMaskedInput_keyboardHidden")).toBeTruthy();
+
+            picker.unmount();
+        });
+
         it("shows the large calendar, paged from the header month and year instead of arrows", () => {
             window.scrollTo = jest.fn();
             setWindowWidth(500);
@@ -1663,6 +1692,33 @@ describe("Date range picker", () => {
         expect(setup.find("div.datePicker").hasClass("datePicker_loading")).toBeTruthy();
         expect(setup.find("div.skeleton")).toHaveLength(2);
         expect(inputs(setup).exists()).toBeFalsy();
+    });
+
+    it("uses the numeric keyboard, and keeps the virtual keyboard closed on a phone", () => {
+        expect(inputs(setup).map((input) => input.prop("inputMode"))).toEqual(["numeric", "numeric"]);
+
+        setWindowWidth(500);
+
+        const range = mountRange();
+
+        expect(inputs(range).map((input) => input.prop("inputMode"))).toEqual(["none", "none"]);
+
+        range.unmount();
+        setWindowWidth(initialInnerWidth);
+    });
+
+    it("reports a typed date at once on Enter, before the key reaches `onKeyDown`", () => {
+        const calls: string[] = [];
+        const onChange = jest.fn(() => calls.push("change"));
+        const onKeyDown = jest.fn(() => calls.push("keydown"));
+
+        setup.setProps({ onChange, onKeyDown });
+        typeWithoutPause(setup, "15/03/2026", 1);
+        inputs(setup).at(1).simulate("keydown", { key: "Enter" });
+
+        expect(calls).toEqual(["change", "keydown"]);
+        expect(onChange).toHaveBeenCalledWith(expect.anything(), { start: "", end: "2026-03-15" }, "end");
+        expect(onKeyDown).toHaveBeenCalledWith(expect.anything(), "end");
     });
 
     it("shows one month on a phone, without the days of the months around it", () => {

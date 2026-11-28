@@ -38,9 +38,10 @@ interface IPickerMaskedInputProps {
      */
     maskTrack: Track;
     /**
-     * Virtual keyboard hint of the input: `numeric` when the value can only hold digits.
+     * Virtual keyboard hint of the input: `numeric` when the value can only hold digits, `none` to
+     * keep the virtual keyboard closed, which also hides the caret.
      */
-    inputMode?: "numeric" | "text";
+    inputMode?: "numeric" | "text" | "none";
     /**
      * Width of the input in characters (the `HTML` `size` attribute). Sized for the longest value the
      * picker can hold, so the field keeps its width whatever the value.
@@ -148,7 +149,8 @@ const PickerMaskedInput: FC<IPickerMaskedInputProps> = ({
         size={inputSize}
         className={classNames("pickerMaskedInput", `pickerMaskedInput_size_${size}`, {
             pickerMaskedInput_disabled: disabled,
-            pickerMaskedInput_readOnly: readOnly
+            pickerMaskedInput_readOnly: readOnly,
+            pickerMaskedInput_keyboardHidden: inputMode === "none"
         })}
         showMask={false}
         placeholder={(disabled && value) || placeholder}

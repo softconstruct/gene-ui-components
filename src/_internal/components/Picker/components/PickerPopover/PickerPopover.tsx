@@ -24,7 +24,7 @@ interface IPickerPopoverProps {
     /**
      * Controls the popover height mode on mobile.
      */
-    mobileHeightMode?: "fit" | "full";
+    mobileHeightMode?: "fit" | "full" | "compact";
     /**
      * Reference to the popover element.
      */

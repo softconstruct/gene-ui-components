@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FocusEvent, forwardRef, KeyboardEvent, Ref, useMemo } from "react";
+import React, { ChangeEvent, FocusEvent, forwardRef, KeyboardEvent, Ref, useContext, useMemo } from "react";
 import classNames from "classnames";
 import { nanoid } from "nanoid/non-secure";
 
@@ -7,6 +7,7 @@ import { Calendar as CalendarIcon } from "@geneui/icons";
 // Components
 import Label from "@components/atoms/Label";
 import Skeleton from "@components/atoms/Skeleton";
+import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
 import { DEFAULT_ID_PREFIX, PickerInput, PickerPopover, textSizeMap } from "@internal/components/Picker";
 
@@ -271,10 +272,12 @@ interface IRangeDatePickerProps extends Omit<IDatePickerBaseProps, "onFocus" | "
 type PickerSetupOptions = Pick<IDatePickerBaseProps, "id" | "format" | "localization" | "disabled" | "readOnly">;
 
 /**
- * Derived values shared by both pickers: ids, texts, the mask of the format, and the read-only
- * state, which `disabled` takes precedence over.
+ * Derived values shared by both pickers: ids, texts, the mask of the format, the read-only state,
+ * which `disabled` takes precedence over, and the keyboard hint. On phones the calendar opens where
+ * the virtual keyboard would appear, so the keyboard stays closed there.
  */
 const usePickerSetup = ({ id, format: formatProp, localization, disabled, readOnly }: PickerSetupOptions) => {
+    const { breakpoint } = useContext(GeneUIDesignSystemContext);
     const generatedId = useMemo(() => id || `${DEFAULT_ID_PREFIX}${nanoid()}`, [id]);
     const texts = useMemo(() => resolveLocalization(localization), [localization]);
     const format = resolveDateFormat(formatProp);
@@ -290,6 +293,7 @@ const usePickerSetup = ({ id, format: formatProp, localization, disabled, readOn
         mask,
         maskTrack,
         inputKey: mask,
+        inputMode: breakpoint?.isMobileBreakpoint ? ("none" as const) : ("numeric" as const),
         inputSize: mask.length + 1
     };
 };
@@ -378,7 +382,7 @@ const SingleDatePicker = forwardRef<HTMLDivElement, ISingleDatePickerProps>(
                     mask={setup.mask}
                     maskReplacement={DATE_MASK_REPLACEMENT}
                     maskTrack={setup.maskTrack}
-                    inputMode="numeric"
+                    inputMode={setup.inputMode}
                     inputSize={setup.inputSize}
                 />
                 <PickerPopover {...popoverProps} id={setup.popoverId} mobileHeightMode="fit">
@@ -462,7 +466,7 @@ const RangeDatePicker = forwardRef<HTMLDivElement, IRangeDatePickerProps>(
                     mask={setup.mask}
                     maskReplacement={DATE_MASK_REPLACEMENT}
                     maskTrack={setup.maskTrack}
-                    inputMode="numeric"
+                    inputMode={setup.inputMode}
                     inputSize={setup.inputSize}
                 />
                 <PickerPopover {...popoverProps} id={setup.popoverId} mobileHeightMode="fit">

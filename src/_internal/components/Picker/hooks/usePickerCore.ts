@@ -268,6 +268,9 @@ const usePickerCore = <F extends string>({
                 leaveField(field, event);
             },
             onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => {
+                // Enter reports the typed text at once, so `onKeyDown` and a submitting form get the new value.
+                if (event.key === KEYS.ENTER) typedChange.flush();
+
                 onKeyDown?.(event, field);
 
                 if (!isInteractive) return;
