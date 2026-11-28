@@ -1,4 +1,4 @@
-import { Track } from "@react-input/mask";
+import { PICKER_RANGE_FIELDS, resolveLocalization as resolvePickerLocalization } from "@internal/components/Picker";
 
 // Constants
 import {
@@ -10,12 +10,10 @@ import {
     LAST_HOUR_IN_24H_FORMAT_DAY,
     LAST_MINUTE_IN_HOUR,
     LAST_SECOND_IN_MINUTE,
-    MASK_PLACEHOLDER,
     MERIDIEM_LIST,
     MERIDIEM_OFFSET,
     MERIDIEMS,
     MINUTES,
-    PICKER_RANGE_FIELDS,
     SECONDS,
     SECONDS_IN_HOUR,
     SECONDS_IN_MINUTE,
@@ -219,21 +217,8 @@ export const parseTypedTimeParts = (value: string | null | undefined, is12Hour: 
  * Merges the consumer localization over the defaults, ignoring empty entries so a partially
  * provided object cannot blank out a label (including the accessible ones).
  */
-export const resolveLocalization = (localization?: ITimePickerLocalization): Required<ITimePickerLocalization> => {
-    const resolved: Required<ITimePickerLocalization> = { ...DEFAULT_LOCALIZATION };
-
-    if (!localization) return resolved;
-
-    (Object.keys(localization) as (keyof ITimePickerLocalization)[]).forEach((key) => {
-        const text = localization[key];
-
-        if (text) {
-            resolved[key] = text;
-        }
-    });
-
-    return resolved;
-};
+export const resolveLocalization = (localization?: ITimePickerLocalization): Required<ITimePickerLocalization> =>
+    resolvePickerLocalization(DEFAULT_LOCALIZATION, localization);
 
 /**
  * @description
@@ -361,33 +346,3 @@ export const isPickerPartDisabled = (
 
     return false;
 };
-
-// ---------------------------------------------------------
-// Input mask
-// ---------------------------------------------------------
-
-/**
- * @description
- * Builds the `track` callback of the input mask: every inserted character is matched against the
- * rule of the slot it lands in, and the ones that do not fit are dropped, so structurally impossible
- * values (`99:99:99`) can never be typed.
- * @param mask the mask the rules belong to
- * @param slotRules one regular expression per placeholder of the mask, in mask order
- */
-export const createMaskTrack =
-    (mask: string, slotRules: RegExp[]): Track =>
-    ({ inputType, data, selectionStart }) => {
-        if (inputType !== "insert") return undefined;
-
-        let slot = mask.slice(0, selectionStart).split(MASK_PLACEHOLDER).length - 1;
-        let accepted = "";
-
-        Array.from(data).forEach((char) => {
-            if (slot < slotRules.length && slotRules[slot].test(char)) {
-                accepted += char;
-                slot += 1;
-            }
-        });
-
-        return accepted || false;
-    };

@@ -64,4 +64,8 @@
             color: inherit;
         }
     }
+
+    &_keyboardHidden {
+        caret-color: transparent;
+    }
 }
